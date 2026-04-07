@@ -31,6 +31,9 @@ cd ../mirai-gikai-<branch-name> && pnpm install --frozen-lockfile
 実装完了後（コミット前）に、必ず `/review` スキルを実行してセルフレビューを受けること。`/review` はCodexレビュー・`test-guidelines-checker` によるテストガイドラインチェック・`code-quality-checker` によるコード品質チェックを同時に実行する。指摘があれば修正してからコミットする。
 レビューを通過したら、ユーザーに確認せずそのままPR作成まで一気に進めること（push → `gh pr create`）。
 
+### UI変更時のスクリーンショット必須
+PR作成後、変更差分にUI関連ファイル（`web/src/`, `admin/src/` 配下の `.tsx`, `.css` 等）が含まれる場合は、必ず `/pr-screenshot` スキルを実行すること。スキルが自動でdevサーバー起動→スクリーンショット撮影→R2アップロード→PR本文更新まで行う。
+
 ### 並列PR作成
 複数の独立したPRを作成する場合は `/parallel-pr` スキルを使用すること。
 
