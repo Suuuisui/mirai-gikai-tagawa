@@ -1,7 +1,7 @@
 "use client";
 
-import type { Route } from "next";
 import { BarChart3, Copy, Pencil, Plus, Sparkles, Trash2 } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -22,12 +22,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { routes } from "@/lib/routes";
-import {
   Table,
   TableBody,
   TableCell,
@@ -35,6 +29,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { routes } from "@/lib/routes";
 import {
   deleteInterviewConfig,
   duplicateInterviewConfig,
