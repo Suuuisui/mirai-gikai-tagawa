@@ -89,9 +89,11 @@ export type Database = {
           published_at: string | null
           share_thumbnail_url: string | null
           shugiin_url: string | null
+          slug: string | null
           status: Database["public"]["Enums"]["bill_status_enum"]
           status_note: string | null
           status_order: number | null
+          submitted_date: string | null
           thumbnail_url: string | null
           updated_at: string
         }
@@ -108,9 +110,11 @@ export type Database = {
           published_at?: string | null
           share_thumbnail_url?: string | null
           shugiin_url?: string | null
+          slug?: string | null
           status: Database["public"]["Enums"]["bill_status_enum"]
           status_note?: string | null
           status_order?: number | null
+          submitted_date?: string | null
           thumbnail_url?: string | null
           updated_at?: string
         }
@@ -127,9 +131,11 @@ export type Database = {
           published_at?: string | null
           share_thumbnail_url?: string | null
           shugiin_url?: string | null
+          slug?: string | null
           status?: Database["public"]["Enums"]["bill_status_enum"]
           status_note?: string | null
           status_order?: number | null
+          submitted_date?: string | null
           thumbnail_url?: string | null
           updated_at?: string
         }

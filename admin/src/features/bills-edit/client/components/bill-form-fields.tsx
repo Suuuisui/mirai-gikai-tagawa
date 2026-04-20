@@ -155,16 +155,14 @@ export function BillFormFields({
 
       <FormField
         control={control}
-        name="published_at"
+        name="submitted_date"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>公開日時 *</FormLabel>
+            <FormLabel>法案提出日 *</FormLabel>
             <FormControl>
-              <Input type="datetime-local" {...field} />
+              <Input type="date" {...field} />
             </FormControl>
-            <FormDescription>
-              議案が公開される日時を設定してください
-            </FormDescription>
+            <FormDescription>法案の提出日を設定してください</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -228,6 +226,27 @@ export function BillFormFields({
             </FormControl>
             <FormDescription>
               衆議院の議案ページURLを入力してください（「これから掲載される法案」表示時に外部リンクとして使用）
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="slug"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Slug</FormLabel>
+            <FormControl>
+              <Input
+                {...field}
+                value={field.value || ""}
+                placeholder="221-kaku-1-mof-法案名"
+              />
+            </FormControl>
+            <FormDescription>
+              コンテンツ同期用の識別子です（最大200文字）
             </FormDescription>
             <FormMessage />
           </FormItem>

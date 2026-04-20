@@ -4,6 +4,9 @@ import { useRouter } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MultiSimulationView } from "@/features/interview-simulation/client/components/multi-simulation-view";
+import type { CompletedReportListItem } from "@/features/interview-simulation/shared/types";
 import { routes } from "@/lib/routes";
 import { saveInterviewQuestions } from "../../server/actions/save-interview-questions";
 import {
@@ -23,12 +26,20 @@ interface InterviewConfigEditClientProps {
   billId: string;
   config: InterviewConfig | null;
   questions: InterviewQuestion[];
+  completedReports: CompletedReportListItem[];
+  /** レポート一覧が上限で切り詰められたか（シミュレーション UI の警告表示用） */
+  completedReportsTruncated?: boolean;
+  /** 切り詰め上限値 */
+  completedReportsLimit?: number;
 }
 
 export function InterviewConfigEditClient({
   billId,
   config: initialConfig,
   questions,
+  completedReports,
+  completedReportsTruncated = false,
+  completedReportsLimit,
 }: InterviewConfigEditClientProps) {
   const router = useRouter();
   const [configId, setConfigId] = useState<string | undefined>(
@@ -53,6 +64,8 @@ export function InterviewConfigEditClient({
       })
     | null
   >(null);
+  // 質問一覧の現在値を取得するための ref（シミュレーション機能で使用）
+  const getQuestionsRef = useRef<(() => InterviewQuestionInput[]) | null>(null);
 
   const getFormThemes = useCallback(
     () => getFormValuesRef.current?.().themes ?? [],
@@ -137,48 +150,85 @@ export function InterviewConfigEditClient({
   );
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* 左カラム: フォーム */}
-      <div className="space-y-6">
-        <InterviewConfigForm
-          billId={billId}
-          config={initialConfig}
-          aiGeneratedThemes={aiGeneratedThemes}
-          onAiThemesApplied={() => setAiGeneratedThemes(null)}
-          getFormValuesRef={getFormValuesRef}
-        />
-        {configId ? (
-          <InterviewQuestionList
-            interviewConfigId={configId}
-            questions={questions}
-            aiGeneratedQuestions={aiGeneratedQuestions}
-            onAiQuestionsApplied={() => setAiGeneratedQuestions(null)}
-          />
-        ) : (
-          aiGeneratedQuestions &&
-          aiGeneratedQuestions.length > 0 && (
-            <AiQuestionsPreview questions={aiGeneratedQuestions} />
-          )
-        )}
-      </div>
+    // ページ全体をタブ切替に: 「設定編集」(フォーム+AI チャット) と「シミュレーション」
+    // forceMount で state 保持 → シミュレーションタブに切り替えても未保存編集値が維持される
+    <Tabs defaultValue="edit" className="w-full">
+      <TabsList>
+        <TabsTrigger value="edit">設定編集</TabsTrigger>
+        <TabsTrigger value="simulation" disabled={!configId}>
+          シミュレーション
+          {!configId && "（保存後に有効）"}
+        </TabsTrigger>
+      </TabsList>
 
-      {/* 右カラム: AIチャット */}
-      <div>
-        <ConfigGenerationChat
-          billId={billId}
-          configId={configId}
-          existingThemes={initialConfig?.themes ?? undefined}
-          existingQuestions={questions.map((q) => ({
-            question: q.question,
-            follow_up_guide: q.follow_up_guide ?? undefined,
-            quick_replies: q.quick_replies ?? undefined,
-          }))}
-          onThemesConfirmed={handleThemesConfirmed}
-          onQuestionsConfirmed={handleQuestionsConfirmed}
-          getFormThemes={getFormThemes}
-        />
-      </div>
-    </div>
+      <TabsContent
+        value="edit"
+        forceMount
+        className="mt-4 data-[state=inactive]:hidden"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* 左カラム: フォーム */}
+          <div className="space-y-6">
+            <InterviewConfigForm
+              billId={billId}
+              config={initialConfig}
+              aiGeneratedThemes={aiGeneratedThemes}
+              onAiThemesApplied={() => setAiGeneratedThemes(null)}
+              getFormValuesRef={getFormValuesRef}
+            />
+            {configId ? (
+              <InterviewQuestionList
+                interviewConfigId={configId}
+                questions={questions}
+                aiGeneratedQuestions={aiGeneratedQuestions}
+                onAiQuestionsApplied={() => setAiGeneratedQuestions(null)}
+                getQuestionsRef={getQuestionsRef}
+              />
+            ) : (
+              aiGeneratedQuestions &&
+              aiGeneratedQuestions.length > 0 && (
+                <AiQuestionsPreview questions={aiGeneratedQuestions} />
+              )
+            )}
+          </div>
+
+          {/* 右カラム: AI 設定生成チャット */}
+          <div>
+            <ConfigGenerationChat
+              billId={billId}
+              configId={configId}
+              existingThemes={initialConfig?.themes ?? undefined}
+              existingQuestions={questions.map((q) => ({
+                question: q.question,
+                follow_up_guide: q.follow_up_guide ?? undefined,
+                quick_replies: q.quick_replies ?? undefined,
+              }))}
+              onThemesConfirmed={handleThemesConfirmed}
+              onQuestionsConfirmed={handleQuestionsConfirmed}
+              getFormThemes={getFormThemes}
+            />
+          </div>
+        </div>
+      </TabsContent>
+
+      {configId ? (
+        <TabsContent
+          value="simulation"
+          forceMount
+          className="mt-4 data-[state=inactive]:hidden"
+        >
+          <MultiSimulationView
+            billId={billId}
+            configId={configId}
+            getFormValues={() => getFormValuesRef.current?.() ?? null}
+            getCurrentQuestions={() => getQuestionsRef.current?.() ?? []}
+            completedReports={completedReports}
+            completedReportsTruncated={completedReportsTruncated}
+            completedReportsLimit={completedReportsLimit}
+          />
+        </TabsContent>
+      ) : null}
+    </Tabs>
   );
 }
 

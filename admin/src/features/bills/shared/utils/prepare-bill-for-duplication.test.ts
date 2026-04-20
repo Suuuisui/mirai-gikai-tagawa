@@ -17,8 +17,10 @@ const baseBill: Bill = {
   originating_house: "HR",
   publish_status: "published",
   published_at: null,
+  submitted_date: null,
   share_thumbnail_url: null,
   shugiin_url: null,
+  slug: null,
   status: "introduced",
   status_note: null,
   status_order: BILL_STATUS_ORDER.introduced,
@@ -47,6 +49,12 @@ describe("prepareBillForDuplication", () => {
   it("is_review_completedをfalseにリセットする", () => {
     const result = prepareBillForDuplication(baseBill);
     expect(result.is_review_completed).toBe(false);
+  });
+
+  it("slugをnullにリセットする", () => {
+    const billWithSlug = { ...baseBill, slug: "test-slug" };
+    const result = prepareBillForDuplication(billWithSlug);
+    expect(result.slug).toBeNull();
   });
 
   it("その他のフィールドを保持する", () => {

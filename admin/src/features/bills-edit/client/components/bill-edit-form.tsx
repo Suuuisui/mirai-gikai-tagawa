@@ -37,12 +37,15 @@ export function BillEditForm({ bill, dietSessions }: BillEditFormProps) {
       status: bill.status,
       originating_house: bill.originating_house,
       status_note: bill.status_note,
-      published_at: bill.published_at
-        ? new Date(bill.published_at).toISOString().slice(0, 16)
+      submitted_date: bill.submitted_date
+        ? new Date(bill.submitted_date).toLocaleDateString("sv-SE", {
+            timeZone: "Asia/Tokyo",
+          })
         : "",
       thumbnail_url: bill.thumbnail_url,
       share_thumbnail_url: bill.share_thumbnail_url,
       shugiin_url: bill.shugiin_url,
+      slug: bill.slug,
       is_featured: bill.is_featured,
       is_review_completed: bill.is_review_completed,
       diet_session_id: defaultDietSessionId,

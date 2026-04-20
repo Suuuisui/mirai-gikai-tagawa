@@ -19,7 +19,7 @@ export async function findBillsWithDietSessions(sortConfig?: BillSortConfig) {
     ascending,
   };
 
-  if (field === "published_at") {
+  if (field === "submitted_date") {
     orderOptions.nullsFirst = false;
   }
 
