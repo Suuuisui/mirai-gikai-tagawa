@@ -425,6 +425,7 @@ export type Database = {
           question: string
           question_order: number
           quick_replies: string[] | null
+          target_audience: string | null
           updated_at: string
         }
         Insert: {
@@ -435,6 +436,7 @@ export type Database = {
           question: string
           question_order: number
           quick_replies?: string[] | null
+          target_audience?: string | null
           updated_at?: string
         }
         Update: {
@@ -445,6 +447,7 @@ export type Database = {
           question?: string
           question_order?: number
           quick_replies?: string[] | null
+          target_audience?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -1076,7 +1079,7 @@ export type Database = {
         | "misunderstood"
         | "too_many_questions"
         | "other"
-      interview_mode_enum: "loop" | "bulk"
+      interview_mode_enum: "loop" | "bulk" | "targeted"
       interview_report_role_enum:
         | "subject_expert"
         | "work_related"
@@ -1242,7 +1245,7 @@ export const Constants = {
         "too_many_questions",
         "other",
       ],
-      interview_mode_enum: ["loop", "bulk"],
+      interview_mode_enum: ["loop", "bulk", "targeted"],
       interview_report_role_enum: [
         "subject_expert",
         "work_related",
