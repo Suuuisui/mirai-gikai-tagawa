@@ -285,6 +285,41 @@ export async function finalizeVersion(
   }
 }
 
+/**
+ * version を公開する（§7）。「旧公開版を降ろす → 対象を公開」を DB 関数で
+ * 単一トランザクション実行し、公開版が0件になる瞬間を外部から不可視にする
+ * （アプリ層で2回 update すると公開読み取りが一時的に404になるため・§8）。
+ * one_published_per_bill（bill ごと公開は最大1版）も満たす。
+ */
+export async function publishVersion(versionId: string): Promise<void> {
+  const supabase = createAdminClient();
+  const { error } = await supabase.rpc("publish_topic_analysis_version", {
+    p_version_id: versionId,
+  });
+  if (error) {
+    throw new Error(`Failed to publish version: ${error.message}`);
+  }
+}
+
+/** 公開/非公開を切り替える（Admin 手動操作・§7）。 */
+export async function setVersionPublished(
+  versionId: string,
+  published: boolean
+): Promise<void> {
+  if (published) {
+    await publishVersion(versionId);
+    return;
+  }
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("topic_analysis_version")
+    .update({ is_published: false })
+    .eq("id", versionId);
+  if (error) {
+    throw new Error(`Failed to unpublish version: ${error.message}`);
+  }
+}
+
 /** ステータス取得（UI ポーリング用）。 */
 export async function getVersionStatus(versionId: string) {
   const supabase = createAdminClient();
