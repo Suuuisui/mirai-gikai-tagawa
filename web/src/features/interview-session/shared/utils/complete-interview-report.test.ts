@@ -13,6 +13,9 @@ const reportData = {
       title: "賛成の理由",
       content: "社会全体の利益になる",
       source_message_id: "message-user-1",
+      contextual_quote: null,
+      bill_sentiment: null,
+      richness: 70,
     },
   ],
   content_richness: {
@@ -54,6 +57,8 @@ describe("buildCompletedInterviewReportInsert", () => {
         is_public_by_admin: true,
         moderation_score: 29,
         moderation_reasoning: "問題なし",
+        // 完了時は再抽出ウォーターマークを未処理へ戻す（再完了後もバックフィルで復旧可能にする）
+        opinions_reextracted_at: null,
       })
     );
     expect(insert.opinions).toEqual([
@@ -116,6 +121,9 @@ describe("buildCompletedInterviewReportInsert", () => {
             title: "根拠なし",
             content: "全体として賛成",
             source_message_id: null,
+            contextual_quote: null,
+            bill_sentiment: null,
+            richness: null,
           },
         ],
       },

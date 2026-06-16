@@ -16,11 +16,15 @@ export const routes = {
   dietSessions: () => "/diet-sessions" as const,
   experts: () => "/experts" as const,
   interviews: () => "/interviews" as const,
+  interviewOpinionBackfill: () => "/interview-opinion-backfill" as const,
+  userTopicAnalysisAll: () => "/user-topic-analysis" as const,
 
   // ── 議案配下 ──────────────────────────────────────
   billEdit: (billId: string) => `/bills/${billId}/edit` as const,
   billContentsEdit: (billId: string) =>
     `/bills/${billId}/contents/edit` as const,
+  billUserTopicAnalysis: (billId: string) =>
+    `/bills/${billId}/user-topic-analysis` as const,
 
   // インタビュー
   billInterview: (billId: string) => `/bills/${billId}/interview` as const,

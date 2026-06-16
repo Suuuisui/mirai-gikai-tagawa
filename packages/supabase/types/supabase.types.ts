@@ -416,6 +416,56 @@ export type Database = {
           },
         ]
       }
+      interview_opinion: {
+        Row: {
+          bill_sentiment: string | null
+          content: string
+          contextual_quote: string | null
+          created_at: string
+          id: string
+          interview_report_id: string
+          opinion_index: number
+          richness: number | null
+          source_message_id: string | null
+          title: string
+          topic_extracted_at: string | null
+        }
+        Insert: {
+          bill_sentiment?: string | null
+          content: string
+          contextual_quote?: string | null
+          created_at?: string
+          id?: string
+          interview_report_id: string
+          opinion_index: number
+          richness?: number | null
+          source_message_id?: string | null
+          title: string
+          topic_extracted_at?: string | null
+        }
+        Update: {
+          bill_sentiment?: string | null
+          content?: string
+          contextual_quote?: string | null
+          created_at?: string
+          id?: string
+          interview_report_id?: string
+          opinion_index?: number
+          richness?: number | null
+          source_message_id?: string | null
+          title?: string
+          topic_extracted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_opinion_interview_report_id_fkey"
+            columns: ["interview_report_id"]
+            isOneToOne: false
+            referencedRelation: "interview_report"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interview_questions: {
         Row: {
           created_at: string
@@ -503,6 +553,7 @@ export type Database = {
             | Database["public"]["Enums"]["moderation_status_enum"]
             | null
           opinions: Json | null
+          opinions_reextracted_at: string | null
           role: Database["public"]["Enums"]["interview_report_role_enum"] | null
           role_description: string | null
           role_title: string | null
@@ -524,6 +575,7 @@ export type Database = {
             | Database["public"]["Enums"]["moderation_status_enum"]
             | null
           opinions?: Json | null
+          opinions_reextracted_at?: string | null
           role?:
             | Database["public"]["Enums"]["interview_report_role_enum"]
             | null
@@ -547,6 +599,7 @@ export type Database = {
             | Database["public"]["Enums"]["moderation_status_enum"]
             | null
           opinions?: Json | null
+          opinions_reextracted_at?: string | null
           role?:
             | Database["public"]["Enums"]["interview_report_role_enum"]
             | null
@@ -743,6 +796,41 @@ export type Database = {
         }
         Relationships: []
       }
+      topic: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          sort_order: number
+          title: string
+          version_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          sort_order?: number
+          title: string
+          version_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          sort_order?: number
+          title?: string
+          version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "topic_analysis_version"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       topic_analysis_classifications: {
         Row: {
           id: string
@@ -827,6 +915,68 @@ export type Database = {
           },
         ]
       }
+      topic_analysis_version: {
+        Row: {
+          bill_id: string
+          completed_at: string | null
+          created_at: string
+          current_step: string | null
+          error_message: string | null
+          id: string
+          is_published: boolean
+          model: string | null
+          progress: Json | null
+          prompt_version: string | null
+          source_opinion_count: number | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["topic_analysis_status"]
+          trigger: string
+          version: number
+        }
+        Insert: {
+          bill_id: string
+          completed_at?: string | null
+          created_at?: string
+          current_step?: string | null
+          error_message?: string | null
+          id?: string
+          is_published?: boolean
+          model?: string | null
+          progress?: Json | null
+          prompt_version?: string | null
+          source_opinion_count?: number | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["topic_analysis_status"]
+          trigger: string
+          version: number
+        }
+        Update: {
+          bill_id?: string
+          completed_at?: string | null
+          created_at?: string
+          current_step?: string | null
+          error_message?: string | null
+          id?: string
+          is_published?: boolean
+          model?: string | null
+          progress?: Json | null
+          prompt_version?: string | null
+          source_opinion_count?: number | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["topic_analysis_status"]
+          trigger?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_analysis_version_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       topic_analysis_versions: {
         Row: {
           bill_id: string
@@ -879,6 +1029,46 @@ export type Database = {
             columns: ["bill_id"]
             isOneToOne: false
             referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topic_opinion: {
+        Row: {
+          opinion_id: string
+          topic_id: string
+          version_id: string
+        }
+        Insert: {
+          opinion_id: string
+          topic_id: string
+          version_id: string
+        }
+        Update: {
+          opinion_id?: string
+          topic_id?: string
+          version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_opinion_opinion_id_fkey"
+            columns: ["opinion_id"]
+            isOneToOne: false
+            referencedRelation: "interview_opinion"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "topic_opinion_topic_fk"
+            columns: ["version_id", "topic_id"]
+            isOneToOne: false
+            referencedRelation: "topic"
+            referencedColumns: ["version_id", "id"]
+          },
+          {
+            foreignKeyName: "topic_opinion_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "topic_analysis_version"
             referencedColumns: ["id"]
           },
         ]
@@ -1052,6 +1242,14 @@ export type Database = {
         }[]
       }
       is_admin: { Args: never; Returns: boolean }
+      mark_opinions_extracted: {
+        Args: { p_extracted_at: string; p_ids: string[] }
+        Returns: undefined
+      }
+      publish_topic_analysis_version: {
+        Args: { p_version_id: string }
+        Returns: undefined
+      }
       set_active_diet_session: {
         Args: { target_session_id: string }
         Returns: undefined
@@ -1096,6 +1294,7 @@ export type Database = {
         | "conditional_against"
         | "considering"
         | "continued_deliberation"
+      topic_analysis_status: "pending" | "running" | "completed" | "failed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1264,6 +1463,7 @@ export const Constants = {
         "considering",
         "continued_deliberation",
       ],
+      topic_analysis_status: ["pending", "running", "completed", "failed"],
     },
   },
 } as const

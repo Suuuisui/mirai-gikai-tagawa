@@ -1,5 +1,8 @@
 import "server-only";
 
+import { buildInterviewOpinionRows } from "@mirai-gikai/shared/interview-report/build-opinion-rows";
+import type { InterviewOpinionSource } from "@mirai-gikai/shared/interview-report/schema";
+import { syncInterviewOpinions } from "@mirai-gikai/shared/interview-report/sync-opinions";
 import type { InterviewReportData } from "../../shared/schemas";
 import type { InterviewReport } from "../../shared/types";
 import { buildCompletedInterviewReportInsert } from "../../shared/utils/complete-interview-report";
@@ -86,6 +89,26 @@ export async function completeInterviewSession({
       isPublicByUser,
     })
   );
+
+  // 新規インタビュー完了時は JSONB（report.opinions）と interview_opinion テーブルの
+  // 両方へ書き込む（既存互換のため。JSONB はユーザーが確認するレポート記録、
+  // interview_opinion はトピック分析用の意見ストア）。
+  // 失敗してもインタビュー完了はブロックしない。未同期分は意見再抽出バックフィルが取り込む
+  // （再抽出は JSONB を書き換えず interview_opinion のみ更新する）。
+  try {
+    const storedOpinions = Array.isArray(report.opinions)
+      ? (report.opinions as InterviewOpinionSource[])
+      : [];
+    await syncInterviewOpinions(
+      report.id,
+      buildInterviewOpinionRows(report.id, storedOpinions)
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error(
+      `Failed to sync interview_opinion for session ${sessionId}: ${message}`
+    );
+  }
 
   // セッションを完了
   await updateInterviewSessionCompleted(sessionId);

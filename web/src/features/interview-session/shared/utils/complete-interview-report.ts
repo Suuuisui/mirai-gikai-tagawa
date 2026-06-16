@@ -1,3 +1,4 @@
+import { enrichOpinionsWithSourceContent } from "@mirai-gikai/shared/interview-report/enrich-opinions";
 import { isReportAutoPublishEligible } from "@mirai-gikai/shared/report-publication/auto-publish";
 import type { InterviewReportData } from "../schemas";
 import type { InterviewMessage, InterviewReportInsert } from "../types";
@@ -24,26 +25,10 @@ export function buildCompletedInterviewReportInsert({
   moderationReasoning,
   isPublicByUser,
 }: BuildCompletedInterviewReportInsertParams): InterviewReportInsert {
-  const enrichedOpinions = reportData.opinions.map((opinion) => {
-    if (!opinion.source_message_id) {
-      return { ...opinion, source_message_content: null };
-    }
-    const sourceMsg = messages.find(
-      (m) => m.id === opinion.source_message_id && m.role === "user"
-    );
-    if (!sourceMsg) {
-      return {
-        ...opinion,
-        source_message_id: null,
-        source_message_content: null,
-      };
-    }
-
-    return {
-      ...opinion,
-      source_message_content: sourceMsg.content,
-    };
-  });
+  const enrichedOpinions = enrichOpinionsWithSourceContent(
+    reportData.opinions,
+    messages
+  );
 
   const shouldAutoPublish = isReportAutoPublishEligible({
     isPublicByUser: isPublicByUser ?? false,
@@ -59,6 +44,10 @@ export function buildCompletedInterviewReportInsert({
     role_description: reportData.role_description,
     role_title: reportData.role_title,
     opinions: enrichedOpinions,
+    // 完了（再完了含む）時はレポート内容が（再）確定するため、意見再抽出の
+    // ウォーターマークを未処理(NULL)に戻す。これにより再完了で interview_opinion が
+    // JSONB 由来の内容へ同期され直しても、次回バックフィルが再抽出して品質を復旧できる。
+    opinions_reextracted_at: null,
     content_richness: reportData.content_richness,
     moderation_score: moderationScore,
     moderation_reasoning: moderationReasoning,
