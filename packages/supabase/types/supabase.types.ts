@@ -548,6 +548,7 @@ export type Database = {
           created_at: string
           id: string
           interview_session_id: string
+          is_data_reuse_consented: boolean
           is_public_by_admin: boolean
           is_public_by_user: boolean
           moderation_reasoning: string | null
@@ -570,6 +571,7 @@ export type Database = {
           created_at?: string
           id?: string
           interview_session_id: string
+          is_data_reuse_consented?: boolean
           is_public_by_admin?: boolean
           is_public_by_user?: boolean
           moderation_reasoning?: string | null
@@ -594,6 +596,7 @@ export type Database = {
           created_at?: string
           id?: string
           interview_session_id?: string
+          is_data_reuse_consented?: boolean
           is_public_by_admin?: boolean
           is_public_by_user?: boolean
           moderation_reasoning?: string | null
