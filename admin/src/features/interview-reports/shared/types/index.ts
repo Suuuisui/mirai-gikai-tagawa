@@ -139,6 +139,14 @@ export type InterviewStatistics = {
   avgCostUsd: number;
 };
 
+export type QuestionAnswerCount = {
+  questionId: string;
+  question: string;
+  questionOrder: number;
+  askedSessionCount: number;
+  answeredSessionCount: number;
+};
+
 // ソート関連の型定義
 export type SessionSortField =
   | "started_at"
