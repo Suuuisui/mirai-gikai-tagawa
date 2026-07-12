@@ -1,0 +1,5160 @@
+[
+  {
+    "key": "r1-5-teirei",
+    "name": "令和元年（第5回）12月定例会",
+    "startDate": "2019-12-02",
+    "endDate": "2019-12-19",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0036592/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第59号",
+        "title": "令和元年度田川市一般会計補正予算（人件費分）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resolvedDate": "2019-12-02",
+        "resultSource": "minutes"
+      },
+      {
+        "billNumberLabel": "議案第60号",
+        "title": "令和元年度田川市国民健康保険特別会計補正予算（人件費分）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resolvedDate": "2019-12-02",
+        "resultSource": "minutes"
+      },
+      {
+        "billNumberLabel": "議案第61号",
+        "title": "令和元年度田川市後期高齢者医療特別会計補正予算（人件費分）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resolvedDate": "2019-12-02",
+        "resultSource": "minutes"
+      },
+      {
+        "billNumberLabel": "議案第62号",
+        "title": "令和元年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resolvedDate": "2019-12-19",
+        "resultSource": "minutes"
+      },
+      {
+        "billNumberLabel": "議案第63号",
+        "title": "令和元年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resolvedDate": "2019-12-19",
+        "resultSource": "minutes"
+      },
+      {
+        "billNumberLabel": "議案第64号",
+        "title": "田川市職員の給与に関する条例等の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resolvedDate": "2019-12-02",
+        "resultSource": "minutes"
+      },
+      {
+        "billNumberLabel": "議案第65号",
+        "title": "田川市議会議員の議員報酬及び費用弁償等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resolvedDate": "2019-12-02",
+        "resultSource": "minutes"
+      },
+      {
+        "billNumberLabel": "議案第66号",
+        "title": "田川市特定教育・保育施設及び特定地域型保育事業の運営に関する基準を定める条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resolvedDate": "2019-12-19",
+        "resultSource": "minutes"
+      },
+      {
+        "billNumberLabel": "議案第67号",
+        "title": "田川市教育職員の給与等に関する条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resolvedDate": "2019-12-19",
+        "resultSource": "minutes"
+      },
+      {
+        "billNumberLabel": "議案第68号",
+        "title": "過疎地域自立促進計画の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resolvedDate": "2019-12-19",
+        "resultSource": "minutes"
+      },
+      {
+        "billNumberLabel": "議案第69号",
+        "title": "田川市教育委員会委員の任命について（光井敬夫氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resolvedDate": "2019-12-19",
+        "resultSource": "minutes"
+      },
+      {
+        "billNumberLabel": "議案第5号",
+        "title": "地方財政の充実・強化を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resolvedDate": "2019-12-19",
+        "resultSource": "minutes"
+      },
+      {
+        "billNumberLabel": "議案第6号",
+        "title": "地元負担のない鉄道によるJR日田彦山線の早期復旧に関する意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resolvedDate": "2019-12-19",
+        "resultSource": "minutes"
+      }
+    ]
+  },
+  {
+    "key": "r3-1-teirei",
+    "name": "令和3年（第1回）3月定例会",
+    "startDate": "2021-02-19",
+    "endDate": "2021-03-18",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0037279/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第1号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第2号 令和2年度田川市一般会計補正予算）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2021-02-19"
+      },
+      {
+        "billNumberLabel": "議案第1号",
+        "title": "令和2年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-04"
+      },
+      {
+        "billNumberLabel": "議案第2号",
+        "title": "令和2年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-04"
+      },
+      {
+        "billNumberLabel": "議案第3号",
+        "title": "令和2年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-04"
+      },
+      {
+        "billNumberLabel": "議案第4号",
+        "title": "令和2年度田川市急患医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-04"
+      },
+      {
+        "billNumberLabel": "議案第5号",
+        "title": "令和2年度田川市病院事業会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-04"
+      },
+      {
+        "billNumberLabel": "議案第6号",
+        "title": "令和3年度田川市一般会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第7号",
+        "title": "令和3年度田川市国民健康保険特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第8号",
+        "title": "令和3年度田川市後期高齢者医療特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第9号",
+        "title": "令和3年度田川市急患医療特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第10号",
+        "title": "令和3年度田川市住宅新築資金等貸付特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第11号",
+        "title": "令和3年度田川市等三線沿線地域交通体系整備事業基金特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第12号",
+        "title": "令和3年度田川市病院事業会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第13号",
+        "title": "田川市犯罪被害者等支援条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第14号",
+        "title": "田川市急患医療事業基金条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第15号",
+        "title": "田川市国民健康保険税条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第16号",
+        "title": "田川市国民健康保険条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第17号",
+        "title": "田川市教育職員の給与等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第18号",
+        "title": "田川市体育施設条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第19号",
+        "title": "市道路線の認定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第20号",
+        "title": "業務委託契約の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第21号",
+        "title": "田川市固定資産評価審査委員会委員の選任について（藤本光一氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第22号",
+        "title": "田川市固定資産評価審査委員会委員の選任について（槇由紀氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第23号",
+        "title": "令和2年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第24号",
+        "title": "田川市病院事業の設置等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第25号",
+        "title": "財産の取得について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第26号",
+        "title": "工事請負契約の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第27号",
+        "title": "工事請負契約の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第28号",
+        "title": "工事請負契約の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第29号",
+        "title": "令和2年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "諮問第1号",
+        "title": "人権擁護委員候補者の推薦について（古賀勲氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "議案第2号",
+        "title": "養護老人ホームの運営の支援拡充を求める意見書について",
+        "proposer": "committee",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      },
+      {
+        "billNumberLabel": "陳情第2号",
+        "title": "養護老人ホーム措置入所に係る弾力的運用等に関する陳情",
+        "proposer": "committee",
+        "resultLabel": "不採択",
+        "resultSource": "official",
+        "resolvedDate": "2021-03-18"
+      }
+    ]
+  },
+  {
+    "key": "r3-2-rinji",
+    "name": "令和3年（第2回）4月臨時会",
+    "startDate": "2021-04-14",
+    "endDate": "2021-04-20",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0037344/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第2号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第3号 田川市市税条例等の一部改正について）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2021-04-14"
+      },
+      {
+        "billNumberLabel": "議案第30号",
+        "title": "令和3年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-04-20"
+      },
+      {
+        "billNumberLabel": "議案第31号",
+        "title": "財産の取得について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-04-20"
+      }
+    ]
+  },
+  {
+    "key": "r3-4-teirei",
+    "name": "令和3年（第4回）6月定例会",
+    "startDate": "2021-06-14",
+    "endDate": "2021-07-01",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0037497/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第33号",
+        "title": "令和3年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-07-01"
+      },
+      {
+        "billNumberLabel": "議案第34号",
+        "title": "田川市職員旅費支給条例等の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-07-01"
+      },
+      {
+        "billNumberLabel": "議案第35号",
+        "title": "田川市市税条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-07-01"
+      },
+      {
+        "billNumberLabel": "議案第36号",
+        "title": "田川市廃棄物の処理及び清掃に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-07-01"
+      },
+      {
+        "billNumberLabel": "議案第37号",
+        "title": "田川市浄化槽清掃業の許可等に関する条例の廃止について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-07-01"
+      },
+      {
+        "billNumberLabel": "議案第38号",
+        "title": "田川市市営住宅管理条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-07-01"
+      },
+      {
+        "billNumberLabel": "議案第39号",
+        "title": "財産の取得について（じんかい収集車8台購入）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-07-01"
+      },
+      {
+        "billNumberLabel": "議案第40号",
+        "title": "田川市教育委員会教育長の任命について（吉栁啓二氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2021-07-01"
+      },
+      {
+        "billNumberLabel": "議案第41号",
+        "title": "令和3年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-07-01"
+      },
+      {
+        "billNumberLabel": "議案第4号",
+        "title": "田川市議会会議規則の一部改正について",
+        "proposer": "committee",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-07-01"
+      },
+      {
+        "billNumberLabel": "議案第11号",
+        "title": "地方財政の充実・強化を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-07-01"
+      },
+      {
+        "billNumberLabel": "議案第12号",
+        "title": "少人数学級の推進及び教職員定数の改善を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-07-01"
+      },
+      {
+        "billNumberLabel": "議案第13号",
+        "title": "核兵器禁止条約の署名及び批准を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-07-01"
+      }
+    ]
+  },
+  {
+    "key": "r3-5-teirei",
+    "name": "令和3年（第5回）9月定例会",
+    "startDate": "2021-09-06",
+    "endDate": "2021-10-08",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0037638/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第3号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第4号 令和3年度田川市一般会計補正予算）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-06"
+      },
+      {
+        "billNumberLabel": "議案第42号",
+        "title": "令和3年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第43号",
+        "title": "令和3年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第44号",
+        "title": "令和3年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第45号",
+        "title": "令和3年度田川市等三線沿線地域交通体系整備事業基金特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第46号",
+        "title": "田川市手数料条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第47号",
+        "title": "田川市平成筑豊鉄道経営安定化基金条例及び田川市バス路線維持・充実対策基金条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第48号",
+        "title": "田川市立病院使用料及び手数料条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第49号",
+        "title": "田川市過疎地域持続的発展計画の策定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第50号",
+        "title": "市道路線の認定について（松原タウン1号線～3号線）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第51号",
+        "title": "市道路線の変更について（白鳥町10号線）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第52号",
+        "title": "田川市教育委員会委員の任命について（柴田利規子氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第53号",
+        "title": "田川市公平委員会委員の選任について（知京富美子氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第54号",
+        "title": "田川市固定資産評価審査委員会委員の選任について（奥永哲幸氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第55号",
+        "title": "工事請負契約の変更について（田川東中学校校舎棟新築工事）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第56号",
+        "title": "工事請負契約の変更について（田川東中学校屋内運動場棟新築工事）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第57号",
+        "title": "工事請負契約の変更について（田川西中学校校舎棟新築工事）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "諮問第2号",
+        "title": "人権擁護委員候補者の推薦について（原田幸子氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第5号",
+        "title": "田川市議会会議規則の一部改正について",
+        "proposer": "committee",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第14号",
+        "title": "田川市議会議員の議員報酬等の特例に関する条例の一部改正について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-09-27"
+      },
+      {
+        "billNumberLabel": "議案第58号",
+        "title": "令和3年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-10-08"
+      },
+      {
+        "billNumberLabel": "認定第1号",
+        "title": "令和2年度田川市一般会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2021-10-08"
+      },
+      {
+        "billNumberLabel": "認定第2号",
+        "title": "令和2年度田川市国民健康保険特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2021-10-08"
+      },
+      {
+        "billNumberLabel": "認定第3号",
+        "title": "令和2年度田川市後期高齢者医療特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2021-10-08"
+      },
+      {
+        "billNumberLabel": "認定第4号",
+        "title": "令和2年度田川市急患医療特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2021-10-08"
+      },
+      {
+        "billNumberLabel": "認定第5号",
+        "title": "令和2年度田川市住宅新築資金等貸付特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2021-10-08"
+      },
+      {
+        "billNumberLabel": "認定第6号",
+        "title": "令和2年度田川市等三線沿線地域交通体系整備事業基金特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2021-10-08"
+      },
+      {
+        "billNumberLabel": "認定第7号",
+        "title": "令和2年度田川市病院事業会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2021-10-08"
+      },
+      {
+        "billNumberLabel": "議案第15号",
+        "title": "コロナ禍による厳しい財政状況に対処し地方税財源の充実を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-10-08"
+      }
+    ]
+  },
+  {
+    "key": "r3-6-teirei",
+    "name": "令和3年（第6回）12月定例会",
+    "startDate": "2021-11-30",
+    "endDate": "2021-12-16",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0037791/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第59号",
+        "title": "令和3年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-11-30"
+      },
+      {
+        "billNumberLabel": "議案第77号",
+        "title": "令和3年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-11-30"
+      },
+      {
+        "billNumberLabel": "議案第16号",
+        "title": "田川市議会議員の政治倫理の確立に関する検証等特別委員会の設置について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-11-30"
+      },
+      {
+        "billNumberLabel": "議案第17号",
+        "title": "田川市議会議長不信任決議について",
+        "proposer": "member",
+        "resultLabel": "否決",
+        "resultSource": "official",
+        "resolvedDate": "2021-11-30"
+      },
+      {
+        "billNumberLabel": "議案第18号",
+        "title": "田川市議会議会運営委員会委員長不信任決議について",
+        "proposer": "member",
+        "resultLabel": "否決",
+        "resultSource": "official",
+        "resolvedDate": "2021-11-30"
+      },
+      {
+        "billNumberLabel": "議案第19号",
+        "title": "田川市議会議長信任決議について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-11-30"
+      },
+      {
+        "billNumberLabel": "議案第20号",
+        "title": "田川市議会議会運営委員会委員長信任決議について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-11-30"
+      },
+      {
+        "billNumberLabel": "議案第60号",
+        "title": "令和3年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第61号",
+        "title": "令和3年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第62号",
+        "title": "令和3年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第63号",
+        "title": "田川市企業版ふるさと納税地方創生基金条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第64号",
+        "title": "田川市国民健康保険条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第65号",
+        "title": "香春町との間における田川広域定住自立圏形成協定の一部を変更する協定の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第66号",
+        "title": "添田町との間における田川広域定住自立圏形成協定の一部を変更する協定の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第67号",
+        "title": "糸田町との間における田川広域定住自立圏形成協定の一部を変更する協定の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第68号",
+        "title": "川崎町との間における田川広域定住自立圏形成協定の一部を変更する協定の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第69号",
+        "title": "大任町との間における田川広域定住自立圏形成協定の一部を変更する協定の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第70号",
+        "title": "赤村との間における田川広域定住自立圏形成協定の一部を変更する協定の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第71号",
+        "title": "福智町との間における田川広域定住自立圏形成協定の一部を変更する協定の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第72号",
+        "title": "指定管理者の指定期間の延長について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第73号",
+        "title": "田川地区清掃施設組合の共同処理する事務の変更に伴う財産処分について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第74号",
+        "title": "指定管理者の指定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第75号",
+        "title": "指定管理者の指定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第76号",
+        "title": "田川市固定資産評価審査委員会委員の選任について（野元孝行氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第78号",
+        "title": "令和3年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      },
+      {
+        "billNumberLabel": "議案第79号",
+        "title": "令和3年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2021-12-16"
+      }
+    ]
+  },
+  {
+    "key": "r4-1-teirei",
+    "name": "令和4年（第1回）3月定例会",
+    "startDate": "2022-02-24",
+    "endDate": "2022-03-24",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0037954/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第1号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第1号 令和3年度田川市一般会計補正予算）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2022-02-24"
+      },
+      {
+        "billNumberLabel": "議案第1号",
+        "title": "令和3年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-08"
+      },
+      {
+        "billNumberLabel": "議案第2号",
+        "title": "令和3年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-08"
+      },
+      {
+        "billNumberLabel": "議案第3号",
+        "title": "令和3年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-08"
+      },
+      {
+        "billNumberLabel": "議案第4号",
+        "title": "令和3年度田川市急患医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-08"
+      },
+      {
+        "billNumberLabel": "議案第5号",
+        "title": "令和3年度田川市病院事業会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-08"
+      },
+      {
+        "billNumberLabel": "議案第21号",
+        "title": "ロシアのウクライナ侵攻に強く抗議し、即時撤退を求める決議について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-09"
+      },
+      {
+        "billNumberLabel": "議案第6号",
+        "title": "令和4年度田川市一般会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第7号",
+        "title": "令和4年度田川市国民健康保険特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第8号",
+        "title": "令和4年度田川市後期高齢者医療特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第9号",
+        "title": "令和4年度田川市急患医療特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第10号",
+        "title": "令和4年度田川市住宅新築資金等貸付特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第11号",
+        "title": "令和4年度田川市等三線沿線地域交通体系整備事業基金特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第12号",
+        "title": "令和4年度田川市病院事業会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第13号",
+        "title": "田川市職員の給与に関する条例等の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第14号",
+        "title": "田川市議会議員の議員報酬及び費用弁償等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第15号",
+        "title": "田川市特別職の職員で非常勤のものの報酬及び費用弁償に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第16号",
+        "title": "田川市消防団条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第17号",
+        "title": "田川市特定教育・保育施設及び特定地域型保育事業の運営に関する基準を定める条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第18号",
+        "title": "田川市家庭的保育事業等の設備及び運営に関する基準を定める条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第19号",
+        "title": "田川市国民健康保険税条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第20号",
+        "title": "田川市企業の誘致及び育成に関する条例の全部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第21号",
+        "title": "田川市市民体験農園条例の廃止について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第22号",
+        "title": "田川市市営住宅管理条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第23号",
+        "title": "田川市体育施設条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第24号",
+        "title": "市道路線の認定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第25号",
+        "title": "指定管理者の指定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第26号",
+        "title": "田川市子どもの権利条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第22号",
+        "title": "台湾の世界保健機関（WHO）への参加を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "議案第6号",
+        "title": "安全・安心の医療・介護・福祉を実現し、国民の命と健康を守るための意見書について",
+        "proposer": "committee",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "陳情第4号",
+        "title": "安全・安心の医療・介護・福祉を実現し、国民の命と健康を守るための意見書の提出に関する陳情",
+        "proposer": "committee",
+        "resultLabel": "採択",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      },
+      {
+        "billNumberLabel": "陳情第5号",
+        "title": "田川バイオマス発電所建設設置反対に関する陳情",
+        "proposer": "committee",
+        "resultLabel": "不採択",
+        "resultSource": "official",
+        "resolvedDate": "2022-03-24"
+      }
+    ]
+  },
+  {
+    "key": "r4-2-teirei",
+    "name": "令和4年（第2回）6月定例会",
+    "startDate": "2022-06-14",
+    "endDate": "2022-06-30",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0038052/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第2号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第3号 田川市市税条例の一部改正について）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-14"
+      },
+      {
+        "billNumberLabel": "報告第3号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第4号 田川市国民健康保険税条例の一部改正について）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-14"
+      },
+      {
+        "billNumberLabel": "報告第4号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第5号 令和4年度田川市一般会計補正予算）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-14"
+      },
+      {
+        "billNumberLabel": "議案第34号",
+        "title": "令和4年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-14"
+      },
+      {
+        "billNumberLabel": "議案第27号",
+        "title": "令和4年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      },
+      {
+        "billNumberLabel": "議案第28号",
+        "title": "田川市市税条例等の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      },
+      {
+        "billNumberLabel": "議案第29号",
+        "title": "田川市児童センター条例の廃止について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      },
+      {
+        "billNumberLabel": "議案第30号",
+        "title": "田川市立病院使用料及び手数料条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      },
+      {
+        "billNumberLabel": "議案第31号",
+        "title": "田川広域水道企業団の共同処理する事務の変更及び田川広域水道企業団規約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      },
+      {
+        "billNumberLabel": "議案第32号",
+        "title": "財産の処分について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      },
+      {
+        "billNumberLabel": "議案第33号",
+        "title": "市道路線の認定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      },
+      {
+        "billNumberLabel": "議案第35号",
+        "title": "工事請負契約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      },
+      {
+        "billNumberLabel": "議案第36号",
+        "title": "工事請負契約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      },
+      {
+        "billNumberLabel": "議案第37号",
+        "title": "工事請負契約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      },
+      {
+        "billNumberLabel": "議案第38号",
+        "title": "業務委託契約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      },
+      {
+        "billNumberLabel": "議案第39号",
+        "title": "田川市公平委員会委員の選任について（森脇敦史氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      },
+      {
+        "billNumberLabel": "議案第23号",
+        "title": "豊かな学びの実現・教職員定数改善を図るための2023年度政府予算に係る意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      },
+      {
+        "billNumberLabel": "議案第24号",
+        "title": "一般廃棄物処理業務委託の調査に関する決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-06-30"
+      }
+    ]
+  },
+  {
+    "key": "r4-3-teirei",
+    "name": "令和4年（第3回）9月定例会",
+    "startDate": "2022-09-05",
+    "endDate": "2022-10-07",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0038225/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第5号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第6号 令和4年度田川市一般会計補正予算）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-05"
+      },
+      {
+        "billNumberLabel": "報告第6号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第7号 令和4年度田川市一般会計補正予算）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-05"
+      },
+      {
+        "billNumberLabel": "議案第7号",
+        "title": "田川市議会委員会条例の一部改正について",
+        "proposer": "committee",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-09"
+      },
+      {
+        "billNumberLabel": "議案第40号",
+        "title": "令和4年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-26"
+      },
+      {
+        "billNumberLabel": "議案第41号",
+        "title": "令和4年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-26"
+      },
+      {
+        "billNumberLabel": "議案第42号",
+        "title": "令和4年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-26"
+      },
+      {
+        "billNumberLabel": "議案第43号",
+        "title": "田川市職員の育児休業等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-26"
+      },
+      {
+        "billNumberLabel": "議案第44号",
+        "title": "田川市保育所設置条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-26"
+      },
+      {
+        "billNumberLabel": "議案第45号",
+        "title": "田川市印鑑条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-26"
+      },
+      {
+        "billNumberLabel": "議案第46号",
+        "title": "田川市立中学校設置条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-26"
+      },
+      {
+        "billNumberLabel": "議案第47号",
+        "title": "田川市固定資産評価審査委員会委員の選任について（重松安男氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-26"
+      },
+      {
+        "billNumberLabel": "議案第48号",
+        "title": "田川市教育委員会委員の任命について（加治誠子氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-26"
+      },
+      {
+        "billNumberLabel": "諮問第1号",
+        "title": "人権擁護委員候補者の推薦について（廣川郁子氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-26"
+      },
+      {
+        "billNumberLabel": "諮問第2号",
+        "title": "人権擁護委員候補者の推薦について（佐々木さゆり氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-26"
+      },
+      {
+        "billNumberLabel": "諮問第3号",
+        "title": "人権擁護委員候補者の推薦について（原田清高氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-26"
+      },
+      {
+        "billNumberLabel": "諮問第4号",
+        "title": "人権擁護委員候補者の推薦について（牧野瑞代氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2022-09-26"
+      },
+      {
+        "billNumberLabel": "議案第49号",
+        "title": "令和4年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-10-07"
+      },
+      {
+        "billNumberLabel": "議案第50号",
+        "title": "令和4年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-10-07"
+      },
+      {
+        "billNumberLabel": "認定第1号",
+        "title": "令和3年度田川市一般会計決算",
+        "proposer": "mayor",
+        "resultLabel": "不認定",
+        "resultSource": "official",
+        "resolvedDate": "2022-10-07"
+      },
+      {
+        "billNumberLabel": "認定第2号",
+        "title": "令和3年度田川市国民健康保険特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2022-10-07"
+      },
+      {
+        "billNumberLabel": "認定第3号",
+        "title": "令和3年度田川市後期高齢者医療特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2022-10-07"
+      },
+      {
+        "billNumberLabel": "認定第4号",
+        "title": "令和3年度田川市急患医療特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2022-10-07"
+      },
+      {
+        "billNumberLabel": "認定第5号",
+        "title": "令和3年度田川市住宅新築資金等貸付特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2022-10-07"
+      },
+      {
+        "billNumberLabel": "認定第6号",
+        "title": "令和3年度田川市等三線沿線地域交通体系整備事業基金特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2022-10-07"
+      },
+      {
+        "billNumberLabel": "認定第7号",
+        "title": "令和3年度田川市病院事業会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2022-10-07"
+      },
+      {
+        "billNumberLabel": "議案第25号",
+        "title": "地方財政の充実・強化に関する意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-10-07"
+      },
+      {
+        "billNumberLabel": "議案第26号",
+        "title": "インボイス制度の実施中止を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-10-07"
+      }
+    ]
+  },
+  {
+    "key": "r4-4-teirei",
+    "name": "令和4年（第4回）12月定例会",
+    "startDate": "2022-12-02",
+    "endDate": "2022-12-20",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0038363/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第7号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第8号 令和4年度田川市一般会計補正予算］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-02"
+      },
+      {
+        "billNumberLabel": "議案第59号",
+        "title": "田川市職員の給与に関する条例等の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-02"
+      },
+      {
+        "billNumberLabel": "議案第60号",
+        "title": "田川市議会議員の議員報酬及び費用弁償等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-02"
+      },
+      {
+        "billNumberLabel": "議案第51号",
+        "title": "令和4年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-02"
+      },
+      {
+        "billNumberLabel": "議案第52号",
+        "title": "令和4年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-02"
+      },
+      {
+        "billNumberLabel": "議案第53号",
+        "title": "令和4年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-02"
+      },
+      {
+        "billNumberLabel": "議案第57号",
+        "title": "田川市個人情報保護法施行条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-20"
+      },
+      {
+        "billNumberLabel": "議案第58号",
+        "title": "田川市職員の定年等に関する条例等の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-20"
+      },
+      {
+        "billNumberLabel": "議案第61号",
+        "title": "田川市ふるさと寄附活用基金条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-20"
+      },
+      {
+        "billNumberLabel": "議案第62号",
+        "title": "田川市奨学金給付条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-20"
+      },
+      {
+        "billNumberLabel": "議案第54号",
+        "title": "令和4年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-20"
+      },
+      {
+        "billNumberLabel": "議案第55号",
+        "title": "令和4年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-20"
+      },
+      {
+        "billNumberLabel": "議案第56号",
+        "title": "令和4年度田川市急患医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-20"
+      },
+      {
+        "billNumberLabel": "議案第63号",
+        "title": "財産の処分について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-20"
+      },
+      {
+        "billNumberLabel": "議案第64号",
+        "title": "市道路線の認定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-20"
+      },
+      {
+        "billNumberLabel": "議案第65号",
+        "title": "市道路線の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-20"
+      },
+      {
+        "billNumberLabel": "議案第8号",
+        "title": "田川市議会の個人情報の保護に関する条例の制定について",
+        "proposer": "committee",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-20"
+      },
+      {
+        "billNumberLabel": "議案第27号",
+        "title": "田川木質バイオマス発電所設置に関する意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-20"
+      },
+      {
+        "billNumberLabel": "議案第28号",
+        "title": "田川木質バイオマス発電所建設に係る地域住民との合意形成を図り、公害防止協定の締結を求める決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2022-12-20"
+      }
+    ]
+  },
+  {
+    "key": "r5-1-teirei",
+    "name": "令和5年（第1回）3月定例会",
+    "startDate": "2023-02-16",
+    "endDate": "2023-03-15",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0038446/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第1号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第1号 令和4年度田川市一般会計補正予算）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2023-02-16"
+      },
+      {
+        "billNumberLabel": null,
+        "title": "一般廃棄物処理業務委託の調査特別委員会の調査結果報告について",
+        "proposer": "mayor",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-02-16"
+      },
+      {
+        "billNumberLabel": "議案第1号",
+        "title": "令和4年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-01"
+      },
+      {
+        "billNumberLabel": "議案第2号",
+        "title": "令和4年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-01"
+      },
+      {
+        "billNumberLabel": "議案第3号",
+        "title": "令和4年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-01"
+      },
+      {
+        "billNumberLabel": "議案第4号",
+        "title": "令和4年度田川市病院事業会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-01"
+      },
+      {
+        "billNumberLabel": "議案第5号",
+        "title": "令和5年度田川市一般会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第6号",
+        "title": "令和5年度田川市国民健康保険特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第7号",
+        "title": "令和5年度田川市後期高齢者医療特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第8号",
+        "title": "令和5年度田川市急患医療特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第9号",
+        "title": "令和5年度田川市等三線沿線地域交通体系整備事業基金特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第10号",
+        "title": "令和5年度田川市病院事業会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第11号",
+        "title": "田川市市税条例及び田川市税外収入金の督促並びに督促手数料及び延滞金に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第12号",
+        "title": "田川市特別会計条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第13号",
+        "title": "田川市国民健康保険税条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第14号",
+        "title": "田川市後期高齢者医療に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第15号",
+        "title": "田川市重度障がい者医療費の支給に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第16号",
+        "title": "田川市国民健康保険条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第17号",
+        "title": "田川市病院事業の設置等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第18号",
+        "title": "田川市育英事業基金条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第19号",
+        "title": "田川市猪位金小中一貫校教育振興基金条例の廃止について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第20号",
+        "title": "田川市放課後児童健全育成事業の設備及び運営に関する基準を定める条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第21号",
+        "title": "田川市教育職員の給与等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第22号",
+        "title": "田川市中央公民館の設置及び管理に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第23号",
+        "title": "財産の取得について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第24号",
+        "title": "市道路線の認定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第25号",
+        "title": "市道路線の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第26号",
+        "title": "田川市固定資産評価審査委員会委員の選任について（和田孝子氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第27号",
+        "title": "田川市固定資産評価審査委員会委員の選任について（岩岡智之氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第28号",
+        "title": "田川市子ども・子育て会議条例及び田川市特定教育・保育施設及び特定地域型保育事業の運営に関する基準を定める条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第29号",
+        "title": "田川市家庭的保育事業等の設備及び運営に関する基準を定める条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第30号",
+        "title": "工事請負契約の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第31号",
+        "title": "工事請負契約の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "諮問第1号",
+        "title": "人権擁護委員候補者の推薦について（村上顕功氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第9号",
+        "title": "田川市議会委員会条例の一部改正について",
+        "proposer": "committee",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第10号",
+        "title": "介護保険の適用優先を定めた障がい者総合支援法第7条の廃止等を求める意見書について",
+        "proposer": "committee",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      },
+      {
+        "billNumberLabel": "議案第29号",
+        "title": "建設アスベスト被害者の救済とアスベスト対策の拡充を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-03-15"
+      }
+    ]
+  },
+  {
+    "key": "r5-3-teirei",
+    "name": "令和5年（第3回）6月定例会",
+    "startDate": "2023-06-19",
+    "endDate": "2023-07-05",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0038597/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第33号",
+        "title": "令和5年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "修正議決",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第34号",
+        "title": "令和5年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第35号",
+        "title": "令和5年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第36号",
+        "title": "田川市市税条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第37号",
+        "title": "田川市地区計画の区域内における建築物の制限に関する条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第38号",
+        "title": "市道路線の認定について（下弓削田9号線）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第39号",
+        "title": "田川市監査委員の選任について（水上茂氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第40号",
+        "title": "田川市農業委員会委員の任命について（柴田一明氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第41号",
+        "title": "田川市農業委員会委員の任命について（高口秀明氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第42号",
+        "title": "田川市農業委員会委員の任命について（中園佳一氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第43号",
+        "title": "田川市農業委員会委員の任命について（原敬太郎氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第44号",
+        "title": "田川市農業委員会委員の任命について（三好義勝氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第45号",
+        "title": "田川市農業委員会委員の任命について（北山俊之氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第46号",
+        "title": "田川市農業委員会委員の任命について（服部龍一郎氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第47号",
+        "title": "田川市農業委員会委員の任命について（原田敏春氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第48号",
+        "title": "田川市農業委員会委員の任命について（奥敏晴氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第49号",
+        "title": "田川市農業委員会委員の任命について（野中栄藏氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第50号",
+        "title": "田川市農業委員会委員の任命について（冨士本稔氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第51号",
+        "title": "田川市農業委員会委員の任命について（川並勝次氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第52号",
+        "title": "田川市農業委員会委員の任命について（星野峰敏氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第53号",
+        "title": "田川市農業委員会委員の任命について（牧野瑞代氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第54号",
+        "title": "田川市教育委員会教育長の任命について（小林清氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第1号",
+        "title": "最低賃金法の改正と中小企業支援策の拡充を求める意見書について",
+        "proposer": "committee",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第2号",
+        "title": "豊かな学びの実現・教職員定数改善を図るための2024年度政府予算に係る意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第3号",
+        "title": "義務教育費国庫負担制度負担率の引き上げを図るための2024年度政府予算に係る意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      },
+      {
+        "billNumberLabel": "議案第4号",
+        "title": "大任町に対し、し尿処理施設、じん芥処理施設及び埋立処分施設の建設に関する事務の情報開示を求める決議について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-05"
+      }
+    ]
+  },
+  {
+    "key": "r5-4-rinji",
+    "name": "令和5年（第4回）7月臨時会",
+    "startDate": "2023-07-12",
+    "endDate": "2023-07-12",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0038597/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第55号",
+        "title": "議案第33号令和5年度田川市一般会計補正予算に対する再議※について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-07-12"
+      }
+    ]
+  },
+  {
+    "key": "r5-5-teirei",
+    "name": "令和5年（第5回）9月定例会",
+    "startDate": "2023-09-05",
+    "endDate": "2023-10-05",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji0038719/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第56号",
+        "title": "令和5年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "修正議決",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "議案第57号",
+        "title": "令和5年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "議案第58号",
+        "title": "令和5年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "議案第59号",
+        "title": "令和5年度田川市急患医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "議案第60号",
+        "title": "令和5年度田川市等三線沿線地域交通体系整備事業基金特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "議案第61号",
+        "title": "たがわ情報センターの設置及び管理に関する条例の廃止について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "議案第62号",
+        "title": "田川市平成筑豊鉄道経営安定化基金条例の廃止について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "議案第63号",
+        "title": "田川市バス路線維持・充実対策基金条例の廃止について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "議案第64号",
+        "title": "田川市立病院使用料及び手数料条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "議案第65号",
+        "title": "田川市放課後児童健全育成事業の設備及び運営に関する基準を定める条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "議案第66号",
+        "title": "田川市過疎地域持続的発展計画の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "議案第67号",
+        "title": "訴えの提起について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "議案第68号",
+        "title": "田川市公平委員会委員の選任について（今村秀治氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "諮問第2号",
+        "title": "人権擁護委員候補者の推薦について （牛尾淳子氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-09-22"
+      },
+      {
+        "billNumberLabel": "認定第1号",
+        "title": "令和4年度田川市一般会計決算",
+        "proposer": "mayor",
+        "resultLabel": "不認定",
+        "resultSource": "official",
+        "resolvedDate": "2023-10-05"
+      },
+      {
+        "billNumberLabel": "認定第2号",
+        "title": "令和4年度田川市国民健康保険特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2023-10-05"
+      },
+      {
+        "billNumberLabel": "認定第3号",
+        "title": "令和4年度田川市後期高齢者医療特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2023-10-05"
+      },
+      {
+        "billNumberLabel": "認定第4号",
+        "title": "令和4年度田川市急患医療特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2023-10-05"
+      },
+      {
+        "billNumberLabel": "認定第5号",
+        "title": "令和4年度田川市住宅新築資金等貸付特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2023-10-05"
+      },
+      {
+        "billNumberLabel": "認定第6号",
+        "title": "令和4年度田川市等三線沿線地域交通体系整備事業基金特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2023-10-05"
+      },
+      {
+        "billNumberLabel": "認定第7号",
+        "title": "令和4年度田川市病院事業会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2023-10-05"
+      },
+      {
+        "billNumberLabel": "議案第5号",
+        "title": "田川市議会議員の議員報酬及び費用弁償等に関する条例の一部改正について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-10-05"
+      },
+      {
+        "billNumberLabel": "議案第6号",
+        "title": "地方財政の充実・強化に関する意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-10-05"
+      },
+      {
+        "billNumberLabel": "議案第7号",
+        "title": "健康保険証を廃止しないよう求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-10-05"
+      }
+    ]
+  },
+  {
+    "key": "r5-6-teirei",
+    "name": "令和5年（第6回）12月定例会",
+    "startDate": "2023-12-01",
+    "endDate": "2023-12-26",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00310134/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第69号",
+        "title": "令和5年度田川市一般会計補正予算（人件費分）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-01"
+      },
+      {
+        "billNumberLabel": "議案第70号",
+        "title": "令和5年度田川市後期高齢者医療特別会計補正予算（人件費分）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-01"
+      },
+      {
+        "billNumberLabel": "議案第73号",
+        "title": "田川市職員の給与に関する条例等の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-01"
+      },
+      {
+        "billNumberLabel": "議案第74号",
+        "title": "田川市議会議員の議員報酬及び費用弁償等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-01"
+      },
+      {
+        "billNumberLabel": "議員提出議案第8号",
+        "title": "田川市議会議長不信任決議について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-01"
+      },
+      {
+        "billNumberLabel": "議案第71号",
+        "title": "令和5年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議案第72号",
+        "title": "令和5年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議案第75号",
+        "title": "田川市特定教育・保育施設及び特定地域型保育事業の運営に関する基準を定める条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議案第76号",
+        "title": "田川市印鑑条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議案第77号",
+        "title": "田川市国民健康保険税条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議案第78号",
+        "title": "田川市空家等の適正管理に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議案第79号",
+        "title": "財産の減額譲渡について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議案第80号",
+        "title": "財産の処分について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議案第81号",
+        "title": "指定管理者の指定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議案第82号",
+        "title": "指定管理者の指定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議案第83号",
+        "title": "指定管理者の指定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議案第84号",
+        "title": "田川市教育委員会委員の任命について",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議案第85号",
+        "title": "令和5年度田川市一般会計補正予算（追加分）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議員提出議案第9号",
+        "title": "教育費負担軽減のため、給付制奨学金の対象拡大、給食費無償化などを求める意見書について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議員提出議案第10号",
+        "title": "福岡県介護保険広域連合における介護保険料の引き下げ等を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議員提出議案第11号",
+        "title": "陸田孝則議員に対する懲罰について",
+        "proposer": "member",
+        "resultLabel": "継続審議",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-20"
+      },
+      {
+        "billNumberLabel": "議員提出議案第12号",
+        "title": "田川市議会議長信任決議について",
+        "proposer": "member",
+        "resultLabel": "否決",
+        "resultSource": "official",
+        "resolvedDate": "2023-12-26"
+      }
+    ]
+  },
+  {
+    "key": "r6-1-teirei",
+    "name": "令和6年（第1回）3月定例会",
+    "startDate": "2024-02-22",
+    "endDate": "2024-03-21",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00310303/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第1号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第1号 令和5年度田川市一般会計補正予算）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2024-02-22"
+      },
+      {
+        "billNumberLabel": "報告第2号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第2号 令和5年度田川市一般会計補正予算）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2024-02-22"
+      },
+      {
+        "billNumberLabel": "議案第1号",
+        "title": "令和5年度田川市一般会計補正予算（追加分）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-02-22"
+      },
+      {
+        "billNumberLabel": "議案第19号",
+        "title": "田川市手数料条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-02-22"
+      },
+      {
+        "billNumberLabel": "議員提出議案第11号",
+        "title": "陸田孝則議員に対する懲罰について",
+        "proposer": "member",
+        "resultLabel": "懲罰を科す(陳謝)",
+        "resultSource": "official",
+        "resolvedDate": "2024-02-22"
+      },
+      {
+        "billNumberLabel": "議案第2号",
+        "title": "令和5年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-06"
+      },
+      {
+        "billNumberLabel": "議案第3号",
+        "title": "令和5年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-06"
+      },
+      {
+        "billNumberLabel": "議案第4号",
+        "title": "令和5年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-06"
+      },
+      {
+        "billNumberLabel": "議案第5号",
+        "title": "令和5年度田川市急患医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-06"
+      },
+      {
+        "billNumberLabel": "議案第6号",
+        "title": "令和5年度田川市病院事業会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-06"
+      },
+      {
+        "billNumberLabel": "議案第13号",
+        "title": "田川市事務分掌条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-06"
+      },
+      {
+        "billNumberLabel": "議案第14号",
+        "title": "田川市特別職の職員で非常勤のものの報酬及び費用弁償に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-06"
+      },
+      {
+        "billNumberLabel": "議案第22号",
+        "title": "田川市学校教育施設整備基金条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-06"
+      },
+      {
+        "billNumberLabel": "議案第25号",
+        "title": "工事請負契約の締結について（令和5年度田川市向陽台土壌汚染対策工事）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-06"
+      },
+      {
+        "billNumberLabel": "議案第7号",
+        "title": "令和6年度田川市一般会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第8号",
+        "title": "令和6年度田川市国民健康保険特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第9号",
+        "title": "令和6年度田川市後期高齢者医療特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第10号",
+        "title": "令和6年度田川市急患医療特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第11号",
+        "title": "令和6年度田川市等三線沿線地域交通体系整備事業基金特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第12号",
+        "title": "令和6年度田川市病院事業会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第15号",
+        "title": "田川市会計年度任用職員の給与、費用弁償及び旅費に関する条例等の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第16号",
+        "title": "行政手続における特定の個人を識別するための番号の利用等に関する法律に基づく個人番号の利用及び特定個人情報の提供に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第17号",
+        "title": "田川市保健センターの設置及び管理に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第18号",
+        "title": "田川市特定教育・保育施設及び特定地域型保育事業の運営に関する基準を定める条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第20号",
+        "title": "田川市子ども医療費の支給に関する条例等の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第21号",
+        "title": "田川市市営住宅管理条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第23号",
+        "title": "田川市教育職員の給与等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第24号",
+        "title": "財産の減額譲渡について（旧弓削田中学校の建物・土地）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第26号",
+        "title": "市道路線の認定について（岩下・若咲3号線）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第27号",
+        "title": "田川市固定資産評価審査委員会委員の選任について（藤本光一氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第28号",
+        "title": "田川市固定資産評価審査委員会委員の選任について（槇由紀氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第29号",
+        "title": "田川市固定資産評価員の選任について（野島豊治氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議案第30号",
+        "title": "田川市市税条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "諮問第1号",
+        "title": "人権擁護委員候補者の推薦について（古賀勲氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "委員会提出議案第2号",
+        "title": "田川市議会委員会条例の一部改正について",
+        "proposer": "committee",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議員提出議案第13号",
+        "title": "陸田孝則議員に対する懲罰について",
+        "proposer": "member",
+        "resultLabel": "原案可決(戒告)",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議員提出議案第14号",
+        "title": "田川市議会政務活動費の交付に関する条例の制定について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議員提出議案第15号",
+        "title": "陸田孝則議員に対する問責決議について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      },
+      {
+        "billNumberLabel": "議員提出議案第16号",
+        "title": "陸田孝則議員の公職選挙法及び田川市政治倫理条例違反疑惑に関する検証等特別委員会の設置について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-03-21"
+      }
+    ]
+  },
+  {
+    "key": "r6-2-teirei",
+    "name": "令和6年（第2回）6月定例会",
+    "startDate": "2024-06-17",
+    "endDate": "2024-07-03",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00310473/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第3号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第3号 田川市市税条例の一部改正について）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2024-06-17"
+      },
+      {
+        "billNumberLabel": "報告第4号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第4号 田川市国民健康保険税条例の一部改正について）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2024-06-17"
+      },
+      {
+        "billNumberLabel": "報告第5号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第5号 令和6年度田川市一般会計補正予算）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2024-06-17"
+      },
+      {
+        "billNumberLabel": "報告第6号",
+        "title": "市長専決処分の報告並びに承認を求めることについて（専決第6号 田川市いじめ問題対策連絡協議会等条例の一部改正について）",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2024-06-17"
+      },
+      {
+        "billNumberLabel": "議案第33号",
+        "title": "田川市市税条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-07-03"
+      },
+      {
+        "billNumberLabel": "議案第34号",
+        "title": "田川市都市計画法に基づく開発許可の基準の緩和に関する条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-07-03"
+      },
+      {
+        "billNumberLabel": "議案第31号",
+        "title": "令和6年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-07-03"
+      },
+      {
+        "billNumberLabel": "議案第32号",
+        "title": "令和6年度田川市一般会計補正予算【追加】",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-07-03"
+      },
+      {
+        "billNumberLabel": "議案第35号",
+        "title": "田川市教育委員会教育長の任命について",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2024-07-03"
+      },
+      {
+        "billNumberLabel": "議案第36号",
+        "title": "田川市副市長の選任について",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2024-07-03"
+      },
+      {
+        "billNumberLabel": "議員提出議案第17号",
+        "title": "健康保険証の存続を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-07-03"
+      },
+      {
+        "billNumberLabel": "議員提出議案第18号",
+        "title": "豊かな学びの実現・教職員定数の改善を図るための２０２５年度政府予算に係る意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-07-03"
+      },
+      {
+        "billNumberLabel": "議員提出議案第19号",
+        "title": "地方財政の充実・強化に関する意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-07-03"
+      },
+      {
+        "billNumberLabel": "議員提出議案第20号",
+        "title": "一般廃棄物処理業務の調査に関する決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-07-03"
+      }
+    ]
+  },
+  {
+    "key": "r6-3-teirei",
+    "name": "令和6年（第3回）9月定例会",
+    "startDate": "2024-09-06",
+    "endDate": "2024-10-08",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00310825/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第37号",
+        "title": "令和６年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第38号",
+        "title": "令和６年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第39号",
+        "title": "令和６年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第40号",
+        "title": "令和６年度田川市急患医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第41号",
+        "title": "田川市コンプライアンス条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第42号",
+        "title": "田川市手数料条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第43号",
+        "title": "田川市廃棄物の処理及び清掃に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第44号",
+        "title": "福岡県後期高齢者医療広域連合規約の一部変更に関する協議について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第45号",
+        "title": "工事請負契約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第46号",
+        "title": "市道路線の認定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第47号",
+        "title": "田川市教育委員会委員の任命について（魚島一彦氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第48号",
+        "title": "田川市農業委員会委員の任命について（宮内了治氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第49号",
+        "title": "田川市国民健康保険条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第50号",
+        "title": "令和６年度田川市一般会計補正予算（追加）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第52号",
+        "title": "田川市重度障がい者医療費の支給に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "諮問第2号",
+        "title": "人権擁護委員候補者の推薦について（原田幸子氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2024-09-27"
+      },
+      {
+        "billNumberLabel": "議案第51号",
+        "title": "田川市ひとり親家庭等医療費の支給に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第53号",
+        "title": "田川地区広域環境衛生施設組合の共同処理する事務の変更及び規約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "否決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第54号",
+        "title": "田川地区清掃施設組合規約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "否決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第55号",
+        "title": "田川地区清掃施設組合の解散について",
+        "proposer": "mayor",
+        "resultLabel": "否決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第56号",
+        "title": "田川地区清掃施設組合の解散に伴う財産処分について",
+        "proposer": "mayor",
+        "resultLabel": "否決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第57号",
+        "title": "田川郡東部環境衛生施設組合からの脱退について",
+        "proposer": "mayor",
+        "resultLabel": "否決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第58号",
+        "title": "田川郡東部環境衛生施設組合からの田川郡川崎町、田川市、同郡糸田町及び同郡福智町の脱退に伴う財産処分について",
+        "proposer": "mayor",
+        "resultLabel": "否決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第59号",
+        "title": "財産の無償譲渡について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第60号",
+        "title": "令和６年度田川市一般会計補正予算（追加（その２））",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第61号",
+        "title": "田川市子ども医療費の支給に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "認定第1号",
+        "title": "令和5年度田川市一般会計決算",
+        "proposer": "mayor",
+        "resultLabel": "不認定",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "認定第2号",
+        "title": "令和5年度田川市国民健康保険特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "認定第3号",
+        "title": "令和5年度田川市後期高齢者医療特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "認定第4号",
+        "title": "令和5年度田川市急患医療特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "認定第5号",
+        "title": "令和５年度田川市等三線沿線地域交通体系整備事業基金特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "認定第6号",
+        "title": "令和５年度田川市病院事業会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第21号",
+        "title": "持続可能な学校の実現を目指す意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第22号",
+        "title": "大任町に情報提供を求める決議について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第23号",
+        "title": "田川地区広域環境衛生施設組合に情報提供を求める決議について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第24号",
+        "title": "田川地区広域環境衛生施設組合議会に会議録の写しの提供を求める決議について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第25号",
+        "title": "田川郡東部環境衛生施設組合議会に会議録の写しの提供を求める決議について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第26号",
+        "title": "情報公開条例の制定を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      },
+      {
+        "billNumberLabel": "議案第27号",
+        "title": "田川地区広域環境衛生施設組合の共同処理する事務の変更及び規約の変更に関する決議について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-10-08"
+      }
+    ]
+  },
+  {
+    "key": "r6-4-rinji",
+    "name": "令和6年（第4回）11月臨時会",
+    "startDate": "2024-11-15",
+    "endDate": "2024-11-15",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00310831/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第62号",
+        "title": "田川郡東部環境衛生施設組合からの脱退について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-11-15"
+      },
+      {
+        "billNumberLabel": "議案第63号",
+        "title": "田川郡東部環境衛生施設組合からの田川郡川崎町、田川市、同郡糸田町及び同郡福智町の脱退に伴う財産処分について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-11-15"
+      },
+      {
+        "billNumberLabel": "議案第64号",
+        "title": "田川地区清掃施設組合規約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-11-15"
+      },
+      {
+        "billNumberLabel": "議案第65号",
+        "title": "田川地区清掃施設組合の解散について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-11-15"
+      },
+      {
+        "billNumberLabel": "議案第66号",
+        "title": "田川地区清掃施設組合の解散に伴う財産処分について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-11-15"
+      },
+      {
+        "billNumberLabel": "議案第67号",
+        "title": "田川地区広域環境衛生施設組合の共同処理する事務の変更及び規約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-11-15"
+      }
+    ]
+  },
+  {
+    "key": "r6-5-teirei",
+    "name": "令和6年（第5回）12月定例会",
+    "startDate": "2024-12-02",
+    "endDate": "2024-12-19",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00310826/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第68号",
+        "title": "令和６年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      },
+      {
+        "billNumberLabel": "議案第69号",
+        "title": "令和６年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      },
+      {
+        "billNumberLabel": "議案第70号",
+        "title": "令和６年度田川市急患医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      },
+      {
+        "billNumberLabel": "議案第71号",
+        "title": "刑法等の一部を改正する法律の施行に伴う関係条例の整理に関する条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      },
+      {
+        "billNumberLabel": "議案第72号",
+        "title": "工事請負契約の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      },
+      {
+        "billNumberLabel": "議案第73号",
+        "title": "工事請負契約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      },
+      {
+        "billNumberLabel": "議案第74号",
+        "title": "指定管理者の指定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      },
+      {
+        "billNumberLabel": "議案第75号",
+        "title": "市道路線の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      },
+      {
+        "billNumberLabel": "議案第76号",
+        "title": "田川市固定資産評価審査委員会委員の選任について（植田洋一氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      },
+      {
+        "billNumberLabel": "議案第77号",
+        "title": "令和６年度田川市一般会計補正予算（人件費分）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      },
+      {
+        "billNumberLabel": "議案第78号",
+        "title": "令和６年度田川市後期高齢者医療特別会計補正予算（人件費分）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      },
+      {
+        "billNumberLabel": "議案第79号",
+        "title": "田川市職員の給与に関する条例等の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      },
+      {
+        "billNumberLabel": "議案第80号",
+        "title": "田川市議会議員の議員報酬及び費用弁償等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      },
+      {
+        "billNumberLabel": "議案第81号",
+        "title": "財産の処分について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2024-12-19"
+      }
+    ]
+  },
+  {
+    "key": "r7-1-teirei",
+    "name": "令和7年（第1回）3月定例会",
+    "startDate": "2025-02-20",
+    "endDate": "2025-03-19",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00310997/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第1号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第１号 令和６年度田川市一般会計補正予算］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2025-02-20"
+      },
+      {
+        "billNumberLabel": "議案第1号",
+        "title": "令和６年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-06"
+      },
+      {
+        "billNumberLabel": "議案第2号",
+        "title": "令和６年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-06"
+      },
+      {
+        "billNumberLabel": "議案第3号",
+        "title": "令和６年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-06"
+      },
+      {
+        "billNumberLabel": "議案第4号",
+        "title": "令和６年度田川市急患医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-06"
+      },
+      {
+        "billNumberLabel": "議案第5号",
+        "title": "令和６年度田川市病院事業会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-06"
+      },
+      {
+        "billNumberLabel": "議案第21号",
+        "title": "田川市宿泊税交付金基金条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-06"
+      },
+      {
+        "billNumberLabel": "議案第28号",
+        "title": "村上卓哉田川市長に対する問責決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-06"
+      },
+      {
+        "billNumberLabel": "議案第6号",
+        "title": "令和７年度田川市一般会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第7号",
+        "title": "令和７年度田川市国民健康保険特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第8号",
+        "title": "令和７年度田川市後期高齢者医療特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第9号",
+        "title": "令和７年度田川市急患医療特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第10号",
+        "title": "令和７年度田川市等三線沿線地域交通体系整備事業基金特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第11号",
+        "title": "令和７年度田川市病院事業会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第12号",
+        "title": "田川市職員の給与に関する条例等の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第13号",
+        "title": "田川市個人情報保護法施行条例及び田川市議会の個人情報の保護に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第14号",
+        "title": "財産の取得、管理、処分等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第15号",
+        "title": "田川市手数料条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第16号",
+        "title": "田川市国民健康保険税条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第17号",
+        "title": "田川市生活環境と再生可能エネルギー発電事業との調和に関する条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第18号",
+        "title": "田川市廃棄物の処理及び清掃に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第19号",
+        "title": "田川市家庭的保育事業等の設備及び運営に関する基準を定める条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第20号",
+        "title": "田川市病児病後児保育室の設置及び管理に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第22号",
+        "title": "田川市教育職員の給与等に関する条例の廃止について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第23号",
+        "title": "特定の事務を取り扱う郵便局の指定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第24号",
+        "title": "市道路線の認定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第25号",
+        "title": "田川市市長の給料の減額に関する条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第26号",
+        "title": "工事請負契約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第27号",
+        "title": "令和６年度田川市一般会計補正予算【追加】",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第30号",
+        "title": "再審法改正を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第31号",
+        "title": "公立小中学校における学校給食費の無償化を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第32号",
+        "title": "教育予算の増額と負担軽減措置等の拡充を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第33号",
+        "title": "企業・団体献金の禁止の実現を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第34号",
+        "title": "自民党派閥裏金問題の真相の徹底解明を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第35号",
+        "title": "ワンヘルスの推進に関する決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第36号",
+        "title": "一般廃棄物処理業務に関する調査特別委員会の経費に関する決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第37号",
+        "title": "田川市議会政務活動費の交付に関する条例の一部改正について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第38号",
+        "title": "村上卓哉田川市長に対する不信任決議について",
+        "proposer": "member",
+        "resultLabel": "否決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第39号",
+        "title": "田川市長の公務の調査に関する決議について",
+        "proposer": "member",
+        "resultLabel": "否決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      },
+      {
+        "billNumberLabel": "議案第40号",
+        "title": "村上卓哉田川市長に対する辞職勧告決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-03-19"
+      }
+    ]
+  },
+  {
+    "key": "r7-2-rinji",
+    "name": "令和7年（第2回）4月臨時会",
+    "startDate": "2025-04-30",
+    "endDate": "2025-04-30",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311087/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第2号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第2号 田川市市税条例の一部改正について］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2025-04-30"
+      },
+      {
+        "billNumberLabel": "報告第3号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第3号 田川市国民健康保険税条例の一部改正について］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2025-04-30"
+      },
+      {
+        "billNumberLabel": "報告第4号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第4号 令和7年度田川市一般会計補正予算］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2025-04-30"
+      },
+      {
+        "billNumberLabel": "議案第41号",
+        "title": "村上卓哉田川市長に対する不信任決議について",
+        "proposer": "member",
+        "resultLabel": "否決",
+        "resultSource": "official",
+        "resolvedDate": "2025-04-30"
+      }
+    ]
+  },
+  {
+    "key": "r7-3-rinji",
+    "name": "令和7年（第3回）5月臨時会",
+    "startDate": "2025-05-26",
+    "endDate": "2025-05-26",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311090/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第5号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第5号 令和7年度田川市一般会計補正予算］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2025-05-26"
+      },
+      {
+        "billNumberLabel": "議案第28号",
+        "title": "田川市監査委員の選任について",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2025-05-26"
+      },
+      {
+        "billNumberLabel": "議案第3号",
+        "title": "田川市議会委員会条例の一部改正について",
+        "proposer": "committee",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-05-26"
+      },
+      {
+        "billNumberLabel": "議案第42号",
+        "title": "田川市議会議長不信任決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-05-26"
+      }
+    ]
+  },
+  {
+    "key": "r7-5-rinji",
+    "name": "令和7年（第5回）7月臨時会",
+    "startDate": "2025-07-24",
+    "endDate": "2025-07-24",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311181/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第6号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第10号 令和7年度田川市一般会計補正予算］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2025-07-24"
+      },
+      {
+        "billNumberLabel": "報告第7号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第11号 令和7年度田川市一般会計補正予算【追加】］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2025-07-24"
+      },
+      {
+        "billNumberLabel": "報告第8号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第12号 田川市病院事業の設置等に関する条例の一部改正について］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2025-07-24"
+      },
+      {
+        "billNumberLabel": "報告第9号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第13号 財産の処分について］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2025-07-24"
+      },
+      {
+        "billNumberLabel": "報告第10号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第14号 市道路線の認定について］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2025-07-24"
+      },
+      {
+        "billNumberLabel": "報告第11号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第15号 財産の取得について］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2025-07-24"
+      },
+      {
+        "billNumberLabel": "議案第36号",
+        "title": "令和7年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-07-24"
+      },
+      {
+        "billNumberLabel": "議案第37号",
+        "title": "田川市長の不適切とされる行為に関する第三者調査委員会設置条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-07-24"
+      },
+      {
+        "billNumberLabel": "議案第38号",
+        "title": "損害賠償請求事件に係る和解について",
+        "proposer": "mayor",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-07-24"
+      },
+      {
+        "billNumberLabel": "議案第43号",
+        "title": "田川市議会議長不信任決議について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-07-24"
+      }
+    ]
+  },
+  {
+    "key": "r7-6-teirei",
+    "name": "令和7年（第6回）9月定例会",
+    "startDate": "2025-09-05",
+    "endDate": "2025-10-08",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311415/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第12号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第１６号 令和７年度田川市一般会計補正予算］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-05"
+      },
+      {
+        "billNumberLabel": "議案第53号",
+        "title": "令和７年度田川市一般会計補正予算（追加）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-05"
+      },
+      {
+        "billNumberLabel": "議案第44号",
+        "title": "田川市議会議長不信任決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-05"
+      },
+      {
+        "billNumberLabel": "議案第45号",
+        "title": "情報公開請求に係る個人情報漏えいの調査に関する決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-11"
+      },
+      {
+        "billNumberLabel": "議案第39号",
+        "title": "令和７年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第40号",
+        "title": "令和７年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第41号",
+        "title": "令和７年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第42号",
+        "title": "令和７年度田川市急患医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第43号",
+        "title": "田川市職員の育児休業等に関する条例及び田川市職員の勤務時間、休暇等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第44号",
+        "title": "行政手続における特定の個人を識別するための番号の利用等に関する法律に基づく個人番号の利用及び特定個人情報の提供に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第45号",
+        "title": "田川市市税条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第46号",
+        "title": "田川市防災会議条例の一部改正ついて",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第47号",
+        "title": "田川市放課後児童健全育成事業の設備及び運営に関する基準を定める条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第48号",
+        "title": "転貸債による借入金の貸付契約の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第49号",
+        "title": "製造請負契約の締結について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第50号",
+        "title": "田川市固定資産評価審査委員会委員の選任について",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第51号",
+        "title": "田川市教育委員会委員の任命について",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第52号",
+        "title": "田川市公平委員会委員の選任について",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第54号",
+        "title": "令和７年度田川市一般会計補正予算（追加その２）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第55号",
+        "title": "和解及び損害賠償の額を定めることについて",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "諮問第1号",
+        "title": "人権擁護委員候補者の推薦について",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "議案第46号",
+        "title": "指名競争入札による建設工事発注の調査に関する決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-09-26"
+      },
+      {
+        "billNumberLabel": "認定第1号",
+        "title": "令和６年度田川市一般会計決算",
+        "proposer": "mayor",
+        "resultLabel": "不認定",
+        "resultSource": "official",
+        "resolvedDate": "2025-10-08"
+      },
+      {
+        "billNumberLabel": "認定第2号",
+        "title": "令和６年度田川市国民健康保険特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2025-10-08"
+      },
+      {
+        "billNumberLabel": "認定第3号",
+        "title": "令和６年度田川市後期高齢者医療特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2025-10-08"
+      },
+      {
+        "billNumberLabel": "認定第4号",
+        "title": "令和６年度田川市急患医療特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2025-10-08"
+      },
+      {
+        "billNumberLabel": "認定第5号",
+        "title": "令和６年度田川市等三線沿線地域交通体系整備事業基金特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2025-10-08"
+      },
+      {
+        "billNumberLabel": "認定第6号",
+        "title": "令和６年度田川市病院事業会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2025-10-08"
+      },
+      {
+        "billNumberLabel": "議案第4号",
+        "title": "持続可能な病院経営の確保を求める意見書について",
+        "proposer": "committee",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-10-08"
+      },
+      {
+        "billNumberLabel": "議案第47号",
+        "title": "子どもたちの豊かな学びの保障と学校の働き方改革の確実な推進を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-10-08"
+      },
+      {
+        "billNumberLabel": "議案第48号",
+        "title": "地方財政の充実・強化に関する意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-10-08"
+      },
+      {
+        "billNumberLabel": "議案第49号",
+        "title": "国民健康保険財政への国庫負担の増額を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-10-08"
+      },
+      {
+        "billNumberLabel": "議案第50号",
+        "title": "訪問介護の基本報酬引下げを見直し、介護報酬引上げの再改定を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-10-08"
+      },
+      {
+        "billNumberLabel": "議案第51号",
+        "title": "民生委員・児童委員の担い手確保を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-10-08"
+      }
+    ]
+  },
+  {
+    "key": "r7-7-teirei",
+    "name": "令和7年（第7回）12月定例会",
+    "startDate": "2025-12-01",
+    "endDate": "2025-12-18",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311472/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第67号",
+        "title": "令和７年度田川市一般会計補正予算（追加）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-01"
+      },
+      {
+        "billNumberLabel": "議員提出議案第52号",
+        "title": "田川市議会議長不信任決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-01"
+      },
+      {
+        "billNumberLabel": "議案第56号",
+        "title": "令和７年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第57号",
+        "title": "令和７年度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第58号",
+        "title": "第６次田川市総合計画の基本構想の変更及び後期基本計画の策定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第59号",
+        "title": "田川地区斎場組合規約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第60号",
+        "title": "田川地区斎場組合の解散について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第61号",
+        "title": "田川地区斎場組合の解散に伴う財産処分について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第62号",
+        "title": "田川地区広域環境衛生施設組合の共同処理する事務の変更及び規約の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第64号",
+        "title": "財産の取得について（スクールバス）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第65号",
+        "title": "財産の取得について（電子黒板）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第66号",
+        "title": "指定管理者の指定について（田川文化センター、田川青少年文化ホール）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第68号",
+        "title": "財産の取得について（２トンプレス式パッカー車、３トンプレス式パッカー車）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第69号",
+        "title": "令和７年度田川市一般会計補正予算（人件費分）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第70号",
+        "title": "令和７年度田川市国民健康保険特別会計補正予算（人件費分）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第71号",
+        "title": "令和７年度田川市後期高齢者医療特別会計補正予算（人件費分）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第72号",
+        "title": "令和７年度田川市急患医療特別会計補正予算（人件費分）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第73号",
+        "title": "令和７年度田川市一般会計補正予算（追加その２）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第74号",
+        "title": "田川市職員の給与に関する条例等の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第75号",
+        "title": "田川市議会議員の議員報酬及び費用弁償等に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第76号",
+        "title": "和解及び損害賠償の額を定めることについて",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議案第77号",
+        "title": "和解の一部変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "諮問第2号",
+        "title": "人権擁護委員候補者の推薦について（十時恵美氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      },
+      {
+        "billNumberLabel": "議員提出議案第53号",
+        "title": "永原譲二大任町長の田川市議会に対する不当な政治的介入に関する抗議の決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2025-12-18"
+      }
+    ]
+  },
+  {
+    "key": "r8-1-rinji",
+    "name": "令和8年（第1回）1月臨時会",
+    "startDate": "2026-01-19",
+    "endDate": "2026-01-19",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311511/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第1号",
+        "title": "令和７年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-01-19"
+      }
+    ]
+  },
+  {
+    "key": "r8-2-teirei",
+    "name": "令和8年（第2回）3月定例会",
+    "startDate": "2026-02-19",
+    "endDate": "2026-03-18",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311615/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第1号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第１号 令和７年度田川市一般会計補正予算］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2026-02-19"
+      },
+      {
+        "billNumberLabel": "議案第2号",
+        "title": "令和７年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-04"
+      },
+      {
+        "billNumberLabel": "議案第3号",
+        "title": "令和７度田川市国民健康保険特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-04"
+      },
+      {
+        "billNumberLabel": "議案第4号",
+        "title": "令和７年度田川市後期高齢者医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-04"
+      },
+      {
+        "billNumberLabel": "議案第5号",
+        "title": "令和７年度田川市急患医療特別会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-04"
+      },
+      {
+        "billNumberLabel": "議案第6号",
+        "title": "令和７年度田川市病院事業会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-04"
+      },
+      {
+        "billNumberLabel": "議案第15号",
+        "title": "田川市猫の不妊去勢費用支援基金条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-04"
+      },
+      {
+        "billNumberLabel": "議案第20号",
+        "title": "田川市立小中一貫校猪位金学園教育振興基金条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-04"
+      },
+      {
+        "billNumberLabel": "議案第7号",
+        "title": "令和８年度田川市一般会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第8号",
+        "title": "令和８年度田川市国民健康保険特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第9号",
+        "title": "令和８年度田川市後期高齢者医療特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第10号",
+        "title": "令和８年度田川市急患医療特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第11号",
+        "title": "令和８年度田川市等三線沿線地域交通体系整備事業基金特別会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第12号",
+        "title": "令和８年度田川市病院事業会計予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第13号",
+        "title": "田川市印鑑条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第14号",
+        "title": "田川市国民健康保険税条例の一部を改正する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第16号",
+        "title": "田川市乳児等通園支援事業の設備及び運営に関する基準を定める条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第17号",
+        "title": "田川市特定乳児等通園支援事業の運営に関する基準を定める条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第18号",
+        "title": "田川市特定教育・保育施設及び特定地域型保育事業の運営に関する基準を定める条例及び田川市家庭的保育事業等の設備及び運営に関する基準を定める条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第19号",
+        "title": "田川市放課後児童クラブ設置条例の制定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第21号",
+        "title": "田川市過疎地域持続的発展計画の策定について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第22号",
+        "title": "特定の事務を取り扱う郵便局の指定の変更について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第23号",
+        "title": "市道路線の認定について（奈良タウン１号線）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第24号",
+        "title": "田川市固定資産評価審査委員会委員の選任について（和田 孝子 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第25号",
+        "title": "田川市固定資産評価審査委員会委員の選任について（岩岡 智之 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第26号",
+        "title": "田川市都市公園条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "諮問第1号",
+        "title": "人権擁護委員候補者の推薦について（田尼得 美穂 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "諮問第2号",
+        "title": "人権擁護委員候補者の推薦について（村上 美鈴 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第54号",
+        "title": "一般廃棄物処理業務に関する調査特別委員会の経費に関する決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第55号",
+        "title": "情報公開請求に係る個人情報漏えいに関する調査特別委員会の経費に関する決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      },
+      {
+        "billNumberLabel": "議案第56号",
+        "title": "指名競争入札による建設工事発注に関する調査特別委員会の経費に関する決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-03-18"
+      }
+    ]
+  },
+  {
+    "key": "r8-3-rinji",
+    "name": "令和8年（第3回）5月臨時会",
+    "startDate": "2026-05-29",
+    "endDate": "2026-05-29",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311747/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "報告第2号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第4号 田川市市税条例の一部改正について］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2026-05-29"
+      },
+      {
+        "billNumberLabel": "報告第3号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第5号 田川市国民健康保険税条例の一部改正について］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2026-05-29"
+      },
+      {
+        "billNumberLabel": "報告第4号",
+        "title": "市長専決処分の報告並びに承認を求めることについて［専決第6号 令和8年度田川市一般会計補正予算］",
+        "proposer": "mayor",
+        "resultLabel": "承認",
+        "resultSource": "official",
+        "resolvedDate": "2026-05-29"
+      },
+      {
+        "billNumberLabel": null,
+        "title": "市長の退職の期日に関する同意について",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-05-29"
+      }
+    ]
+  },
+  {
+    "key": "r8-4-teirei",
+    "name": "令和8年（第4回）6月定例会",
+    "startDate": "2026-06-12",
+    "endDate": "2026-07-01",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311782/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第28号",
+        "title": "令和8年度田川市一般会計補正予算【追加】",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-06-12"
+      },
+      {
+        "billNumberLabel": "議案第27号",
+        "title": "令和8年度田川市一般会計補正予算",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第29号",
+        "title": "田川市行政手続条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第30号",
+        "title": "田川市市税条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第31号",
+        "title": "工事請負契約の変更について（令和6年度向陽台団地橋梁上部工工事）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第32号",
+        "title": "市道路線の認定について（大浦団地8号線）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第33号",
+        "title": "田川市公平委員会委員の選任について（森脇 敦史 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第34号",
+        "title": "田川市農業委員会委員の任命について（柴田 一明 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第35号",
+        "title": "田川市農業委員会委員の任命について（高口 秀明 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第36号",
+        "title": "田川市農業委員会委員の任命について（原 敬太郎 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第37号",
+        "title": "田川市農業委員会委員の任命について（三好 義勝 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第38号",
+        "title": "田川市農業委員会委員の任命について（北山 俊之 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第39号",
+        "title": "田川市農業委員会委員の任命について（皆川 広文 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第40号",
+        "title": "田川市農業委員会委員の任命について（原田 敏春 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第41号",
+        "title": "田川市農業委員会委員の任命について（辻 繁美 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第42号",
+        "title": "田川市農業委員会委員の任命について（野中 栄藏 氏）",
+        "proposer": "mayor",
+        "resultLabel": "否決",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第43号",
+        "title": "田川市農業委員会委員の任命について（冨士本 稔 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第44号",
+        "title": "田川市農業委員会委員の任命について（川並 勝次 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第45号",
+        "title": "田川市農業委員会委員の任命について（星野 峰敏 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第46号",
+        "title": "田川市農業委員会委員の任命について（牧野 瑞代 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第47号",
+        "title": "田川市農業委員会委員の任命について（宮内 了治 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第57号",
+        "title": "豊かな学びの実現・教職員定数の改善を図るための2027年度政府予算に係る意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": "議案第58号",
+        "title": "地方財政の充実・強化に関する意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      },
+      {
+        "billNumberLabel": null,
+        "title": "陸田孝則議員の公職選挙法及び田川市政治倫理条例違反疑惑に関する検証等特別委員会の審査結果報告について",
+        "proposer": "member",
+        "resultLabel": "可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-07-01"
+      }
+    ]
+  }
+]
