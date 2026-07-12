@@ -70,10 +70,10 @@ export const BILL_STATUS_ORDER: Record<BillStatusEnum, number> = {
   preparing: 5,
 };
 
-// House display mapping
+// House display mapping（田川市議会では委員会審査・本会議の2段階審議として扱う）
 export const HOUSE_LABELS: Record<HouseEnum, string> = {
-  HR: "衆議院",
-  HC: "参議院",
+  HR: "委員会",
+  HC: "本会議",
 };
 
 // ステータスを日本語ラベルに変換する関数

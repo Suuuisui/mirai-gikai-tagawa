@@ -8,8 +8,8 @@ import {
 } from "@/components/layouts/legal-page-layout";
 
 export const metadata: Metadata = {
-  title: "プライバシーポリシー | みらい議会",
-  description: "みらい議会のプライバシーポリシー",
+  title: "プライバシーポリシー | みらい議会＠田川市",
+  description: "みらい議会＠田川市のプライバシーポリシー",
 };
 
 export default function PrivacyPage() {
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
     <LegalPageLayout
       className="bg-transparent pt-24 md:pt-12"
       title="プライバシーポリシー"
-      description="チームみらい（以下「当組織」といいます）における個人情報の取り扱いについてご説明します。"
+      description="みらい議会＠田川市の運営者（以下「当組織」といいます）における個人情報の取り扱いについてご説明します。"
     >
       <Container className="space-y-8">
         <p className="text-sm text-mirai-text-muted">
@@ -99,7 +99,7 @@ export default function PrivacyPage() {
         <section className="space-y-4">
           <LegalSectionTitle>6. 保管期間と廃棄</LegalSectionTitle>
           <LegalParagraph>
-            取得した個人情報および対話ログは、法令（政治資金規正法等）に基づき必要な期間（原則7年間）保管した後、適切な方法で廃棄・削除します。
+            取得した個人情報および対話ログは、関係法令に基づき必要な期間（原則7年間）保管した後、適切な方法で廃棄・削除します。
           </LegalParagraph>
         </section>
 
@@ -115,7 +115,7 @@ export default function PrivacyPage() {
           <LegalParagraph>
             個人情報の確認・修正・削除、またはみらい議会AIインタビュー機能の回答公開に関する取り消し等のご相談は、下記までご連絡ください。
           </LegalParagraph>
-          <LegalParagraph>support@team-mir.ai</LegalParagraph>
+          <LegalParagraph>support@example.com</LegalParagraph>
         </section>
       </Container>
     </LegalPageLayout>

@@ -4,6 +4,7 @@ import Image from "next/image";
 import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { EXTERNAL_LINKS } from "@/config/external-links";
 import { isInterviewPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
 import { policyLinks, primaryLinks } from "./footer.config";
@@ -21,6 +22,7 @@ export function Footer() {
         <FooterLogoSection />
         <FooterPrimaryLinks />
         <FooterPolicies />
+        <FooterDisclaimer />
         <FooterCopyright />
       </div>
     </footer>
@@ -30,10 +32,10 @@ export function Footer() {
 function FooterLogoSection() {
   return (
     <div className="flex flex-col items-center text-center mb-9">
-      <Link href={routes.home()} aria-label="みらい議会 トップページ">
+      <Link href={routes.home()} aria-label="みらい議会＠田川市 トップページ">
         <Image
           src="/img/logo.svg"
-          alt="みらい議会"
+          alt="みらい議会＠田川市"
           width={150}
           height={128}
           className="h-auto"
@@ -91,10 +93,29 @@ function FooterPolicies() {
   );
 }
 
+function FooterDisclaimer() {
+  return (
+    <div className="mb-5 max-w-[380px] text-[11px] leading-relaxed text-mirai-text-note">
+      <p>
+        本サイトは、みらい議会（
+        <a
+          href={EXTERNAL_LINKS.UPSTREAM_MIRAI_GIKAI}
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          {EXTERNAL_LINKS.UPSTREAM_MIRAI_GIKAI}
+        </a>
+        ）を有志が改変・運営する非公式版です。これは政党チームみらいが運営しているものではありません。
+      </p>
+    </div>
+  );
+}
+
 function FooterCopyright() {
   return (
     <div className="text-center text-sm font-medium text-slate-800">
-      © 2025 Team Mirai All rights Reserved
+      © 2026 みらい議会＠田川市 All rights Reserved
     </div>
   );
 }

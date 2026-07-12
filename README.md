@@ -1,4 +1,16 @@
-# みらい議会
+# みらい議会＠田川市
+
+> **本リポジトリについて**
+>
+> 本リポジトリは、政党チームみらいが開発したオープンソースプロダクト
+> [team-mirai/mirai-gikai](https://github.com/team-mirai/mirai-gikai)（「みらい議会」、本家:
+> https://gikai.team-mir.ai/）を fork し、福岡県田川市議会向けにカスタマイズした
+> 「**みらい議会＠田川市**」です。
+>
+> - 改変日: 2026-07-12
+> - 本リポジトリは AGPL-3.0 ライセンスを継承しており、改変後のソースコードも
+>   同ライセンスの下で公開しています。
+> - 本プロジェクトは有志による非公式の改変版であり、**政党チームみらいが運営・監修しているものではありません**。
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/team-mirai-volunteer/mirai-gikai)
 [![codecov](https://codecov.io/gh/team-mirai/mirai-gikai/branch/develop/graph/badge.svg)](https://codecov.io/gh/team-mirai/mirai-gikai)

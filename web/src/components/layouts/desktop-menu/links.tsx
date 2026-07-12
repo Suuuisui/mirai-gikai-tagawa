@@ -11,11 +11,6 @@ type FooterLinkItem = {
 
 const links: FooterLinkItem[] = [
   {
-    label: "チームみらいについて",
-    href: EXTERNAL_LINKS.TEAM_MIRAI_ABOUT,
-    external: true,
-  },
-  {
     label: "利用規約",
     href: routes.terms(),
     external: false,
@@ -63,7 +58,7 @@ export function DesktopMenuLinks() {
           lineHeight: "1.48em",
         }}
       >
-        © 2025 Team Mirai
+        © 2026 みらい議会＠田川市
       </p>
     </div>
   );
