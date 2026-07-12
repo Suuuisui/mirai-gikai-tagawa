@@ -8,4 +8,6 @@ export const EXTERNAL_LINKS = {
   FORK_GUIDELINES_NOTE: "https://note.com/team_mirai_jp/n/nc59ec347e8c7",
   /** フォーク元「みらい議会」本家サイト（チームみらい運営） */
   UPSTREAM_MIRAI_GIKAI: "https://gikai.team-mir.ai/",
+  /** 本サイトの改変後ソースコード（AGPL-3.0 に基づく公開） */
+  SOURCE_CODE: "https://github.com/Suuuisui/mirai-gikai-tagawa",
 } as const;

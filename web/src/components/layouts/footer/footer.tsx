@@ -128,6 +128,18 @@ function FooterDisclaimer() {
         ）を有志団体「田川市政ラボ」が改変・運営する非公式版です。これは政党チームみらいが運営しているものではありません。
       </p>
       <p className="mt-1">運営: 田川市政ラボ</p>
+      <p className="mt-1">
+        本サイトのソースコードは AGPL-3.0 に基づき
+        <a
+          href={EXTERNAL_LINKS.SOURCE_CODE}
+          target="_blank"
+          rel="noreferrer"
+          className="underline"
+        >
+          GitHub
+        </a>
+        で公開しています。
+      </p>
     </div>
   );
 }

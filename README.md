@@ -13,8 +13,6 @@
 >   同ライセンスの下で公開しています。
 > - 本プロジェクトは有志団体「田川市政ラボ」による非公式の改変版であり、**政党チームみらいが運営・監修しているものではありません**。
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/team-mirai-volunteer/mirai-gikai)
-[![codecov](https://codecov.io/gh/team-mirai/mirai-gikai/branch/develop/graph/badge.svg)](https://codecov.io/gh/team-mirai/mirai-gikai)
 
 ## セットアップ
 
