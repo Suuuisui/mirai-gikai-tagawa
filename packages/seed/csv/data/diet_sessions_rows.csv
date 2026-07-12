@@ -1,3 +1,8 @@
 id,name,start_date,end_date,created_at,updated_at,slug,shugiin_url,is_active
-590f4bea-1aad-4509-b7ef-908873675097,第219回臨時国会,2025-10-21,2025-12-17,2025-10-21 00:23:01.822259+00,2025-10-21 00:23:01.822259+00,219-rinji,https://www.shugiin.go.jp/internet/itdb_gian.nsf/html/gian/menu.htm,false
-afb58baa-9cca-404a-a9cd-8efb603f6b3e,第221回国会,2026-02-18,2026-07-18,2026-02-18 00:00:00.000000+00,2026-02-18 00:00:00.000000+00,221-tokubetsu,https://www.shugiin.go.jp/internet/itdb_gian.nsf/html/gian/kaiji221.htm,true
+07fd3c4e-df18-4d8d-b97f-1aa151943afd,令和7年（第5回）7月臨時会,2025-07-24,2025-07-24,2025-07-24T00:00:00.000Z,2025-07-24T00:00:00.000Z,r7-5-rinji,https://www.joho.tagawa.fukuoka.jp/kiji00311181/index.html,false
+8ebcb3d9-0f55-480b-bc0b-cbf25f1961a2,令和7年（第6回）9月定例会,2025-09-05,2025-10-08,2025-09-05T00:00:00.000Z,2025-09-05T00:00:00.000Z,r7-6-teirei,https://www.joho.tagawa.fukuoka.jp/kiji00311415/index.html,false
+f790820f-47b3-4742-aed8-cbb51e11ce46,令和7年（第7回）12月定例会,2025-12-01,2025-12-18,2025-12-01T00:00:00.000Z,2025-12-01T00:00:00.000Z,r7-7-teirei,https://www.joho.tagawa.fukuoka.jp/kiji00311472/index.html,false
+d6ffdbe2-062b-4f34-8ecd-d75221f2208c,令和8年（第1回）1月臨時会,2026-01-19,2026-01-19,2026-01-19T00:00:00.000Z,2026-01-19T00:00:00.000Z,r8-1-rinji,https://www.joho.tagawa.fukuoka.jp/kiji00311511/index.html,false
+16c9548a-3c2c-4f09-9396-672877d8d484,令和8年（第2回）3月定例会,2026-02-19,2026-03-18,2026-02-19T00:00:00.000Z,2026-02-19T00:00:00.000Z,r8-2-teirei,https://www.joho.tagawa.fukuoka.jp/kiji00311615/index.html,false
+c0296a39-95c3-4ee0-ac43-8db9930f0441,令和8年（第3回）5月臨時会,2026-05-29,2026-05-29,2026-05-29T00:00:00.000Z,2026-05-29T00:00:00.000Z,r8-3-rinji,https://www.joho.tagawa.fukuoka.jp/kiji00311747/index.html,false
+d822e15b-e0c4-4c04-bd3b-59b19b53f29e,令和8年（第4回）6月定例会,2026-06-12,2026-07-01,2026-06-12T00:00:00.000Z,2026-06-12T00:00:00.000Z,r8-4-teirei,https://www.joho.tagawa.fukuoka.jp/kiji00311782/index.html,true
