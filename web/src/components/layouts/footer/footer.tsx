@@ -1,5 +1,6 @@
 "use client";
 
+import { Instagram } from "lucide-react";
 import Image from "next/image";
 import type { Route } from "next";
 import Link from "next/link";
@@ -7,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { EXTERNAL_LINKS } from "@/config/external-links";
 import { isInterviewPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
+import { SOCIAL_LINKS } from "@/lib/social-links";
 import { policyLinks, primaryLinks } from "./footer.config";
 
 export function Footer() {
@@ -22,6 +24,7 @@ export function Footer() {
         <FooterLogoSection />
         <FooterPrimaryLinks />
         <FooterPolicies />
+        <FooterSocialLinks />
         <FooterDisclaimer />
         <FooterCopyright />
       </div>
@@ -93,6 +96,22 @@ function FooterPolicies() {
   );
 }
 
+function FooterSocialLinks() {
+  return (
+    <div className="mb-5 flex items-center justify-center">
+      <a
+        href={SOCIAL_LINKS.instagram.url}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Instagram（田川市政ラボ）"
+        className="text-slate-800 transition-colors hover:text-slate-900"
+      >
+        <Instagram className="size-6" />
+      </a>
+    </div>
+  );
+}
+
 function FooterDisclaimer() {
   return (
     <div className="mb-5 max-w-[380px] text-[11px] leading-relaxed text-mirai-text-note">
@@ -106,8 +125,9 @@ function FooterDisclaimer() {
         >
           {EXTERNAL_LINKS.UPSTREAM_MIRAI_GIKAI}
         </a>
-        ）を有志が改変・運営する非公式版です。これは政党チームみらいが運営しているものではありません。
+        ）を有志団体「田川市政ラボ」が改変・運営する非公式版です。これは政党チームみらいが運営しているものではありません。
       </p>
+      <p className="mt-1">運営: 田川市政ラボ</p>
     </div>
   );
 }
@@ -115,7 +135,7 @@ function FooterDisclaimer() {
 function FooterCopyright() {
   return (
     <div className="text-center text-sm font-medium text-slate-800">
-      © 2026 みらい議会＠田川市 All rights Reserved
+      © 2026 田川市政ラボ All rights Reserved
     </div>
   );
 }

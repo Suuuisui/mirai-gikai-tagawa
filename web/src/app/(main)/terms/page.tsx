@@ -26,7 +26,7 @@ export default function TermsPage() {
         </LegalParagraph>
 
         <LegalParagraph>
-          みらい議会＠田川市（以下「本サービス」といいます。）をご利用いただく場合、以下の規約に同意いただいたものとみなします。
+          みらい議会＠田川市（以下「本サービス」といいます。）は、田川市政ラボ（以下「当組織」といいます。）が運営しています。本サービスをご利用いただく場合、以下の規約に同意いただいたものとみなします。
         </LegalParagraph>
 
         <section className="space-y-4">

@@ -58,7 +58,7 @@ export function DesktopMenuLinks() {
           lineHeight: "1.48em",
         }}
       >
-        © 2026 みらい議会＠田川市
+        © 2026 田川市政ラボ
       </p>
     </div>
   );

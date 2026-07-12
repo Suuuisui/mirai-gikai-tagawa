@@ -17,7 +17,7 @@ export default function PrivacyPage() {
     <LegalPageLayout
       className="bg-transparent pt-24 md:pt-12"
       title="プライバシーポリシー"
-      description="みらい議会＠田川市の運営者（以下「当組織」といいます）における個人情報の取り扱いについてご説明します。"
+      description="みらい議会＠田川市の運営者である田川市政ラボ（以下「当組織」といいます）における個人情報の取り扱いについてご説明します。"
     >
       <Container className="space-y-8">
         <p className="text-sm text-mirai-text-muted">
@@ -115,7 +115,7 @@ export default function PrivacyPage() {
           <LegalParagraph>
             個人情報の確認・修正・削除、またはみらい議会AIインタビュー機能の回答公開に関する取り消し等のご相談は、下記までご連絡ください。
           </LegalParagraph>
-          <LegalParagraph>support@example.com</LegalParagraph>
+          <LegalParagraph>ugmyus@gmail.com（田川市政ラボ）</LegalParagraph>
         </section>
       </Container>
     </LegalPageLayout>

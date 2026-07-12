@@ -21,7 +21,7 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center">
             <p className="text-xs text-muted-foreground">
-              © 2026 みらい議会＠田川市. All rights reserved.
+              © 2026 田川市政ラボ. All rights reserved.
             </p>
           </div>
         </CardContent>

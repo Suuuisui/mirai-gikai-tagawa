@@ -7,10 +7,11 @@
 > https://gikai.team-mir.ai/）を fork し、福岡県田川市議会向けにカスタマイズした
 > 「**みらい議会＠田川市**」です。
 >
+> - 運営: 田川市政ラボ（連絡先: ugmyus@gmail.com）
 > - 改変日: 2026-07-12
 > - 本リポジトリは AGPL-3.0 ライセンスを継承しており、改変後のソースコードも
 >   同ライセンスの下で公開しています。
-> - 本プロジェクトは有志による非公式の改変版であり、**政党チームみらいが運営・監修しているものではありません**。
+> - 本プロジェクトは有志団体「田川市政ラボ」による非公式の改変版であり、**政党チームみらいが運営・監修しているものではありません**。
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/team-mirai-volunteer/mirai-gikai)
 [![codecov](https://codecov.io/gh/team-mirai/mirai-gikai/branch/develop/graph/badge.svg)](https://codecov.io/gh/team-mirai/mirai-gikai)
