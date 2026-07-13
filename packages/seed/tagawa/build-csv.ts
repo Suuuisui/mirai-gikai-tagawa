@@ -24,6 +24,7 @@ import {
   type BillSource,
   type Proposer,
 } from "./source-data";
+import { BILL_DESCRIPTIONS, billDescriptionKey } from "./bill-descriptions";
 
 const CSV_DATA_DIR = path.join(import.meta.dirname, "../csv/data");
 
@@ -204,10 +205,20 @@ function main() {
         created_at: decidedAt,
       });
 
-      const summary = bill.resultLabel
-        ? `${session.name}に${proposerLabel}から提出され、${bill.resultLabel}となりました。（議決日: ${bill.resolvedDate}）`
-        : `${session.name}に${proposerLabel}から提出されました。議決結果は出典ページに記載されていません。`;
+      const descriptionOverride =
+        BILL_DESCRIPTIONS[
+          billDescriptionKey(session.key, bill.billNumberLabel, bill.title)
+        ];
+
+      const summary =
+        descriptionOverride?.summary ??
+        (bill.resultLabel
+          ? `${session.name}に${proposerLabel}から提出され、${bill.resultLabel}となりました。（議決日: ${bill.resolvedDate}）`
+          : `${session.name}に${proposerLabel}から提出されました。議決結果は出典ページに記載されていません。`);
       const content = [
+        ...(descriptionOverride
+          ? ["## 解説", "", descriptionOverride.body, ""]
+          : []),
         "## 議案情報",
         "",
         `- **議案番号**: ${bill.billNumberLabel ?? "（番号なし）"}`,
@@ -220,13 +231,24 @@ function main() {
         "## 出典",
         "",
         `- [田川市議会「${session.name}の提出議案と議決結果」](${session.sourceUrl})（福岡県田川市公式サイト）`,
+        ...(descriptionOverride
+          ? [
+              "- 田川市議会公式サイトに掲載の議案説明資料（PDF）等の公開情報",
+            ]
+          : []),
         ...(bill.resultSource === "minutes"
           ? [
               "- 議決結果は[田川市議会 会議録検索システム](https://www.kensakusystem.jp/tagawa/index.html)の本会議録から自動抽出したものです",
             ]
           : []),
         "",
-        "※ この内容は田川市議会事務局が公開する情報を基に事実のみを転記したものです。分かりやすい解説文のAIによる生成は行っていません。",
+        ...(descriptionOverride
+          ? [
+              "※ 上記の解説は、田川市議会公式サイトが公開する議案説明資料等の情報をもとに作成しています。本会議での質疑・討論の内容は、会議録が本稿執筆時点（2026年7月）で田川市議会 会議録検索システムに未公開のため反映していません。",
+            ]
+          : [
+              "※ この内容は田川市議会事務局が公開する情報を基に事実のみを転記したものです。分かりやすい解説文のAIによる生成は行っていません。",
+            ]),
       ].join("\n");
 
       billContentRows.push({
