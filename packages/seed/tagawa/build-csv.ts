@@ -25,6 +25,16 @@ import {
   type Proposer,
 } from "./source-data";
 import { BILL_DESCRIPTIONS, billDescriptionKey } from "./bill-descriptions";
+import { BATCH_B_OVERRIDES } from "./bill-descriptions-batch-b";
+import { BATCH_C_OVERRIDES } from "./bill-descriptions-batch-c";
+
+// 並列バッチ（batch-b/batch-c）の解説文を統合する。担当会期が排他的なため
+// キーの衝突は発生しない想定（build-csv実行時にログで確認する）。
+const ALL_BILL_DESCRIPTIONS = {
+  ...BILL_DESCRIPTIONS,
+  ...BATCH_B_OVERRIDES,
+  ...BATCH_C_OVERRIDES,
+};
 
 const CSV_DATA_DIR = path.join(import.meta.dirname, "../csv/data");
 
@@ -206,7 +216,7 @@ function main() {
       });
 
       const descriptionOverride =
-        BILL_DESCRIPTIONS[
+        ALL_BILL_DESCRIPTIONS[
           billDescriptionKey(
             session.key,
             bill.billNumberLabel,
