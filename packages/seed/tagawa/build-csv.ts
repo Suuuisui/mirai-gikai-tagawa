@@ -207,7 +207,12 @@ function main() {
 
       const descriptionOverride =
         BILL_DESCRIPTIONS[
-          billDescriptionKey(session.key, bill.billNumberLabel, bill.title)
+          billDescriptionKey(
+            session.key,
+            bill.billNumberLabel,
+            bill.title,
+            bill.proposer
+          )
         ];
 
       const summary =
