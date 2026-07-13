@@ -70,6 +70,25 @@ export async function findDietSessionBySlug(
 }
 
 /**
+ * 全ての田川市議会会期を開始日の新しい順に取得
+ */
+export async function findAllDietSessions(): Promise<DietSession[]> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("diet_sessions")
+    .select("*")
+    .order("start_date", { ascending: false });
+
+  if (error) {
+    console.error("Failed to fetch all diet sessions:", error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+/**
  * 指定日より前の直近の田川市議会会期を取得
  */
 export async function findPreviousDietSession(

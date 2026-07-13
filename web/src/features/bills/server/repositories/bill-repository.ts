@@ -278,6 +278,34 @@ export async function countPublishedBillsByDietSession(
   return count ?? 0;
 }
 
+/**
+ * 全ての田川市議会会期について、公開済み議案数を一括で取得する
+ * 会期一覧ページ等、複数会期の件数をまとめて表示する場合に使用（N+1回避）
+ */
+export async function countPublishedBillsGroupedByDietSession(
+  difficultyLevel: DifficultyLevelEnum
+): Promise<Map<string, number>> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills")
+    .select("diet_session_id, bill_contents!inner(difficulty_level)")
+    .eq("publish_status", "published")
+    .eq("bill_contents.difficulty_level", difficultyLevel);
+
+  if (error) {
+    console.error("Failed to count bills grouped by diet session:", error);
+    return new Map();
+  }
+
+  const counts = new Map<string, number>();
+  for (const row of data ?? []) {
+    if (!row.diet_session_id) continue;
+    counts.set(row.diet_session_id, (counts.get(row.diet_session_id) ?? 0) + 1);
+  }
+
+  return counts;
+}
+
 // ============================================================
 // Featured
 // ============================================================

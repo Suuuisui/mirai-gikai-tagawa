@@ -22,6 +22,7 @@ import {
   findPublishedBillsByDietSession,
   findPreviousSessionBills,
   countPublishedBillsByDietSession,
+  countPublishedBillsGroupedByDietSession,
   findFeaturedTags,
   findPublishedBillsByTag,
   findFeaturedBillsWithContents,
@@ -428,6 +429,48 @@ describe("bill-repository 統合テスト", () => {
       );
 
       expect(count).toBe(0);
+    });
+  });
+
+  // ============================================================
+  // countPublishedBillsGroupedByDietSession
+  // ============================================================
+
+  describe("countPublishedBillsGroupedByDietSession", () => {
+    it("会期ごとの公開済み議案数をまとめて取得できる", async () => {
+      const sessionA = await createTestDietSession();
+      const sessionB = await createTestDietSession();
+      dietSessionIds.push(sessionA.id, sessionB.id);
+
+      const billA1 = await createTestBill({
+        publish_status: "published",
+        diet_session_id: sessionA.id,
+        submitted_date: new Date().toISOString(),
+      });
+      const billA2 = await createTestBill({
+        publish_status: "published",
+        diet_session_id: sessionA.id,
+        submitted_date: new Date().toISOString(),
+      });
+      const billB1 = await createTestBill({
+        publish_status: "published",
+        diet_session_id: sessionB.id,
+        submitted_date: new Date().toISOString(),
+      });
+      const draftBill = await createTestBill({
+        publish_status: "draft",
+        diet_session_id: sessionA.id,
+      });
+      billIds.push(billA1.id, billA2.id, billB1.id, draftBill.id);
+      await createTestBillContent(billA1.id, { difficulty_level: "normal" });
+      await createTestBillContent(billA2.id, { difficulty_level: "normal" });
+      await createTestBillContent(billB1.id, { difficulty_level: "normal" });
+      await createTestBillContent(draftBill.id, { difficulty_level: "normal" });
+
+      const counts = await countPublishedBillsGroupedByDietSession("normal");
+
+      expect(counts.get(sessionA.id)).toBe(2);
+      expect(counts.get(sessionB.id)).toBe(1);
     });
   });
 

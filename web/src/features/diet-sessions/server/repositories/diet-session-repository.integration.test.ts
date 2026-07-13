@@ -5,6 +5,7 @@ import {
 } from "@test-utils/utils";
 import {
   findActiveDietSession,
+  findAllDietSessions,
   findCurrentDietSession,
   findDietSessionBySlug,
   findPreviousDietSession,
@@ -110,6 +111,32 @@ describe("diet-session-repository 統合テスト", () => {
       const result = await findDietSessionBySlug("non-existent-slug-999999999");
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe("findAllDietSessions", () => {
+    it("全ての会期を開始日の新しい順に返す", async () => {
+      const older = await createTestDietSession({
+        start_date: "2027-01-01",
+        end_date: "2027-06-30",
+        is_active: false,
+      });
+      const newer = await createTestDietSession({
+        start_date: "2029-01-01",
+        end_date: "2029-06-30",
+        is_active: false,
+      });
+      sessionIds.push(older.id, newer.id);
+
+      const result = await findAllDietSessions();
+      const resultIds = result.map((s) => s.id);
+      const olderIndex = resultIds.indexOf(older.id);
+      const newerIndex = resultIds.indexOf(newer.id);
+
+      expect(olderIndex).toBeGreaterThanOrEqual(0);
+      expect(newerIndex).toBeGreaterThanOrEqual(0);
+      // 開始日が新しい会期ほど先に出現する
+      expect(newerIndex).toBeLessThan(olderIndex);
     });
   });
 

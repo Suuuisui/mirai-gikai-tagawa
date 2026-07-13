@@ -38,15 +38,24 @@ export function PreviousSessionSection({
     <section className="flex flex-col gap-6">
       {/* Archiveヘッダー */}
       <div className="flex flex-col gap-1">
-        <h2>
-          <Image
-            src="/icons/archive-typography.svg"
-            alt="Archive"
-            width={156}
-            height={36}
-            priority
-          />
-        </h2>
+        <div className="flex items-center justify-between gap-2">
+          <h2>
+            <Image
+              src="/icons/archive-typography.svg"
+              alt="Archive"
+              width={156}
+              height={36}
+              priority
+            />
+          </h2>
+          <Link
+            href={routes.kokkaiSessionArchive() as Route}
+            className="group flex items-center gap-0.5 text-xs font-bold text-mirai-text shrink-0"
+          >
+            すべての会期を見る
+            <ChevronRight className="h-4 w-4 text-mirai-text group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        </div>
         <p className="text-sm font-bold text-primary-accent">
           過去の田川市議会に提出された議案
         </p>
