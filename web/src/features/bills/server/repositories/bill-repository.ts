@@ -331,11 +331,14 @@ export async function findFeaturedTags() {
 
 /**
  * 特定タグに紐づく公開済み議案を取得（bill_contents + タグ付き）
+ * 議決日（submitted_date）の新しい順に並べる。
+ * @param limit 取得件数の上限（省略時は全件取得）
  */
 export async function findPublishedBillsByTag(
   tagId: string,
   difficultyLevel: DifficultyLevelEnum,
-  dietSessionId: string | null
+  dietSessionId: string | null,
+  limit?: number
 ) {
   const supabase = createAdminClient();
   let query = supabase
@@ -366,16 +369,43 @@ export async function findPublishedBillsByTag(
     )
     .eq("tag_id", tagId)
     .eq("bills.publish_status", "published")
-    .eq("bills.bill_contents.difficulty_level", difficultyLevel);
+    .eq("bills.bill_contents.difficulty_level", difficultyLevel)
+    .order("submitted_date", {
+      referencedTable: "bills",
+      ascending: false,
+      nullsFirst: false,
+    });
 
   if (dietSessionId) {
     query = query.eq("bills.diet_session_id", dietSessionId);
+  }
+
+  if (limit) {
+    query = query.limit(limit);
   }
 
   const { data, error } = await query;
 
   if (error) {
     console.error(`Failed to fetch bills for tag:`, error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * タグを1件取得
+ */
+export async function findTagById(tagId: string) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("tags")
+    .select("id, label, description")
+    .eq("id", tagId)
+    .single();
+
+  if (error) {
     return null;
   }
 

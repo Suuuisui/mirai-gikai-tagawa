@@ -70,8 +70,25 @@ const PROPOSER_LABEL: Record<Proposer, string> = {
   committee: "委員会提出",
 };
 
+// categorize() が判定するタグ種別の一覧（FEATURED_TAG_CONFIG のキーをこの型に
+// 制約することで、タグ名の変更時に両者が食い違うことをコンパイル時に検出する）
+type CategoryLabel =
+  | "専決処分承認"
+  | "決算"
+  | "請願・陳情"
+  | "予算"
+  | "条例"
+  | "人事"
+  | "意見書"
+  | "決議"
+  | "契約・工事"
+  | "財産処分・取得"
+  | "一部事務組合"
+  | "計画・構想"
+  | "その他";
+
 // 件名から議案の種別タグを機械的に判定する（AI生成ではなく単純なパターンマッチ）
-function categorize(bill: BillSource): string {
+function categorize(bill: BillSource): CategoryLabel {
   const { billNumberLabel, title } = bill;
   if (billNumberLabel?.startsWith("報告")) return "専決処分承認";
   if (billNumberLabel?.startsWith("認定")) return "決算";
@@ -97,6 +114,28 @@ function categorize(bill: BillSource): string {
   if (/計画|構想/.test(title)) return "計画・構想";
   return "その他";
 }
+
+// ホームページのタグ横断セクションに表示するタグと、その優先度・説明文
+// （団体運営者の判断として選定済み。優先度は小さい数字ほど上位表示）
+const FEATURED_TAG_CONFIG: Partial<
+  Record<CategoryLabel, { priority: number; description: string }>
+> = {
+  決議: {
+    priority: 1,
+    description:
+      "議長・市長への不信任、辞職勧告など、政治的に注目度の高い決議案",
+  },
+  予算: { priority: 2, description: "毎年度の市の使いみちを決める予算案" },
+  決算: {
+    priority: 3,
+    description: "前年度の税金の使われ方が適切だったかを審査する決算案",
+  },
+  条例: { priority: 4, description: "市民生活に直接関わるルールを定める条例改正" },
+  意見書: {
+    priority: 5,
+    description: "国・県などへ田川市議会としての意見を提出する意見書",
+  },
+};
 
 // 注目の議案として homepage に掲載する議案（事実として特筆性が高いものを選定。
 // AI選定ではなく、決算不認定・否決など議決が割れた案件と当初予算を人手で選定）
@@ -200,13 +239,14 @@ function main() {
       if (!tagId) {
         tagId = randomUUID();
         tagLabelToId.set(category, tagId);
+        const featuredConfig = FEATURED_TAG_CONFIG[category];
         tagRows.push({
           id: tagId,
           label: category,
           created_at: now,
           updated_at: now,
-          featured_priority: null,
-          description: null,
+          featured_priority: featuredConfig?.priority ?? null,
+          description: featuredConfig?.description ?? null,
         });
       }
       billsTagRows.push({

@@ -46,4 +46,7 @@ export const routes = {
   // ── 田川市議会セッション ────────────────────────────────
   kokkaiSessionArchive: () => "/kokkai" as const,
   kokkaiSessionBills: (slug: string) => `/kokkai/${slug}/bills` as const,
+
+  // ── タグ ──────────────────────────────────────────
+  tagBills: (tagId: string) => `/tags/${tagId}` as const,
 } as const;

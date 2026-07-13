@@ -1,80 +1,55 @@
 import { unstable_cache } from "next/cache";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { getActiveDietSession } from "@/features/diet-sessions/server/loaders/get-active-diet-session";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { BillsByTag } from "../../shared/types";
+import { mapBillsTagRowsToBills } from "../../shared/utils/map-bills-tag-rows";
 import {
+  findBillIdsWithPublicInterview,
   findFeaturedTags,
   findPublishedBillsByTag,
-  findBillIdsWithPublicInterview,
 } from "../repositories/bill-repository";
+
+// ホームページのタグ横断セクションで各タグごとに表示する議案数
+// 田川市議会は会期あたりの議案数が少ないため、会期を絞らず全会期横断で
+// 直近の議案を上位N件表示する（本家「みらい議会」の会期絞り込みとは異なる仕様）
+const BILLS_PER_TAG = 6;
 
 /**
  * Featured表示用の議案をタグごとにグループ化して取得
- * featured_priorityが設定されているタグを持つアクティブな田川市議会会期の議案を優先度順に取得
- * アクティブな田川市議会会期がない場合は全件取得
+ * featured_priorityが設定されているタグについて、全会期を横断して
+ * 議決日が新しい順に上位 BILLS_PER_TAG 件を取得する
  */
 export async function getBillsByFeaturedTags(): Promise<BillsByTag[]> {
   // キャッシュ外でcookiesにアクセス
   const difficultyLevel = await getDifficultyLevel();
-  const activeSession = await getActiveDietSession();
 
-  return _getCachedBillsByFeaturedTags(
-    difficultyLevel,
-    activeSession?.id ?? null
-  );
+  return _getCachedBillsByFeaturedTags(difficultyLevel);
 }
 
 const _getCachedBillsByFeaturedTags = unstable_cache(
-  async (
-    difficultyLevel: DifficultyLevelEnum,
-    dietSessionId: string | null
-  ): Promise<BillsByTag[]> => {
+  async (difficultyLevel: DifficultyLevelEnum): Promise<BillsByTag[]> => {
     const featuredTags = await findFeaturedTags();
 
     if (featuredTags.length === 0) {
       return [];
     }
 
-    // 各タグの議案を並列で取得
+    // 各タグの議案を並列で取得（全会期横断、直近順に上位N件）
     const results = await Promise.all(
       featuredTags.map(async (tag) => {
         const data = await findPublishedBillsByTag(
           tag.id,
           difficultyLevel,
-          dietSessionId
+          null,
+          BILLS_PER_TAG
         );
 
         if (!data || data.length === 0) {
           return null;
         }
 
-        // データを整形
-        const bills = data
-          .map((item) => {
-            const billData = item.bills;
-            if (!billData) return null;
-
-            const { bill_contents, bills_tags, ...bill } = billData;
-            const billContent = Array.isArray(bill_contents)
-              ? bill_contents[0]
-              : undefined;
-
-            // billに紐づくすべてのタグを取得
-            const tags = Array.isArray(bills_tags)
-              ? bills_tags
-                  .map((bt) => bt.tags)
-                  .filter((t): t is NonNullable<typeof t> => t !== null)
-              : [];
-
-            return {
-              ...bill,
-              bill_content: billContent,
-              tags,
-            };
-          })
-          .filter((bill): bill is NonNullable<typeof bill> => bill !== null);
+        const bills = mapBillsTagRowsToBills(data);
 
         if (bills.length === 0) {
           return null;
