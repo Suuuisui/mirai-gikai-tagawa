@@ -137,6 +137,25 @@ const FEATURED_TAG_CONFIG: Partial<
   },
 };
 
+// カテゴリ別のサムネイル画像（`web/public/img/bill-thumbnails/` に配置済みの静的イラスト）。
+// 議案ごとに個別のAI生成画像は用意せず、カテゴリ共通の画像を割り当てる
+// （コスト・運用負荷を抑えるため。将来的にadmin画面から個別画像への差し替えは可能）
+const CATEGORY_THUMBNAIL: Record<CategoryLabel, string> = {
+  予算: "/img/bill-thumbnails/budget.webp",
+  条例: "/img/bill-thumbnails/ordinance.webp",
+  "計画・構想": "/img/bill-thumbnails/plan.webp",
+  人事: "/img/bill-thumbnails/personnel.webp",
+  意見書: "/img/bill-thumbnails/opinion.webp",
+  決議: "/img/bill-thumbnails/resolution.webp",
+  決算: "/img/bill-thumbnails/settlement.webp",
+  一部事務組合: "/img/bill-thumbnails/union.webp",
+  専決処分承認: "/img/bill-thumbnails/special-disposition.webp",
+  "契約・工事": "/img/bill-thumbnails/contract.webp",
+  財産処分・取得: "/img/bill-thumbnails/property.webp",
+  "請願・陳情": "/img/bill-thumbnails/petition.webp",
+  その他: "/img/bill-thumbnails/other.webp",
+};
+
 // 注目の議案として homepage に掲載する議案（事実として特筆性が高いものを選定。
 // AI選定ではなく、決算不認定・否決など議決が割れた案件と当初予算を人手で選定）
 // キーは `会期キー:議案番号ラベル`
@@ -209,6 +228,7 @@ function main() {
         ? `${bill.billNumberLabel}　${bill.title}`
         : bill.title;
       const decidedAt = `${bill.resolvedDate}T00:00:00.000Z`;
+      const category = categorize(bill);
 
       billRows.push({
         id: billId,
@@ -224,7 +244,7 @@ function main() {
         submitted_date: bill.resolvedDate,
         created_at: decidedAt,
         updated_at: decidedAt,
-        thumbnail_url: null,
+        thumbnail_url: CATEGORY_THUMBNAIL[category],
         publish_status: "published",
         is_featured: FEATURED_BILLS.has(`${session.key}:${bill.billNumberLabel}`),
         share_thumbnail_url: null,
@@ -234,7 +254,6 @@ function main() {
         use_knowledge_source_in_chat: false,
       });
 
-      const category = categorize(bill);
       let tagId = tagLabelToId.get(category);
       if (!tagId) {
         tagId = randomUUID();
