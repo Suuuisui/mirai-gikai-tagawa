@@ -64,3 +64,17 @@ export function calculateProgressWidth(currentStep: number): number {
 export function getCurrentStep(status: BillStatusEnum): number {
   return STATUS_TO_STEP[status] ?? 0;
 }
+
+/**
+ * 審議ステータス進捗バーの基本ステップ定義を生成する
+ * 最終ステップのラベルはステータスに応じて出し分ける（否決の場合に
+ * 「議案成立」と表示されると可決したかのように誤解されるため）
+ */
+export function getBaseSteps(status: BillStatusEnum): { label: string }[] {
+  return [
+    { label: "議案\n提出" },
+    { label: "委員会\n審査" },
+    { label: "本会議\n議決" },
+    { label: status === "rejected" ? "審議\n終了" : "議案\n成立" },
+  ];
+}

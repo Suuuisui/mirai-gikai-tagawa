@@ -1,6 +1,7 @@
 import type { BillStatusEnum, HouseEnum } from "../../../shared/types";
 import {
   calculateProgressWidth,
+  getBaseSteps,
   getCurrentStep,
   getOrderedSteps,
   getStatusMessage,
@@ -24,14 +25,6 @@ interface ProgressStepProps {
   isActive: boolean;
   isPreparing: boolean;
 }
-
-// 基本ステップ定義
-const BASE_STEPS = [
-  { label: "議案\n提出" },
-  { label: "委員会\n審査" },
-  { label: "本会議\n議決" },
-  { label: "議案\n成立" },
-] as const;
 
 // ステータスバッジコンポーネント
 function StatusBadge({ message }: StatusBadgeProps) {
@@ -101,7 +94,7 @@ export function BillStatusProgress({
   const isPreparing = status === "preparing";
   const currentStep = getCurrentStep(status);
 
-  const orderedSteps = getOrderedSteps(originatingHouse, BASE_STEPS);
+  const orderedSteps = getOrderedSteps(originatingHouse, getBaseSteps(status));
   const progressWidth = calculateProgressWidth(currentStep);
 
   const statusMessage = getStatusMessage(status, statusNote);

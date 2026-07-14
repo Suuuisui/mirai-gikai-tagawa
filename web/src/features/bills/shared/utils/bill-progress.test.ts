@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   calculateProgressWidth,
+  getBaseSteps,
   getCurrentStep,
   getOrderedSteps,
   getStatusMessage,
@@ -106,6 +107,26 @@ describe("calculateProgressWidth", () => {
   test("範囲外のステップは0%", () => {
     expect(calculateProgressWidth(5)).toBe(0);
     expect(calculateProgressWidth(-1)).toBe(0);
+  });
+});
+
+describe("getBaseSteps", () => {
+  test("rejected 以外は最終ステップが '議案\\n成立'", () => {
+    expect(getBaseSteps("enacted")[3].label).toBe("議案\n成立");
+    expect(getBaseSteps("introduced")[3].label).toBe("議案\n成立");
+    expect(getBaseSteps("preparing")[3].label).toBe("議案\n成立");
+  });
+
+  test("rejected の場合は最終ステップが '審議\\n終了'", () => {
+    expect(getBaseSteps("rejected")[3].label).toBe("審議\n終了");
+  });
+
+  test("最終ステップ以外のラベルはステータスによらず共通", () => {
+    const enacted = getBaseSteps("enacted");
+    const rejected = getBaseSteps("rejected");
+    expect(rejected[0].label).toBe(enacted[0].label);
+    expect(rejected[1].label).toBe(enacted[1].label);
+    expect(rejected[2].label).toBe(enacted[2].label);
   });
 });
 
