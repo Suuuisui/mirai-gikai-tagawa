@@ -3,20 +3,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { DifficultySelector } from "@/features/bill-difficulty/client/components/difficulty-selector";
-import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { InterviewHeaderActions } from "@/features/interview-session/client/components/interview-header-actions";
-import { isInterviewPage, isMainPage } from "@/lib/page-layout-utils";
+import { isInterviewPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
 import { HamburgerMenu } from "./hamburger-menu";
 
-interface HeaderClientProps {
-  difficultyLevel: DifficultyLevelEnum;
-}
-
-export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
+// 難易度切り替え（説明をもっと詳しく）は、田川市版では hard 難易度の
+// 議案本文を用意していないため一時的に非表示にしている。
+// hard 版コンテンツを用意した際に DifficultySelector を復活させること。
+export function HeaderClient() {
   const pathname = usePathname();
-  const showDifficultySelector = isMainPage(pathname);
   const showInterviewActions = isInterviewPage(pathname);
 
   return (
@@ -50,9 +46,6 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
             className="flex items-center space-x-2"
             aria-label="補助ナビゲーション"
           >
-            {showDifficultySelector && (
-              <DifficultySelector currentLevel={difficultyLevel} />
-            )}
             {showInterviewActions && <InterviewHeaderActions />}
             <HamburgerMenu />
           </nav>
