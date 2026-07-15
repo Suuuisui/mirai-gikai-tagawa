@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import { sortBillsTagRowsByDateDesc } from "../../shared/utils/map-bills-tag-rows";
 
 // ============================================================
 // Bills
@@ -369,19 +370,10 @@ export async function findPublishedBillsByTag(
     )
     .eq("tag_id", tagId)
     .eq("bills.publish_status", "published")
-    .eq("bills.bill_contents.difficulty_level", difficultyLevel)
-    .order("submitted_date", {
-      referencedTable: "bills",
-      ascending: false,
-      nullsFirst: false,
-    });
+    .eq("bills.bill_contents.difficulty_level", difficultyLevel);
 
   if (dietSessionId) {
     query = query.eq("bills.diet_session_id", dietSessionId);
-  }
-
-  if (limit) {
-    query = query.limit(limit);
   }
 
   const { data, error } = await query;
@@ -391,7 +383,10 @@ export async function findPublishedBillsByTag(
     return null;
   }
 
-  return data;
+  // bills_tags を起点にした select では referencedTable 指定の .order() が
+  // 最上位の行順に反映されないため、取得後にアプリ側で並べ替える
+  const sorted = sortBillsTagRowsByDateDesc(data);
+  return limit ? sorted.slice(0, limit) : sorted;
 }
 
 /**

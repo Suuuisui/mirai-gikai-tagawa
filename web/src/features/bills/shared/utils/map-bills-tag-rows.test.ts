@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { mapBillsTagRowsToBills } from "./map-bills-tag-rows";
+import {
+  mapBillsTagRowsToBills,
+  sortBillsTagRowsByDateDesc,
+} from "./map-bills-tag-rows";
 
 // 実際の呼び出し元（findPublishedBillsByTag）はBillの全カラムを含む重い型を返すが、
 // このテストでは純粋関数のロジック検証に必要な最小限のフィールドのみを渡す。
@@ -80,5 +83,57 @@ describe("mapBillsTagRowsToBills", () => {
     ] as unknown as Rows);
 
     expect(result.map((b) => b.id)).toEqual(["bill-1", "bill-2"]);
+  });
+});
+
+describe("sortBillsTagRowsByDateDesc", () => {
+  it("submitted_date の新しい順に並べ替える", () => {
+    const result = sortBillsTagRowsByDateDesc([
+      { bills: { submitted_date: "2021-03-01" } },
+      { bills: { submitted_date: "2026-06-01" } },
+      { bills: { submitted_date: "2024-01-01" } },
+    ]);
+
+    expect(result.map((r) => r.bills?.submitted_date)).toEqual([
+      "2026-06-01",
+      "2024-01-01",
+      "2021-03-01",
+    ]);
+  });
+
+  it("submitted_date が null の行は末尾に回す", () => {
+    const result = sortBillsTagRowsByDateDesc([
+      { bills: { submitted_date: null } },
+      { bills: { submitted_date: "2025-01-01" } },
+    ]);
+
+    expect(result.map((r) => r.bills?.submitted_date)).toEqual([
+      "2025-01-01",
+      null,
+    ]);
+  });
+
+  it("bills が null の行も末尾に回す", () => {
+    const result = sortBillsTagRowsByDateDesc([
+      { bills: null },
+      { bills: { submitted_date: "2025-01-01" } },
+    ]);
+
+    expect(result.map((r) => r.bills?.submitted_date ?? null)).toEqual([
+      "2025-01-01",
+      null,
+    ]);
+  });
+
+  it("元の配列を変更しない", () => {
+    const original = [
+      { bills: { submitted_date: "2021-03-01" } },
+      { bills: { submitted_date: "2026-06-01" } },
+    ];
+    const originalCopy = [...original];
+
+    sortBillsTagRowsByDateDesc(original);
+
+    expect(original).toEqual(originalCopy);
   });
 });
