@@ -24,11 +24,19 @@ const CSV_IMPORTS: CsvImportConfig[] = [
 /**
  * JSON配列文字列をPostgreSQL配列形式に変換する
  * 例: '["a","b","c"]' -> '{a,b,c}'
+ *
+ * オブジェクトを含む配列（例: bills.explanation_material_urls のような
+ * jsonbカラム向けの '[{"label":...,"url":...}]'）はPostgreSQL配列ではなく
+ * JSONとして挿入する必要があるため、パース済みの配列をそのまま返す
+ * （supabase-jsがjsonbとしてシリアライズする）
  */
-function convertJsonArrayToPostgresArray(value: string): string {
+function convertJsonArrayToPostgresArray(value: string): string | unknown[] {
   try {
     const parsed = JSON.parse(value);
     if (Array.isArray(parsed)) {
+      if (parsed.some((item) => typeof item === "object" && item !== null)) {
+        return parsed;
+      }
       const escaped = parsed.map((item) => {
         const str = String(item);
         // カンマ、ダブルクォート、バックスラッシュ、中括弧、空白を含む場合はクォート

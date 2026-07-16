@@ -24,57 +24,17 @@
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import type { BillSource, Proposer, SessionSource } from "./source-data";
+import {
+  CACHE_DIR,
+  ENTITIES,
+  decodeEntities,
+  normalizeDigits,
+  fetchWithCache,
+  waitForRateLimit,
+} from "./http-utils";
 
 const LIST_URL = "https://www.joho.tagawa.fukuoka.jp/list00711.html";
-const CACHE_DIR =
-  process.env.TAGAWA_CACHE_DIR ?? path.join(import.meta.dirname, ".cache");
 const OUT_PATH = path.join(import.meta.dirname, "data/sessions.json");
-const FETCH_INTERVAL_MS = 1500;
-
-// ---------------------------------------------------------------- fetch/cache
-
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-let lastFetchAt = 0;
-
-async function fetchWithCache(url: string, cacheName: string): Promise<string> {
-  const cachePath = path.join(CACHE_DIR, cacheName);
-  if (existsSync(cachePath)) {
-    return readFileSync(cachePath, "utf-8");
-  }
-  const wait = lastFetchAt + FETCH_INTERVAL_MS - Date.now();
-  if (wait > 0) await sleep(wait);
-  lastFetchAt = Date.now();
-  console.log(`fetching ${url}`);
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
-  const body = await res.text();
-  mkdirSync(CACHE_DIR, { recursive: true });
-  writeFileSync(cachePath, body, "utf-8");
-  return body;
-}
-
-// ---------------------------------------------------------------- html utils
-
-const ENTITIES: Record<string, string> = {
-  "&nbsp;": " ",
-  "&amp;": "&",
-  "&lt;": "<",
-  "&gt;": ">",
-  "&quot;": '"',
-  "&#39;": "'",
-};
-
-function decodeEntities(s: string): string {
-  return s.replace(/&[a-z]+;|&#\d+;/g, (m) => ENTITIES[m] ?? " ");
-}
-
-/** 全角数字を半角へ */
-function normalizeDigits(s: string): string {
-  return s.replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
-}
 
 /**
  * タグを除去したテキストと、テキスト各文字の元HTMLオフセット対応表を作る。
@@ -499,9 +459,7 @@ async function fetchSjisWithCache(
   if (existsSync(cachePath)) {
     return readFileSync(cachePath, "utf-8");
   }
-  const wait = lastFetchAt + FETCH_INTERVAL_MS - Date.now();
-  if (wait > 0) await sleep(wait);
-  lastFetchAt = Date.now();
+  await waitForRateLimit();
   console.log(`fetching ${url}${postBody ? " (POST)" : ""}`);
   const res = await fetch(url, {
     method: postBody ? "POST" : "GET",

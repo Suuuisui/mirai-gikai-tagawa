@@ -27,6 +27,7 @@ const makeBill = (
   thumbnail_url: null,
   knowledge_source: null,
   use_knowledge_source_in_chat: false,
+  explanation_material_urls: null,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
   bill_content: {

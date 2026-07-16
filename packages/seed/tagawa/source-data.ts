@@ -44,6 +44,13 @@ export interface BillSource {
   resultSource?: "official" | "minutes";
   /** 議決月日（YYYY-MM-DD）。議決日不明の場合は会期末日 */
   resolvedDate: string;
+  /**
+   * 提出時の議案説明資料PDF（田川市公式サイト「提出議案と議決結果」ページ掲載分）。
+   * `scrape-explanation-materials.ts` が `session.sourceUrl` から抽出して埋める。
+   * 該当PDFが無い議案では省略される。複数号をまとめた資料や、同一議案に対する
+   * 複数PDF（説明資料＋委員会資料等）がある場合は配列で複数件保持する
+   */
+  explanationMaterialUrls?: { label: string; url: string }[];
 }
 
 export interface SessionSource {

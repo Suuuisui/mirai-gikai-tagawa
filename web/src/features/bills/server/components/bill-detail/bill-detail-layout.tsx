@@ -13,6 +13,7 @@ import type { BillWithContent } from "../../../shared/types";
 import { BillShareButtons } from "../share/bill-share-buttons";
 import { BillContent } from "./bill-content";
 import { BillDetailHeader } from "./bill-detail-header";
+import { ExplanationMaterialsSection } from "./explanation-materials-section";
 
 interface BillDetailLayoutProps {
   bill: BillWithContent;
@@ -65,6 +66,9 @@ export async function BillDetailLayout({
       </BillDetailClient>
 
       <Container>
+        {/* 提出時の説明資料（PDF）への外部リンク（資料が無い議案では非表示） */}
+        <ExplanationMaterialsSection bill={bill} />
+
         {/* 議案のトピック一覧（AIインタビュー意見の整理） */}
         <div className="my-8">
           <BillTopicsPreviewSection

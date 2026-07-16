@@ -252,6 +252,11 @@ function main() {
         diet_session_id: dietSessionId,
         knowledge_source: null,
         use_knowledge_source_in_chat: false,
+        // 提出時の議案説明資料PDF（公式サイト掲載分）。jsonbカラムのため
+        // JSON文字列として出力する（無い議案はnull）
+        explanation_material_urls: bill.explanationMaterialUrls
+          ? JSON.stringify(bill.explanationMaterialUrls)
+          : null,
       });
 
       let tagId = tagLabelToId.get(category);
@@ -388,6 +393,7 @@ function main() {
       "diet_session_id",
       "knowledge_source",
       "use_knowledge_source_in_chat",
+      "explanation_material_urls",
     ],
     billRows
   );

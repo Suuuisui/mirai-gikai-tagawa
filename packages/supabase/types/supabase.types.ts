@@ -79,6 +79,7 @@ export type Database = {
         Row: {
           created_at: string
           diet_session_id: string | null
+          explanation_material_urls: Json | null
           id: string
           is_featured: boolean
           is_review_completed: boolean
@@ -102,6 +103,7 @@ export type Database = {
         Insert: {
           created_at?: string
           diet_session_id?: string | null
+          explanation_material_urls?: Json | null
           id?: string
           is_featured?: boolean
           is_review_completed?: boolean
@@ -125,6 +127,7 @@ export type Database = {
         Update: {
           created_at?: string
           diet_session_id?: string | null
+          explanation_material_urls?: Json | null
           id?: string
           is_featured?: boolean
           is_review_completed?: boolean
@@ -1504,3 +1507,4 @@ export const Constants = {
     },
   },
 } as const
+
