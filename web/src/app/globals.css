@@ -109,6 +109,26 @@
   --color-mirai-gradient-start: #e8a08c;
   --color-mirai-gradient-end: #f5d9c8;
 
+  /* BillCover背景（議案カード用の動的カバー）: カテゴリ系統 × 濃淡3段階 */
+  --color-cover-terracotta-1: #f5d9c8;
+  --color-cover-terracotta-2: #edc0aa;
+  --color-cover-terracotta-3: #e0a888;
+  --color-cover-slate-1: #dde3e8;
+  --color-cover-slate-2: #c7d1d9;
+  --color-cover-slate-3: #aebcc7;
+  --color-cover-sage-1: #dfe6dc;
+  --color-cover-sage-2: #c9d4c3;
+  --color-cover-sage-3: #b0c0a8;
+  --color-cover-ochre-1: #ede0c0;
+  --color-cover-ochre-2: #e3cd9c;
+  --color-cover-ochre-3: #d6ba7c;
+  --color-cover-brown-1: #e3d3c4;
+  --color-cover-brown-2: #cdb69f;
+  --color-cover-brown-3: #b49579;
+  --color-cover-beige-1: #ece8e1;
+  --color-cover-beige-2: #ddd7cc;
+  --color-cover-beige-3: #cac1b1;
+
   /* Topic analysis */
   --color-topic-info-bg: #e5f3f0;
   --color-topic-chip-bg: #f1f1f1;
@@ -280,6 +300,148 @@
 
   .font-lexend {
     font-family: var(--font-lexend-giga), system-ui, sans-serif;
+  }
+
+  /* BillCover用の斜めグラデーション: 系統×濃淡3段階（variant 0/1/2）を巡回させる */
+  .bg-cover-terracotta-0 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-terracotta-1),
+      var(--color-cover-terracotta-2)
+    );
+  }
+  .bg-cover-terracotta-1 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-terracotta-2),
+      var(--color-cover-terracotta-3)
+    );
+  }
+  .bg-cover-terracotta-2 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-terracotta-3),
+      var(--color-cover-terracotta-1)
+    );
+  }
+
+  .bg-cover-slate-0 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-slate-1),
+      var(--color-cover-slate-2)
+    );
+  }
+  .bg-cover-slate-1 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-slate-2),
+      var(--color-cover-slate-3)
+    );
+  }
+  .bg-cover-slate-2 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-slate-3),
+      var(--color-cover-slate-1)
+    );
+  }
+
+  .bg-cover-sage-0 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-sage-1),
+      var(--color-cover-sage-2)
+    );
+  }
+  .bg-cover-sage-1 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-sage-2),
+      var(--color-cover-sage-3)
+    );
+  }
+  .bg-cover-sage-2 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-sage-3),
+      var(--color-cover-sage-1)
+    );
+  }
+
+  .bg-cover-ochre-0 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-ochre-1),
+      var(--color-cover-ochre-2)
+    );
+  }
+  .bg-cover-ochre-1 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-ochre-2),
+      var(--color-cover-ochre-3)
+    );
+  }
+  .bg-cover-ochre-2 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-ochre-3),
+      var(--color-cover-ochre-1)
+    );
+  }
+
+  .bg-cover-brown-0 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-brown-1),
+      var(--color-cover-brown-2)
+    );
+  }
+  .bg-cover-brown-1 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-brown-2),
+      var(--color-cover-brown-3)
+    );
+  }
+  .bg-cover-brown-2 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-brown-3),
+      var(--color-cover-brown-1)
+    );
+  }
+
+  .bg-cover-beige-0 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-beige-1),
+      var(--color-cover-beige-2)
+    );
+  }
+  .bg-cover-beige-1 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-beige-2),
+      var(--color-cover-beige-3)
+    );
+  }
+  .bg-cover-beige-2 {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-cover-beige-3),
+      var(--color-cover-beige-1)
+    );
+  }
+
+  /* BillCover用の薄いドットパターン装飾（過剰にならない程度の控えめな模様） */
+  .bg-cover-dots {
+    background-image: radial-gradient(
+      rgba(31, 41, 55, 0.06) 1px,
+      transparent 1px
+    );
+    background-size: 12px 12px;
   }
 }
 

@@ -3,7 +3,9 @@ import { RubySafeLineClamp } from "@/components/ruby-safe-line-clamp";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
+import { isDefaultThumbnail } from "../../../shared/utils/bill-cover";
 import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
+import { BillCover } from "./bill-cover";
 import { BillStatusBadge } from "./bill-status-badge";
 import { BillTag } from "./bill-tag";
 
@@ -18,29 +20,31 @@ export function BillCard({ bill }: BillCardProps) {
   return (
     <Card className="border border-black hover:bg-muted/50 transition-colors relative overflow-hidden max-w-[634px]">
       <div className="flex flex-col">
-        {/* 注目バッジエリア */}
+        {/* 注目バッジエリア（サムネイル領域は動的カバー含め常に表示されるため常に絶対配置） */}
         {bill.is_featured && (
-          <div
-            className={`${bill.thumbnail_url != null ? "absolute" : "relative"} top-3 left-3 z-1`}
-          >
+          <div className="absolute top-3 left-3 z-1">
             <span className="inline-flex items-center justify-center px-3 py-0.5 text-xs font-medium text-mirai-text bg-mirai-highlight rounded-[20px]">
               注目🔥
             </span>
           </div>
         )}
 
-        {/* サムネイル画像 */}
-        {bill.thumbnail_url && (
-          <div className="relative w-full h-52 md:h-65">
-            <Image
-              src={bill.thumbnail_url}
-              alt={bill.name}
-              fill
-              className="object-cover"
-              sizes="100vw"
-            />
-          </div>
-        )}
+        {/* サムネイル領域: 個別差し替え画像があればそれを表示、無ければ動的カバー(BillCover)を表示 */}
+        <div className="relative w-full h-36 md:h-44">
+          {isDefaultThumbnail(bill.thumbnail_url) ? (
+            <BillCover bill={bill} />
+          ) : (
+            bill.thumbnail_url && (
+              <Image
+                src={bill.thumbnail_url}
+                alt={bill.name}
+                fill
+                className="object-cover"
+                sizes="100vw"
+              />
+            )
+          )}
+        </div>
 
         {/* コンテンツエリア */}
         <div className="flex-1">
