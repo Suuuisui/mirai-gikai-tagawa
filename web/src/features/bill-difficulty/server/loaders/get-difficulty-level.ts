@@ -1,20 +1,23 @@
 import { cookies } from "next/headers";
-import {
-  DIFFICULTY_COOKIE_NAME,
-  type DifficultyLevelEnum,
-} from "../../shared/types";
-import { parseDifficultyLevel } from "../../shared/utils/parse-difficulty-level";
+import type { DifficultyLevelEnum } from "../../shared/types";
 
 /**
- * 現在の難易度設定をCookieから取得
+ * 現在の難易度設定を取得
  * Server Componentsから呼び出される読み取り専用の関数
  *
- * Note: URLパラメータ ?difficulty=hard がある場合、
- * Middlewareで自動的にCookieにセットされるため、
- * この関数は常にCookieから取得するだけでOK
+ * Note: 田川市版では hard 用の bill_contents を用意していないため、
+ * 常に "normal" を返す。トグル公開時に保存された Cookie
+ * （bill_difficulty_level=hard）が残っているブラウザで、
+ * bill_contents!inner 結合により全議案が空表示になる不具合を防ぐ。
+ * hard コンテンツを整備して難易度トグルを再有効化する際は、
+ * Cookie から取得する実装（git履歴参照）に戻すこと。
+ *
+ * cookies() の呼び出しは、この関数を経由するページ（sitemap.xml 含む）の
+ * 動的レンダリング特性を従来どおり維持するために残している。
+ * 外すとビルド時プリレンダリングに変わり、DB接続のないCI環境で
+ * next build が失敗する。
  */
 export async function getDifficultyLevel(): Promise<DifficultyLevelEnum> {
-  const cookieStore = await cookies();
-  const difficulty = cookieStore.get(DIFFICULTY_COOKIE_NAME);
-  return parseDifficultyLevel(difficulty?.value);
+  await cookies();
+  return "normal";
 }
