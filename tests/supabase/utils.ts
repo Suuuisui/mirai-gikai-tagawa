@@ -81,6 +81,14 @@ export async function cleanupTestUser(userId: string): Promise<void> {
 }
 
 // ── テストデータ作成ヘルパー ──
+
+// is_active=true な会期は同時に1件のみが不変条件（本番は set_active_diet_session
+// RPCで担保）。テストで is_active: true な会期を作る際、既存のactiveな会期
+// （seedデータ含む）を退避しておかないと findActiveDietSession の .maybeSingle() が
+// 「複数件」エラーになる。退避したIDを記録しておき、cleanupTestDietSession で
+// 元に戻す（seedデータ等への副作用を残さないため）。
+const deactivatedDietSessionIdsBySessionId = new Map<string, string[]>();
+
 /** テスト用 diet_session を作成 */
 export async function createTestDietSession(
   overrides: Partial<{
@@ -99,18 +107,49 @@ export async function createTestDietSession(
     is_active: false,
     ...overrides,
   };
+
+  let previouslyActiveIds: string[] = [];
+  if (defaults.is_active) {
+    const { data: previouslyActive } = await adminClient
+      .from("diet_sessions")
+      .select("id")
+      .eq("is_active", true);
+    previouslyActiveIds = (previouslyActive ?? []).map((row) => row.id);
+
+    if (previouslyActiveIds.length > 0) {
+      await adminClient
+        .from("diet_sessions")
+        .update({ is_active: false })
+        .eq("is_active", true);
+    }
+  }
+
   const { data, error } = await adminClient
     .from("diet_sessions")
     .insert(defaults)
     .select()
     .single();
   if (error) throw new Error(`diet_session 作成失敗: ${error.message}`);
+
+  if (previouslyActiveIds.length > 0) {
+    deactivatedDietSessionIdsBySessionId.set(data.id, previouslyActiveIds);
+  }
+
   return data;
 }
 
 /** テスト用 diet_session を削除 */
 export async function cleanupTestDietSession(sessionId: string): Promise<void> {
   await adminClient.from("diet_sessions").delete().eq("id", sessionId);
+
+  const idsToRestore = deactivatedDietSessionIdsBySessionId.get(sessionId);
+  if (idsToRestore && idsToRestore.length > 0) {
+    await adminClient
+      .from("diet_sessions")
+      .update({ is_active: true })
+      .in("id", idsToRestore);
+  }
+  deactivatedDietSessionIdsBySessionId.delete(sessionId);
 }
 
 /** テスト用 bill を作成 */

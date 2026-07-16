@@ -21,8 +21,9 @@ const _getCachedInterviewConfig = unstable_cache(
       if (error.code === "PGRST116") {
         return null;
       }
-      console.error("Failed to fetch interview config:", error);
-      return null;
+      // それ以外は一時的なDB障害等の可能性があるためthrowし、
+      // 空結果がunstable_cacheに焼き付くのを防ぐ。
+      throw new Error(`Failed to fetch interview config: ${error.message}`);
     }
 
     return data;

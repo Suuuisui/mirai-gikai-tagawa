@@ -15,8 +15,9 @@ export async function findActiveDietSession(): Promise<DietSession | null> {
     .maybeSingle();
 
   if (error) {
-    console.error("Failed to fetch active diet session:", error);
-    return null;
+    // maybeSingle()は0件時に error を返さないため、ここに到達するのは
+    // 接続断等の実エラーのみ。握りつぶさずthrowしてキャッシュ焼き付けを防ぐ。
+    throw new Error(`Failed to fetch active diet session: ${error.message}`);
   }
 
   return data;
@@ -40,8 +41,7 @@ export async function findCurrentDietSession(
     .maybeSingle();
 
   if (error) {
-    console.error("Failed to fetch current diet session:", error);
-    return null;
+    throw new Error(`Failed to fetch current diet session: ${error.message}`);
   }
 
   return data;
@@ -62,8 +62,7 @@ export async function findDietSessionBySlug(
     .maybeSingle();
 
   if (error) {
-    console.error("Failed to fetch diet session by slug:", error);
-    return null;
+    throw new Error(`Failed to fetch diet session by slug: ${error.message}`);
   }
 
   return data;
@@ -81,8 +80,7 @@ export async function findAllDietSessions(): Promise<DietSession[]> {
     .order("start_date", { ascending: false });
 
   if (error) {
-    console.error("Failed to fetch all diet sessions:", error);
-    return [];
+    throw new Error(`Failed to fetch all diet sessions: ${error.message}`);
   }
 
   return data ?? [];
@@ -105,8 +103,7 @@ export async function findPreviousDietSession(
     .maybeSingle();
 
   if (error) {
-    console.error("Failed to fetch previous diet session:", error);
-    return null;
+    throw new Error(`Failed to fetch previous diet session: ${error.message}`);
   }
 
   return data;

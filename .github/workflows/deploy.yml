@@ -4,22 +4,34 @@ name: Deploy to Vercel
 # Vercel GitHub App を使わず、GitHub Actions + Vercel CLI で実現している。
 # paths フィルタは意図的に使わない（packages/ の共有コード変更を拾い漏らさないため常に両方デプロイ）。
 #
+# push トリガーではなく Code Check（lint/typecheck/build/test）workflow の完了を
+# workflow_run で受けて実行する。conclusion == 'success' かつ対象ブランチが main の
+# 場合のみデプロイし、Code Check が失敗した push ではデプロイしない。
+# workflow_dispatch（手動実行）は Code Check の結果に関わらず単独で動作する。
+#
 # 必要な Secrets:
 # - VERCEL_TOKEN: Vercel API トークン
 # - VERCEL_TEAM_ID: Vercel チームID（org id）
 # - VERCEL_PROJECT_ID_WEB / VERCEL_PROJECT_ID_ADMIN: 各プロジェクトID
 
 on:
-  push:
-    branches: [main]
+  workflow_run:
+    workflows: ["Code Check"]
+    types: [completed]
   workflow_dispatch:
 
 concurrency:
-  group: deploy-vercel-${{ github.ref }}
+  group: deploy-vercel-${{ github.event.workflow_run.head_branch || github.ref_name }}
   cancel-in-progress: false
 
 jobs:
   deploy:
+    # workflow_dispatch は無条件で実行。workflow_run 経由は Code Check が
+    # main ブランチで成功した場合のみ実行する（develop や PR での実行、失敗時は除外）。
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -35,6 +47,10 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          # workflow_run はデフォルトブランチ先頭を checkout してしまうため、
+          # Code Check が実際に検証したコミットを明示的に指定する。
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

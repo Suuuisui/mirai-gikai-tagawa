@@ -55,7 +55,13 @@ export async function findPublishedBillById(id: string) {
     .single();
 
   if (error) {
-    return null;
+    // 0件/複数件時のPGRST116は「存在しない」という正常系のため握りつぶす。
+    // それ以外（接続断など）は一時的なDB障害の可能性があるためthrowし、
+    // unstable_cacheに空結果を焼き付けさせない。
+    if (error.code === "PGRST116") {
+      return null;
+    }
+    throw new Error(`Failed to fetch bill by id: ${error.message}`);
   }
 
   return data;
@@ -73,7 +79,10 @@ export async function findBillById(id: string) {
     .single();
 
   if (error) {
-    return null;
+    if (error.code === "PGRST116") {
+      return null;
+    }
+    throw new Error(`Failed to fetch bill: ${error.message}`);
   }
 
   return data;
@@ -91,7 +100,10 @@ export async function findMiraiStanceByBillId(billId: string) {
     .single();
 
   if (error) {
-    return null;
+    if (error.code === "PGRST116") {
+      return null;
+    }
+    throw new Error(`Failed to fetch mirai stance: ${error.message}`);
   }
 
   return data;
@@ -108,7 +120,7 @@ export async function findTagsByBillId(billId: string) {
     .eq("bill_id", billId);
 
   if (error) {
-    return null;
+    throw new Error(`Failed to fetch tags by bill id: ${error.message}`);
   }
 
   return data;
@@ -134,8 +146,10 @@ export async function findBillContentByDifficulty(
     .single();
 
   if (error) {
-    console.error(`Failed to fetch bill content: ${error.message}`);
-    return null;
+    if (error.code === "PGRST116") {
+      return null;
+    }
+    throw new Error(`Failed to fetch bill content: ${error.message}`);
   }
 
   return data;
@@ -246,8 +260,7 @@ export async function findPreviousSessionBills(
     .limit(limit);
 
   if (error) {
-    console.error("Failed to fetch previous session bills:", error);
-    return [];
+    throw new Error(`Failed to fetch previous session bills: ${error.message}`);
   }
 
   return data ?? [];
@@ -272,8 +285,7 @@ export async function countPublishedBillsByDietSession(
     .eq("bill_contents.difficulty_level", difficultyLevel);
 
   if (error) {
-    console.error("Failed to count previous session bills:", error);
-    return 0;
+    throw new Error(`Failed to count previous session bills: ${error.message}`);
   }
 
   return count ?? 0;
@@ -294,8 +306,9 @@ export async function countPublishedBillsGroupedByDietSession(
     .eq("bill_contents.difficulty_level", difficultyLevel);
 
   if (error) {
-    console.error("Failed to count bills grouped by diet session:", error);
-    return new Map();
+    throw new Error(
+      `Failed to count bills grouped by diet session: ${error.message}`
+    );
   }
 
   const counts = new Map<string, number>();
@@ -323,8 +336,7 @@ export async function findFeaturedTags() {
     .order("featured_priority", { ascending: true });
 
   if (error) {
-    console.error("Failed to fetch featured tags:", error);
-    return [];
+    throw new Error(`Failed to fetch featured tags: ${error.message}`);
   }
 
   return data ?? [];
@@ -379,8 +391,7 @@ export async function findPublishedBillsByTag(
   const { data, error } = await query;
 
   if (error) {
-    console.error(`Failed to fetch bills for tag:`, error);
-    return null;
+    throw new Error(`Failed to fetch bills for tag: ${error.message}`);
   }
 
   // bills_tags を起点にした select では referencedTable 指定の .order() が
@@ -401,7 +412,10 @@ export async function findTagById(tagId: string) {
     .single();
 
   if (error) {
-    return null;
+    if (error.code === "PGRST116") {
+      return null;
+    }
+    throw new Error(`Failed to fetch tag: ${error.message}`);
   }
 
   return data;
@@ -449,8 +463,7 @@ export async function findFeaturedBillsWithContents(
   const { data, error } = await query;
 
   if (error) {
-    console.error("Failed to fetch featured bills:", error);
-    return [];
+    throw new Error(`Failed to fetch featured bills: ${error.message}`);
   }
 
   return data ?? [];
@@ -489,8 +502,7 @@ export async function findComingSoonBills(dietSessionId: string | null) {
   const { data, error } = await query;
 
   if (error) {
-    console.error("Failed to fetch coming soon bills:", error);
-    return [];
+    throw new Error(`Failed to fetch coming soon bills: ${error.message}`);
   }
 
   return data ?? [];
@@ -545,8 +557,7 @@ export async function findBillIdsWithPublicInterview(
     .eq("status", "public");
 
   if (error) {
-    console.error("Failed to fetch interview configs:", error);
-    return new Set();
+    throw new Error(`Failed to fetch interview configs: ${error.message}`);
   }
 
   return new Set(data.map((row) => row.bill_id));

@@ -38,15 +38,17 @@ const _getCachedInterviewConfigAdmin = unstable_cache(
         if (latestError.code === "PGRST116") {
           return null;
         }
-        console.error("Failed to fetch interview config (admin):", latestError);
-        return null;
+        throw new Error(
+          `Failed to fetch interview config (admin): ${latestError.message}`
+        );
       }
 
       return latestData;
     }
 
-    console.error("Failed to fetch interview config (admin):", publicError);
-    return null;
+    throw new Error(
+      `Failed to fetch interview config (admin): ${publicError?.message}`
+    );
   },
   ["interview-config-admin"],
   {
