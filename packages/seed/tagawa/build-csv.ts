@@ -18,7 +18,6 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { randomUUID } from "node:crypto";
 import {
   loadTagawaSessions,
   type BillSource,
@@ -27,6 +26,17 @@ import {
 import { BILL_DESCRIPTIONS, billDescriptionKey } from "./bill-descriptions";
 import { BATCH_B_OVERRIDES } from "./bill-descriptions-batch-b";
 import { BATCH_C_OVERRIDES } from "./bill-descriptions-batch-c";
+import { uuidv5 } from "./uuidv5";
+
+// みらい議会＠田川市のシードID採番専用の名前空間UUID（ランダム生成した固定値）。
+// 変更すると全ID（bill_id等）が別値になり `/bills/{id}` のURLが全て変わるため、
+// 一度決めたら変更しないこと。
+const TAGAWA_SEED_NAMESPACE = "bca7c2b2-c956-4dc0-905c-7c6e312deb68";
+
+/** namespace固定でuuidv5を呼び出すための薄いラッパー */
+function seedId(name: string): string {
+  return uuidv5(TAGAWA_SEED_NAMESPACE, name);
+}
 
 // 並列バッチ（batch-b/batch-c）の解説文を統合する。担当会期が排他的なため
 // キーの衝突は発生しない想定（build-csv実行時にログで確認する）。
@@ -205,7 +215,7 @@ function main() {
   const billsTagRows: Array<Record<string, unknown>> = [];
 
   for (const session of TAGAWA_SESSIONS) {
-    const dietSessionId = randomUUID();
+    const dietSessionId = seedId(`session:${session.key}`);
     const now = `${session.startDate}T00:00:00.000Z`;
 
     dietSessionRows.push({
@@ -221,7 +231,14 @@ function main() {
     });
 
     for (const bill of session.bills) {
-      const billId = randomUUID();
+      // 同一会期内で「議案番号ラベル（無ければ件名）+ 提出者」の組は一意
+      // （提出者区分ごとに番号採番が独立しているため、番号のみでは同一会期内で
+      // 重複するケースがある。例: r3-1-teirei の市長提出「議案第2号」と
+      // 委員会提出「議案第2号」）
+      const billKey = bill.billNumberLabel ?? bill.title;
+      const billId = seedId(
+        `bill:${session.key}:${billKey}:${bill.proposer}`
+      );
       const status = resultToStatus(bill.resultLabel);
       const proposerLabel = PROPOSER_LABEL[bill.proposer];
       const name = bill.billNumberLabel
@@ -261,7 +278,7 @@ function main() {
 
       let tagId = tagLabelToId.get(category);
       if (!tagId) {
-        tagId = randomUUID();
+        tagId = seedId(`tag:${category}`);
         tagLabelToId.set(category, tagId);
         const featuredConfig = FEATURED_TAG_CONFIG[category];
         tagRows.push({
@@ -339,10 +356,11 @@ function main() {
               ]),
       ].join("\n");
 
+      const difficultyLevel = "normal";
       billContentRows.push({
-        id: randomUUID(),
+        id: seedId(`bill_content:${billId}:${difficultyLevel}`),
         bill_id: billId,
-        difficulty_level: "normal",
+        difficulty_level: difficultyLevel,
         title: bill.title,
         summary,
         content,
