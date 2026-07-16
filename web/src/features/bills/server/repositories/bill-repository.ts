@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import { sortBillsTagRowsByInterestDesc } from "../../shared/utils/interest-score";
 import { sortBillsTagRowsByDateDesc } from "../../shared/utils/map-bills-tag-rows";
 
 // ============================================================
@@ -344,14 +345,17 @@ export async function findFeaturedTags() {
 
 /**
  * 特定タグに紐づく公開済み議案を取得（bill_contents + タグ付き）
- * 議決日（submitted_date）の新しい順に並べる。
  * @param limit 取得件数の上限（省略時は全件取得）
+ * @param order 並び順。"date"（既定）は議決日の新しい順。"interest" はトップページの
+ *   タグ別議案一覧専用で、興味度スコア（interest-score.ts）の高い順に並べる。
+ *   タグ詳細ページ等の既存呼び出しは "date" のまま変更しないこと。
  */
 export async function findPublishedBillsByTag(
   tagId: string,
   difficultyLevel: DifficultyLevelEnum,
   dietSessionId: string | null,
-  limit?: number
+  limit?: number,
+  order: "date" | "interest" = "date"
 ) {
   const supabase = createAdminClient();
   let query = supabase
@@ -396,7 +400,10 @@ export async function findPublishedBillsByTag(
 
   // bills_tags を起点にした select では referencedTable 指定の .order() が
   // 最上位の行順に反映されないため、取得後にアプリ側で並べ替える
-  const sorted = sortBillsTagRowsByDateDesc(data);
+  const sorted =
+    order === "interest"
+      ? sortBillsTagRowsByInterestDesc(data)
+      : sortBillsTagRowsByDateDesc(data);
   return limit ? sorted.slice(0, limit) : sorted;
 }
 

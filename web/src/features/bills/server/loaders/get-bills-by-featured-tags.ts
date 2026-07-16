@@ -18,7 +18,8 @@ const BILLS_PER_TAG = 6;
 /**
  * Featured表示用の議案をタグごとにグループ化して取得
  * featured_priorityが設定されているタグについて、全会期を横断して
- * 議決日が新しい順に上位 BILLS_PER_TAG 件を取得する
+ * 興味度スコア（interest-score.ts）が高い順に上位 BILLS_PER_TAG 件を取得する
+ * （日付順だと補正予算等の定型議案ばかりになるため。タグ詳細ページは従来通り日付順）
  */
 export async function getBillsByFeaturedTags(): Promise<BillsByTag[]> {
   // キャッシュ外でcookiesにアクセス
@@ -38,11 +39,14 @@ const _getCachedBillsByFeaturedTags = unstable_cache(
     // 各タグの議案を並列で取得（全会期横断、直近順に上位N件）
     const results = await Promise.all(
       featuredTags.map(async (tag) => {
+        // トップページのタグ別議案一覧は興味度スコア順（interest-score.ts）に並べる。
+        // タグ詳細ページ（get-bills-by-tag.ts）は従来通り日付順のまま変更しない。
         const data = await findPublishedBillsByTag(
           tag.id,
           difficultyLevel,
           null,
-          BILLS_PER_TAG
+          BILLS_PER_TAG,
+          "interest"
         );
 
         if (!data || data.length === 0) {
