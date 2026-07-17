@@ -32,6 +32,7 @@ const makeBill = (
   knowledge_source: "厚生労働省の報告書",
   use_knowledge_source_in_chat: false,
   explanation_material_urls: null,
+  member_votes: null,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
   bill_content: {

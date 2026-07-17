@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { Database } from "@mirai-gikai/supabase";
 import { createAdminClient, clearAllData, type AdminClient } from "../shared/helper";
+import { castCsvValue } from "./csv-value-cast";
 import {
   attachBillMatchKeys,
   buildBillIdToMatchKey,
@@ -33,51 +34,12 @@ const CSV_IMPORTS: CsvImportConfig[] = [
   { table: "interview_questions", file: "interview_questions_rows.csv" },
 ];
 
-/**
- * JSON配列文字列をPostgreSQL配列形式に変換する
- * 例: '["a","b","c"]' -> '{a,b,c}'
- *
- * オブジェクトを含む配列（例: bills.explanation_material_urls のような
- * jsonbカラム向けの '[{"label":...,"url":...}]'）はPostgreSQL配列ではなく
- * JSONとして挿入する必要があるため、パース済みの配列をそのまま返す
- * （supabase-jsがjsonbとしてシリアライズする）
- */
-function convertJsonArrayToPostgresArray(value: string): string | unknown[] {
-  try {
-    const parsed = JSON.parse(value);
-    if (Array.isArray(parsed)) {
-      if (parsed.some((item) => typeof item === "object" && item !== null)) {
-        return parsed;
-      }
-      const escaped = parsed.map((item) => {
-        const str = String(item);
-        // カンマ、ダブルクォート、バックスラッシュ、中括弧、空白を含む場合はクォート
-        if (/[,"\\\{\}\s]/.test(str)) {
-          return `"${str.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
-        }
-        return str;
-      });
-      return `{${escaped.join(",")}}`;
-    }
-  } catch {
-    // JSON解析に失敗した場合は元の値を返す
-  }
-  return value;
-}
-
 function readCsv<T>(filePath: string): T[] {
   const content = fs.readFileSync(filePath, "utf-8");
   const records = parse(content, {
     columns: true,
     skip_empty_lines: true,
-    cast: (value) => {
-      if (value === "") return null;
-      // JSON配列形式の場合はPostgreSQL配列形式に変換
-      if (value.startsWith("[") && value.endsWith("]")) {
-        return convertJsonArrayToPostgresArray(value);
-      }
-      return value;
-    },
+    cast: (value) => castCsvValue(value),
   });
   return records as T[];
 }

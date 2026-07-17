@@ -33,6 +33,7 @@ const baseBill: BillWithContent = {
   knowledge_source: null,
   use_knowledge_source_in_chat: false,
   explanation_material_urls: null,
+  member_votes: null,
   created_at: "2026-02-15T00:00:00Z",
   updated_at: "2026-02-15T00:00:00Z",
   bill_content: {

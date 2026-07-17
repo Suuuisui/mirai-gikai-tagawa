@@ -27,6 +27,7 @@ import { BILL_DESCRIPTIONS, billDescriptionKey } from "./bill-descriptions";
 import { BATCH_B_OVERRIDES } from "./bill-descriptions-batch-b";
 import { BATCH_C_OVERRIDES } from "./bill-descriptions-batch-c";
 import { BATCH_D_OVERRIDES } from "./bill-descriptions-batch-d";
+import { MEMBER_VOTES } from "./member-votes-data";
 import { uuidv5 } from "./uuidv5";
 
 // みらい議会＠田川市のシードID採番専用の名前空間UUID（ランダム生成した固定値）。
@@ -218,6 +219,9 @@ function main() {
   const tagLabelToId = new Map<string, string>();
   const tagRows: Array<Record<string, unknown>> = [];
   const billsTagRows: Array<Record<string, unknown>> = [];
+  // MEMBER_VOTES のキーが実際にどこかの議案とマッチしたかを記録する
+  // （データ投入時のタイポ検出用。マッチしなかったキーは実行後にwarnする）
+  const matchedMemberVoteKeys = new Set<string>();
 
   for (const session of TAGAWA_SESSIONS) {
     const dietSessionId = seedId(`session:${session.key}`);
@@ -252,6 +256,13 @@ function main() {
       const decidedAt = `${bill.resolvedDate}T00:00:00.000Z`;
       const category = categorize(bill);
 
+      // 議員別の賛否（賛否が分かれた案件のみ市が公開。無ければnull）
+      const memberVoteKey = `${session.key}:${bill.billNumberLabel}`;
+      const memberVotes = MEMBER_VOTES[memberVoteKey];
+      if (memberVotes) {
+        matchedMemberVoteKeys.add(memberVoteKey);
+      }
+
       billRows.push({
         id: billId,
         name,
@@ -279,6 +290,9 @@ function main() {
         explanation_material_urls: bill.explanationMaterialUrls
           ? JSON.stringify(bill.explanationMaterialUrls)
           : null,
+        // 議員別の賛否（田川市議会公開分）。jsonbカラムのためJSON文字列として
+        // 出力する（賛否が分かれず市が公開していない議案はnull）
+        member_votes: memberVotes ? JSON.stringify(memberVotes) : null,
       });
 
       let tagId = tagLabelToId.get(category);
@@ -417,6 +431,7 @@ function main() {
       "knowledge_source",
       "use_knowledge_source_in_chat",
       "explanation_material_urls",
+      "member_votes",
     ],
     billRows
   );
@@ -449,6 +464,20 @@ function main() {
     ],
     []
   );
+
+  // MEMBER_VOTES のキーがどの議案にもマッチしなかった場合はwarnする
+  // （会期key・議案番号ラベルのタイポ検出用）
+  const unmatchedMemberVoteKeys = Object.keys(MEMBER_VOTES).filter(
+    (key) => !matchedMemberVoteKeys.has(key)
+  );
+  if (unmatchedMemberVoteKeys.length > 0) {
+    console.warn(
+      `\n⚠️ MEMBER_VOTES のキーがどの議案ともマッチしませんでした（${unmatchedMemberVoteKeys.length}件）:`
+    );
+    for (const key of unmatchedMemberVoteKeys) {
+      console.warn(`  - ${key}`);
+    }
+  }
 
   console.log(
     `\n🎉 変換完了: 会期${dietSessionRows.length}件 / 議案${billRows.length}件 / タグ${tagRows.length}件`

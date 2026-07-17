@@ -29,6 +29,7 @@ const baseBill: Bill = {
   knowledge_source: null,
   use_knowledge_source_in_chat: false,
   explanation_material_urls: null,
+  member_votes: null,
 };
 
 describe("prepareBillForDuplication", () => {

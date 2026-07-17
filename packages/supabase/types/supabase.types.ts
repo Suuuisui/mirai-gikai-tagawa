@@ -84,6 +84,7 @@ export type Database = {
           is_featured: boolean
           is_review_completed: boolean
           knowledge_source: string | null
+          member_votes: Json | null
           name: string
           originating_house: Database["public"]["Enums"]["house_enum"]
           publish_status: Database["public"]["Enums"]["bill_publish_status"]
@@ -108,6 +109,7 @@ export type Database = {
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
+          member_votes?: Json | null
           name: string
           originating_house: Database["public"]["Enums"]["house_enum"]
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
@@ -132,6 +134,7 @@ export type Database = {
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
+          member_votes?: Json | null
           name?: string
           originating_house?: Database["public"]["Enums"]["house_enum"]
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
