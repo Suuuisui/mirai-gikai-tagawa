@@ -23,6 +23,8 @@ import type { BillWithContent } from "../../../shared/types";
 
 interface BillCoverProps {
   bill: BillWithContent;
+  /** CompactBillCard の小サムネイル枠用。タイポグラフィを省きアイコンのみ表示する */
+  compact?: boolean;
 }
 
 // カテゴリ系統（globals.css の `.bg-cover-{family}-{0|1|2}` ユーティリティに対応）
@@ -90,13 +92,23 @@ function splitNumberLabel(label: string): { prefix: string; number: string } {
  * カテゴリ共通の静的サムネイル画像の代わりに、議案ごとに見た目が決定的に
  * 変化する背景・アイコン・タイポグラフィのみで構成されたカバーを描画する
  */
-export function BillCover({ bill }: BillCoverProps) {
+export function BillCover({ bill, compact = false }: BillCoverProps) {
   const categoryLabel = bill.tags[0]?.label;
   const categoryStyle =
     (categoryLabel && CATEGORY_STYLE[categoryLabel]) || DEFAULT_CATEGORY_STYLE;
   const variant = pickCoverVariant(bill.id, VARIANT_COUNT);
   const gradientClass = GRADIENT_CLASSES[categoryStyle.family][variant];
   const Icon = categoryStyle.icon;
+
+  if (compact) {
+    return (
+      <div
+        className={`relative flex h-full w-full items-center justify-center overflow-hidden ${gradientClass} bg-cover-dots`}
+      >
+        <Icon aria-hidden className="h-7 w-7 text-mirai-text/30" />
+      </div>
+    );
+  }
 
   const numberLabel = extractBillNumberLabel(bill.name);
   const parsedNumberLabel = numberLabel ? splitNumberLabel(numberLabel) : null;

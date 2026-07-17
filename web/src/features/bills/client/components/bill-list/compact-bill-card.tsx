@@ -2,7 +2,9 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
+import { isDefaultThumbnail } from "../../../shared/utils/bill-cover";
 import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
+import { BillCover } from "./bill-cover";
 import { BillStatusBadge } from "./bill-status-badge";
 
 interface CompactBillCardProps {
@@ -44,18 +46,20 @@ export function CompactBillCard({ bill, className }: CompactBillCardProps) {
           </div>
         </div>
 
-        {/* サムネイル画像 */}
-        {bill.thumbnail_url && (
-          <div className="relative w-24 h-16 flex-shrink-0 self-center mr-4 rounded-lg overflow-hidden">
+        {/* サムネイル（カテゴリ共通のデフォルト画像の場合は動的カバーを表示） */}
+        <div className="relative w-24 h-16 flex-shrink-0 self-center mr-4 rounded-lg overflow-hidden">
+          {isDefaultThumbnail(bill.thumbnail_url) ? (
+            <BillCover bill={bill} compact />
+          ) : (
             <Image
-              src={bill.thumbnail_url}
+              src={bill.thumbnail_url ?? ""}
               alt={bill.name}
               fill
               className="object-cover"
               sizes="96px"
             />
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </Card>
   );

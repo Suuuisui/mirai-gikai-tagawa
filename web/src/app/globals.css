@@ -435,10 +435,15 @@
     );
   }
 
-  /* BillCover用の薄いドットパターン装飾（過剰にならない程度の控えめな模様） */
-  .bg-cover-dots {
+  /* BillCover用の薄いドットパターン装飾（過剰にならない程度の控えめな模様）。
+     background-image を直接指定すると .bg-cover-* のグラデーションを上書きして
+     しまうため、::before の重ね描きにしている（要 position 済みの親） */
+  .bg-cover-dots::before {
+    content: "";
+    position: absolute;
+    inset: 0;
     background-image: radial-gradient(
-      rgba(31, 41, 55, 0.06) 1px,
+      rgba(31, 41, 55, 0.08) 1px,
       transparent 1px
     );
     background-size: 12px 12px;
