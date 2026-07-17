@@ -26,6 +26,7 @@ import {
 import { BILL_DESCRIPTIONS, billDescriptionKey } from "./bill-descriptions";
 import { BATCH_B_OVERRIDES } from "./bill-descriptions-batch-b";
 import { BATCH_C_OVERRIDES } from "./bill-descriptions-batch-c";
+import { BATCH_D_OVERRIDES } from "./bill-descriptions-batch-d";
 import { uuidv5 } from "./uuidv5";
 
 // みらい議会＠田川市のシードID採番専用の名前空間UUID（ランダム生成した固定値）。
@@ -38,12 +39,16 @@ function seedId(name: string): string {
   return uuidv5(TAGAWA_SEED_NAMESPACE, name);
 }
 
-// 並列バッチ（batch-b/batch-c）の解説文を統合する。担当会期が排他的なため
-// キーの衝突は発生しない想定（build-csv実行時にログで確認する）。
+// 並列バッチ（batch-b/batch-c/batch-d）の解説文を統合する。batch-b/batch-cは
+// 担当会期が排他的なためキーの衝突は発生しない想定（build-csv実行時にログで
+// 確認する）。batch-dのみ例外で、r8-2-teireiの一部議案についてbatch-cの
+// 会議録ベース解説を説明資料PDFで厚くする目的で意図的にキーを衝突させ、
+// 後勝ち（spread順）で上書きしている（bill-descriptions-batch-d.ts冒頭参照）。
 const ALL_BILL_DESCRIPTIONS = {
   ...BILL_DESCRIPTIONS,
   ...BATCH_B_OVERRIDES,
   ...BATCH_C_OVERRIDES,
+  ...BATCH_D_OVERRIDES,
 };
 
 const CSV_DATA_DIR = path.join(import.meta.dirname, "../csv/data");
