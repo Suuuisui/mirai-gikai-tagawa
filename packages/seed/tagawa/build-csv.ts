@@ -256,8 +256,10 @@ function main() {
       const decidedAt = `${bill.resolvedDate}T00:00:00.000Z`;
       const category = categorize(bill);
 
-      // 議員別の賛否（賛否が分かれた案件のみ市が公開。無ければnull）
-      const memberVoteKey = `${session.key}:${bill.billNumberLabel}`;
+      // 議員別の賛否（賛否が分かれた案件のみ市が公開。無ければnull）。
+      // 会期によっては市長提出と議員提出で同じ議案番号が使われるため
+      // （例: r7-6の議案第44号）、キーにproposerを含めて衝突を防ぐ
+      const memberVoteKey = `${session.key}:${bill.billNumberLabel}:${bill.proposer}`;
       const memberVotes = MEMBER_VOTES[memberVoteKey];
       if (memberVotes) {
         matchedMemberVoteKeys.add(memberVoteKey);
