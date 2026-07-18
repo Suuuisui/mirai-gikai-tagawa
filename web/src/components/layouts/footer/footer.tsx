@@ -1,8 +1,8 @@
 "use client";
 
 import { Instagram } from "lucide-react";
-import Image from "next/image";
 import type { Route } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { EXTERNAL_LINKS } from "@/config/external-links";

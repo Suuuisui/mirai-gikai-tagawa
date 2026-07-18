@@ -1,8 +1,8 @@
-import { describe, it, expect, afterEach } from "vitest";
 import {
-  createTestDietSession,
   cleanupTestDietSession,
+  createTestDietSession,
 } from "@test-utils/utils";
+import { afterEach, describe, expect, it } from "vitest";
 import {
   findActiveDietSession,
   findAllDietSessions,

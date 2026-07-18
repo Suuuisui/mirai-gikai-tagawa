@@ -174,13 +174,15 @@ const CATEGORY_THUMBNAIL: Record<CategoryLabel, string> = {
 
 // 注目の議案として homepage に掲載する議案（事実として特筆性が高いものを選定。
 // AI選定ではなく、決算不認定・否決など議決が割れた案件と当初予算を人手で選定）
-// キーは `会期キー:議案番号ラベル`
-const FEATURED_BILLS = new Set([
-  "r7-5-rinji:議案第37号", // 第三者調査委員会設置条例の制定
+// キーは `会期キー:議案番号ラベル`。
+// **配列の順番がそのままトップページの表示順になる**（先頭が一番上）。
+// 並び替えたいときはこの配列の順序を入れ替えて再シードする
+const FEATURED_BILLS = [
   "r7-6-teirei:認定第1号", // 令和6年度一般会計決算（不認定）
+  "r7-5-rinji:議案第37号", // 第三者調査委員会設置条例の制定
   "r8-2-teirei:議案第7号", // 令和8年度一般会計予算
   "r8-4-teirei:議案第42号", // 農業委員会委員の任命（否決）
-]);
+];
 
 function csvField(value: string | number | boolean | null): string {
   if (value === null || value === undefined) return "";
@@ -265,6 +267,11 @@ function main() {
         matchedMemberVoteKeys.add(memberVoteKey);
       }
 
+      // 注目の議案での位置（-1なら注目対象外）
+      const featuredIndex = FEATURED_BILLS.indexOf(
+        `${session.key}:${bill.billNumberLabel}`
+      );
+
       billRows.push({
         id: billId,
         name,
@@ -281,7 +288,9 @@ function main() {
         updated_at: decidedAt,
         thumbnail_url: CATEGORY_THUMBNAIL[category],
         publish_status: "published",
-        is_featured: FEATURED_BILLS.has(`${session.key}:${bill.billNumberLabel}`),
+        is_featured: featuredIndex >= 0,
+        // 注目の議案の表示順（FEATURED_BILLS配列の並び順。小さいほど上位）
+        featured_priority: featuredIndex >= 0 ? featuredIndex + 1 : null,
         share_thumbnail_url: null,
         shugiin_url: session.sourceUrl,
         diet_session_id: dietSessionId,
@@ -427,6 +436,7 @@ function main() {
       "thumbnail_url",
       "publish_status",
       "is_featured",
+      "featured_priority",
       "share_thumbnail_url",
       "shugiin_url",
       "diet_session_id",

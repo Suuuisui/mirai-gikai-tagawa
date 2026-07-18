@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   countVotes,
   groupEntriesByFaction,
-  parseMemberVotes,
   type MemberVoteEntry,
+  parseMemberVotes,
 } from "./member-votes";
 
 function validValue(overrides: Record<string, unknown> = {}) {

@@ -14,12 +14,12 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import type { BillWithContent } from "../../../shared/types";
 import {
   extractBillNumberLabel,
   formatSubmittedYearMonth,
   pickCoverVariant,
 } from "../../../shared/utils/bill-cover";
-import type { BillWithContent } from "../../../shared/types";
 
 interface BillCoverProps {
   bill: BillWithContent;

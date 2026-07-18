@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Container } from "@/components/layouts/container";
 import {
   LegalList,
   LegalPageLayout,
@@ -6,7 +7,6 @@ import {
   LegalSectionTitle,
   LegalSubSectionTitle,
 } from "@/components/layouts/legal-page-layout";
-import { Container } from "@/components/layouts/container";
 
 export const metadata: Metadata = {
   title: "利用規約 | みらい議会＠田川市",

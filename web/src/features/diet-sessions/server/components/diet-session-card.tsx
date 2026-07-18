@@ -2,8 +2,8 @@ import { ChevronRight } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import { formatDateWithDots } from "@/lib/utils/date";
 import { routes } from "@/lib/routes";
+import { formatDateWithDots } from "@/lib/utils/date";
 import type { DietSession } from "../../shared/types";
 
 interface DietSessionCardProps {

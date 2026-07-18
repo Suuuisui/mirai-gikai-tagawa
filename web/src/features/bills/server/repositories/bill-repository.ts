@@ -461,6 +461,8 @@ export async function findFeaturedBillsWithContents(
     )
     .eq("is_featured", true)
     .eq("bill_contents.difficulty_level", difficultyLevel)
+    // 運営が指定した表示順（featured_priority昇順、未設定は末尾）→ 新しい順
+    .order("featured_priority", { ascending: true, nullsFirst: false })
     .order("submitted_date", { ascending: false, nullsFirst: false });
 
   if (dietSessionId) {

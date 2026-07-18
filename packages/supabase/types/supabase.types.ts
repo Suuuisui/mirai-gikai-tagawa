@@ -80,6 +80,7 @@ export type Database = {
           created_at: string
           diet_session_id: string | null
           explanation_material_urls: Json | null
+          featured_priority: number | null
           id: string
           is_featured: boolean
           is_review_completed: boolean
@@ -105,6 +106,7 @@ export type Database = {
           created_at?: string
           diet_session_id?: string | null
           explanation_material_urls?: Json | null
+          featured_priority?: number | null
           id?: string
           is_featured?: boolean
           is_review_completed?: boolean
@@ -130,6 +132,7 @@ export type Database = {
           created_at?: string
           diet_session_id?: string | null
           explanation_material_urls?: Json | null
+          featured_priority?: number | null
           id?: string
           is_featured?: boolean
           is_review_completed?: boolean

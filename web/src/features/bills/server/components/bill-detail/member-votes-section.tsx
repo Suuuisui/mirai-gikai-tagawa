@@ -3,8 +3,8 @@ import type { Bill } from "../../../shared/types";
 import {
   countVotes,
   groupEntriesByFaction,
-  parseMemberVotes,
   type MemberVoteValue,
+  parseMemberVotes,
 } from "../../../shared/utils/member-votes";
 
 interface MemberVotesSectionProps {
