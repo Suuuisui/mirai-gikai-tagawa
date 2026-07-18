@@ -47,6 +47,18 @@ const SCORE_ROUTINE_PENALTY = -15;
 const ROUTINE_BILL_PATTERN =
   /任命|選任|同意を求める|専決処分|人権擁護委員|固定資産評価/;
 
+/**
+ * 新しさボーナス。スコアに「新しさ」の要素がないと、古い否決議案が新しい注目議案
+ * より上に来ることがあり、トップページが「今」の関心を反映できないため加点する。
+ * 400日 = 直近1年間＋定例会のずれを吸収する余裕を見た閾値。
+ * 800日 = 概ね2年圏内であればまだ「新しい」とみなす閾値。
+ */
+const SCORE_SUBMITTED_WITHIN_400_DAYS = 15;
+const SCORE_SUBMITTED_WITHIN_800_DAYS = 8;
+const RECENCY_BONUS_HIGH_THRESHOLD_DAYS = 400;
+const RECENCY_BONUS_LOW_THRESHOLD_DAYS = 800;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
 type BillContentForScore = Pick<BillContent, "title" | "summary" | "content">;
 
 /**
@@ -55,7 +67,11 @@ type BillContentForScore = Pick<BillContent, "title" | "summary" | "content">;
  */
 export type BillForInterestScore = Pick<
   Bill,
-  "status_note" | "name" | "is_featured" | "explanation_material_urls"
+  | "status_note"
+  | "name"
+  | "is_featured"
+  | "explanation_material_urls"
+  | "submitted_date"
 > & {
   bill_contents?: BillContentForScore[] | BillContentForScore | null;
 };
@@ -72,8 +88,12 @@ function getSingleBillContent(
 /**
  * 議案の「興味度スコア」を計算する純粋関数。
  * トップページのタグ別議案一覧のみで使用し、タグ詳細ページ等は従来通り日付順のまま。
+ * @param now 新しさボーナスの基準時刻。省略時は現在時刻（テストで日付を固定する用途）。
  */
-export function computeBillInterestScore(bill: BillForInterestScore): number {
+export function computeBillInterestScore(
+  bill: BillForInterestScore,
+  now: Date = new Date()
+): number {
   const content = getSingleBillContent(bill);
   const title = content?.title ?? "";
   const summary = content?.summary ?? "";
@@ -120,6 +140,16 @@ export function computeBillInterestScore(bill: BillForInterestScore): number {
     score += SCORE_ROUTINE_PENALTY;
   }
 
+  if (bill.submitted_date !== null) {
+    const elapsedDays =
+      (now.getTime() - new Date(bill.submitted_date).getTime()) / MS_PER_DAY;
+    if (elapsedDays <= RECENCY_BONUS_HIGH_THRESHOLD_DAYS) {
+      score += SCORE_SUBMITTED_WITHIN_400_DAYS;
+    } else if (elapsedDays <= RECENCY_BONUS_LOW_THRESHOLD_DAYS) {
+      score += SCORE_SUBMITTED_WITHIN_800_DAYS;
+    }
+  }
+
   return score;
 }
 
@@ -130,17 +160,18 @@ export function computeBillInterestScore(bill: BillForInterestScore): number {
  */
 export function sortBillsTagRowsByInterestDesc<
   T extends {
-    bills:
-      | (BillForInterestScore & { id: string; submitted_date: string | null })
-      | null;
+    bills: (BillForInterestScore & { id: string }) | null;
   },
 >(rows: T[]): T[] {
+  // ソート中に new Date() が複数回呼ばれて時刻がブレないよう、一度だけ取得して使い回す
+  const now = new Date();
+
   return [...rows].sort((a, b) => {
     const scoreA = a.bills
-      ? computeBillInterestScore(a.bills)
+      ? computeBillInterestScore(a.bills, now)
       : Number.NEGATIVE_INFINITY;
     const scoreB = b.bills
-      ? computeBillInterestScore(b.bills)
+      ? computeBillInterestScore(b.bills, now)
       : Number.NEGATIVE_INFINITY;
     if (scoreA !== scoreB) return scoreB - scoreA;
 

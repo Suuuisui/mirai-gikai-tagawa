@@ -3,7 +3,9 @@ import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/ge
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { BillsByTag } from "../../shared/types";
+import { computeBillInterestScore } from "../../shared/utils/interest-score";
 import { mapBillsTagRowsToBills } from "../../shared/utils/map-bills-tag-rows";
+import { sortBillsByTagSections } from "../../shared/utils/sort-bills-by-tag-sections";
 import {
   findBillIdsWithPublicInterview,
   findFeaturedTags,
@@ -81,13 +83,26 @@ const _getCachedBillsByFeaturedTags = unstable_cache(
     const interviewBillIds = await findBillIdsWithPublicInterview(allBillIds);
 
     // インタビュー状態を付与
-    return filteredResults.map((result) => ({
+    const resultsWithInterview = filteredResults.map((result) => ({
       ...result,
       bills: result.bills.map((bill) => ({
         ...bill,
         hasPublicInterview: interviewBillIds.has(bill.id),
       })),
     }));
+
+    // セクション（タグ）の並び順は featured_priority の固定順ではなく、
+    // 各セクションの代表スコア（表示議案の興味度スコアの最大値）の降順にする。
+    // 不信任決議ラッシュのように「今」政治的に熱いトピックがあれば、
+    // そのセクションが自動的に上位に来るようにするため。
+    // 同点時は featured_priority 昇順（従来の固定順）にフォールバックする。
+    const now = new Date();
+    return sortBillsByTagSections(resultsWithInterview, (bill) =>
+      computeBillInterestScore(
+        { ...bill, bill_contents: bill.bill_content },
+        now
+      )
+    );
   },
   ["featured-bills-list"],
   {

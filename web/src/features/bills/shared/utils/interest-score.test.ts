@@ -7,6 +7,17 @@ import {
 
 // 実際の呼び出し元（findPublishedBillsByTag）はBillの全カラムを含む重い型を返すが、
 // このテストでは純粋関数のロジック検証に必要な最小限のフィールドのみを渡す。
+// submitted_date は既定で新しさボーナス圏外（実行時刻によらず常に800日超前）にしておき、
+// 加点・減点ルールの単体テストが新しさボーナスの影響を受けないようにする。
+const FAR_PAST_SUBMITTED_DATE = "2000-01-01";
+
+/** 実行時点から指定日数前の日付文字列（YYYY-MM-DD）を返す。now依存の統合テスト用 */
+function daysAgo(days: number): string {
+  return new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+}
+
 function createBill(
   overrides: Partial<BillForInterestScore> = {}
 ): BillForInterestScore {
@@ -15,6 +26,7 @@ function createBill(
     name: "第1号議案 田川市一般会計補正予算（第1号）",
     is_featured: false,
     explanation_material_urls: null,
+    submitted_date: FAR_PAST_SUBMITTED_DATE,
     bill_contents: undefined,
     ...overrides,
   };
@@ -154,6 +166,40 @@ describe("computeBillInterestScore", () => {
     // 50(否決) + 30(featured) + 25(討論) + 15(論点解説)
     expect(score).toBe(120);
   });
+
+  it("submitted_date から400日以内（now基準）の場合は新しさボーナス+15", () => {
+    // 2025-06-01 -> 2026-07-01 は395日後
+    const score = computeBillInterestScore(
+      createBill({ submitted_date: "2025-06-01" }),
+      new Date("2026-07-01")
+    );
+    expect(score).toBe(15);
+  });
+
+  it("submitted_date から400日超800日以内（now基準）の場合は新しさボーナス+8", () => {
+    // 2024-06-01 -> 2026-07-01 は760日後
+    const score = computeBillInterestScore(
+      createBill({ submitted_date: "2024-06-01" }),
+      new Date("2026-07-01")
+    );
+    expect(score).toBe(8);
+  });
+
+  it("submitted_date から800日を超える（now基準）場合は新しさボーナスなし", () => {
+    const score = computeBillInterestScore(
+      createBill({ submitted_date: "2020-01-01" }),
+      new Date("2026-07-01")
+    );
+    expect(score).toBe(0);
+  });
+
+  it("submitted_date が null の場合は新しさボーナスなし", () => {
+    const score = computeBillInterestScore(
+      createBill({ submitted_date: null }),
+      new Date("2026-07-01")
+    );
+    expect(score).toBe(0);
+  });
 });
 
 describe("sortBillsTagRowsByInterestDesc", () => {
@@ -163,19 +209,42 @@ describe("sortBillsTagRowsByInterestDesc", () => {
         bills: {
           ...createBill(),
           id: "bill-low",
-          submitted_date: "2026-01-01",
         },
       },
       {
         bills: {
           ...createBill({ status_note: "否決" }),
           id: "bill-high",
-          submitted_date: "2020-01-01",
         },
       },
     ]);
 
     expect(result.map((r) => r.bills?.id)).toEqual(["bill-high", "bill-low"]);
+  });
+
+  it("新しい注目議案が古い注目議案より上に来る（新しさボーナス）", () => {
+    const recentFeaturedBill = {
+      bills: {
+        ...createBill({ is_featured: true, submitted_date: daysAgo(10) }),
+        id: "recent-featured",
+      },
+    };
+    const oldFeaturedBill = {
+      bills: {
+        ...createBill({ is_featured: true, submitted_date: "2015-01-01" }),
+        id: "old-featured",
+      },
+    };
+
+    const result = sortBillsTagRowsByInterestDesc([
+      oldFeaturedBill,
+      recentFeaturedBill,
+    ]);
+
+    expect(result.map((r) => r.bills?.id)).toEqual([
+      "recent-featured",
+      "old-featured",
+    ]);
   });
 
   it("否決議案が新しい定型議案より上に来る（統合ケース）", () => {
@@ -195,7 +264,7 @@ describe("sortBillsTagRowsByInterestDesc", () => {
           name: "教育委員会委員の任命につき同意を求めることについて",
         }),
         id: "routine-new",
-        submitted_date: "2026-06-01",
+        submitted_date: daysAgo(30),
       },
     };
 
@@ -213,7 +282,7 @@ describe("sortBillsTagRowsByInterestDesc", () => {
   it("スコアが同点の場合は submitted_date の新しい順（null末尾）", () => {
     const result = sortBillsTagRowsByInterestDesc([
       { bills: { ...createBill(), id: "b", submitted_date: null } },
-      { bills: { ...createBill(), id: "a", submitted_date: "2025-01-01" } },
+      { bills: { ...createBill(), id: "a", submitted_date: "2010-06-01" } },
     ]);
 
     expect(result.map((r) => r.bills?.id)).toEqual(["a", "b"]);
@@ -221,8 +290,8 @@ describe("sortBillsTagRowsByInterestDesc", () => {
 
   it("スコアも日付も同点の場合は id の昇順で安定化する", () => {
     const result = sortBillsTagRowsByInterestDesc([
-      { bills: { ...createBill(), id: "b", submitted_date: "2025-01-01" } },
-      { bills: { ...createBill(), id: "a", submitted_date: "2025-01-01" } },
+      { bills: { ...createBill(), id: "b", submitted_date: "2010-01-01" } },
+      { bills: { ...createBill(), id: "a", submitted_date: "2010-01-01" } },
     ]);
 
     expect(result.map((r) => r.bills?.id)).toEqual(["a", "b"]);
@@ -231,7 +300,7 @@ describe("sortBillsTagRowsByInterestDesc", () => {
   it("bills が null の行は末尾に回す", () => {
     const result = sortBillsTagRowsByInterestDesc([
       { bills: null },
-      { bills: { ...createBill(), id: "a", submitted_date: "2020-01-01" } },
+      { bills: { ...createBill(), id: "a" } },
     ]);
 
     expect(result.map((r) => r.bills?.id ?? null)).toEqual(["a", null]);
@@ -239,8 +308,8 @@ describe("sortBillsTagRowsByInterestDesc", () => {
 
   it("元の配列を変更しない", () => {
     const original = [
-      { bills: { ...createBill(), id: "b", submitted_date: "2020-01-01" } },
-      { bills: { ...createBill(), id: "a", submitted_date: "2025-01-01" } },
+      { bills: { ...createBill(), id: "b", submitted_date: "2010-01-01" } },
+      { bills: { ...createBill(), id: "a", submitted_date: "2015-01-01" } },
     ];
     const originalCopy = [...original];
 
