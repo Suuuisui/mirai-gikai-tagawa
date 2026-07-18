@@ -1,9 +1,14 @@
 import Image from "next/image";
 import { RubySafeLineClamp } from "@/components/ruby-safe-line-clamp";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
 import { isDefaultThumbnail } from "../../../shared/utils/bill-cover";
+import {
+  countVotes,
+  parseMemberVotes,
+} from "../../../shared/utils/member-votes";
 import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
 import { BillCover } from "./bill-cover";
 import { BillStatusBadge } from "./bill-status-badge";
@@ -16,6 +21,8 @@ interface BillCardProps {
 export function BillCard({ bill }: BillCardProps) {
   const displayTitle = bill.bill_content?.title;
   const summary = bill.bill_content?.summary;
+  const memberVotes = parseMemberVotes(bill.member_votes);
+  const voteCounts = memberVotes ? countVotes(memberVotes.entries) : null;
 
   return (
     <Card className="border border-black hover:bg-muted/50 transition-colors relative overflow-hidden max-w-[634px]">
@@ -61,6 +68,11 @@ export function BillCard({ bill }: BillCardProps) {
               </CardTitle>
               <div className="flex flex-row gap-4">
                 <BillStatusBadge status={bill.status} className="w-fit" />
+                {voteCounts && (
+                  <Badge variant="light" className="w-fit">
+                    賛否 {voteCounts.yes}対{voteCounts.no}
+                  </Badge>
+                )}
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   {bill.submitted_date && (
                     <time>{formatDateWithDots(bill.submitted_date)} 提出</time>

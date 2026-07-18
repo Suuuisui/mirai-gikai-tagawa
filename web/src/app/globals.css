@@ -91,6 +91,10 @@
   --color-stance-neutral: #805f34;
   --color-stance-neutral-badge-bg: #f7e8db;
 
+  /* Member vote semantic colors（議員別の賛否: 賛成=緑系。反対はstance-againstを流用） */
+  --color-vote-for: #2f7d4f;
+  --color-vote-for-bg: #e6f4ea;
+
   /* Reaction */
   --color-mirai-reaction-active: #dd425f;
   --color-mirai-reaction-inactive: var(--color-mirai-text-muted);

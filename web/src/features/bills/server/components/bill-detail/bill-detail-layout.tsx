@@ -62,6 +62,10 @@ export async function BillDetailLayout({
             />
           </div>
 
+          {/* 議員別の賛否（賛否が分かれた案件のみ市が公開。データが無い議案では非表示）
+              「賛否が分かれた」事実は議案の一番のニュースのため、長文解説より前に配置する */}
+          <MemberVotesSection bill={bill} />
+
           <BillContent bill={bill} />
         </Container>
       </BillDetailClient>
@@ -69,9 +73,6 @@ export async function BillDetailLayout({
       <Container>
         {/* 提出時の説明資料（PDF）への外部リンク（資料が無い議案では非表示） */}
         <ExplanationMaterialsSection bill={bill} />
-
-        {/* 議員別の賛否（賛否が分かれた案件のみ市が公開。データが無い議案では非表示） */}
-        <MemberVotesSection bill={bill} />
 
         {/* 議案のトピック一覧（AIインタビュー意見の整理） */}
         <div className="my-8">
