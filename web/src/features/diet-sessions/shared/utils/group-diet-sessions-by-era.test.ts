@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { DietSession } from "../types";
-import { groupDietSessionsByEraYear } from "./group-diet-sessions-by-era";
+import {
+  formatEraGroupHeading,
+  groupDietSessionsByEraYear,
+} from "./group-diet-sessions-by-era";
 
 function makeSession(overrides: Partial<DietSession>): DietSession {
   return {
@@ -87,5 +90,30 @@ describe("groupDietSessionsByEraYear", () => {
 
   it("空配列を渡すと空配列を返す", () => {
     expect(groupDietSessionsByEraYear([])).toEqual([]);
+  });
+});
+
+describe("formatEraGroupHeading", () => {
+  it("先頭会期のstart_dateの西暦とラベルを組み合わせた見出しを返す", () => {
+    const sessions = [
+      makeSession({ id: "1", start_date: "2026-06-12" }),
+      makeSession({ id: "2", start_date: "2026-05-29" }),
+    ];
+    const [group] = groupDietSessionsByEraYear(sessions);
+
+    expect(formatEraGroupHeading(group)).toBe("2026年（令和8年）");
+  });
+
+  it("令和元年（年またぎしない）の見出しも正しく組み立てる", () => {
+    const sessions = [
+      makeSession({
+        id: "1",
+        name: "令和元年（第5回）12月定例会",
+        start_date: "2019-12-02",
+      }),
+    ];
+    const [group] = groupDietSessionsByEraYear(sessions);
+
+    expect(formatEraGroupHeading(group)).toBe("2019年（令和元年）");
   });
 });

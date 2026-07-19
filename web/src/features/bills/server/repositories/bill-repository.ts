@@ -321,6 +321,52 @@ export async function countPublishedBillsGroupedByDietSession(
   return counts;
 }
 
+export type DietSessionBillStats = {
+  /** 公開済み議案数 */
+  billCount: number;
+  /** 議員別の賛否データ（member_votes）が登録されている議案の数 */
+  splitVoteCount: number;
+};
+
+/**
+ * 全ての田川市議会会期について、公開済み議案数と賛否が分かれた議案数を
+ * 一括で取得する（会期一覧ページ用、N+1回避）
+ */
+export async function findBillStatsGroupedByDietSession(
+  difficultyLevel: DifficultyLevelEnum
+): Promise<Map<string, DietSessionBillStats>> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills")
+    .select(
+      "diet_session_id, member_votes, bill_contents!inner(difficulty_level)"
+    )
+    .eq("publish_status", "published")
+    .eq("bill_contents.difficulty_level", difficultyLevel);
+
+  if (error) {
+    throw new Error(
+      `Failed to fetch bill stats grouped by diet session: ${error.message}`
+    );
+  }
+
+  const stats = new Map<string, DietSessionBillStats>();
+  for (const row of data ?? []) {
+    if (!row.diet_session_id) continue;
+    const current = stats.get(row.diet_session_id) ?? {
+      billCount: 0,
+      splitVoteCount: 0,
+    };
+    current.billCount += 1;
+    if (row.member_votes !== null) {
+      current.splitVoteCount += 1;
+    }
+    stats.set(row.diet_session_id, current);
+  }
+
+  return stats;
+}
+
 // ============================================================
 // Featured
 // ============================================================

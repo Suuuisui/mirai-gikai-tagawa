@@ -44,3 +44,14 @@ export function groupDietSessionsByEraYear(
 
   return groups;
 }
+
+/**
+ * 会期年度グループの見出しラベルを「2026年（令和8年）」の形式で組み立てる。
+ * 西暦はグループ内先頭会期（start_dateが最も新しい会期）の start_date から求める。
+ * グループは groupDietSessionsByEraYear により必ず1件以上の会期を持つ。
+ */
+export function formatEraGroupHeading(group: DietSessionEraGroup): string {
+  const firstSession = group.sessions[0];
+  const year = new Date(firstSession.start_date).getFullYear();
+  return `${year}年（${group.label}）`;
+}

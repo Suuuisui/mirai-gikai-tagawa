@@ -4,7 +4,7 @@ import { LinkButton } from "./link-button";
 
 export function About() {
   return (
-    <div className="py-10">
+    <div id="about" className="py-10 scroll-mt-24">
       <div className="flex flex-col gap-4">
         {/* ヘッダー */}
         <div className="flex flex-col gap-4">

@@ -1,5 +1,6 @@
 import { Container } from "@/components/layouts/container";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import { getDietSessionById } from "@/features/diet-sessions/server/loaders/get-diet-session-by-id";
 import { InterviewLandingSection } from "@/features/interview-config/client/components/interview-landing-section";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { getPublicReportsByBillId } from "@/features/interview-report/server/loaders/get-public-reports-by-bill-id";
@@ -13,6 +14,7 @@ import type { BillWithContent } from "../../../shared/types";
 import { BillShareButtons } from "../share/bill-share-buttons";
 import { BillContent } from "./bill-content";
 import { BillDetailHeader } from "./bill-detail-header";
+import { BillSessionLink } from "./bill-session-link";
 import { ExplanationMaterialsSection } from "./explanation-materials-section";
 import { MemberVotesSection } from "./member-votes-section";
 
@@ -26,11 +28,14 @@ export async function BillDetailLayout({
   currentDifficulty,
 }: BillDetailLayoutProps) {
   const showMiraiStance = bill.status === "preparing" || bill.mirai_stance;
-  const [interviewConfig, publicReportsResult, topicAnalysis] =
+  const [interviewConfig, publicReportsResult, topicAnalysis, dietSession] =
     await Promise.all([
       getInterviewConfig(bill.id),
       getPublicReportsByBillId(bill.id),
       getPublicTopicAnalysis(bill.id),
+      bill.diet_session_id
+        ? getDietSessionById(bill.diet_session_id)
+        : Promise.resolve(null),
     ]);
 
   return (
@@ -61,6 +66,16 @@ export async function BillDetailLayout({
               statusNote={bill.status_note}
             />
           </div>
+
+          {/* 所属会期のまとめページへのリンク（diet_session_idが無い議案では非表示） */}
+          {dietSession && (
+            <div className="mb-8">
+              <BillSessionLink
+                sessionId={dietSession.id}
+                sessionName={dietSession.name}
+              />
+            </div>
+          )}
 
           {/* 議員別の賛否（賛否が分かれた案件のみ市が公開。データが無い議案では非表示）
               「賛否が分かれた」事実は議案の一番のニュースのため、長文解説より前に配置する */}

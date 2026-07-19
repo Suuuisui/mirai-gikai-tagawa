@@ -11,6 +11,11 @@ type FooterLinkItem = {
 
 const links: FooterLinkItem[] = [
   {
+    label: "議会ごとのまとめ",
+    href: routes.sessionArchive(),
+    external: false,
+  },
+  {
     label: "利用規約",
     href: routes.terms(),
     external: false,
