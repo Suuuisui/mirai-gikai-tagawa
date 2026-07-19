@@ -1,7 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { getActiveDietSession } from "@/features/diet-sessions/server/loaders/get-active-diet-session";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { BillWithContent } from "../../shared/types";
 import {
@@ -12,15 +11,16 @@ import {
 
 /**
  * 注目の議案を取得する
- * is_featured = true でアクティブな田川市議会会期の公開済み議案を最新順に取得
- * アクティブな田川市議会会期がない場合は全件取得
+ * is_featured = true の公開済み議案を featured_priority 順に取得。
+ * 田川市版の注目議案は運営が全会期を横断してキュレーションしているため、
+ * upstream と異なりアクティブ会期での絞り込みは行わない
+ * （絞ると過去会期の注目議案がセクションに表示されない）
  */
 export async function getFeaturedBills(): Promise<BillWithContent[]> {
   // キャッシュ外でcookiesにアクセス
   const difficultyLevel = await getDifficultyLevel();
-  const activeSession = await getActiveDietSession();
 
-  return _getCachedFeaturedBills(difficultyLevel, activeSession?.id ?? null);
+  return _getCachedFeaturedBills(difficultyLevel, null);
 }
 
 const _getCachedFeaturedBills = unstable_cache(
