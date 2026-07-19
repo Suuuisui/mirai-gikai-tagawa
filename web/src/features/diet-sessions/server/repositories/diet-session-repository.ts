@@ -1,6 +1,6 @@
 import "server-only";
 import { createAdminClient } from "@mirai-gikai/supabase";
-import type { DietSession } from "../../shared/types";
+import type { DietSession, DietSessionNavItem } from "../../shared/types";
 
 /**
  * アクティブな田川市議会会期を取得
@@ -81,6 +81,48 @@ export async function findAllDietSessions(): Promise<DietSession[]> {
 
   if (error) {
     throw new Error(`Failed to fetch all diet sessions: ${error.message}`);
+  }
+
+  return data ?? [];
+}
+
+/**
+ * idで田川市議会会期を取得（会期まとめページ用）
+ */
+export async function findDietSessionById(
+  id: string
+): Promise<DietSession | null> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("diet_sessions")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to fetch diet session by id: ${error.message}`);
+  }
+
+  return data;
+}
+
+/**
+ * 前後の会期ナビゲーション用に、全ての田川市議会会期を開始日の古い順で
+ * 軽量な形（id, name, start_date のみ）で取得
+ */
+export async function findAllDietSessionsForNav(): Promise<
+  DietSessionNavItem[]
+> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("diet_sessions")
+    .select("id, name, start_date")
+    .order("start_date", { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to fetch diet sessions for nav: ${error.message}`);
   }
 
   return data ?? [];

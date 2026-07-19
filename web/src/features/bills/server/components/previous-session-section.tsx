@@ -76,6 +76,13 @@ export function PreviousSessionSection({
         <p className="text-xs font-medium text-mirai-text">
           {sessionDescription}
         </p>
+        <Link
+          href={routes.sessionSummary(session.id) as Route}
+          className="group inline-flex items-center gap-0.5 text-xs font-bold text-primary-accent w-fit"
+        >
+          この会期のまとめを見る
+          <ChevronRight className="h-4 w-4 text-primary-accent group-hover:translate-x-0.5 transition-transform" />
+        </Link>
       </div>
 
       {/* 議案カードリスト */}

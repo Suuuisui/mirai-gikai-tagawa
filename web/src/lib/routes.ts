@@ -47,6 +47,9 @@ export const routes = {
   kokkaiSessionArchive: () => "/kokkai" as const,
   kokkaiSessionBills: (slug: string) => `/kokkai/${slug}/bills` as const,
 
+  // ── 会期まとめ ────────────────────────────────────
+  sessionSummary: (id: string) => `/sessions/${id}` as const,
+
   // ── タグ ──────────────────────────────────────────
   tagBills: (tagId: string) => `/tags/${tagId}` as const,
 } as const;

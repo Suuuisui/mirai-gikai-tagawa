@@ -6,7 +6,9 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   findActiveDietSession,
   findAllDietSessions,
+  findAllDietSessionsForNav,
   findCurrentDietSession,
+  findDietSessionById,
   findDietSessionBySlug,
   findPreviousDietSession,
 } from "./diet-session-repository";
@@ -137,6 +139,57 @@ describe("diet-session-repository 統合テスト", () => {
       expect(newerIndex).toBeGreaterThanOrEqual(0);
       // 開始日が新しい会期ほど先に出現する
       expect(newerIndex).toBeLessThan(olderIndex);
+    });
+  });
+
+  describe("findDietSessionById", () => {
+    it("idで会期を取得できる", async () => {
+      const session = await createTestDietSession({});
+      sessionIds.push(session.id);
+
+      const result = await findDietSessionById(session.id);
+
+      expect(result).not.toBeNull();
+      expect(result?.id).toBe(session.id);
+      expect(result?.name).toBe(session.name);
+    });
+
+    it("存在しないidではnullを返す", async () => {
+      const result = await findDietSessionById(
+        "00000000-0000-0000-0000-000000000000"
+      );
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("findAllDietSessionsForNav", () => {
+    it("id, name, start_dateのみを開始日の古い順で返す", async () => {
+      const older = await createTestDietSession({
+        start_date: "2027-01-01",
+        end_date: "2027-06-30",
+        is_active: false,
+      });
+      const newer = await createTestDietSession({
+        start_date: "2029-01-01",
+        end_date: "2029-06-30",
+        is_active: false,
+      });
+      sessionIds.push(older.id, newer.id);
+
+      const result = await findAllDietSessionsForNav();
+      const olderIndex = result.findIndex((s) => s.id === older.id);
+      const newerIndex = result.findIndex((s) => s.id === newer.id);
+
+      expect(olderIndex).toBeGreaterThanOrEqual(0);
+      expect(newerIndex).toBeGreaterThanOrEqual(0);
+      // 開始日が古い会期ほど先に出現する
+      expect(olderIndex).toBeLessThan(newerIndex);
+      expect(Object.keys(result[olderIndex]).sort()).toEqual([
+        "id",
+        "name",
+        "start_date",
+      ]);
     });
   });
 
