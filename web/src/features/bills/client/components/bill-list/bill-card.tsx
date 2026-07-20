@@ -7,6 +7,7 @@ import type { BillWithContent } from "../../../shared/types";
 import { isDefaultThumbnail } from "../../../shared/utils/bill-cover";
 import {
   countVotes,
+  formatVoteCounts,
   parseMemberVotes,
 } from "../../../shared/utils/member-votes";
 import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
@@ -23,6 +24,9 @@ export function BillCard({ bill }: BillCardProps) {
   const summary = bill.bill_content?.summary;
   const memberVotes = parseMemberVotes(bill.member_votes);
   const voteCounts = memberVotes ? countVotes(memberVotes.entries) : null;
+  const voteLabel = voteCounts
+    ? formatVoteCounts(voteCounts.yes, voteCounts.no)
+    : null;
 
   return (
     <Card className="border border-black hover:bg-muted/50 transition-colors relative overflow-hidden max-w-[634px]">
@@ -31,7 +35,7 @@ export function BillCard({ bill }: BillCardProps) {
         {bill.is_featured && (
           <div className="absolute top-3 left-3 z-1">
             <span className="inline-flex items-center justify-center px-3 py-0.5 text-xs font-medium text-mirai-text bg-mirai-highlight rounded-[20px]">
-              注目🔥
+              注目<span aria-hidden="true">🔥</span>
             </span>
           </div>
         )}
@@ -68,9 +72,9 @@ export function BillCard({ bill }: BillCardProps) {
               </CardTitle>
               <div className="flex flex-row gap-4">
                 <BillStatusBadge status={bill.status} className="w-fit" />
-                {voteCounts && (
+                {voteLabel && (
                   <Badge variant="light" className="w-fit">
-                    賛否 {voteCounts.yes}対{voteCounts.no}
+                    {voteLabel.text}
                   </Badge>
                 )}
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">

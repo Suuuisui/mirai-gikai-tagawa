@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   countVotes,
+  formatVoteCounts,
   groupEntriesByFaction,
   type MemberVoteEntry,
   parseMemberVotes,
@@ -131,5 +132,21 @@ describe("countVotes", () => {
 
   it("空配列は0件を返す", () => {
     expect(countVotes([])).toEqual({ yes: 0, no: 0 });
+  });
+});
+
+describe("formatVoteCounts", () => {
+  it("賛成・反対どちらの数かが分かる表示テキストとaria-labelを返す", () => {
+    expect(formatVoteCounts(14, 5)).toEqual({
+      text: "賛成14・反対5",
+      ariaLabel: "賛成14対反対5",
+    });
+  });
+
+  it("0対0のような境界値も整形できる", () => {
+    expect(formatVoteCounts(0, 0)).toEqual({
+      text: "賛成0・反対0",
+      ariaLabel: "賛成0対反対0",
+    });
   });
 });

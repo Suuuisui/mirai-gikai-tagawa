@@ -134,3 +134,18 @@ export function countVotes(entries: MemberVoteEntry[]): {
   }
   return { yes, no };
 }
+
+/**
+ * 賛否の集計を表示用テキストとaria-labelに整形する。
+ * 「賛否 X対Y」だとどちらが賛成/反対か初見で分からないため、
+ * 「賛成X・反対Y」の形式に統一する
+ */
+export function formatVoteCounts(
+  yes: number,
+  no: number
+): { text: string; ariaLabel: string } {
+  return {
+    text: `賛成${yes}・反対${no}`,
+    ariaLabel: `賛成${yes}対反対${no}`,
+  };
+}

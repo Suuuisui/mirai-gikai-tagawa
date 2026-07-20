@@ -6,15 +6,22 @@ import { getPreviousSessionBills } from "./get-previous-session-bills";
 /**
  * トップページ用のデータを並列取得する
  * BFF (Backend For Frontend) パターン
+ *
+ * 「注目の議案」セクションに表示する議案は、直下のタグ別セクションと重複
+ * 表示させないため、先にfeaturedBillsを確定させてからそのIDを
+ * getBillsByFeaturedTagsに渡して除外する（タグ側のDB取得より前に除外する
+ * ことで、BILLS_PER_TAG件の表示件数が除外後も埋まった状態を保つ）
  */
 export async function loadHomeData() {
-  const [featuredBills, billsByTag, comingSoonBills, previousSessionData] =
+  const [featuredBills, comingSoonBills, previousSessionData] =
     await Promise.all([
       getFeaturedBills(),
-      getBillsByFeaturedTags(),
       getComingSoonBills(),
       getPreviousSessionBills(),
     ]);
+
+  const featuredBillIds = featuredBills.map((bill) => bill.id);
+  const billsByTag = await getBillsByFeaturedTags(featuredBillIds);
 
   return {
     billsByTag,

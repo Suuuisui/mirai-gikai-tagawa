@@ -22,21 +22,37 @@ const BILLS_PER_TAG = 6;
  * featured_priorityが設定されているタグについて、全会期を横断して
  * 興味度スコア（interest-score.ts）が高い順に上位 BILLS_PER_TAG 件を取得する
  * （日付順だと補正予算等の定型議案ばかりになるため。タグ詳細ページは従来通り日付順）
+ *
+ * @param excludeBillIds 除外する議案ID（トップページの「注目の議案」セクション
+ *   と重複させないため）。limit適用前にDB取得結果から除外するため、除外後も
+ *   BILLS_PER_TAG件まで埋まる
  */
-export async function getBillsByFeaturedTags(): Promise<BillsByTag[]> {
+export async function getBillsByFeaturedTags(
+  excludeBillIds: readonly string[] = []
+): Promise<BillsByTag[]> {
   // キャッシュ外でcookiesにアクセス
   const difficultyLevel = await getDifficultyLevel();
 
-  return _getCachedBillsByFeaturedTags(difficultyLevel);
+  // unstable_cacheの引数はキャッシュキーの一部としてシリアライズされるため、
+  // Setではなく安定した順序の配列（ソート済み）で渡す
+  return _getCachedBillsByFeaturedTags(
+    difficultyLevel,
+    [...excludeBillIds].sort()
+  );
 }
 
 const _getCachedBillsByFeaturedTags = unstable_cache(
-  async (difficultyLevel: DifficultyLevelEnum): Promise<BillsByTag[]> => {
+  async (
+    difficultyLevel: DifficultyLevelEnum,
+    excludeBillIds: string[]
+  ): Promise<BillsByTag[]> => {
     const featuredTags = await findFeaturedTags();
 
     if (featuredTags.length === 0) {
       return [];
     }
+
+    const excludeSet = new Set(excludeBillIds);
 
     // 各タグの議案を並列で取得（全会期横断、直近順に上位N件）
     const results = await Promise.all(
@@ -48,7 +64,8 @@ const _getCachedBillsByFeaturedTags = unstable_cache(
           difficultyLevel,
           null,
           BILLS_PER_TAG,
-          "interest"
+          "interest",
+          excludeSet
         );
 
         if (!data || data.length === 0) {

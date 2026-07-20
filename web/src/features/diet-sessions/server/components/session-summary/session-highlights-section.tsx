@@ -22,7 +22,7 @@ export function SessionHighlightsSection({
   return (
     <section className="flex flex-col gap-4">
       <h2 className="text-[22px] font-bold text-mirai-text leading-[1.48]">
-        🔥 この会期のハイライト
+        <span aria-hidden="true">🔥</span> この会期のハイライト
       </h2>
       <div className="flex flex-col gap-4">
         {bills.map((bill) => (

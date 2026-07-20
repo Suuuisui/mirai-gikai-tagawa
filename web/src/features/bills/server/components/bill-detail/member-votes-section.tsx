@@ -2,6 +2,7 @@ import { ExternalLink } from "lucide-react";
 import type { Bill } from "../../../shared/types";
 import {
   countVotes,
+  formatVoteCounts,
   groupEntriesByFaction,
   type MemberVoteValue,
   parseMemberVotes,
@@ -58,12 +59,13 @@ export function MemberVotesSection({ bill }: MemberVotesSectionProps) {
     (entry) => entry.vote === "not_voting"
   ).length;
   const decisiveCount = yes + no;
+  const voteLabel = formatVoteCounts(yes, no);
 
   return (
     <section className="my-8 rounded-md bg-white px-4 py-6">
       <h3 className="text-sm font-bold text-black">議員別の賛否</h3>
       <p className="mt-2 text-sm text-mirai-text">
-        賛成{yes}・反対{no}
+        {voteLabel.text}
         {absentCount > 0 && `・欠席${absentCount}`}
         {notVotingCount > 0 && `・採決に加わらず${notVotingCount}`}
       </p>
@@ -74,7 +76,7 @@ export function MemberVotesSection({ bill }: MemberVotesSectionProps) {
         <div
           className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-mirai-surface-muted"
           role="img"
-          aria-label={`賛成${yes}対反対${no}`}
+          aria-label={voteLabel.ariaLabel}
         >
           <div className="basis-0 bg-vote-for" style={{ flexGrow: yes }} />
           <div className="basis-0 bg-stance-against" style={{ flexGrow: no }} />

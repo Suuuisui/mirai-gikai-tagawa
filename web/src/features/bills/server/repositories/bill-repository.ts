@@ -395,13 +395,16 @@ export async function findFeaturedTags() {
  * @param order 並び順。"date"（既定）は議決日の新しい順。"interest" はトップページの
  *   タグ別議案一覧専用で、興味度スコア（interest-score.ts）の高い順に並べる。
  *   タグ詳細ページ等の既存呼び出しは "date" のまま変更しないこと。
+ * @param excludeBillIds 除外する議案ID（"注目の議案"セクションと重複させない
+ *   ため）。limitで件数を絞る前に除外するため、除外後も指定件数まで埋まる
  */
 export async function findPublishedBillsByTag(
   tagId: string,
   difficultyLevel: DifficultyLevelEnum,
   dietSessionId: string | null,
   limit?: number,
-  order: "date" | "interest" = "date"
+  order: "date" | "interest" = "date",
+  excludeBillIds?: ReadonlySet<string>
 ) {
   const supabase = createAdminClient();
   let query = supabase
@@ -444,12 +447,18 @@ export async function findPublishedBillsByTag(
     throw new Error(`Failed to fetch bills for tag: ${error.message}`);
   }
 
+  // excludeBillIdsによる除外は、limitで件数を絞る前に行う（後段で除外すると
+  // 指定件数に満たなくなり、除外前提でしか成立しないlimitの意味が崩れるため）
+  const filtered = excludeBillIds
+    ? data.filter((row) => !excludeBillIds.has(row.bill_id))
+    : data;
+
   // bills_tags を起点にした select では referencedTable 指定の .order() が
   // 最上位の行順に反映されないため、取得後にアプリ側で並べ替える
   const sorted =
     order === "interest"
-      ? sortBillsTagRowsByInterestDesc(data)
-      : sortBillsTagRowsByDateDesc(data);
+      ? sortBillsTagRowsByInterestDesc(filtered)
+      : sortBillsTagRowsByDateDesc(filtered);
   return limit ? sorted.slice(0, limit) : sorted;
 }
 

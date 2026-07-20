@@ -557,6 +557,45 @@ describe("bill-repository 統合テスト", () => {
       const found = result?.find((r) => r.bill_id === bill.id);
       expect(found).toBeDefined();
     });
+
+    it("excludeBillIdsで指定した議案をlimit適用前に除外する", async () => {
+      const tag = await createTestTag({
+        label: `tag-exclude-${Date.now()}`,
+      });
+      tagIds.push(tag.id);
+
+      const excludedBill = await createTestBill({
+        publish_status: "published",
+        submitted_date: new Date().toISOString(),
+      });
+      billIds.push(excludedBill.id);
+      await createTestBillContent(excludedBill.id, {
+        difficulty_level: "normal",
+      });
+      await createTestBillTag(excludedBill.id, tag.id);
+
+      const keptBill = await createTestBill({
+        publish_status: "published",
+        submitted_date: new Date().toISOString(),
+      });
+      billIds.push(keptBill.id);
+      await createTestBillContent(keptBill.id, { difficulty_level: "normal" });
+      await createTestBillTag(keptBill.id, tag.id);
+
+      // limitを1件にしても、除外対象を除いた残り（keptBill）が埋まることを
+      // 確認する（除外がlimit適用後だとexcludedBillが先に埋まり得る）
+      const result = await findPublishedBillsByTag(
+        tag.id,
+        "normal",
+        null,
+        1,
+        "date",
+        new Set([excludedBill.id])
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0].bill_id).toBe(keptBill.id);
+    });
   });
 
   // ============================================================

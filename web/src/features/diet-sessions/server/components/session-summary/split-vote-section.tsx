@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import {
   countVotes,
+  formatVoteCounts,
   parseMemberVotes,
 } from "@/features/bills/shared/utils/member-votes";
 import { routes } from "@/lib/routes";
@@ -44,11 +45,12 @@ export function SplitVoteSection({ bills }: SplitVoteSectionProps) {
   return (
     <section className="flex flex-col gap-4">
       <h2 className="text-[22px] font-bold text-mirai-text leading-[1.48]">
-        🗳️ 賛否が分かれた案件
+        <span aria-hidden="true">🗳️</span> 賛否が分かれた案件
       </h2>
       <div className="flex flex-col gap-3">
         {splitVoteBills.map(({ bill, yes, no }) => {
           const title = bill.bill_content?.title || bill.name;
+          const voteLabel = formatVoteCounts(yes, no);
           return (
             <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
               <Card className="flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
@@ -60,7 +62,7 @@ export function SplitVoteSection({ bills }: SplitVoteSectionProps) {
                 <div
                   className="flex h-2 w-full overflow-hidden rounded-full bg-mirai-surface-muted"
                   role="img"
-                  aria-label={`賛成${yes}対反対${no}`}
+                  aria-label={voteLabel.ariaLabel}
                 >
                   <div
                     className="basis-0 bg-vote-for"
@@ -72,7 +74,7 @@ export function SplitVoteSection({ bills }: SplitVoteSectionProps) {
                   />
                 </div>
                 <p className="text-xs text-mirai-text-muted">
-                  賛成{yes}・反対{no}
+                  {voteLabel.text}
                 </p>
               </Card>
             </Link>

@@ -1,4 +1,5 @@
 import { Container } from "@/components/layouts/container";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { getDietSessionById } from "@/features/diet-sessions/server/loaders/get-diet-session-by-id";
 import { InterviewLandingSection } from "@/features/interview-config/client/components/interview-landing-section";
@@ -6,6 +7,7 @@ import { getInterviewConfig } from "@/features/interview-config/server/loaders/g
 import { getPublicReportsByBillId } from "@/features/interview-report/server/loaders/get-public-reports-by-bill-id";
 import { BillTopicsPreviewSection } from "@/features/user-topic-analysis/server/components/bill-topics-preview-section";
 import { getPublicTopicAnalysis } from "@/features/user-topic-analysis/server/loaders/get-public-topic-analysis";
+import { routes } from "@/lib/routes";
 import { BillDetailClient } from "../../../client/components/bill-detail/bill-detail-client";
 import { BillDisclaimer } from "../../../client/components/bill-detail/bill-disclaimer";
 import { BillStatusProgress } from "../../../client/components/bill-detail/bill-status-progress";
@@ -58,6 +60,15 @@ export async function BillDetailLayout({
           topicCount={topicAnalysis?.topics.length ?? 0}
         />
         <Container>
+          <div className="mt-6">
+            <Breadcrumb
+              items={[
+                { label: "TOP", href: routes.home() },
+                { label: bill.bill_content?.title || bill.name },
+              ]}
+            />
+          </div>
+
           {/* 議案ステータス進捗 */}
           <div className="my-8">
             <BillStatusProgress
