@@ -27,7 +27,7 @@ const notoSerifJP = Noto_Serif_JP({
 
 const isDev = process.env.NODE_ENV === "development";
 const isStaging = process.env.VERCEL_TARGET_ENV === "staging";
-const siteTitle = "みらい議会＠田川市｜田川市議会の議案をやさしく解説";
+const siteTitle = "みらい議会＠田川市｜議案をやさしく解説";
 const siteDescription =
   "田川市議会に提出された議案・予算・条例・決議・意見書を、AIを活用してやさしい言葉で解説する市民向けプラットフォームです。";
 const siteName = "みらい議会＠田川市";
