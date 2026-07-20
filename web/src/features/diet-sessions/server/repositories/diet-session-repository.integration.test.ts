@@ -10,7 +10,7 @@ import {
   findCurrentDietSession,
   findDietSessionById,
   findDietSessionBySlug,
-  findPreviousDietSession,
+  findMostRecentConcludedDietSession,
 } from "./diet-session-repository";
 
 describe("diet-session-repository 統合テスト", () => {
@@ -193,24 +193,53 @@ describe("diet-session-repository 統合テスト", () => {
     });
   });
 
-  describe("findPreviousDietSession", () => {
-    it("指定日より前の直近の会期を返す", async () => {
-      const session = await createTestDietSession({
+  describe("findMostRecentConcludedDietSession", () => {
+    it("指定日より前にend_dateを迎えた会期のうち、start_dateが最も新しいものを返す", async () => {
+      const older = await createTestDietSession({
         start_date: "2027-01-01",
         end_date: "2027-06-30",
         is_active: false,
       });
-      sessionIds.push(session.id);
+      const newer = await createTestDietSession({
+        start_date: "2027-08-01",
+        end_date: "2027-09-30",
+        is_active: false,
+      });
+      sessionIds.push(older.id, newer.id);
 
-      const result = await findPreviousDietSession("2028-01-01");
+      const result = await findMostRecentConcludedDietSession("2028-01-01");
 
-      expect(result).not.toBeNull();
-      // biome-ignore lint/style/noNonNullAssertion: toBeNull 後に安全
-      expect(new Date(result!.start_date) < new Date("2028-01-01")).toBe(true);
+      expect(result?.id).toBe(newer.id);
     });
 
-    it("指定日より前の会期がない場合は null を返す", async () => {
-      const result = await findPreviousDietSession("1900-01-01");
+    it("end_dateが指定日以降の会期（開催中）は返さない", async () => {
+      const session = await createTestDietSession({
+        start_date: "2031-01-01",
+        end_date: "2031-06-30",
+        is_active: false,
+      });
+      sessionIds.push(session.id);
+
+      const result = await findMostRecentConcludedDietSession("2031-03-01");
+
+      expect(result?.id).not.toBe(session.id);
+    });
+
+    it("end_dateちょうどの日付では開催中扱いで返さない（findCurrentDietSessionの終了日inclusiveと二重計上しない）", async () => {
+      const session = await createTestDietSession({
+        start_date: "2033-01-01",
+        end_date: "2033-06-30",
+        is_active: false,
+      });
+      sessionIds.push(session.id);
+
+      const result = await findMostRecentConcludedDietSession("2033-06-30");
+
+      expect(result?.id).not.toBe(session.id);
+    });
+
+    it("該当する会期がない場合は null を返す", async () => {
+      const result = await findMostRecentConcludedDietSession("1900-01-01");
 
       expect(result).toBeNull();
     });

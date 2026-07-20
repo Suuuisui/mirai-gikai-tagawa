@@ -1,6 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { formatDate, formatDateWithDots, getJapanTime } from "./date";
+import {
+  formatDate,
+  formatDateWithDots,
+  getJapanTime,
+  toDateString,
+} from "./date";
 
 describe("formatDate", () => {
   it("formats a date string in Japanese locale", () => {
@@ -63,5 +68,15 @@ describe("getJapanTime", () => {
     expect(result.getHours()).toBe(9);
 
     vi.useRealTimers();
+  });
+});
+
+describe("toDateString", () => {
+  it("formats a date as YYYY-MM-DD", () => {
+    expect(toDateString(new Date(2026, 5, 12))).toBe("2026-06-12");
+  });
+
+  it("zero-pads single-digit month and day", () => {
+    expect(toDateString(new Date(2026, 0, 5))).toBe("2026-01-05");
   });
 });

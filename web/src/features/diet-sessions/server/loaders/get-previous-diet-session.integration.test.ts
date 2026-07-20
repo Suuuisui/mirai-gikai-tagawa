@@ -23,8 +23,7 @@ describe("getPreviousDietSession 統合テスト", () => {
     sessionIds.length = 0;
   });
 
-  it("アクティブな会期の前の会期を返す", async () => {
-    // 古い会期を作成
+  it("基準日時点で既に終了している会期のうち、開始日が最も新しいものを返す", async () => {
     const older = await createTestDietSession({
       start_date: "2027-01-01",
       end_date: "2027-06-30",
@@ -32,20 +31,49 @@ describe("getPreviousDietSession 統合テスト", () => {
     });
     sessionIds.push(older.id);
 
-    // アクティブな会期を作成
-    const active = await createTestDietSession({
+    // is_active はfalseのままだが、こちらの方が新しく閉会している
+    const mostRecentlyConcluded = await createTestDietSession({
       start_date: "2028-01-01",
       end_date: "2028-06-30",
+      is_active: false,
+    });
+    sessionIds.push(mostRecentlyConcluded.id);
+
+    const result = await getPreviousDietSession(new Date(2028, 6, 15));
+
+    expect(result?.id).toBe(mostRecentlyConcluded.id);
+  });
+
+  it("is_active=trueの会期が最新でも、基準日時点で終了していれば返す（is_activeの更新有無に依存しない）", async () => {
+    // 運営がis_activeの付け替えを忘れていても正しく動くことを確認する
+    const activeButConcluded = await createTestDietSession({
+      start_date: "2029-01-01",
+      end_date: "2029-01-10",
       is_active: true,
     });
-    sessionIds.push(active.id);
+    sessionIds.push(activeButConcluded.id);
 
-    const result = await getPreviousDietSession();
+    const result = await getPreviousDietSession(new Date(2029, 0, 20));
 
-    expect(result).not.toBeNull();
-    // biome-ignore lint/style/noNonNullAssertion: toBeNull 後に安全
-    expect(new Date(result!.start_date) < new Date(active.start_date)).toBe(
-      true
-    );
+    expect(result?.id).toBe(activeButConcluded.id);
+  });
+
+  it("基準日時点でまだ終了していない会期は返さない", async () => {
+    const ongoing = await createTestDietSession({
+      start_date: "2030-01-01",
+      end_date: "2030-06-30",
+      is_active: false,
+    });
+    sessionIds.push(ongoing.id);
+
+    const result = await getPreviousDietSession(new Date(2030, 2, 1));
+
+    expect(result?.id).not.toBe(ongoing.id);
+  });
+
+  it("該当する会期がない場合は null を返す", async () => {
+    const result = await getPreviousDietSession(new Date(1900, 0, 1));
+
+    expect(result).toBeNull();
   });
 });

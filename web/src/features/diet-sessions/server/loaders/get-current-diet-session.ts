@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { CACHE_TAGS } from "@/lib/cache-tags";
+import { toDateString } from "@/lib/utils/date";
 import type { DietSession } from "../../shared/types";
 import { findCurrentDietSession } from "../repositories/diet-session-repository";
 
@@ -10,13 +11,7 @@ import { findCurrentDietSession } from "../repositories/diet-session-repository"
 export async function getCurrentDietSession(
   date: Date
 ): Promise<DietSession | null> {
-  // YYYY-MM-DD形式に変換
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const targetDate = `${year}-${month}-${day}`;
-
-  return _getCachedCurrentDietSession(targetDate);
+  return _getCachedCurrentDietSession(toDateString(date));
 }
 
 const _getCachedCurrentDietSession = unstable_cache(

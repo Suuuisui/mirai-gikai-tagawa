@@ -4,6 +4,7 @@ import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/type
 import { getPreviousDietSession } from "@/features/diet-sessions/server/loaders/get-previous-diet-session";
 import type { DietSession } from "@/features/diet-sessions/shared/types";
 import { CACHE_TAGS } from "@/lib/cache-tags";
+import { getJapanTime } from "@/lib/utils/date";
 import type { BillWithContent } from "../../shared/types";
 import {
   countPublishedBillsByDietSession,
@@ -25,12 +26,15 @@ export type PreviousSessionBillsResult = {
  * 前回の会期がない場合はnullを返す
  */
 export async function getPreviousSessionBills(): Promise<PreviousSessionBillsResult> {
-  const previousSession = await getPreviousDietSession();
+  // 互いに依存しないため並列取得する
+  const [previousSession, difficultyLevel] = await Promise.all([
+    getPreviousDietSession(getJapanTime()),
+    getDifficultyLevel(),
+  ]);
   if (!previousSession) {
     return null;
   }
 
-  const difficultyLevel = await getDifficultyLevel();
   const [bills, totalBillCount] = await Promise.all([
     _getCachedPreviousSessionBills(previousSession.id, difficultyLevel),
     _getCachedPreviousSessionBillCount(previousSession.id, difficultyLevel),

@@ -129,23 +129,29 @@ export async function findAllDietSessionsForNav(): Promise<
 }
 
 /**
- * 指定日より前の直近の田川市議会会期を取得
+ * 指定日時点で既に終了している会期のうち、開始日が最も新しいものを取得する
+ * （「前回の田川市議会」プレビュー用）。
+ * is_active フラグ（運営が現在フォーカスしている会期を示す手動フラグ）には
+ * 依存しない。is_active の更新が新しい会期の追加に追いつかない場合でも、
+ * 実際に直近で閉会した会期を正しく返すため。
  */
-export async function findPreviousDietSession(
-  beforeStartDate: string
+export async function findMostRecentConcludedDietSession(
+  targetDate: string
 ): Promise<DietSession | null> {
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("diet_sessions")
     .select("*")
-    .lt("start_date", beforeStartDate)
+    .lt("end_date", targetDate)
     .order("start_date", { ascending: false })
     .limit(1)
     .maybeSingle();
 
   if (error) {
-    throw new Error(`Failed to fetch previous diet session: ${error.message}`);
+    throw new Error(
+      `Failed to fetch most recent concluded diet session: ${error.message}`
+    );
   }
 
   return data;
