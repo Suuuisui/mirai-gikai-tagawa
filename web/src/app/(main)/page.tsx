@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Container } from "@/components/layouts/container";
 import { About } from "@/components/top/about";
 import { ComingSoonSection } from "@/components/top/coming-soon-section";
@@ -13,6 +14,12 @@ import { HomeChatClient } from "@/features/chat/client/components/home-chat-clie
 import { CurrentDietSession } from "@/features/diet-sessions/client/components/current-diet-session";
 import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/get-current-diet-session";
 import { getJapanTime } from "@/lib/utils/date";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default async function Home() {
   const { billsByTag, featuredBills, comingSoonBills, previousSessionData } =

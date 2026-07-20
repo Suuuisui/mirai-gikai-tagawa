@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Lexend_Giga, Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import type { ReactNode } from "react";
+import { JsonLd } from "@/components/seo/json-ld";
 import { env } from "@/lib/env";
 
 const notoSansJP = Noto_Sans_JP({
@@ -26,9 +27,9 @@ const notoSerifJP = Noto_Serif_JP({
 
 const isDev = process.env.NODE_ENV === "development";
 const isStaging = process.env.VERCEL_TARGET_ENV === "staging";
-const siteTitle = "みらい議会＠田川市";
+const siteTitle = "みらい議会＠田川市｜田川市議会の議案をやさしく解説";
 const siteDescription =
-  "田川市議会で今どんな議案が検討されているか、わかりやすく伝えるプラットフォーム";
+  "田川市議会に提出された議案・予算・条例・決議・意見書を、AIを活用してやさしい言葉で解説する市民向けプラットフォームです。";
 const siteName = "みらい議会＠田川市";
 const ogImage = {
   url: "/ogp.jpg",
@@ -39,7 +40,10 @@ const ogImage = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.webUrl),
-  title: siteTitle,
+  title: {
+    default: siteTitle,
+    template: `%s | ${siteName}`,
+  },
   description: siteDescription,
   keywords: [siteName, "議案", "政治", "田川市議会", "政策", "解説"],
   icons: {
@@ -81,8 +85,21 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
   themeColor: "#b5432a",
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteName,
+  alternateName: "田川市議会見える化プラットフォーム",
+  url: env.webUrl,
+  description: siteDescription,
+  publisher: {
+    "@type": "Organization",
+    name: "田川市政ラボ",
+    url: env.webUrl,
+  },
 };
 
 export default function RootLayout({
@@ -96,6 +113,7 @@ export default function RootLayout({
         className={`${notoSansJP.variable} ${lexendGiga.variable} ${notoSerifJP.variable} font-sans antialiased bg-mirai-surface-light`}
       >
         <NextTopLoader showSpinner={false} color="#b5432a" />
+        <JsonLd data={websiteJsonLd} />
         {children}
       </body>
     </html>

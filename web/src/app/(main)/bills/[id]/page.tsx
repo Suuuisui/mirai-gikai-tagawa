@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/seo/json-ld";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import { BillDetailLayout } from "@/features/bills/server/components/bill-detail/bill-detail-layout";
 import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
@@ -72,10 +73,58 @@ export default async function BillDetailPage({ params }: BillDetailPageProps) {
     notFound();
   }
 
+  const billUrl = new URL(
+    routes.billDetail(billWithContent.id),
+    env.webUrl
+  ).toString();
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: billWithContent.bill_content?.title || billWithContent.name,
+    description: billWithContent.bill_content?.summary || undefined,
+    image:
+      billWithContent.share_thumbnail_url ||
+      billWithContent.thumbnail_url ||
+      new URL("/ogp.jpg", env.webUrl).toString(),
+    datePublished: billWithContent.submitted_date ?? undefined,
+    dateModified: billWithContent.updated_at,
+    mainEntityOfPage: billUrl,
+    author: {
+      "@type": "Organization",
+      name: "田川市政ラボ",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "みらい議会＠田川市",
+    },
+  };
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "ホーム",
+        item: env.webUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: billWithContent.name,
+        item: billUrl,
+      },
+    ],
+  };
+
   return (
-    <BillDetailLayout
-      bill={billWithContent}
-      currentDifficulty={currentDifficulty}
-    />
+    <>
+      <JsonLd data={articleJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
+      <BillDetailLayout
+        bill={billWithContent}
+        currentDifficulty={currentDifficulty}
+      />
+    </>
   );
 }

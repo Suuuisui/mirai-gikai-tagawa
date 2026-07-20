@@ -15,10 +15,10 @@ export function Hero() {
       />
       <div className="absolute bottom-[30vh] left-0 right-0 py-4">
         <Container>
-          <p className="font-bold text-xl md:text-2xl leading-relaxed">
+          <h1 className="font-bold text-xl md:text-2xl leading-relaxed">
             いま田川市議会で議論されていること <br />
             やさしい言葉で説明します
-          </p>
+          </h1>
           <p className="mt-2 font-lexend text-xs">powered by AI</p>
         </Container>
       </div>
