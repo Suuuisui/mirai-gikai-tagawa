@@ -123,7 +123,7 @@ describe("pickSessionHighlights", () => {
     } as any;
   }
 
-  it("興味度スコアの高い順に上位N件を返す", () => {
+  it("閾値を超える議案の中からスコアの高い順に上位N件を返す", () => {
     const bills = [
       makeBillWithContent({ id: "routine", name: "専決処分の承認について" }),
       makeBillWithContent({
@@ -131,27 +131,72 @@ describe("pickSessionHighlights", () => {
         status: "rejected",
         status_note: "否決",
       }),
-      makeBillWithContent({ id: "featured", is_featured: true }),
+      makeBillWithContent({
+        id: "debated",
+        bill_content: {
+          title: "",
+          summary: "",
+          content: "反対討論があった。\n## 議会での主な論点\n詳細",
+          // biome-ignore lint/suspicious/noExplicitAny: テスト用ダミーのため型を緩める
+        } as any,
+      }),
     ];
 
     const result = pickSessionHighlights(bills, 2, now);
 
-    expect(result.map((bill) => bill.id)).toEqual([
-      "controversial",
-      "featured",
-    ]);
+    expect(result.map((bill) => bill.id)).toEqual(["controversial", "debated"]);
   });
 
-  it("countが0件ならスコアに関わらず空配列を返す", () => {
-    const bills = [makeBillWithContent()];
+  it("賛成多数で穏当に可決された議案は、テンプレート由来の加点だけでは閾値を超えず含まれない", () => {
+    // 実例: 賛成14反対5で認定された決算議案（令和2年度田川市一般会計決算）。
+    // 「反対討論」の記述＋「議会での主な論点」見出し＋生活密着キーワードの
+    // ヒットだけでスコアが48点まで積み上がるが、否決でも直近でもないため
+    // 「ハイライト」には含めない
+    const bills = [
+      makeBillWithContent({
+        id: "settlement-passed-comfortably",
+        submitted_date: "2021-10-08",
+        bill_content: {
+          title: "",
+          summary: "",
+          content:
+            "学校再編について反対討論があった。\n## 議会での主な論点\n詳細",
+          // biome-ignore lint/suspicious/noExplicitAny: テスト用ダミーのため型を緩める
+        } as any,
+      }),
+    ];
+
+    expect(pickSessionHighlights(bills, 3, now)).toEqual([]);
+  });
+
+  it("is_featuredのみで他に根拠がない議案は、countの余裕があっても閾値未満なら含めない", () => {
+    const bills = [
+      makeBillWithContent({ id: "featured-only", is_featured: true }),
+    ];
+
+    expect(pickSessionHighlights(bills, 5, now)).toEqual([]);
+  });
+
+  it("countが0件なら閾値を超える議案があっても空配列を返す", () => {
+    const bills = [
+      makeBillWithContent({ status: "rejected", status_note: "否決" }),
+    ];
 
     expect(pickSessionHighlights(bills, 0, now)).toEqual([]);
   });
 
-  it("countが件数を超える場合は全件を返す", () => {
+  it("countが閾値を超える議案数より多い場合は、閾値を超える議案のみを返す", () => {
     const bills = [
-      makeBillWithContent({ id: "a" }),
-      makeBillWithContent({ id: "b" }),
+      makeBillWithContent({
+        id: "a",
+        status: "rejected",
+        status_note: "否決",
+      }),
+      makeBillWithContent({
+        id: "b",
+        status: "rejected",
+        status_note: "否決",
+      }),
     ];
 
     expect(pickSessionHighlights(bills, 10, now)).toHaveLength(2);

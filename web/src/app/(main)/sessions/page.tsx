@@ -5,7 +5,7 @@ import { routes } from "@/lib/routes";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "議会ごとのまとめ | みらい議会＠田川市",
+    title: "議会ごとのまとめ",
     description:
       "田川市議会の全ての会期のまとめページへの入り口です。会期ごとの提出議案数や賛否が分かれた議案数を一覧で確認できます。",
     alternates: {

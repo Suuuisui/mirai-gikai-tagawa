@@ -9,7 +9,7 @@ import {
 } from "@/components/layouts/legal-page-layout";
 
 export const metadata: Metadata = {
-  title: "利用規約 | みらい議会＠田川市",
+  title: "利用規約",
   description: "みらい議会＠田川市の利用規約",
 };
 

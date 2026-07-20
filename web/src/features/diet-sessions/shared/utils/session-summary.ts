@@ -113,8 +113,23 @@ function toInterestScoreInput(bill: BillWithContent): BillForInterestScore {
 }
 
 /**
- * 会期の議案一覧から、興味度スコア（computeBillInterestScore）が高い順に
- * 上位 `count` 件を選ぶ純粋関数。「この会期のハイライト」セクションで使用する。
+ * 「ハイライト」に載せるための最低スコア。
+ *
+ * 「議会での主な論点」見出し(+15)や「反対討論」の記述(+25)は、AIが解説記事を
+ * 書く際にほぼ定型で入るため、賛成多数で穏当に可決された議案でもこれだけで
+ * 50点前後まで積み上がる（実例: 賛成14反対5で認定された決算議案が、反対討論
+ * ＋論点見出し＋生活密着キーワードのヒットだけで48点）。「🔥この会期の
+ * ハイライト」と銘打つ以上、テンプレート由来の加点だけでは超えられない
+ * 水準を要求し、争点・否決・直近性など「本当に読む価値がある」根拠を
+ * 追加で持つ議案だけに絞る。全議案がこの水準に届かない会期では、
+ * ハイライトなし（空配列）を返す。
+ */
+const MIN_HIGHLIGHT_SCORE = 50;
+
+/**
+ * 会期の議案一覧から、興味度スコア（computeBillInterestScore）が
+ * MIN_HIGHLIGHT_SCORE を上回る議案に絞り、スコアが高い順に上位 `count` 件を
+ * 選ぶ純粋関数。「この会期のハイライト」セクションで使用する。
  * @param now スコア計算の基準時刻（省略時は現在時刻。テストで日付を固定する用途）
  */
 export function pickSessionHighlights(
@@ -122,25 +137,29 @@ export function pickSessionHighlights(
   count: number,
   now: Date = new Date()
 ): BillWithContent[] {
-  return [...bills]
+  return bills
+    .map((bill) => ({
+      bill,
+      score: computeBillInterestScore(toInterestScoreInput(bill), now),
+    }))
+    .filter(({ score }) => score > MIN_HIGHLIGHT_SCORE)
     .sort((a, b) => {
-      const scoreA = computeBillInterestScore(toInterestScoreInput(a), now);
-      const scoreB = computeBillInterestScore(toInterestScoreInput(b), now);
-      if (scoreA !== scoreB) return scoreB - scoreA;
+      if (a.score !== b.score) return b.score - a.score;
 
       // 同点時は submitted_date の新しい順、次に id 昇順で安定化する
       // （sortBillsTagRowsByInterestDesc と同じ並び替え方針）
-      const dateA = a.submitted_date ?? null;
-      const dateB = b.submitted_date ?? null;
+      const dateA = a.bill.submitted_date ?? null;
+      const dateB = b.bill.submitted_date ?? null;
       if (dateA !== dateB) {
         if (dateA === null) return 1;
         if (dateB === null) return -1;
         return dateA < dateB ? 1 : -1;
       }
 
-      return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+      return a.bill.id < b.bill.id ? -1 : a.bill.id > b.bill.id ? 1 : 0;
     })
-    .slice(0, count);
+    .slice(0, count)
+    .map(({ bill }) => bill);
 }
 
 // ============================================================

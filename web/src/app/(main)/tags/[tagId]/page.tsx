@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props) {
   }
 
   return {
-    title: `${billsByTag.tag.label}の議案一覧 | みらい議会＠田川市`,
+    title: `${billsByTag.tag.label}の議案一覧`,
     description:
       billsByTag.tag.description ??
       `「${billsByTag.tag.label}」タグが付与された議案の一覧です。`,

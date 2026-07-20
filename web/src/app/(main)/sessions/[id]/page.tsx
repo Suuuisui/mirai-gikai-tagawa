@@ -26,7 +26,7 @@ export async function generateMetadata({
   const description = `${session.name}で審議された議案の集計・ハイライトをまとめて紹介します。`;
 
   return {
-    title: `${session.name}のまとめ | みらい議会＠田川市`,
+    title: `${session.name}のまとめ`,
     description,
     alternates: {
       canonical: routes.sessionSummary(session.id),

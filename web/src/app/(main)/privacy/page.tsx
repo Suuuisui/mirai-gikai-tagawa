@@ -8,7 +8,7 @@ import {
 } from "@/components/layouts/legal-page-layout";
 
 export const metadata: Metadata = {
-  title: "プライバシーポリシー | みらい議会＠田川市",
+  title: "プライバシーポリシー",
   description: "みらい議会＠田川市のプライバシーポリシー",
 };
 

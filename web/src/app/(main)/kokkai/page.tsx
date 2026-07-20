@@ -7,7 +7,7 @@ import { getDietSessionArchive } from "@/features/bills/server/loaders/get-diet-
 import { routes } from "@/lib/routes";
 
 export const metadata = {
-  title: "田川市議会 会期一覧 | みらい議会＠田川市",
+  title: "田川市議会 会期一覧",
   description:
     "田川市議会の全ての会期を一覧で確認できます。会期を選ぶと、その会期に提出された議案の一覧を見ることができます。",
 };
