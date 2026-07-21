@@ -8,7 +8,6 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import { LongPressSection } from "@/features/bills/client/components/bill-detail/long-press-section";
-import { DifficultyInfoCard } from "@/features/bills/server/components/bill-detail/difficulty-info-card";
 import { rehypeEmbedYouTube } from "./rehype-embed-youtube";
 import { rehypeExternalLinks } from "./rehype-external-links";
 import { rehypeInjectElement } from "./rehype-inject-element";
@@ -25,7 +24,6 @@ const sanitizeSchema = {
     ...(defaultSchema.tagNames || []),
     // カスタム要素を許可
     "LongPressSection",
-    "DifficultyInfoCard",
   ],
 };
 
@@ -51,10 +49,10 @@ export async function parseMarkdown(markdown: string): Promise<ReactElement> {
           targetH2Index: 3,
           tagName: "LongPressSection",
         },
-        {
-          targetH2Index: -1,
-          tagName: "DifficultyInfoCard",
-        },
+        // 難易度切り替え（説明をもっと詳しく）のDifficultyInfoCard注入は、
+        // 田川市版では hard 難易度の議案本文を用意していないため一時的に非表示にしている。
+        // hard 版コンテンツを用意した際に、この injection と関連する import・
+        // sanitizeSchema・components 登録を復活させること。
       ],
     })
     .use(rehypeSanitize, sanitizeSchema)
@@ -69,7 +67,6 @@ export async function parseMarkdown(markdown: string): Promise<ReactElement> {
     jsxs,
     components: {
       LongPressSection, // Client Componentとして水和
-      DifficultyInfoCard, // Client Componentとして水和
     },
   });
 }
