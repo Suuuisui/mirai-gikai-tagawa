@@ -164,7 +164,12 @@ export async function findBillContentByDifficulty(
 // Tags (bulk)
 // ============================================================
 
+import { chunk } from "../../shared/utils/chunk";
 import { groupTagsByBillId } from "../../shared/utils/group-tags";
+
+// `.in()` にID全件を渡すとGETのクエリ文字列がURI長制限を超えるため
+// （全議案611件で発生）、この件数ごとに分割してリクエストする
+const IN_CLAUSE_CHUNK_SIZE = 100;
 
 /**
  * 複数のbill_idに紐づくタグを一括取得し、bill_idごとにグループ化して返す
@@ -177,16 +182,22 @@ export async function findTagsByBillIds(
   }
 
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills_tags")
-    .select("bill_id, tags(id, label)")
-    .in("bill_id", billIds);
+  const results = await Promise.all(
+    chunk(billIds, IN_CLAUSE_CHUNK_SIZE).map(async (ids) => {
+      const { data, error } = await supabase
+        .from("bills_tags")
+        .select("bill_id, tags(id, label)")
+        .in("bill_id", ids);
 
-  if (error) {
-    throw new Error(`Failed to fetch tags: ${error.message}`);
-  }
+      if (error) {
+        throw new Error(`Failed to fetch tags: ${error.message}`);
+      }
 
-  return groupTagsByBillId(data ?? []);
+      return data ?? [];
+    })
+  );
+
+  return groupTagsByBillId(results.flat());
 }
 
 // ============================================================
@@ -628,15 +639,21 @@ export async function findBillIdsWithPublicInterview(
   }
 
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("interview_configs")
-    .select("bill_id")
-    .in("bill_id", billIds)
-    .eq("status", "public");
+  const results = await Promise.all(
+    chunk(billIds, IN_CLAUSE_CHUNK_SIZE).map(async (ids) => {
+      const { data, error } = await supabase
+        .from("interview_configs")
+        .select("bill_id")
+        .in("bill_id", ids)
+        .eq("status", "public");
 
-  if (error) {
-    throw new Error(`Failed to fetch interview configs: ${error.message}`);
-  }
+      if (error) {
+        throw new Error(`Failed to fetch interview configs: ${error.message}`);
+      }
 
-  return new Set(data.map((row) => row.bill_id));
+      return data ?? [];
+    })
+  );
+
+  return new Set(results.flat().map((row) => row.bill_id));
 }

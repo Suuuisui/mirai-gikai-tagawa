@@ -53,4 +53,10 @@ export const routes = {
 
   // ── タグ ──────────────────────────────────────────
   tagBills: (tagId: string) => `/tags/${tagId}` as const,
+
+  // ── 議員・提出者 ──────────────────────────────────
+  memberArchive: () => "/members" as const,
+  memberDetail: (name: string) =>
+    `/members/${encodeURIComponent(name)}` as const,
+  proposerBills: (proposer: string) => `/proposers/${proposer}` as const,
 } as const;

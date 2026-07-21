@@ -1,15 +1,19 @@
 import type { MetadataRoute } from "next";
 import { getBills } from "@/features/bills/server/loaders/get-bills";
 import { getAllDietSessions } from "@/features/diet-sessions/server/loaders/get-all-diet-sessions";
+import { getBillsWithMemberVotes } from "@/features/members/server/loaders/get-member-vote-data";
+import { aggregateMemberSummaries } from "@/features/members/shared/utils/aggregate-members";
+import { PROPOSER_TYPES } from "@/features/members/shared/utils/proposer";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = env.webUrl;
 
-  const [bills, sessions] = await Promise.all([
+  const [bills, sessions, billsWithMemberVotes] = await Promise.all([
     getBills(),
     getAllDietSessions(),
+    getBillsWithMemberVotes(),
   ]);
 
   const billUrls = bills.map((bill) => ({
@@ -26,6 +30,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  const memberUrls = aggregateMemberSummaries(billsWithMemberVotes).map(
+    (member) => ({
+      url: `${baseUrl}${routes.memberDetail(member.name)}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    })
+  );
+
+  const proposerUrls = PROPOSER_TYPES.map((proposer) => ({
+    url: `${baseUrl}${routes.proposerBills(proposer)}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
+
   return [
     {
       url: baseUrl,
@@ -39,7 +59,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}${routes.memberArchive()}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    },
     ...billUrls,
     ...sessionUrls,
+    ...memberUrls,
+    ...proposerUrls,
   ];
 }

@@ -16,6 +16,11 @@ const links: FooterLinkItem[] = [
     external: false,
   },
   {
+    label: "議員・提出者から見る",
+    href: routes.memberArchive(),
+    external: false,
+  },
+  {
     label: "利用規約",
     href: routes.terms(),
     external: false,

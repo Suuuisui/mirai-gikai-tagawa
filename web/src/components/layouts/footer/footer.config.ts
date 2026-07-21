@@ -23,6 +23,10 @@ export const primaryLinks: FooterLink[] = [
     href: routes.sessionArchive(),
   },
   {
+    label: "議員・提出者から見る",
+    href: routes.memberArchive(),
+  },
+  {
     label: "みらい議会とは",
     href: EXTERNAL_LINKS.ABOUT_NOTE,
     external: true,

@@ -49,11 +49,13 @@ export function HeaderClient() {
             className="flex items-center space-x-2"
             aria-label="補助ナビゲーション"
           >
+            {/* スマホではテキストだけだとボタンと分からないため、
+                枠線＋角丸のピル型にして押せる見た目にする */}
             <Link
               href={routes.sessionArchive()}
-              className="flex items-center gap-1.5 rounded-md px-2 py-2 text-sm font-medium text-mirai-text transition-colors hover:bg-muted/50 whitespace-nowrap"
+              className="flex items-center gap-1.5 rounded-full border border-mirai-border bg-mirai-surface px-3 py-1.5 text-sm font-medium text-mirai-text shadow-xs transition-all hover:bg-muted/50 active:scale-95 whitespace-nowrap"
             >
-              <Landmark className="hidden sm:block h-4 w-4 shrink-0 text-primary-accent" />
+              <Landmark className="h-4 w-4 shrink-0 text-primary-accent" />
               議会まとめ
             </Link>
             {/* 狭い画面ではヘッダーが手狭になるため、みらい議会とはリンクは

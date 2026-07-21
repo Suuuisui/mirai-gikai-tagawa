@@ -1,6 +1,13 @@
 "use client";
 
-import { Home, Info, Landmark, type LucideIcon, Menu } from "lucide-react";
+import {
+  Home,
+  Info,
+  Landmark,
+  type LucideIcon,
+  Menu,
+  Users,
+} from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -25,6 +32,11 @@ const NAV_LINKS: NavLinkItem[] = [
     label: "議会ごとのまとめ",
     href: routes.sessionArchive(),
     icon: Landmark,
+  },
+  {
+    label: "議員・提出者から見る",
+    href: routes.memberArchive(),
+    icon: Users,
   },
   // トップページのAboutセクション（id="about"）へのアンカーリンク
   { label: "みらい議会とは", href: `${routes.home()}#about`, icon: Info },

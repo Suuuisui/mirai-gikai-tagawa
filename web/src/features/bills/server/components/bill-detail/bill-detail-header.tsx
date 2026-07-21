@@ -4,6 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getInterviewLPLink } from "@/features/interview-config/shared/utils/interview-links";
+import {
+  getProposerType,
+  PROPOSER_LABELS,
+} from "@/features/members/shared/utils/proposer";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import { BillDetailShareButton } from "../../../client/components/bill-detail/bill-detail-share-button";
@@ -33,6 +37,12 @@ export async function BillDetailHeader({
 }: BillDetailHeaderProps) {
   const displayTitle = bill.bill_content?.title;
   const displaySummary = bill.bill_content?.summary;
+
+  // 提出者区分（市長/議員/委員会）。判定できない議案ではバッジを表示しない
+  const proposerType = getProposerType({
+    name: bill.name,
+    content: bill.bill_content?.content ?? null,
+  });
 
   const { shareUrl, shareMessage, thumbnailUrl } = await getBillShareData(bill);
 
@@ -65,13 +75,22 @@ export async function BillDetailHeader({
             )}
           </h1>
         )}
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-row flex-wrap items-center gap-4">
           <BillStatusBadge status={bill.status} className="w-fit" />
           <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
             {bill.submitted_date && (
               <time>{formatDateWithDots(bill.submitted_date)} 提出</time>
             )}
           </div>
+          {/* 提出者区分バッジ（提出者別の議案一覧への導線） */}
+          {proposerType && (
+            <Link
+              href={routes.proposerBills(proposerType) as Route}
+              className="rounded-full bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text-secondary transition-colors hover:bg-mirai-surface-tag"
+            >
+              {PROPOSER_LABELS[proposerType]}
+            </Link>
+          )}
         </div>
       </div>
 

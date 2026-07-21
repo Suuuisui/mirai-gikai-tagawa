@@ -1,42 +1,23 @@
-import { ExternalLink } from "lucide-react";
+import { ChevronRight, ExternalLink } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
+import { routes } from "@/lib/routes";
 import type { Bill } from "../../../shared/types";
+import {
+  VOTE_ARIA_LABEL,
+  VOTE_CHIP_CLASS,
+  VOTE_LABEL,
+} from "../../../shared/utils/member-vote-display";
 import {
   countVotes,
   formatVoteCounts,
   groupEntriesByFaction,
-  type MemberVoteValue,
   parseMemberVotes,
 } from "../../../shared/utils/member-votes";
 
 interface MemberVotesSectionProps {
   bill: Bill;
 }
-
-// 賛否の表示ラベル。○=賛成 ×=反対 欠=欠席 −=議長職務・除斥などで採決に加わらず
-const VOTE_LABEL: Record<MemberVoteValue, string> = {
-  yes: "○",
-  no: "×",
-  absent: "欠",
-  not_voting: "−",
-};
-
-// スクリーンリーダー向けの補足ラベル（グリフだけでは意味が伝わらないため）
-const VOTE_ARIA_LABEL: Record<MemberVoteValue, string> = {
-  yes: "賛成",
-  no: "反対",
-  absent: "欠席",
-  not_voting: "採決に加わらず",
-};
-
-// チップの配色。賛成=緑系トークン、反対は既存の赤系トークン
-// （bg-stance-against-bg / text-stance-against）を流用する。欠席・採決に
-// 加わらずはグレースケールの濃淡で表現する（インラインカラーコード禁止のため）
-const VOTE_CHIP_CLASS: Record<MemberVoteValue, string> = {
-  yes: "bg-vote-for-bg text-vote-for",
-  no: "bg-stance-against-bg text-stance-against",
-  absent: "bg-mirai-surface-muted text-mirai-text-muted",
-  not_voting: "bg-mirai-surface-muted text-mirai-text-placeholder",
-};
 
 /**
  * 議員別の賛否セクション
@@ -92,21 +73,32 @@ export function MemberVotesSection({ bill }: MemberVotesSectionProps) {
             </h4>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {group.members.map((member) => (
-                <span
+                <Link
                   key={member.name}
-                  className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${VOTE_CHIP_CLASS[member.vote]}`}
+                  href={routes.memberDetail(member.name) as Route}
+                  className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium underline decoration-dotted underline-offset-[3px] transition-opacity hover:opacity-70 ${VOTE_CHIP_CLASS[member.vote]}`}
                 >
                   {member.name}
                   <span aria-hidden="true">{VOTE_LABEL[member.vote]}</span>
                   <span className="sr-only">
                     （{VOTE_ARIA_LABEL[member.vote]}）
                   </span>
-                </span>
+                </Link>
               ))}
             </div>
           </div>
         ))}
       </div>
+
+      {/* 議員名鑑への導線（議員名チップからも個人ページへ飛べるが、
+          一覧の存在に気づけるよう明示的なリンクも置く） */}
+      <Link
+        href={routes.memberArchive() as Route}
+        className="mt-4 inline-flex items-center gap-0.5 text-sm font-bold text-primary-accent hover:opacity-70"
+      >
+        議員ごとの賛否一覧を見る
+        <ChevronRight className="h-4 w-4" />
+      </Link>
 
       <details className="mt-4 text-xs text-mirai-text-note">
         <summary className="cursor-pointer select-none text-mirai-text-secondary">
