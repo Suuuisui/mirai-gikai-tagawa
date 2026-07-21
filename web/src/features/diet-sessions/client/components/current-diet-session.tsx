@@ -11,7 +11,8 @@ type CurrentDietSessionProps = {
 export function CurrentDietSession({ session }: CurrentDietSessionProps) {
   return (
     <div className="w-full bg-mirai-surface-warm px-6 py-6">
-      <div className="flex items-center gap-5">
+      {/* 会期中の長い会期名でも375px幅ではみ出さないよう折返しを許容する */}
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
         <div className="flex items-center gap-4 flex-1">
           <h2 className="text-xl font-bold text-gray-800 leading-[0.9]">
             本日は
@@ -28,7 +29,7 @@ export function CurrentDietSession({ session }: CurrentDietSessionProps) {
           </div>
         </div>
         {session != null && (
-          <div className="text-sm leading-[1.5] shrink-0">
+          <div className="text-sm leading-[1.5]">
             <div>{session.name}</div>
             <div>{formatDateWithDots(session.start_date)}〜</div>
           </div>
