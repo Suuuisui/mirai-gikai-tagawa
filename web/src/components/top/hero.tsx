@@ -17,9 +17,13 @@ export function Hero() {
           重ならないよう、その分の余白をpbで確保する */}
       <div className="relative flex h-full flex-col justify-center pb-16">
         <Container>
+          {/* 文節単位のinline-blockで、拡大フォント環境でも語の途中で折り返さないようにする */}
           <h1 className="font-bold text-xl md:text-2xl leading-relaxed">
-            いま田川市議会で議論されていること <br />
-            やさしい言葉で説明します
+            <span className="inline-block">いま田川市議会で</span>{" "}
+            <span className="inline-block">議論されていること</span>
+            <br />
+            <span className="inline-block">やさしい言葉で</span>{" "}
+            <span className="inline-block">説明します</span>
           </h1>
           <p className="mt-2 font-lexend text-xs">powered by AI</p>
         </Container>
