@@ -71,6 +71,13 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
  */
 export const MIN_NOTABLE_SCORE = 50;
 
+/**
+ * 定例会1回分＋余裕の期間。これより古い議案は、どれほど劇的な議決でも
+ * 「今まさに話題」とは扱わない（トップページのタグ別セクション自動昇格の
+ * 判定用）。
+ */
+export const HOT_TOPIC_WINDOW_DAYS = 90;
+
 type BillContentForScore = Pick<BillContent, "title" | "summary" | "content">;
 
 /**
@@ -163,6 +170,31 @@ export function computeBillInterestScore(
   }
 
   return score;
+}
+
+/**
+ * 「直近の会期で実際に話題になった議案」かどうかを判定する。
+ * 興味度スコアが MIN_NOTABLE_SCORE を超えるだけでは、去年の否決議案のように
+ * 「かつて話題だった」議案も拾ってしまう。トップページのタグ別セクション
+ * 自動昇格は「今まさに話題」なセクションのみを対象にしたいため、閾値超えに
+ * 加えて submitted_date が HOT_TOPIC_WINDOW_DAYS 以内であることも要求する。
+ * @param now 経過日数計算の基準時刻。省略時は現在時刻（テストで日付を固定する用途）。
+ */
+export function isHotTopicBill(
+  bill: BillForInterestScore,
+  now: Date = new Date()
+): boolean {
+  if (bill.submitted_date === null) {
+    return false;
+  }
+
+  const elapsedDays =
+    (now.getTime() - new Date(bill.submitted_date).getTime()) / MS_PER_DAY;
+  if (elapsedDays > HOT_TOPIC_WINDOW_DAYS) {
+    return false;
+  }
+
+  return computeBillInterestScore(bill, now) > MIN_NOTABLE_SCORE;
 }
 
 /**

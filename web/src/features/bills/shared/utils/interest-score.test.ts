@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   type BillForInterestScore,
   computeBillInterestScore,
+  isHotTopicBill,
   sortBillsTagRowsByInterestDesc,
   sortByInterestKey,
 } from "./interest-score";
@@ -200,6 +201,55 @@ describe("computeBillInterestScore", () => {
       new Date("2026-07-01")
     );
     expect(score).toBe(0);
+  });
+});
+
+describe("isHotTopicBill", () => {
+  const FIXED_NOW = new Date("2026-07-21");
+
+  /** FIXED_NOW から指定日数前のISO日付文字列（YYYY-MM-DD）を返す */
+  function isoDaysBefore(days: number): string {
+    return new Date(FIXED_NOW.getTime() - days * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .slice(0, 10);
+  }
+
+  it("直近（30日前）に否決された議案は話題議案として扱う", () => {
+    const bill = createBill({
+      status_note: "否決",
+      submitted_date: isoDaysBefore(30),
+    });
+
+    expect(isHotTopicBill(bill, FIXED_NOW)).toBe(true);
+  });
+
+  it("古い（200日前）否決議案はスコアが高くても話題議案として扱わない（令和6年度決算のケース）", () => {
+    const bill = createBill({
+      status_note: "否決",
+      submitted_date: isoDaysBefore(200),
+    });
+
+    // 200日前は興味度スコア自体は50超だが、HOT_TOPIC_WINDOW_DAYS(90日)を
+    // 超えているため「今まさに話題」とは扱わない
+    expect(computeBillInterestScore(bill, FIXED_NOW)).toBeGreaterThan(50);
+    expect(isHotTopicBill(bill, FIXED_NOW)).toBe(false);
+  });
+
+  it("直近でもスコアが閾値を超えない議案（加点要素なし）は話題議案として扱わない", () => {
+    const bill = createBill({
+      submitted_date: isoDaysBefore(30),
+    });
+
+    expect(isHotTopicBill(bill, FIXED_NOW)).toBe(false);
+  });
+
+  it("submitted_date が null の場合は話題議案として扱わない", () => {
+    const bill = createBill({
+      status_note: "否決",
+      submitted_date: null,
+    });
+
+    expect(isHotTopicBill(bill, FIXED_NOW)).toBe(false);
   });
 });
 
