@@ -2,6 +2,7 @@ import type { Bill, BillWithContent } from "@/features/bills/shared/types";
 import {
   type BillForInterestScore,
   computeBillInterestScore,
+  MIN_NOTABLE_SCORE,
   sortByInterestKey,
 } from "@/features/bills/shared/utils/interest-score";
 import type { DietSessionNavItem } from "../types";
@@ -114,23 +115,10 @@ function toInterestScoreInput(bill: BillWithContent): BillForInterestScore {
 }
 
 /**
- * 「ハイライト」に載せるための最低スコア。
- *
- * 「議会での主な論点」見出し(+15)や「反対討論」の記述(+25)は、AIが解説記事を
- * 書く際にほぼ定型で入るため、賛成多数で穏当に可決された議案でもこれだけで
- * 50点前後まで積み上がる（実例: 賛成14反対5で認定された決算議案が、反対討論
- * ＋論点見出し＋生活密着キーワードのヒットだけで48点）。「🔥この会期の
- * ハイライト」と銘打つ以上、テンプレート由来の加点だけでは超えられない
- * 水準を要求し、争点・否決・直近性など「本当に読む価値がある」根拠を
- * 追加で持つ議案だけに絞る。全議案がこの水準に届かない会期では、
- * ハイライトなし（空配列）を返す。
- */
-const MIN_HIGHLIGHT_SCORE = 50;
-
-/**
  * 会期の議案一覧から、興味度スコア（computeBillInterestScore）が
- * MIN_HIGHLIGHT_SCORE を上回る議案に絞り、スコアが高い順に上位 `count` 件を
- * 選ぶ純粋関数。「この会期のハイライト」セクションで使用する。
+ * MIN_NOTABLE_SCORE を上回る議案に絞り、スコアが高い順に上位 `count` 件を
+ * 選ぶ純粋関数。「🔥この会期のハイライト」セクションで使用する。全議案が
+ * MIN_NOTABLE_SCORE に届かない会期では、ハイライトなし（空配列）を返す。
  * @param now スコア計算の基準時刻（省略時は現在時刻。テストで日付を固定する用途）
  */
 export function pickSessionHighlights(
@@ -143,7 +131,7 @@ export function pickSessionHighlights(
     score: computeBillInterestScore(toInterestScoreInput(bill), now),
   }));
 
-  const eligible = scored.filter(({ score }) => score > MIN_HIGHLIGHT_SCORE);
+  const eligible = scored.filter(({ score }) => score > MIN_NOTABLE_SCORE);
 
   return sortByInterestKey(eligible, ({ bill, score }) => ({
     score,

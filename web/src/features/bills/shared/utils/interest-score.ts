@@ -59,6 +59,18 @@ const RECENCY_BONUS_HIGH_THRESHOLD_DAYS = 400;
 const RECENCY_BONUS_LOW_THRESHOLD_DAYS = 800;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
+/**
+ * 「本当に話題性が高い」と言えるスコアの下限。
+ *
+ * 「議会での主な論点」見出し(+15)や「反対討論」の記述(+25)は、AIが解説記事を
+ * 書く際にほぼ定型で入るため、賛成多数で穏当に可決された議案でもこれだけで
+ * 50点前後まで積み上がる（実例: 賛成14反対5で認定された決算議案が、反対討論
+ * ＋論点見出し＋生活密着キーワードのヒットだけで48点）。テンプレート由来の
+ * 加点だけでは超えられない水準を要求し、争点・否決・直近性など、追加の根拠を
+ * 持つ議案だけをこの閾値超えとして扱う。
+ */
+export const MIN_NOTABLE_SCORE = 50;
+
 type BillContentForScore = Pick<BillContent, "title" | "summary" | "content">;
 
 /**

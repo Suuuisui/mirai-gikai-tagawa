@@ -141,6 +141,7 @@ export function TagItem({ tag }: TagItemProps) {
             />
             <p className="text-sm text-gray-500">
               数値が小さいほど優先度が高い。空欄にするとFeaturedに表示されません。
+              ただし否決・不信任決議など話題性が高い議案を含むタグは、この設定に関わらず自動的に上位表示されます。
             </p>
           </div>
 

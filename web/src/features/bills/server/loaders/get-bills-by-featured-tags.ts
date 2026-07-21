@@ -108,11 +108,10 @@ const _getCachedBillsByFeaturedTags = unstable_cache(
       })),
     }));
 
-    // セクション（タグ）の並び順は featured_priority の固定順ではなく、
-    // 各セクションの代表スコア（表示議案の興味度スコアの最大値）の降順にする。
-    // 不信任決議ラッシュのように「今」政治的に熱いトピックがあれば、
-    // そのセクションが自動的に上位に来るようにするため。
-    // 同点時は featured_priority 昇順（従来の固定順）にフォールバックする。
+    // セクション（タグ）の並び順は基本的に運営が設定した featured_priority の
+    // 昇順。ただし否決・不信任決議など話題性の高い議案（興味度スコアが
+    // MIN_NOTABLE_SCORE 超）を含むセクションだけは自動的に上位へ昇格する。
+    // 詳細は sortBillsByTagSections のドキュメントを参照。
     const now = new Date();
     return sortBillsByTagSections(resultsWithInterview, (bill) =>
       computeBillInterestScore(
