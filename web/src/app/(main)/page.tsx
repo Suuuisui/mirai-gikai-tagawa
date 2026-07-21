@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/layouts/container";
 import { About } from "@/components/top/about";
-import { ComingSoonSection } from "@/components/top/coming-soon-section";
 import { Hero } from "@/components/top/hero";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import { BillDisclaimer } from "@/features/bills/client/components/bill-detail/bill-disclaimer";
@@ -22,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const { billsByTag, featuredBills, comingSoonBills, previousSessionData } =
+  const { billsByTag, featuredBills, previousSessionData } =
     await loadHomeData();
 
   // ゆくゆくタグ機能がマージされたらBFFに統合する
@@ -56,9 +55,6 @@ export default async function Home() {
 
             {/* タグ別議案一覧セクション */}
             <BillsByTagSection billsByTag={billsByTag} />
-
-            {/* Coming soonセクション */}
-            <ComingSoonSection bills={comingSoonBills} />
           </main>
         </div>
       </Container>

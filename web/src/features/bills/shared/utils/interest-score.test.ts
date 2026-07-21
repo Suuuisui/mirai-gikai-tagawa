@@ -373,7 +373,7 @@ describe("sortBillsTagRowsByInterestDesc", () => {
     ]);
   });
 
-  it("否決議案が新しい定型議案より上に来る（統合ケース）", () => {
+  it("直近の定型議案が古い否決議案より上に来る（バケット優先・統合ケース）", () => {
     const rejectedOldBill = {
       bills: {
         ...createBill({
@@ -395,13 +395,156 @@ describe("sortBillsTagRowsByInterestDesc", () => {
     };
 
     const result = sortBillsTagRowsByInterestDesc([
-      routineNewBill,
       rejectedOldBill,
+      routineNewBill,
+    ]);
+
+    // スコアだけならrejected-old(50点)がroutine-new(0点)より高いが、
+    // 直近バケット優先のため新しいroutine-newが古いrejected-oldより上に来る
+    expect(result.map((r) => r.bills?.id)).toEqual([
+      "routine-new",
+      "rejected-old",
+    ]);
+  });
+
+  it("両方とも直近の場合はスコアの高い否決議案が定型議案より上に来る", () => {
+    const rejectedRecentBill = {
+      bills: {
+        ...createBill({
+          status_note: "否決",
+          name: "工事請負契約の締結について",
+        }),
+        id: "rejected-recent",
+        submitted_date: daysAgo(30),
+      },
+    };
+    const routineRecentBill = {
+      bills: {
+        ...createBill({
+          name: "教育委員会委員の任命につき同意を求めることについて",
+        }),
+        id: "routine-recent",
+        submitted_date: daysAgo(30),
+      },
+    };
+
+    const result = sortBillsTagRowsByInterestDesc([
+      routineRecentBill,
+      rejectedRecentBill,
     ]);
 
     expect(result.map((r) => r.bills?.id)).toEqual([
-      "rejected-old",
-      "routine-new",
+      "rejected-recent",
+      "routine-recent",
+    ]);
+  });
+
+  it("直近の低スコア議案が古い高スコア議案より上に来る（バケット優先）", () => {
+    const oldHighScoreBill = {
+      bills: {
+        ...createBill({ status_note: "否決" }),
+        id: "old-high-score",
+        submitted_date: "2015-01-01",
+      },
+    };
+    const recentLowScoreBill = {
+      bills: {
+        ...createBill(),
+        id: "recent-low-score",
+        submitted_date: daysAgo(30),
+      },
+    };
+
+    const result = sortBillsTagRowsByInterestDesc([
+      oldHighScoreBill,
+      recentLowScoreBill,
+    ]);
+
+    expect(result.map((r) => r.bills?.id)).toEqual([
+      "recent-low-score",
+      "old-high-score",
+    ]);
+  });
+
+  it("両方とも直近の場合はスコア順で並べ替える", () => {
+    const recentHighScoreBill = {
+      bills: {
+        ...createBill({ status_note: "否決" }),
+        id: "recent-high-score",
+        submitted_date: daysAgo(30),
+      },
+    };
+    const recentLowScoreBill = {
+      bills: {
+        ...createBill(),
+        id: "recent-low-score",
+        submitted_date: daysAgo(60),
+      },
+    };
+
+    const result = sortBillsTagRowsByInterestDesc([
+      recentLowScoreBill,
+      recentHighScoreBill,
+    ]);
+
+    expect(result.map((r) => r.bills?.id)).toEqual([
+      "recent-high-score",
+      "recent-low-score",
+    ]);
+  });
+
+  it("両方とも古い場合はスコア順で並べ替える", () => {
+    const oldHighScoreBill = {
+      bills: {
+        ...createBill({ status_note: "否決" }),
+        id: "old-high-score",
+        submitted_date: "2015-01-01",
+      },
+    };
+    const oldLowScoreBill = {
+      bills: {
+        ...createBill(),
+        id: "old-low-score",
+        submitted_date: "2010-01-01",
+      },
+    };
+
+    const result = sortBillsTagRowsByInterestDesc([
+      oldLowScoreBill,
+      oldHighScoreBill,
+    ]);
+
+    expect(result.map((r) => r.bills?.id)).toEqual([
+      "old-high-score",
+      "old-low-score",
+    ]);
+  });
+
+  it("submitted_date が null の議案は古いバケット扱いになる", () => {
+    const nullDateBill = {
+      bills: {
+        ...createBill({ status_note: "否決", submitted_date: null }),
+        id: "null-date",
+      },
+    };
+    const recentLowScoreBill = {
+      bills: {
+        ...createBill(),
+        id: "recent-low-score",
+        submitted_date: daysAgo(30),
+      },
+    };
+
+    const result = sortBillsTagRowsByInterestDesc([
+      nullDateBill,
+      recentLowScoreBill,
+    ]);
+
+    // null-dateはスコアが高くても古いバケット扱いのため、
+    // 直近バケットのrecent-low-scoreが上に来る
+    expect(result.map((r) => r.bills?.id)).toEqual([
+      "recent-low-score",
+      "null-date",
     ]);
   });
 

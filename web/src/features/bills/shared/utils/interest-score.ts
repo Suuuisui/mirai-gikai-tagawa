@@ -239,7 +239,12 @@ export function sortByInterestKey<T>(
 
 /**
  * `sortBillsTagRowsByDateDesc`（同階層 map-bills-tag-rows.ts）と同じ入力形状
- * （`bills_tags` 起点のネスト構造）を受け取り、興味度スコアの降順で並べ替える。
+ * （`bills_tags` 起点のネスト構造）を受け取り、直近（約2年＝
+ * RECENCY_BONUS_LOW_THRESHOLD_DAYS 以内）の議案を優先し、古い議案は枠が
+ * 余った場合のみ表示順の後方に回す（トップページを「今」の関心中心に保つ
+ * ため。実例: 2022年のインボイス意見書が2025年の意見書群より上に出ていた）。
+ * 各バケット内では従来通り興味度スコアの降順（→ submitted_date 降順 →
+ * id 昇順）で並べ替える。submitted_date が null の議案は古いバケット扱い。
  */
 export function sortBillsTagRowsByInterestDesc<
   T extends {
@@ -249,11 +254,27 @@ export function sortBillsTagRowsByInterestDesc<
   // ソート中に new Date() が複数回呼ばれて時刻がブレないよう、一度だけ取得して使い回す
   const now = new Date();
 
-  return sortByInterestKey(rows, (row) => ({
+  const toKey = (row: T) => ({
     score: row.bills
       ? computeBillInterestScore(row.bills, now)
       : Number.NEGATIVE_INFINITY,
     submittedDate: row.bills?.submitted_date ?? null,
     id: row.bills?.id ?? "",
-  }));
+  });
+
+  const isRecent = (row: T): boolean => {
+    const submittedDate = row.bills?.submitted_date;
+    if (!submittedDate) return false;
+    const elapsedDays =
+      (now.getTime() - new Date(submittedDate).getTime()) / MS_PER_DAY;
+    return elapsedDays <= RECENCY_BONUS_LOW_THRESHOLD_DAYS;
+  };
+
+  const recentRows = rows.filter(isRecent);
+  const oldRows = rows.filter((row) => !isRecent(row));
+
+  return [
+    ...sortByInterestKey(recentRows, toKey),
+    ...sortByInterestKey(oldRows, toKey),
+  ];
 }

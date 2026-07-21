@@ -3,27 +3,6 @@ import { createAdminClient } from "@mirai-gikai/supabase";
 import type { DietSession, DietSessionNavItem } from "../../shared/types";
 
 /**
- * アクティブな田川市議会会期を取得
- */
-export async function findActiveDietSession(): Promise<DietSession | null> {
-  const supabase = createAdminClient();
-
-  const { data, error } = await supabase
-    .from("diet_sessions")
-    .select("*")
-    .eq("is_active", true)
-    .maybeSingle();
-
-  if (error) {
-    // maybeSingle()は0件時に error を返さないため、ここに到達するのは
-    // 接続断等の実エラーのみ。握りつぶさずthrowしてキャッシュ焼き付けを防ぐ。
-    throw new Error(`Failed to fetch active diet session: ${error.message}`);
-  }
-
-  return data;
-}
-
-/**
  * 指定日時点で開催中の田川市議会会期を取得
  */
 export async function findCurrentDietSession(

@@ -4,7 +4,6 @@ import {
 } from "@test-utils/utils";
 import { afterEach, describe, expect, it } from "vitest";
 import {
-  findActiveDietSession,
   findAllDietSessions,
   findAllDietSessionsForNav,
   findCurrentDietSession,
@@ -21,18 +20,6 @@ describe("diet-session-repository 統合テスト", () => {
       await cleanupTestDietSession(id);
     }
     sessionIds.length = 0;
-  });
-
-  describe("findActiveDietSession", () => {
-    it("is_active=true の会期を返す", async () => {
-      const session = await createTestDietSession({ is_active: true });
-      sessionIds.push(session.id);
-
-      const result = await findActiveDietSession();
-
-      expect(result).not.toBeNull();
-      expect(result?.is_active).toBe(true);
-    });
   });
 
   describe("findCurrentDietSession", () => {

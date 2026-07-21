@@ -1,5 +1,4 @@
 import { getBillsByFeaturedTags } from "@/features/bills/server/loaders/get-bills-by-featured-tags";
-import { getComingSoonBills } from "./get-coming-soon-bills";
 import { getFeaturedBills } from "./get-featured-bills";
 import { getPreviousSessionBills } from "./get-previous-session-bills";
 
@@ -13,12 +12,10 @@ import { getPreviousSessionBills } from "./get-previous-session-bills";
  * ことで、BILLS_PER_TAG件の表示件数が除外後も埋まった状態を保つ）
  */
 export async function loadHomeData() {
-  const [featuredBills, comingSoonBills, previousSessionData] =
-    await Promise.all([
-      getFeaturedBills(),
-      getComingSoonBills(),
-      getPreviousSessionBills(),
-    ]);
+  const [featuredBills, previousSessionData] = await Promise.all([
+    getFeaturedBills(),
+    getPreviousSessionBills(),
+  ]);
 
   const featuredBillIds = featuredBills.map((bill) => bill.id);
   const billsByTag = await getBillsByFeaturedTags(featuredBillIds);
@@ -26,7 +23,6 @@ export async function loadHomeData() {
   return {
     billsByTag,
     featuredBills,
-    comingSoonBills,
     previousSessionData,
   };
 }
