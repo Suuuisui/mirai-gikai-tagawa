@@ -154,9 +154,48 @@ export function computeBillInterestScore(
 }
 
 /**
- * 興味度スコアの降順 → submitted_date の降順（新しい順、null は末尾） →
- * id の昇順（安定化）で並べ替える。
- * `sortBillsTagRowsByDateDesc`（同階層 map-bills-tag-rows.ts）と同じ入力形状を受け取る。
+ * 興味度スコアによる並べ替えで共通して使うソートキー。
+ * スコア降順 → submittedDate の降順（新しい順、null は末尾） →
+ * id の昇順（安定化）で比較する。
+ */
+export type InterestSortKey = {
+  score: number;
+  submittedDate: string | null;
+  id: string;
+};
+
+/**
+ * `toKey` で各要素をソートキーに変換し、興味度スコアの降順で並べ替える汎用関数。
+ * タグ別議案一覧（ネスト構造）・前回会期プレビュー（フラット構造）・会期ハイライト
+ * （BillWithContent）など、入力の型は異なるが同じ並び替えポリシーを共有したい
+ * 複数箇所から使われる。
+ */
+export function sortByInterestKey<T>(
+  items: T[],
+  toKey: (item: T) => InterestSortKey
+): T[] {
+  return items
+    .map((item) => ({ item, key: toKey(item) }))
+    .sort((a, b) => {
+      if (a.key.score !== b.key.score) return b.key.score - a.key.score;
+
+      const dateA = a.key.submittedDate;
+      const dateB = b.key.submittedDate;
+      if (dateA !== dateB) {
+        if (dateA === null) return 1;
+        if (dateB === null) return -1;
+        return dateA < dateB ? 1 : -1;
+      }
+
+      if (a.key.id === b.key.id) return 0;
+      return a.key.id < b.key.id ? -1 : 1;
+    })
+    .map(({ item }) => item);
+}
+
+/**
+ * `sortBillsTagRowsByDateDesc`（同階層 map-bills-tag-rows.ts）と同じ入力形状
+ * （`bills_tags` 起点のネスト構造）を受け取り、興味度スコアの降順で並べ替える。
  */
 export function sortBillsTagRowsByInterestDesc<
   T extends {
@@ -166,26 +205,11 @@ export function sortBillsTagRowsByInterestDesc<
   // ソート中に new Date() が複数回呼ばれて時刻がブレないよう、一度だけ取得して使い回す
   const now = new Date();
 
-  return [...rows].sort((a, b) => {
-    const scoreA = a.bills
-      ? computeBillInterestScore(a.bills, now)
-      : Number.NEGATIVE_INFINITY;
-    const scoreB = b.bills
-      ? computeBillInterestScore(b.bills, now)
-      : Number.NEGATIVE_INFINITY;
-    if (scoreA !== scoreB) return scoreB - scoreA;
-
-    const dateA = a.bills?.submitted_date ?? null;
-    const dateB = b.bills?.submitted_date ?? null;
-    if (dateA !== dateB) {
-      if (dateA === null) return 1;
-      if (dateB === null) return -1;
-      return dateA < dateB ? 1 : -1;
-    }
-
-    const idA = a.bills?.id ?? "";
-    const idB = b.bills?.id ?? "";
-    if (idA === idB) return 0;
-    return idA < idB ? -1 : 1;
-  });
+  return sortByInterestKey(rows, (row) => ({
+    score: row.bills
+      ? computeBillInterestScore(row.bills, now)
+      : Number.NEGATIVE_INFINITY,
+    submittedDate: row.bills?.submitted_date ?? null,
+    id: row.bills?.id ?? "",
+  }));
 }

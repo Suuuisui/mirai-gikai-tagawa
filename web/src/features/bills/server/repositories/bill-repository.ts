@@ -1,7 +1,11 @@
 import "server-only";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { sortBillsTagRowsByInterestDesc } from "../../shared/utils/interest-score";
+import {
+  computeBillInterestScore,
+  sortBillsTagRowsByInterestDesc,
+  sortByInterestKey,
+} from "../../shared/utils/interest-score";
 import { sortBillsTagRowsByDateDesc } from "../../shared/utils/map-bills-tag-rows";
 
 // ============================================================
@@ -228,7 +232,12 @@ export async function findPublishedBillsByDietSession(
 }
 
 /**
- * 前回の田川市議会会期の公開済み議案を取得（成立議案を優先、件数制限あり）
+ * 前回の田川市議会会期の公開済み議案を取得（興味度スコアの高い順、件数制限あり）。
+ * status_order（審議進行度）だけで並べると、否決・不信任決議のような
+ * 本当に読み応えのある議案より、人事同意や専決処分報告のような定型の
+ * 成立議案が優先されてしまう（status_orderはenactedが最上位のため）。
+ * ホームページのタグ別議案一覧と同じ興味度スコアで並べ替え、会期を代表する
+ * プレビューとして意味のある議案が上位に来るようにする。
  */
 export async function findPreviousSessionBills(
   dietSessionId: string,
@@ -255,16 +264,21 @@ export async function findPreviousSessionBills(
     )
     .eq("diet_session_id", dietSessionId)
     .eq("publish_status", "published")
-    .eq("bill_contents.difficulty_level", difficultyLevel)
-    .order("status_order", { ascending: true })
-    .order("submitted_date", { ascending: false, nullsFirst: false })
-    .limit(limit);
+    .eq("bill_contents.difficulty_level", difficultyLevel);
 
   if (error) {
     throw new Error(`Failed to fetch previous session bills: ${error.message}`);
   }
 
-  return data ?? [];
+  // ソート中に new Date() が複数回呼ばれて時刻がブレないよう、一度だけ取得して使い回す
+  const now = new Date();
+  const sorted = sortByInterestKey(data ?? [], (bill) => ({
+    score: computeBillInterestScore(bill, now),
+    submittedDate: bill.submitted_date,
+    id: bill.id,
+  }));
+
+  return sorted.slice(0, limit);
 }
 
 /**

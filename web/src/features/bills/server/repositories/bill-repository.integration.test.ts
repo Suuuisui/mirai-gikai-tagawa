@@ -381,6 +381,45 @@ describe("bill-repository 統合テスト", () => {
 
       expect(result).toEqual([]);
     });
+
+    it("興味度スコアの高い順に並べる（status_orderではなく否決議案が定型の成立議案より上に来る）", async () => {
+      const session = await createTestDietSession();
+      dietSessionIds.push(session.id);
+
+      // 定型の成立議案（新しさボーナスのみ）: status_order基準なら enacted が
+      // 最上位・submitted_dateも新しいため、旧ロジックでは確実に1位になる
+      const routineEnacted = await createTestBill({
+        publish_status: "published",
+        diet_session_id: session.id,
+        status: "enacted",
+        name: "工事請負契約の締結について",
+        submitted_date: new Date().toISOString().slice(0, 10),
+      });
+      // 否決された議案（争点あり・提出日は古い）: 旧ロジック（status_order昇順→
+      // submitted_date降順）では routineEnacted より後ろに来てしまっていた
+      const rejectedControversial = await createTestBill({
+        publish_status: "published",
+        diet_session_id: session.id,
+        status: "rejected",
+        status_note: "否決",
+        name: "田川市長に対する不信任決議について",
+        submitted_date: "2015-01-01",
+      });
+      billIds.push(routineEnacted.id, rejectedControversial.id);
+      await createTestBillContent(routineEnacted.id, {
+        difficulty_level: "normal",
+      });
+      await createTestBillContent(rejectedControversial.id, {
+        difficulty_level: "normal",
+      });
+
+      const result = await findPreviousSessionBills(session.id, "normal", 10);
+
+      expect(result.map((bill) => bill.id)).toEqual([
+        rejectedControversial.id,
+        routineEnacted.id,
+      ]);
+    });
   });
 
   // ============================================================

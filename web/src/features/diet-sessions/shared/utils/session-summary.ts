@@ -2,6 +2,7 @@ import type { Bill, BillWithContent } from "@/features/bills/shared/types";
 import {
   type BillForInterestScore,
   computeBillInterestScore,
+  sortByInterestKey,
 } from "@/features/bills/shared/utils/interest-score";
 import type { DietSessionNavItem } from "../types";
 
@@ -137,27 +138,18 @@ export function pickSessionHighlights(
   count: number,
   now: Date = new Date()
 ): BillWithContent[] {
-  return bills
-    .map((bill) => ({
-      bill,
-      score: computeBillInterestScore(toInterestScoreInput(bill), now),
-    }))
-    .filter(({ score }) => score > MIN_HIGHLIGHT_SCORE)
-    .sort((a, b) => {
-      if (a.score !== b.score) return b.score - a.score;
+  const scored = bills.map((bill) => ({
+    bill,
+    score: computeBillInterestScore(toInterestScoreInput(bill), now),
+  }));
 
-      // 同点時は submitted_date の新しい順、次に id 昇順で安定化する
-      // （sortBillsTagRowsByInterestDesc と同じ並び替え方針）
-      const dateA = a.bill.submitted_date ?? null;
-      const dateB = b.bill.submitted_date ?? null;
-      if (dateA !== dateB) {
-        if (dateA === null) return 1;
-        if (dateB === null) return -1;
-        return dateA < dateB ? 1 : -1;
-      }
+  const eligible = scored.filter(({ score }) => score > MIN_HIGHLIGHT_SCORE);
 
-      return a.bill.id < b.bill.id ? -1 : a.bill.id > b.bill.id ? 1 : 0;
-    })
+  return sortByInterestKey(eligible, ({ bill, score }) => ({
+    score,
+    submittedDate: bill.submitted_date,
+    id: bill.id,
+  }))
     .slice(0, count)
     .map(({ bill }) => bill);
 }

@@ -164,6 +164,7 @@ export async function createTestBill(
       | "enacted"
       | "rejected"
       | "preparing";
+    status_note: string;
     publish_status: "draft" | "published" | "coming_soon";
     diet_session_id: string;
     is_featured: boolean;

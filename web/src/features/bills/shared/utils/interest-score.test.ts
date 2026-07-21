@@ -1,8 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   type BillForInterestScore,
   computeBillInterestScore,
   sortBillsTagRowsByInterestDesc,
+  sortByInterestKey,
 } from "./interest-score";
 
 // 実際の呼び出し元（findPublishedBillsByTag）はBillの全カラムを含む重い型を返すが、
@@ -199,6 +200,81 @@ describe("computeBillInterestScore", () => {
       new Date("2026-07-01")
     );
     expect(score).toBe(0);
+  });
+});
+
+describe("sortByInterestKey", () => {
+  // Bill型に依存しない汎用関数であることを示すため、最小限の
+  // { id, score, date } だけを持つダミー型でテストする
+  type Item = { id: string; score: number; date: string | null };
+  const toKey = (item: Item) => ({
+    score: item.score,
+    submittedDate: item.date,
+    id: item.id,
+  });
+
+  it("スコアの降順に並べ替える", () => {
+    const result = sortByInterestKey(
+      [
+        { id: "low", score: 10, date: null },
+        { id: "high", score: 50, date: null },
+      ],
+      toKey
+    );
+
+    expect(result.map((item) => item.id)).toEqual(["high", "low"]);
+  });
+
+  it("スコアが同点の場合は submittedDate の新しい順（null末尾）で並べ替える", () => {
+    const result = sortByInterestKey(
+      [
+        { id: "no-date", score: 10, date: null },
+        { id: "old", score: 10, date: "2010-01-01" },
+        { id: "new", score: 10, date: "2020-01-01" },
+      ],
+      toKey
+    );
+
+    expect(result.map((item) => item.id)).toEqual(["new", "old", "no-date"]);
+  });
+
+  it("スコアも日付も同点の場合は id の昇順で安定化する", () => {
+    const result = sortByInterestKey(
+      [
+        { id: "b", score: 10, date: "2010-01-01" },
+        { id: "a", score: 10, date: "2010-01-01" },
+      ],
+      toKey
+    );
+
+    expect(result.map((item) => item.id)).toEqual(["a", "b"]);
+  });
+
+  it("元の配列を変更しない", () => {
+    const original = [
+      { id: "b", score: 10, date: "2010-01-01" },
+      { id: "a", score: 20, date: "2015-01-01" },
+    ];
+    const originalCopy = [...original];
+
+    sortByInterestKey(original, toKey);
+
+    expect(original).toEqual(originalCopy);
+  });
+
+  it("toKey は要素ごとに1回だけ呼び出す（コンパレータ内での再計算を避ける）", () => {
+    const toKeySpy = vi.fn(toKey);
+
+    sortByInterestKey(
+      [
+        { id: "a", score: 10, date: null },
+        { id: "b", score: 20, date: null },
+        { id: "c", score: 30, date: null },
+      ],
+      toKeySpy
+    );
+
+    expect(toKeySpy).toHaveBeenCalledTimes(3);
   });
 });
 
