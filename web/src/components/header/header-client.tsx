@@ -1,6 +1,7 @@
 "use client";
 
-import { Landmark } from "lucide-react";
+import { Info, Landmark } from "lucide-react";
+import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -53,6 +54,15 @@ export function HeaderClient() {
             >
               <Landmark className="h-4 w-4 shrink-0 text-primary-accent" />
               議会まとめ
+            </Link>
+            {/* 狭い画面ではヘッダーが手狭になるため、みらい議会とはリンクは
+                sm以上でのみ表示する（議会まとめは常時表示） */}
+            <Link
+              href={`${routes.home()}#about` as Route}
+              className="hidden sm:flex items-center gap-1.5 rounded-md px-2 py-2 text-sm font-medium text-mirai-text transition-colors hover:bg-muted/50"
+            >
+              <Info className="h-4 w-4 shrink-0 text-primary-accent" />
+              みらい議会とは
             </Link>
             {showInterviewActions && <InterviewHeaderActions />}
             <HamburgerMenu />

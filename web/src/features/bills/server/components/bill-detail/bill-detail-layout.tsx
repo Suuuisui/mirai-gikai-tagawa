@@ -13,7 +13,9 @@ import { BillDisclaimer } from "../../../client/components/bill-detail/bill-disc
 import { BillStatusProgress } from "../../../client/components/bill-detail/bill-status-progress";
 import { MiraiStanceCard } from "../../../client/components/bill-detail/mirai-stance-card";
 import type { BillWithContent } from "../../../shared/types";
+import { getAdjacentSessionBills } from "../../loaders/get-adjacent-session-bills";
 import { BillShareButtons } from "../share/bill-share-buttons";
+import { BillAdjacentNav } from "./bill-adjacent-nav";
 import { BillContent } from "./bill-content";
 import { BillDetailHeader } from "./bill-detail-header";
 import { BillSessionLink } from "./bill-session-link";
@@ -30,15 +32,23 @@ export async function BillDetailLayout({
   currentDifficulty,
 }: BillDetailLayoutProps) {
   const showMiraiStance = bill.status === "preparing" || bill.mirai_stance;
-  const [interviewConfig, publicReportsResult, topicAnalysis, dietSession] =
-    await Promise.all([
-      getInterviewConfig(bill.id),
-      getPublicReportsByBillId(bill.id),
-      getPublicTopicAnalysis(bill.id),
-      bill.diet_session_id
-        ? getDietSessionById(bill.diet_session_id)
-        : Promise.resolve(null),
-    ]);
+  const [
+    interviewConfig,
+    publicReportsResult,
+    topicAnalysis,
+    dietSession,
+    adjacentBills,
+  ] = await Promise.all([
+    getInterviewConfig(bill.id),
+    getPublicReportsByBillId(bill.id),
+    getPublicTopicAnalysis(bill.id),
+    bill.diet_session_id
+      ? getDietSessionById(bill.diet_session_id)
+      : Promise.resolve(null),
+    bill.diet_session_id
+      ? getAdjacentSessionBills(bill.id, bill.diet_session_id)
+      : Promise.resolve(null),
+  ]);
 
   return (
     <div className="container mx-auto pb-8 max-w-4xl">
@@ -126,6 +136,17 @@ export async function BillDetailLayout({
         <div className="my-8">
           <BillShareButtons bill={bill} />
         </div>
+
+        {/* 同じ会期内の前後の議案への導線（会期まとめページと並び順を揃える）。
+            前後どちらも無い場合はラッパーの余白ごと出さない */}
+        {(adjacentBills?.previous || adjacentBills?.next) && (
+          <div className="my-8">
+            <BillAdjacentNav
+              previous={adjacentBills.previous}
+              next={adjacentBills.next}
+            />
+          </div>
+        )}
 
         {/* データの出典と免責事項 */}
         <div className="my-8">
