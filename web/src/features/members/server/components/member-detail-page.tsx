@@ -11,14 +11,18 @@ import {
 } from "@/features/bills/shared/utils/member-vote-display";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
+import { ROSTER_AS_OF } from "../../shared/data/member-profiles";
 import {
   aggregateMemberSummaries,
   collectMemberVoteRecords,
 } from "../../shared/utils/aggregate-members";
 import {
+  resolveMemberDisplayName,
+  resolveMemberProfile,
+} from "../../shared/utils/resolve-member-display";
+import {
   collectSponsorNames,
   extractFamilyName,
-  findUniqueFullName,
 } from "../../shared/utils/sponsors";
 import {
   getBillsWithMemberVotes,
@@ -67,12 +71,14 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
     )
   );
 
-  // sponsorsデータ中にこの議員の姓と一致するフルネームがちょうど1つだけ
-  // 見つかった場合はフルネームで表示する（見つからない/複数ある場合は姓のみ）
+  // 表示名はMEMBER_PROFILES（公式名簿）を優先し、無ければsponsorsデータ中で
+  // この議員の姓と一致するフルネームがちょうど1つだけ見つかった場合それを使う
+  // （どちらも無ければ姓のみ表示）
   const allSponsorNames = collectSponsorNames(
     sponsoredBills.map(({ sponsors }) => sponsors)
   );
-  const displayName = findUniqueFullName(allSponsorNames, name) ?? name;
+  const displayName = resolveMemberDisplayName(name, allSponsorNames);
+  const profile = resolveMemberProfile(name);
 
   return (
     <div className="bg-mirai-surface-muted">
@@ -81,10 +87,27 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
           <h1 className="text-[22px] font-bold text-black leading-[1.48]">
             {displayName} 議員
           </h1>
+          {profile?.reading && (
+            <p className="text-xs text-mirai-text-muted">{profile.reading}</p>
+          )}
           <p className="text-xs text-mirai-text-secondary">
             会派: {summary.factions.join(" / ")}
             {summary.factions.length > 1 && "（新しい順）"}
+            {profile?.role && `・${profile.role}`}
+            {profile?.electedCount !== undefined &&
+              `・当選${profile.electedCount}回`}
           </p>
+          {profile && !profile.isIncumbent && (
+            <p className="text-xs text-mirai-text-muted">
+              元議員
+              {profile.note && `（${profile.note}）`}
+            </p>
+          )}
+          {profile && (
+            <p className="text-xs text-mirai-text-note">
+              ※氏名・役職・当選回数は公式議員名簿（{ROSTER_AS_OF}時点）より
+            </p>
+          )}
         </div>
 
         {/* 集計サマリー */}

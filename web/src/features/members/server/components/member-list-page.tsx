@@ -5,6 +5,7 @@ import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
 import { routes } from "@/lib/routes";
+import { ROSTER_AS_OF } from "../../shared/data/member-profiles";
 import {
   aggregateMemberSummaries,
   type MemberSummary,
@@ -16,7 +17,14 @@ import {
   PROPOSER_TYPES,
   type ProposerType,
 } from "../../shared/utils/proposer";
-import { extractFamilyName } from "../../shared/utils/sponsors";
+import {
+  resolveMemberDisplayName,
+  resolveMemberProfile,
+} from "../../shared/utils/resolve-member-display";
+import {
+  collectSponsorNames,
+  extractFamilyName,
+} from "../../shared/utils/sponsors";
 import {
   countBillsByProposer,
   getBillsWithMemberVotes,
@@ -66,6 +74,11 @@ export async function MemberListPage() {
   ]);
   const members = aggregateMemberSummaries(items);
   const factionGroups = groupByLatestFaction(members);
+
+  // sponsorsデータ中のフルネーム一覧（MEMBER_PROFILESに無い姓のフォールバック用）
+  const allSponsorNames = collectSponsorNames(
+    sponsoredBills.map(({ sponsors }) => sponsors)
+  );
 
   // 議員（姓）ごとの提出議案数（同じ議案に複数回登場しても1件として数える）
   const proposalCounts = new Map<string, number>();
@@ -151,19 +164,41 @@ export async function MemberListPage() {
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {group.members.map((member) => {
                   const proposalCount = proposalCounts.get(member.name);
+                  const profile = resolveMemberProfile(member.name);
+                  const displayName = resolveMemberDisplayName(
+                    member.name,
+                    allSponsorNames
+                  );
+                  const role =
+                    profile?.isIncumbent && profile.role ? profile.role : null;
                   return (
                     <Link
                       key={member.name}
                       href={routes.memberDetail(member.name) as Route}
                     >
                       <Card className="flex h-full flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
-                        <span className="flex items-center justify-between font-bold text-mirai-text">
-                          {member.name}
+                        <span className="flex items-center justify-between gap-2 font-bold text-mirai-text">
+                          <span className="flex flex-col">
+                            {displayName}
+                            {role && (
+                              <span className="text-xs font-normal text-mirai-text-muted">
+                                {role}
+                              </span>
+                            )}
+                          </span>
                           <ChevronRight className="h-4 w-4 shrink-0 text-mirai-text-muted" />
                         </span>
                         <p className="text-xs text-mirai-text-muted">
-                          投票記録 {member.billCount}議案
-                          {proposalCount ? `・提出 ${proposalCount}件` : ""}
+                          <span className="whitespace-nowrap">
+                            投票記録 {member.billCount}議案
+                          </span>
+                          {proposalCount ? (
+                            <span className="whitespace-nowrap">
+                              ・提出 {proposalCount}件
+                            </span>
+                          ) : (
+                            ""
+                          )}
                         </p>
                       </Card>
                     </Link>
@@ -182,6 +217,10 @@ export async function MemberListPage() {
           <p>※姓が同じ表記の議員は同一人物として集計しています。</p>
           <p>
             ※提出議案は市長・議員・委員会の区分単位で掲載しています。議案説明資料PDFに提出者・賛成者（連署議員）の氏名が記載されている議案では、議案ページで個人名も確認できます。
+          </p>
+          <p>
+            ※氏名・会派・役職は田川市議会公式サイトの議員名簿（{ROSTER_AS_OF}
+            時点）より。
           </p>
         </div>
       </Container>

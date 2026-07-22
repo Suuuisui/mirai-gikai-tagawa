@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { MemberDetailPage } from "@/features/members/server/components/member-detail-page";
 import { getBillsWithSponsors } from "@/features/members/server/loaders/get-member-vote-data";
-import {
-  collectSponsorNames,
-  findUniqueFullName,
-} from "@/features/members/shared/utils/sponsors";
+import { resolveMemberDisplayName } from "@/features/members/shared/utils/resolve-member-display";
+import { collectSponsorNames } from "@/features/members/shared/utils/sponsors";
 
 type Props = {
   params: Promise<{ name: string }>;
@@ -14,14 +12,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { name } = await params;
   const decodedName = decodeURIComponent(name);
 
-  // sponsorsデータ中にこの議員の姓と一致するフルネームが1つだけ見つかれば
-  // それをタイトルに使う（member-detail-page.tsxのヘッダー表示と同じロジック）
+  // 表示名はMEMBER_PROFILES（公式名簿）を優先し、無ければsponsorsデータ中で
+  // フルネームが1つだけ見つかればそれを使う（member-detail-page.tsxのヘッダー
+  // 表示と同じロジック）
   const sponsoredBills = await getBillsWithSponsors();
   const allSponsorNames = collectSponsorNames(
     sponsoredBills.map(({ sponsors }) => sponsors)
   );
-  const displayName =
-    findUniqueFullName(allSponsorNames, decodedName) ?? decodedName;
+  const displayName = resolveMemberDisplayName(decodedName, allSponsorNames);
 
   return {
     title: `${displayName} 議員の記録`,
