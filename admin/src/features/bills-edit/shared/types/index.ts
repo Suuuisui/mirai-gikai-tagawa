@@ -46,6 +46,12 @@ const billBaseSchema = z.object({
     })
     .optional(),
   is_featured: z.boolean(),
+  featured_priority: z
+    .number()
+    .int("整数で入力してください")
+    .min(1, "1以上の数値を入力してください")
+    .nullable()
+    .optional(),
   is_review_completed: z.boolean(),
   diet_session_id: z.string().uuid().nullable().optional(),
   slug: z

@@ -5,6 +5,10 @@ import type { Database } from "@mirai-gikai/supabase";
 import { createAdminClient, clearAllData, type AdminClient } from "../shared/helper";
 import { castCsvValue } from "./csv-value-cast";
 import {
+  type FeaturedBillSnapshot,
+  resolveFeaturedBillUpdates,
+} from "./featured-bills-restore";
+import {
   attachBillMatchKeys,
   buildBillIdToMatchKey,
   buildMatchKeyToBillId,
@@ -163,6 +167,79 @@ async function restoreInterviewData(
   };
 }
 
+/**
+ * クリア前に admin画面で設定された「注目の議案」
+ * （is_featured / featured_priority）をスナップショットする。
+ * 再投入CSVには featured-bills-data.ts 由来の初期値が入っているが、
+ * 本番ではadmin設定を正とするため、スナップショットがあればそちらで上書きする
+ */
+async function snapshotFeaturedBills(
+  supabase: AdminClient
+): Promise<FeaturedBillSnapshot[]> {
+  const { data, error } = await supabase
+    .from("bills")
+    .select("name, is_featured, featured_priority")
+    .eq("is_featured", true);
+  if (error) {
+    throw new Error(`Failed to snapshot featured bills: ${error.message}`);
+  }
+  return (data ?? []) as FeaturedBillSnapshot[];
+}
+
+/**
+ * スナップショットした注目の議案を、議案名一致で新しいbills行へ復元する。
+ * スナップショットが空（初回投入・ローカル新規構築）の場合は何もせず、
+ * CSVの初期値（featured-bills-data.ts）をそのまま生かす。
+ * スナップショットがある場合はadmin設定を正とするため、先にCSV由来の
+ * 注目フラグを全解除してから復元する
+ */
+async function restoreFeaturedBills(
+  supabase: AdminClient,
+  snapshots: FeaturedBillSnapshot[],
+  newBills: BillInfo[]
+): Promise<void> {
+  if (snapshots.length === 0) {
+    return;
+  }
+
+  const { error: resetError } = await supabase
+    .from("bills")
+    .update({ is_featured: false, featured_priority: null } as never)
+    .eq("is_featured", true);
+  if (resetError) {
+    throw new Error(
+      `Failed to reset featured bills before restore: ${resetError.message}`
+    );
+  }
+
+  const { restored, skipped } = resolveFeaturedBillUpdates(
+    snapshots,
+    newBills.map((bill) => ({ id: bill.id, name: bill.name }))
+  );
+
+  for (const update of restored) {
+    const { error } = await supabase
+      .from("bills")
+      .update({
+        is_featured: update.is_featured,
+        featured_priority: update.featured_priority,
+      } as never)
+      .eq("id", update.id);
+    if (error) {
+      throw new Error(
+        `Failed to restore featured bill (id=${update.id}): ${error.message}`
+      );
+    }
+  }
+
+  console.log(
+    `\n🔄 注目の議案の復元: ${restored.length}件復元 / ${skipped.length}件スキップ`
+  );
+  for (const s of skipped) {
+    console.warn(`  ⚠️ 復元できませんでした: "${s.name}" — ${s.reason}`);
+  }
+}
+
 async function importFromCsv() {
   const supabase = createAdminClient();
   const dataDir = path.join(import.meta.dirname, "data");
@@ -172,6 +249,7 @@ async function importFromCsv() {
   try {
     const { configSnapshots, questions: questionSnapshots } =
       await snapshotInterviewData(supabase);
+    const featuredSnapshots = await snapshotFeaturedBills(supabase);
 
     await clearAllData(supabase);
 
@@ -217,6 +295,8 @@ async function importFromCsv() {
     );
     summary.interview_configs = restoredConfigs;
     summary.interview_questions = restoredQuestions;
+
+    await restoreFeaturedBills(supabase, featuredSnapshots, importedBills);
 
     console.log("\n🎉 CSV import completed successfully!");
     console.log("\n📊 Summary:");

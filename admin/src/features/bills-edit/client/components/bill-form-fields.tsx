@@ -318,6 +318,31 @@ export function BillFormFields({
 
       <FormField
         control={control}
+        name="featured_priority"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>注目の表示順</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                min={1}
+                value={field.value ?? ""}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  field.onChange(val === "" ? null : Number.parseInt(val, 10));
+                }}
+              />
+            </FormControl>
+            <FormDescription>
+              小さいほど上に表示。注目の議案にチェックした場合に設定
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
         name="is_review_completed"
         render={({ field }) => (
           <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
