@@ -9,6 +9,11 @@ import {
   resolveFeaturedBillUpdates,
 } from "./featured-bills-restore";
 import {
+  type NewTagInfo,
+  resolveTagSettingsUpdates,
+  type TagSettingsSnapshot,
+} from "./tag-settings-restore";
+import {
   attachBillMatchKeys,
   buildBillIdToMatchKey,
   buildMatchKeyToBillId,
@@ -240,6 +245,63 @@ async function restoreFeaturedBills(
   }
 }
 
+/**
+ * クリア前に admin画面で編集されたタグ設定（説明・トップページのセクション
+ * 表示順 featured_priority）をスナップショットする
+ */
+async function snapshotTagSettings(
+  supabase: AdminClient
+): Promise<TagSettingsSnapshot[]> {
+  const { data, error } = await supabase
+    .from("tags")
+    .select("label, description, featured_priority");
+  if (error) {
+    throw new Error(`Failed to snapshot tag settings: ${error.message}`);
+  }
+  return (data ?? []) as TagSettingsSnapshot[];
+}
+
+/**
+ * スナップショットしたタグ設定を、ラベル一致で新しいtags行へ復元する。
+ * DB側（admin設定）がCSV初期値より優先される。初回投入（スナップショット空）は
+ * 何もしない
+ */
+async function restoreTagSettings(
+  supabase: AdminClient,
+  snapshots: TagSettingsSnapshot[],
+  newTags: NewTagInfo[]
+): Promise<void> {
+  if (snapshots.length === 0) {
+    return;
+  }
+
+  const { restored, skipped } = resolveTagSettingsUpdates(snapshots, newTags);
+
+  for (const update of restored) {
+    const { error } = await supabase
+      .from("tags")
+      .update({
+        description: update.description,
+        featured_priority: update.featured_priority,
+      } as never)
+      .eq("id", update.id);
+    if (error) {
+      throw new Error(
+        `Failed to restore tag settings (id=${update.id}): ${error.message}`
+      );
+    }
+  }
+
+  if (restored.length > 0 || skipped.length > 0) {
+    console.log(
+      `\n🔄 タグ設定の復元: ${restored.length}件復元 / ${skipped.length}件スキップ`
+    );
+  }
+  for (const s of skipped) {
+    console.warn(`  ⚠️ 復元できませんでした: "${s.label}" — ${s.reason}`);
+  }
+}
+
 async function importFromCsv() {
   const supabase = createAdminClient();
   const dataDir = path.join(import.meta.dirname, "data");
@@ -250,12 +312,14 @@ async function importFromCsv() {
     const { configSnapshots, questions: questionSnapshots } =
       await snapshotInterviewData(supabase);
     const featuredSnapshots = await snapshotFeaturedBills(supabase);
+    const tagSettingsSnapshots = await snapshotTagSettings(supabase);
 
     await clearAllData(supabase);
 
     const summary: Record<string, number> = {};
     let importedBills: BillInfo[] = [];
     let importedSessions: SessionInfo[] = [];
+    let importedTags: NewTagInfo[] = [];
 
     for (const config of CSV_IMPORTS) {
       console.log(`Importing ${config.table}...`);
@@ -284,6 +348,9 @@ async function importFromCsv() {
       if (config.table === "diet_sessions") {
         importedSessions = (data ?? []) as SessionInfo[];
       }
+      if (config.table === "tags") {
+        importedTags = (data ?? []) as NewTagInfo[];
+      }
     }
 
     const { restoredConfigs, restoredQuestions } = await restoreInterviewData(
@@ -297,6 +364,7 @@ async function importFromCsv() {
     summary.interview_questions = restoredQuestions;
 
     await restoreFeaturedBills(supabase, featuredSnapshots, importedBills);
+    await restoreTagSettings(supabase, tagSettingsSnapshots, importedTags);
 
     console.log("\n🎉 CSV import completed successfully!");
     console.log("\n📊 Summary:");
