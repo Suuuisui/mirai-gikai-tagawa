@@ -4,6 +4,7 @@ import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { CompactBillCard } from "@/features/bills/client/components/bill-list/compact-bill-card";
 import { routes } from "@/lib/routes";
+import { groupBillsByEraYear } from "../../shared/utils/group-bills-by-era-year";
 import {
   PROPOSER_DESCRIPTIONS,
   PROPOSER_LABELS,
@@ -21,6 +22,7 @@ interface ProposerBillsPageProps {
 export async function ProposerBillsPage({ proposer }: ProposerBillsPageProps) {
   const bills = await getBillsByProposer(proposer);
   const label = PROPOSER_LABELS[proposer];
+  const eraYearGroups = groupBillsByEraYear(bills);
 
   return (
     <div className="bg-mirai-surface-muted">
@@ -37,11 +39,23 @@ export async function ProposerBillsPage({ proposer }: ProposerBillsPageProps) {
           </p>
         </div>
 
-        <div className="flex flex-col gap-3">
-          {bills.map((bill) => (
-            <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-              <CompactBillCard bill={bill} />
-            </Link>
+        <div className="flex flex-col gap-8">
+          {eraYearGroups.map((group) => (
+            <section key={group.label} className="flex flex-col gap-3">
+              <h2 className="text-lg font-bold text-mirai-text">
+                {group.label}
+              </h2>
+              <div className="flex flex-col gap-3">
+                {group.bills.map((bill) => (
+                  <Link
+                    key={bill.id}
+                    href={routes.billDetail(bill.id) as Route}
+                  >
+                    <CompactBillCard bill={bill} />
+                  </Link>
+                ))}
+              </div>
+            </section>
           ))}
         </div>
       </Container>

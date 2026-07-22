@@ -11,8 +11,8 @@ describe("getBillStatusLabel", () => {
     expect(getBillStatusLabel("introduced")).toBe("提出済み");
   });
 
-  it("returns '成立' for enacted", () => {
-    expect(getBillStatusLabel("enacted")).toBe("成立");
+  it("returns '可決' for enacted", () => {
+    expect(getBillStatusLabel("enacted")).toBe("可決");
   });
 
   it("returns '否決' for rejected", () => {

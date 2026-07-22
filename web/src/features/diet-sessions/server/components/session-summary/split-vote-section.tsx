@@ -1,3 +1,4 @@
+import { ChevronRight } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
@@ -51,9 +52,21 @@ export function SplitVoteSection({ bills }: SplitVoteSectionProps) {
         {splitVoteBills.map(({ bill, yes, no }) => {
           const title = bill.bill_content?.title || bill.name;
           const voteLabel = formatVoteCounts(yes, no);
+          const billHref = routes.billDetail(bill.id) as Route;
           return (
-            <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-              <Card className="flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
+            <Card
+              key={bill.id}
+              className="relative flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50"
+            >
+              {/* カード全体をクリック可能にするオーバーレイリンク（下部の
+                  「議員ごとの賛否を見る」リンクは pointer-events-auto で
+                  独立してクリックできるようにし、アンカーの入れ子を避ける） */}
+              <Link
+                href={billHref}
+                className="absolute inset-0"
+                aria-label={title}
+              />
+              <div className="pointer-events-none flex flex-col gap-2">
                 <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
                   {title}
                 </h3>
@@ -76,8 +89,15 @@ export function SplitVoteSection({ bills }: SplitVoteSectionProps) {
                 <p className="text-xs text-mirai-text-muted">
                   {voteLabel.text}
                 </p>
-              </Card>
-            </Link>
+                <Link
+                  href={billHref}
+                  className="relative z-10 inline-flex w-fit items-center gap-0.5 pointer-events-auto text-sm font-bold text-primary-accent hover:opacity-70"
+                >
+                  議員ごとの賛否を見る
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </Card>
           );
         })}
       </div>

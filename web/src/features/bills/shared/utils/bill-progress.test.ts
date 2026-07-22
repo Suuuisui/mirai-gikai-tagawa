@@ -12,7 +12,7 @@ const BASE_STEPS = [
   { label: "議案\n提出" },
   { label: "委員会\n審査" },
   { label: "本会議\n議決" },
-  { label: "議案\n成立" },
+  { label: "可決" },
 ] as const;
 
 describe("getStatusMessage", () => {
@@ -64,7 +64,7 @@ describe("getOrderedSteps", () => {
     expect(result[0].label).toBe("議案\n提出");
     expect(result[1].label).toBe("委員会\n審査");
     expect(result[2].label).toBe("本会議\n議決");
-    expect(result[3].label).toBe("議案\n成立");
+    expect(result[3].label).toBe("可決");
   });
 
   test("HC(本会議)の場合はステップ2と3が入れ替わる", () => {
@@ -72,7 +72,7 @@ describe("getOrderedSteps", () => {
     expect(result[0].label).toBe("議案\n提出");
     expect(result[1].label).toBe("本会議\n議決");
     expect(result[2].label).toBe("委員会\n審査");
-    expect(result[3].label).toBe("議案\n成立");
+    expect(result[3].label).toBe("可決");
   });
 
   test("元の配列を変更しない", () => {
@@ -111,10 +111,10 @@ describe("calculateProgressWidth", () => {
 });
 
 describe("getBaseSteps", () => {
-  test("rejected 以外は最終ステップが '議案\\n成立'", () => {
-    expect(getBaseSteps("enacted")[3].label).toBe("議案\n成立");
-    expect(getBaseSteps("introduced")[3].label).toBe("議案\n成立");
-    expect(getBaseSteps("preparing")[3].label).toBe("議案\n成立");
+  test("rejected 以外は最終ステップが '可決'", () => {
+    expect(getBaseSteps("enacted")[3].label).toBe("可決");
+    expect(getBaseSteps("introduced")[3].label).toBe("可決");
+    expect(getBaseSteps("preparing")[3].label).toBe("可決");
   });
 
   test("rejected の場合は最終ステップが '審議\\n終了'", () => {
