@@ -15,10 +15,12 @@ import {
   ReviewCompleteBadge,
   ReviewInProgressBanner,
 } from "../../../client/components/bill-detail/review-status-banner";
+import { BillCover } from "../../../client/components/bill-list/bill-cover";
 import { BillStatusBadge } from "../../../client/components/bill-list/bill-status-badge";
 import { BillTag } from "../../../client/components/bill-list/bill-tag";
 import { getBillShareData } from "../../../client/utils/share";
 import type { BillWithContent } from "../../../shared/types";
+import { isDefaultThumbnail } from "../../../shared/utils/bill-cover";
 
 interface BillDetailHeaderProps {
   bill: BillWithContent;
@@ -27,6 +29,8 @@ interface BillDetailHeaderProps {
   opinionCount?: number;
   /** 公開トピック数。1件以上ならトピック一覧への導線として件数を併記する。 */
   topicCount?: number;
+  /** 所属会期（会期まとめページへのチップリンク用。無い議案では非表示） */
+  dietSession?: { id: string; name: string } | null;
 }
 
 export async function BillDetailHeader({
@@ -34,6 +38,7 @@ export async function BillDetailHeader({
   hasInterviewConfig,
   opinionCount,
   topicCount,
+  dietSession,
 }: BillDetailHeaderProps) {
   const displayTitle = bill.bill_content?.title;
   const displaySummary = bill.bill_content?.summary;
@@ -48,7 +53,15 @@ export async function BillDetailHeader({
 
   return (
     <div className="mb-8 bg-white rounded-b-4xl">
-      {bill.thumbnail_url ? (
+      {/* 一覧カード（BillCard）と同じ見た目のカバーを表示し、
+          クリック前後で議案の見た目が変わらないようにする。
+          カテゴリ共通のデフォルト画像しか無い議案は動的カバー（BillCover）、
+          個別に差し替えた画像がある議案はその画像を表示する */}
+      {isDefaultThumbnail(bill.thumbnail_url) ? (
+        <div className="relative w-full h-72 md:h-80">
+          <BillCover bill={bill} />
+        </div>
+      ) : bill.thumbnail_url ? (
         <div className="relative w-full h-72 md:h-80">
           <Image
             src={bill.thumbnail_url}
@@ -89,6 +102,15 @@ export async function BillDetailHeader({
               className="rounded-full bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text-secondary transition-colors hover:bg-mirai-surface-tag"
             >
               {PROPOSER_LABELS[proposerType]}
+            </Link>
+          )}
+          {/* 会期バッジ（会期まとめページへの導線） */}
+          {dietSession && (
+            <Link
+              href={routes.sessionSummary(dietSession.id) as Route}
+              className="rounded-full bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text-secondary transition-colors hover:bg-mirai-surface-tag"
+            >
+              {dietSession.name}
             </Link>
           )}
         </div>

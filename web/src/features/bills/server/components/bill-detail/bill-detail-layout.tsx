@@ -68,6 +68,7 @@ export async function BillDetailLayout({
           hasInterviewConfig={interviewConfig != null}
           opinionCount={topicAnalysis?.total_opinions ?? 0}
           topicCount={topicAnalysis?.topics.length ?? 0}
+          dietSession={dietSession}
         />
         <Container>
           <div className="mt-6">
