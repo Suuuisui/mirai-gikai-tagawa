@@ -16,13 +16,16 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
     <nav className="flex flex-wrap items-center gap-2 text-sm text-gray-800">
       {items.map((item, index) => (
         <span key={item.label} className="flex items-center gap-2">
-          {index > 0 && <ChevronRight className="w-4 h-4" />}
+          {index > 0 && <ChevronRight className="w-4 h-4 shrink-0" />}
           {item.href ? (
-            <Link href={item.href as Route} className="hover:underline">
+            <Link
+              href={item.href as Route}
+              className="whitespace-nowrap hover:underline"
+            >
               {item.label}
             </Link>
           ) : (
-            <span>{item.label}</span>
+            <span className="whitespace-nowrap">{item.label}</span>
           )}
         </span>
       ))}

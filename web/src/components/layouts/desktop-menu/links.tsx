@@ -59,7 +59,7 @@ export function DesktopMenuLinks() {
           href={link.href as Route}
           target={link.external ? "_blank" : undefined}
           rel={link.external ? "noreferrer" : undefined}
-          className="font-medium text-xs transition-opacity hover:opacity-70"
+          className="whitespace-nowrap font-medium text-xs transition-opacity hover:opacity-70"
           style={{
             lineHeight: "1.48em",
           }}

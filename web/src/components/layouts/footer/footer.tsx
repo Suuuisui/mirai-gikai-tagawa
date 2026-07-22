@@ -53,12 +53,11 @@ function FooterPrimaryLinks() {
     <nav aria-label="主要リンク" className="w-full mb-5">
       <ul
         className="
-      flex flex-col items-center gap-3 text-[14px] font-semibold text-slate-800
-      md:flex-row md:justify-center md:gap-5
+      flex flex-row flex-wrap items-center justify-center gap-x-5 gap-y-3 text-[14px] font-semibold text-slate-800
       "
       >
         {primaryLinks.map((link) => (
-          <li key={link.label}>
+          <li key={link.label} className="whitespace-nowrap">
             <Link
               href={link.href as Route}
               target={link.external ? "_blank" : undefined}
@@ -84,7 +83,7 @@ function FooterPolicies() {
               href={policy.href as Route}
               target={policy.external ? "_blank" : undefined}
               rel={policy.external ? "noreferrer" : undefined}
-              className="transition-colors hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              className="whitespace-nowrap transition-colors hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
             >
               {policy.label}
             </Link>
