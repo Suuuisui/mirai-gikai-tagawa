@@ -115,7 +115,7 @@ export function HeaderClient() {
 
         {/* モバイル用クイックナビ（lg未満のみ表示、横スクロール） */}
         <nav
-          className="flex items-center gap-2 overflow-x-auto pt-1 pb-3 scrollbar-hide lg:hidden"
+          className="flex items-center gap-1.5 overflow-x-auto pt-0.5 pb-2.5 scrollbar-hide lg:hidden"
           aria-label="クイックナビゲーション"
         >
           {MOBILE_QUICK_LINKS.map(({ label, href, icon: Icon }) => (

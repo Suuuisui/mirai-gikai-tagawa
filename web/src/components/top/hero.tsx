@@ -3,7 +3,7 @@ import { Container } from "@/components/layouts/container";
 
 export function Hero() {
   return (
-    <div className="relative w-full h-[55vh] min-h-[360px] md:h-[50vh]">
+    <div className="relative w-full h-[55vh] min-h-[440px] md:h-[50vh]">
       <Image
         src="/img/hero_background.png"
         alt="田川市議会・田川のまちなみ"
@@ -14,8 +14,10 @@ export function Hero() {
         quality={85}
       />
       {/* 見出しはflexで縦中央寄せ。下部のスクロールインジケーターと
-          重ならないよう、その分の余白をpbで確保する */}
-      <div className="relative flex h-full flex-col justify-center pb-16">
+          重ならないよう、その分の余白をpbで確保する。
+          lg未満は2段ヘッダー（フローティング）に見出しが隠れないよう、
+          ヘッダー高ぶんの上余白を確保する */}
+      <div className="relative flex h-full flex-col justify-center pt-36 pb-16 lg:pt-0">
         <Container>
           {/* 文節単位のinline-blockで、拡大フォント環境でも語の途中で折り返さないようにする */}
           <h1 className="font-bold text-xl md:text-2xl leading-relaxed">
