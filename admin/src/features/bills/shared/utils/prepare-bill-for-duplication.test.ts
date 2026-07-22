@@ -20,6 +20,7 @@ const baseBill: Bill = {
   submitted_date: null,
   share_thumbnail_url: null,
   shugiin_url: null,
+  sponsors: null,
   slug: null,
   status: "introduced",
   status_note: null,

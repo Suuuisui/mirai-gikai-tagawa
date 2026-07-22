@@ -25,6 +25,7 @@ const baseBill: BillWithContent = {
   submitted_date: "2026-02-15",
   publish_status: "published",
   shugiin_url: null,
+  sponsors: null,
   slug: null,
   status_note: null,
   status_order: 3,

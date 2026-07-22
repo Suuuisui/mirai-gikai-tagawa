@@ -16,9 +16,11 @@ import {
   PROPOSER_TYPES,
   type ProposerType,
 } from "../../shared/utils/proposer";
+import { extractFamilyName } from "../../shared/utils/sponsors";
 import {
   countBillsByProposer,
   getBillsWithMemberVotes,
+  getBillsWithSponsors,
 } from "../loaders/get-member-vote-data";
 
 const PROPOSER_ICONS: Record<
@@ -57,12 +59,24 @@ function groupByLatestFaction(
  * 入口をまとめたページ
  */
 export async function MemberListPage() {
-  const [items, proposerCounts] = await Promise.all([
+  const [items, proposerCounts, sponsoredBills] = await Promise.all([
     getBillsWithMemberVotes(),
     countBillsByProposer(),
+    getBillsWithSponsors(),
   ]);
   const members = aggregateMemberSummaries(items);
   const factionGroups = groupByLatestFaction(members);
+
+  // 議員（姓）ごとの提出議案数（同じ議案に複数回登場しても1件として数える）
+  const proposalCounts = new Map<string, number>();
+  for (const { sponsors } of sponsoredBills) {
+    const familyNames = new Set(
+      sponsors.proposers.map((person) => extractFamilyName(person.name))
+    );
+    for (const familyName of familyNames) {
+      proposalCounts.set(familyName, (proposalCounts.get(familyName) ?? 0) + 1);
+    }
+  }
 
   // 集計対象期間（賛否データが紐づく議案の議決日の範囲）
   const dates = items
@@ -136,7 +150,7 @@ export async function MemberListPage() {
               </h3>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {group.members.map((member) => {
-                  const { yes, no, absent, not_voting } = member.counts;
+                  const proposalCount = proposalCounts.get(member.name);
                   return (
                     <Link
                       key={member.name}
@@ -147,28 +161,9 @@ export async function MemberListPage() {
                           {member.name}
                           <ChevronRight className="h-4 w-4 shrink-0 text-mirai-text-muted" />
                         </span>
-                        {/* 賛成・反対の比率バー（幅は票数比によるレイアウト計算のため
-                            style を使用。色指定はクラスで行っている） */}
-                        {yes + no > 0 && (
-                          <div
-                            className="flex h-1.5 w-full overflow-hidden rounded-full bg-mirai-surface-muted"
-                            role="img"
-                            aria-label={`賛成${yes}対反対${no}`}
-                          >
-                            <div
-                              className="basis-0 bg-vote-for"
-                              style={{ flexGrow: yes }}
-                            />
-                            <div
-                              className="basis-0 bg-stance-against"
-                              style={{ flexGrow: no }}
-                            />
-                          </div>
-                        )}
-                        <p className="text-xs text-mirai-text-secondary">
-                          賛成{yes}・反対{no}
-                          {absent > 0 && `・欠席${absent}`}
-                          {not_voting > 0 && `・採決に加わらず${not_voting}`}
+                        <p className="text-xs text-mirai-text-muted">
+                          投票記録 {member.billCount}議案
+                          {proposalCount ? `・提出 ${proposalCount}件` : ""}
                         </p>
                       </Card>
                     </Link>
@@ -186,7 +181,7 @@ export async function MemberListPage() {
           </p>
           <p>※姓が同じ表記の議員は同一人物として集計しています。</p>
           <p>
-            ※議員提出議案の提出者個人名は公開データに記載がないため、提出議案は市長・議員・委員会の区分単位で掲載しています。
+            ※提出議案は市長・議員・委員会の区分単位で掲載しています。議案説明資料PDFに提出者・賛成者（連署議員）の氏名が記載されている議案では、議案ページで個人名も確認できます。
           </p>
         </div>
       </Container>

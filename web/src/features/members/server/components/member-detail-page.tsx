@@ -15,21 +15,38 @@ import {
   aggregateMemberSummaries,
   collectMemberVoteRecords,
 } from "../../shared/utils/aggregate-members";
-import { getBillsWithMemberVotes } from "../loaders/get-member-vote-data";
+import {
+  collectSponsorNames,
+  extractFamilyName,
+  findUniqueFullName,
+} from "../../shared/utils/sponsors";
+import {
+  getBillsWithMemberVotes,
+  getBillsWithSponsors,
+} from "../loaders/get-member-vote-data";
 
 interface MemberDetailPageProps {
   /** 議員名（姓、デコード済み） */
   name: string;
 }
 
+// 提出者・賛成者チップの共通スタイル（vote チップと視覚的に区別するため
+// bg-mirai-surface-muted の単色トーンにしている）
+const SPONSOR_CHIP_CLASS =
+  "inline-flex shrink-0 items-center gap-1 rounded-full bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text-secondary";
+
 /**
  * 議員個人ページ
  *
  * 賛否が分かれた案件での、この議員の投票記録（賛成・反対・欠席・
- * 採決に加わらず）を議決日の新しい順に一覧表示する
+ * 採決に加わらず）と、議案説明資料PDFから分かる提出・連署の記録を
+ * 議決日の新しい順に一覧表示する
  */
 export async function MemberDetailPage({ name }: MemberDetailPageProps) {
-  const items = await getBillsWithMemberVotes();
+  const [items, sponsoredBills] = await Promise.all([
+    getBillsWithMemberVotes(),
+    getBillsWithSponsors(),
+  ]);
   const summary = aggregateMemberSummaries(items).find(
     (member) => member.name === name
   );
@@ -41,12 +58,28 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
   const records = collectMemberVoteRecords(items, name);
   const { yes, no, absent, not_voting } = summary.counts;
 
+  const proposedBills = sponsoredBills.filter(({ sponsors }) =>
+    sponsors.proposers.some((person) => extractFamilyName(person.name) === name)
+  );
+  const supportedBills = sponsoredBills.filter(({ sponsors }) =>
+    sponsors.supporters.some(
+      (person) => extractFamilyName(person.name) === name
+    )
+  );
+
+  // sponsorsデータ中にこの議員の姓と一致するフルネームがちょうど1つだけ
+  // 見つかった場合はフルネームで表示する（見つからない/複数ある場合は姓のみ）
+  const allSponsorNames = collectSponsorNames(
+    sponsoredBills.map(({ sponsors }) => sponsors)
+  );
+  const displayName = findUniqueFullName(allSponsorNames, name) ?? name;
+
   return (
     <div className="bg-mirai-surface-muted">
       <Container className="py-8">
         <div className="flex flex-col gap-1.5 pb-6">
           <h1 className="text-[22px] font-bold text-black leading-[1.48]">
-            {summary.name} 議員の賛否
+            {displayName} 議員
           </h1>
           <p className="text-xs text-mirai-text-secondary">
             会派: {summary.factions.join(" / ")}
@@ -56,7 +89,7 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
 
         {/* 集計サマリー */}
         <div className="mb-6 rounded-md bg-white px-4 py-5">
-          <p className="text-sm font-bold text-mirai-text">
+          <p className="text-xs text-mirai-text-secondary">
             賛成{yes}・反対{no}
             {absent > 0 && `・欠席${absent}`}
             {not_voting > 0 && `・採決に加わらず${not_voting}`}
@@ -64,22 +97,58 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
               （{summary.billCount}議案）
             </span>
           </p>
-          {/* 賛成・反対の比率バー（幅は票数比によるレイアウト計算のため style を
-              使用。色指定はクラスで行っている） */}
-          {yes + no > 0 && (
-            <div
-              className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-mirai-surface-muted"
-              role="img"
-              aria-label={`賛成${yes}対反対${no}`}
-            >
-              <div className="basis-0 bg-vote-for" style={{ flexGrow: yes }} />
-              <div
-                className="basis-0 bg-stance-against"
-                style={{ flexGrow: no }}
-              />
-            </div>
-          )}
+          <p className="mt-2 text-xs text-mirai-text-note">
+            ※賛成・反対の数は議員の評価を示すものではありません。個々の議案の内容とあわせてご覧ください。
+          </p>
         </div>
+
+        {/* 提出した議案（議案説明資料PDFに提出者として記載がある議案のみ） */}
+        {proposedBills.length > 0 && (
+          <section className="mb-8 flex flex-col gap-3">
+            <h2 className="text-lg font-bold text-mirai-text">提出した議案</h2>
+            {proposedBills.map(({ bill }) => (
+              <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
+                <Card className="flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
+                      {bill.bill_content?.title || bill.name}
+                    </h3>
+                    <span className={SPONSOR_CHIP_CLASS}>提出者</span>
+                  </div>
+                  <p className="text-xs text-mirai-text-muted">
+                    {bill.submitted_date &&
+                      `${formatDateWithDots(bill.submitted_date)} 議決`}
+                  </p>
+                </Card>
+              </Link>
+            ))}
+          </section>
+        )}
+
+        {/* 賛成者として連署した議案（議案説明資料PDFに賛成者として記載がある議案のみ） */}
+        {supportedBills.length > 0 && (
+          <section className="mb-8 flex flex-col gap-3">
+            <h2 className="text-lg font-bold text-mirai-text">
+              賛成者として連署した議案
+            </h2>
+            {supportedBills.map(({ bill }) => (
+              <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
+                <Card className="flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
+                      {bill.bill_content?.title || bill.name}
+                    </h3>
+                    <span className={SPONSOR_CHIP_CLASS}>賛成者</span>
+                  </div>
+                  <p className="text-xs text-mirai-text-muted">
+                    {bill.submitted_date &&
+                      `${formatDateWithDots(bill.submitted_date)} 議決`}
+                  </p>
+                </Card>
+              </Link>
+            ))}
+          </section>
+        )}
 
         {/* 議案ごとの投票記録 */}
         <section className="flex flex-col gap-3">

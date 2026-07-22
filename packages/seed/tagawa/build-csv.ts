@@ -28,6 +28,7 @@ import { BATCH_B_OVERRIDES } from "./bill-descriptions-batch-b";
 import { BATCH_C_OVERRIDES } from "./bill-descriptions-batch-c";
 import { BATCH_D_OVERRIDES } from "./bill-descriptions-batch-d";
 import { MEMBER_VOTES } from "./member-votes-data";
+import { BILL_SPONSORS } from "./bill-sponsors-data";
 import { uuidv5 } from "./uuidv5";
 
 // みらい議会＠田川市のシードID採番専用の名前空間UUID（ランダム生成した固定値）。
@@ -224,6 +225,7 @@ function main() {
   // MEMBER_VOTES のキーが実際にどこかの議案とマッチしたかを記録する
   // （データ投入時のタイポ検出用。マッチしなかったキーは実行後にwarnする）
   const matchedMemberVoteKeys = new Set<string>();
+  const matchedSponsorKeys = new Set<string>();
 
   for (const session of TAGAWA_SESSIONS) {
     const dietSessionId = seedId(`session:${session.key}`);
@@ -267,6 +269,13 @@ function main() {
         matchedMemberVoteKeys.add(memberVoteKey);
       }
 
+      // 議員・委員会提出議案の提出者・賛成者（公式PDFからの転記。無ければnull）。
+      // キー形式は member_votes と同じ
+      const sponsors = BILL_SPONSORS[memberVoteKey];
+      if (sponsors) {
+        matchedSponsorKeys.add(memberVoteKey);
+      }
+
       // 注目の議案での位置（-1なら注目対象外）
       const featuredIndex = FEATURED_BILLS.indexOf(
         `${session.key}:${bill.billNumberLabel}`
@@ -304,6 +313,9 @@ function main() {
         // 議員別の賛否（田川市議会公開分）。jsonbカラムのためJSON文字列として
         // 出力する（賛否が分かれず市が公開していない議案はnull）
         member_votes: memberVotes ? JSON.stringify(memberVotes) : null,
+        // 提出者・賛成者（議員・委員会提出議案のみ）。jsonbカラムのため
+        // JSON文字列として出力する
+        sponsors: sponsors ? JSON.stringify(sponsors) : null,
       });
 
       let tagId = tagLabelToId.get(category);
@@ -444,6 +456,7 @@ function main() {
       "use_knowledge_source_in_chat",
       "explanation_material_urls",
       "member_votes",
+      "sponsors",
     ],
     billRows
   );
@@ -487,6 +500,19 @@ function main() {
       `\n⚠️ MEMBER_VOTES のキーがどの議案ともマッチしませんでした（${unmatchedMemberVoteKeys.length}件）:`
     );
     for (const key of unmatchedMemberVoteKeys) {
+      console.warn(`  - ${key}`);
+    }
+  }
+
+  // BILL_SPONSORS のキーがどの議案にもマッチしなかった場合はwarnする
+  const unmatchedSponsorKeys = Object.keys(BILL_SPONSORS).filter(
+    (key) => !matchedSponsorKeys.has(key)
+  );
+  if (unmatchedSponsorKeys.length > 0) {
+    console.warn(
+      `\n⚠️ BILL_SPONSORS のキーがどの議案ともマッチしませんでした（${unmatchedSponsorKeys.length}件）:`
+    );
+    for (const key of unmatchedSponsorKeys) {
       console.warn(`  - ${key}`);
     }
   }

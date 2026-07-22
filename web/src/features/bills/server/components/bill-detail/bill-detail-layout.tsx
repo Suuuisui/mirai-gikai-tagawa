@@ -5,6 +5,7 @@ import { getDietSessionById } from "@/features/diet-sessions/server/loaders/get-
 import { InterviewLandingSection } from "@/features/interview-config/client/components/interview-landing-section";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { getPublicReportsByBillId } from "@/features/interview-report/server/loaders/get-public-reports-by-bill-id";
+import { getMemberNameSet } from "@/features/members/server/loaders/get-member-vote-data";
 import { BillTopicsPreviewSection } from "@/features/user-topic-analysis/server/components/bill-topics-preview-section";
 import { getPublicTopicAnalysis } from "@/features/user-topic-analysis/server/loaders/get-public-topic-analysis";
 import { routes } from "@/lib/routes";
@@ -21,6 +22,7 @@ import { BillDetailHeader } from "./bill-detail-header";
 import { BillSessionLink } from "./bill-session-link";
 import { ExplanationMaterialsSection } from "./explanation-materials-section";
 import { MemberVotesSection } from "./member-votes-section";
+import { SponsorsSection } from "./sponsors-section";
 
 interface BillDetailLayoutProps {
   bill: BillWithContent;
@@ -38,6 +40,7 @@ export async function BillDetailLayout({
     topicAnalysis,
     dietSession,
     adjacentBills,
+    memberNameSet,
   ] = await Promise.all([
     getInterviewConfig(bill.id),
     getPublicReportsByBillId(bill.id),
@@ -48,6 +51,7 @@ export async function BillDetailLayout({
     bill.diet_session_id
       ? getAdjacentSessionBills(bill.id, bill.diet_session_id)
       : Promise.resolve(null),
+    getMemberNameSet(),
   ]);
 
   return (
@@ -98,6 +102,10 @@ export async function BillDetailLayout({
               />
             </div>
           )}
+
+          {/* 提出者・賛成者（連署議員）。議員提出・委員会提出議案のみデータがあり、
+              データが無い議案（市長提出等）では非表示 */}
+          <SponsorsSection bill={bill} memberNameSet={memberNameSet} />
 
           {/* 議員別の賛否（賛否が分かれた案件のみ市が公開。データが無い議案では非表示）
               「賛否が分かれた」事実は議案の一番のニュースのため、長文解説より前に配置する */}
