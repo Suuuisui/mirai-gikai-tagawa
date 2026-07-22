@@ -27,6 +27,7 @@ import { BILL_DESCRIPTIONS, billDescriptionKey } from "./bill-descriptions";
 import { BATCH_B_OVERRIDES } from "./bill-descriptions-batch-b";
 import { BATCH_C_OVERRIDES } from "./bill-descriptions-batch-c";
 import { BATCH_D_OVERRIDES } from "./bill-descriptions-batch-d";
+import { FEATURED_BILLS } from "./featured-bills-data";
 import { MEMBER_VOTES } from "./member-votes-data";
 import { BILL_SPONSORS } from "./bill-sponsors-data";
 import { uuidv5 } from "./uuidv5";
@@ -173,18 +174,6 @@ const CATEGORY_THUMBNAIL: Record<CategoryLabel, string> = {
   その他: "/img/bill-thumbnails/other.webp",
 };
 
-// 注目の議案として homepage に掲載する議案（事実として特筆性が高いものを選定。
-// AI選定ではなく、決算不認定・否決など議決が割れた案件と当初予算を人手で選定）
-// キーは `会期キー:議案番号ラベル`。
-// **配列の順番がそのままトップページの表示順になる**（先頭が一番上）。
-// 並び替えたいときはこの配列の順序を入れ替えて再シードする
-const FEATURED_BILLS = [
-  "r7-6-teirei:認定第1号", // 令和6年度一般会計決算（不認定）
-  "r7-5-rinji:議案第37号", // 第三者調査委員会設置条例の制定
-  "r8-2-teirei:議案第7号", // 令和8年度一般会計予算
-  "r8-4-teirei:議案第42号", // 農業委員会委員の任命（否決）
-];
-
 function csvField(value: string | number | boolean | null): string {
   if (value === null || value === undefined) return "";
   const str = String(value);
@@ -226,6 +215,8 @@ function main() {
   // （データ投入時のタイポ検出用。マッチしなかったキーは実行後にwarnする）
   const matchedMemberVoteKeys = new Set<string>();
   const matchedSponsorKeys = new Set<string>();
+  // FEATURED_BILLS のタイポ検出用（全議案のキー集合）
+  const allBillKeys = new Set<string>();
 
   for (const session of TAGAWA_SESSIONS) {
     const dietSessionId = seedId(`session:${session.key}`);
@@ -277,6 +268,7 @@ function main() {
       }
 
       // 注目の議案での位置（-1なら注目対象外）
+      allBillKeys.add(`${session.key}:${bill.billNumberLabel}`);
       const featuredIndex = FEATURED_BILLS.indexOf(
         `${session.key}:${bill.billNumberLabel}`
       );
@@ -513,6 +505,20 @@ function main() {
       `\n⚠️ BILL_SPONSORS のキーがどの議案ともマッチしませんでした（${unmatchedSponsorKeys.length}件）:`
     );
     for (const key of unmatchedSponsorKeys) {
+      console.warn(`  - ${key}`);
+    }
+  }
+
+  // FEATURED_BILLS のキーがどの議案にもマッチしなかった場合はwarnする
+  // （注目の議案が意図せず表示されないことに気づけるように）
+  const unmatchedFeaturedKeys = FEATURED_BILLS.filter(
+    (key) => !allBillKeys.has(key)
+  );
+  if (unmatchedFeaturedKeys.length > 0) {
+    console.warn(
+      `\n⚠️ FEATURED_BILLS のキーがどの議案ともマッチしませんでした（${unmatchedFeaturedKeys.length}件）:`
+    );
+    for (const key of unmatchedFeaturedKeys) {
       console.warn(`  - ${key}`);
     }
   }
