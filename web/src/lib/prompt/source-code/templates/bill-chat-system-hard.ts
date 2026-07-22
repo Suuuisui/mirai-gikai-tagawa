@@ -1,4 +1,5 @@
 import { buildKnowledgeSourceSection } from "./knowledge-source-section";
+import { buildMemberVotesAndSponsorsSection } from "./member-info-section";
 import {
   COMMON_RULES,
   MIRAI_GIKAI_OVERVIEW,
@@ -13,7 +14,9 @@ export function buildBillChatSystemHardPrompt(
   billTitle: string,
   billSummary: string,
   billContent: string,
-  knowledgeSource = ""
+  knowledgeSource = "",
+  memberVotes = "",
+  sponsors = ""
 ): string {
   return `あなたは「みらい議会＠田川市」プラットフォーム上で動作する中立的なAIアシスタントです。
 
@@ -28,6 +31,7 @@ ${MIRAI_GIKAI_OVERVIEW}
 - 要約: ${billSummary}
 - 詳細: ${billContent}
 ${buildKnowledgeSourceSection(knowledgeSource)}
+${buildMemberVotesAndSponsorsSection(memberVotes, sponsors)}
 ## 回答の難易度：難しい（専門用語を含む詳細な内容）
 - 専門用語を正確に使用し、詳細で網羅的な説明をしてください
 - 法律的な背景や制度的な文脈も含めて説明してください

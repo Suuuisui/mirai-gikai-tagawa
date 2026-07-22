@@ -19,6 +19,8 @@ import {
   SUGGEST_INTERVIEW_TOOL_TYPE,
 } from "@/features/chat/shared/constants";
 import { ChatError, ChatErrorCode } from "@/features/chat/shared/types/errors";
+import { formatMemberVotesForPrompt } from "@/features/chat/shared/utils/format-member-votes-for-prompt";
+import { formatSponsorsForPrompt } from "@/features/chat/shared/utils/format-sponsors-for-prompt";
 import { pickChatKnowledgeSource } from "@/features/chat/shared/utils/pick-chat-knowledge-source";
 import { findPublicInterviewConfigByBillId } from "@/features/interview-config/server/repositories/interview-config-repository";
 import { AI_MODELS } from "@/lib/ai/models";
@@ -216,6 +218,8 @@ async function buildPrompt(
       billSummary: serverContent?.summary ?? "",
       billContent: serverContent?.content ?? "",
       knowledgeSource: pickChatKnowledgeSource(serverBill),
+      memberVotes: formatMemberVotesForPrompt(serverBill?.member_votes),
+      sponsors: formatSponsorsForPrompt(serverBill?.sponsors),
     };
   }
 

@@ -128,4 +128,45 @@ describe("SourceCodePromptProvider", () => {
 
     expect(result.content).not.toContain("<knowledge_source>");
   });
+
+  it("memberVotes・sponsors を渡すと bill-chat-system-normal の出力に含まれる", async () => {
+    const result = await provider.getPrompt("bill-chat-system-normal", {
+      billName: "n",
+      billTitle: "t",
+      billSummary: "s",
+      billContent: "c",
+      memberVotes: "賛成1・反対1",
+      sponsors: "提出者: 山田太郎",
+    });
+
+    expect(result.content).toContain("議員別の賛否・提出者情報");
+    expect(result.content).toContain("賛成1・反対1");
+    expect(result.content).toContain("提出者: 山田太郎");
+  });
+
+  it("memberVotes・sponsors を渡すと bill-chat-system-hard の出力に含まれる", async () => {
+    const result = await provider.getPrompt("bill-chat-system-hard", {
+      billName: "n",
+      billTitle: "t",
+      billSummary: "s",
+      billContent: "c",
+      memberVotes: "賛成1・反対1",
+      sponsors: "提出者: 山田太郎",
+    });
+
+    expect(result.content).toContain("議員別の賛否・提出者情報");
+    expect(result.content).toContain("賛成1・反対1");
+    expect(result.content).toContain("提出者: 山田太郎");
+  });
+
+  it("top-chat-system にサイト内ページの案内が含まれる", async () => {
+    const result = await provider.getPrompt("top-chat-system", {
+      billSummary: "[]",
+    });
+
+    expect(result.content).toContain("/search");
+    expect(result.content).toContain("/sessions");
+    expect(result.content).toContain("/members");
+    expect(result.content).toContain("評価・批判する表現はしないでください");
+  });
 });
