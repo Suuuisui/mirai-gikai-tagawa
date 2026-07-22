@@ -162,3 +162,54 @@ export async function createBillsTags(billId: string, tagIds: string[]) {
     throw new Error(`Failed to create bill tags: ${error.message}`);
   }
 }
+
+/**
+ * 「注目の議案」（is_featured=true）の id と featured_priority を取得する。
+ * excludeBillId を指定すると、その議案を除いた一覧を返す（保存対象を除いた
+ * 「他の注目議案」一覧を取得する用途）。
+ */
+export async function findFeaturedBillPriorities(excludeBillId?: string) {
+  const supabase = createAdminClient();
+  let query = supabase
+    .from("bills")
+    .select("id, featured_priority")
+    .eq("is_featured", true);
+
+  if (excludeBillId) {
+    query = query.neq("id", excludeBillId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    throw new Error(
+      `Failed to fetch featured bill priorities: ${error.message}`
+    );
+  }
+
+  return data ?? [];
+}
+
+/**
+ * 複数議案の featured_priority を一括更新する。
+ */
+export async function updateBillFeaturedPriorities(
+  updates: Array<{ id: string; featured_priority: number | null }>
+) {
+  const supabase = createAdminClient();
+
+  await Promise.all(
+    updates.map(async ({ id, featured_priority }) => {
+      const { error } = await supabase
+        .from("bills")
+        .update({ featured_priority, updated_at: new Date().toISOString() })
+        .eq("id", id);
+
+      if (error) {
+        throw new Error(
+          `Failed to update featured priority for bill ${id}: ${error.message}`
+        );
+      }
+    })
+  );
+}

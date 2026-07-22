@@ -36,7 +36,7 @@ const BILL_STATUS_OPTIONS: Array<{ value: BillStatus; label: string }> = [
   { value: "introduced", label: "提出済み" },
   { value: "in_originating_house", label: "審議中（提出院）" },
   { value: "in_receiving_house", label: "審議中（送付院）" },
-  { value: "enacted", label: "成立" },
+  { value: "enacted", label: "可決" },
   { value: "rejected", label: "否決" },
 ];
 
@@ -227,7 +227,7 @@ export function BillFormFields({
         name="shugiin_url"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>衆議院URL</FormLabel>
+            <FormLabel>市議会URL</FormLabel>
             <FormControl>
               <Input
                 {...field}
@@ -236,7 +236,7 @@ export function BillFormFields({
               />
             </FormControl>
             <FormDescription>
-              衆議院の議案ページURLを入力してください（「これから掲載される法案」表示時に外部リンクとして使用）
+              市議会の議案ページURLを入力してください（「これから掲載される法案」表示時に外部リンクとして使用）
             </FormDescription>
             <FormMessage />
           </FormItem>
@@ -269,14 +269,14 @@ export function BillFormFields({
         name="diet_session_id"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>国会会期</FormLabel>
+            <FormLabel>会期</FormLabel>
             <Select
               onValueChange={field.onChange}
               value={field.value ?? undefined}
             >
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="国会会期を選択" />
+                  <SelectValue placeholder="会期を選択" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
@@ -288,7 +288,7 @@ export function BillFormFields({
               </SelectContent>
             </Select>
             <FormDescription>
-              議案が提出された国会会期を選択してください
+              議案が提出された会期を選択してください
             </FormDescription>
             <FormMessage />
           </FormItem>
@@ -334,7 +334,7 @@ export function BillFormFields({
               />
             </FormControl>
             <FormDescription>
-              小さいほど上に表示。注目の議案にチェックした場合に設定
+              小さいほど上に表示。保存時に自動で1から連番に整列されます。指定した位置に割り込みます（未指定の場合は末尾に追加）
             </FormDescription>
             <FormMessage />
           </FormItem>

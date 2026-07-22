@@ -50,10 +50,10 @@ export const BILL_STATUS_ORDER: Record<BillStatus, number> = {
   preparing: 5,
 };
 
-// House display mapping
+// House display mapping（田川市議会では委員会審査・本会議の2段階審議として扱う。webと表記を統一）
 export const HOUSE_LABELS: Record<OriginatingHouse, string> = {
-  HR: "衆議院",
-  HC: "参議院",
+  HR: "委員会",
+  HC: "本会議",
 };
 
 // ステータスを日本語ラベルに変換する関数
@@ -78,7 +78,7 @@ export function getBillStatusLabel(
       }
       return "審議中";
     case "enacted":
-      return "成立";
+      return "可決";
     case "rejected":
       return "否決";
     default:

@@ -8,7 +8,11 @@ import {
 } from "@/lib/utils/cache-invalidation";
 import type { BillUpdateInput } from "../../shared/types";
 import { shouldAutoCloseInterviewOnBillStatus } from "../../shared/utils/should-auto-close-interview";
-import { updateBillRecord } from "../repositories/bill-edit-repository";
+import {
+  findBillById,
+  updateBillRecord,
+} from "../repositories/bill-edit-repository";
+import { resequenceFeaturedPrioritiesAfterSave } from "./resequence-featured-priorities-service";
 
 /**
  * 議案の更新と、それに伴う副作用（インタビュー自動クローズ・キャッシュ無効化）を一括で実行する。
@@ -38,6 +42,21 @@ export async function updateBillWithSideEffects(
   if (input.status && shouldAutoCloseInterviewOnBillStatus(input.status)) {
     await closeOtherPublicConfigs(id);
     tagsToInvalidate.push(WEB_CACHE_TAGS.INTERVIEW_CONFIGS);
+  }
+
+  // is_featured / featured_priority が今回の更新に含まれる場合のみ、
+  // 保存後の最新状態を読み直して表示順を自動整列する（部分更新に対応するため、
+  // input をそのまま使わずDB上の確定値を使う）。
+  if (
+    input.is_featured !== undefined ||
+    input.featured_priority !== undefined
+  ) {
+    const savedBill = await findBillById(id);
+    await resequenceFeaturedPrioritiesAfterSave({
+      id: savedBill.id,
+      is_featured: savedBill.is_featured,
+      featured_priority: savedBill.featured_priority,
+    });
   }
 
   await invalidateWebCache(tagsToInvalidate);

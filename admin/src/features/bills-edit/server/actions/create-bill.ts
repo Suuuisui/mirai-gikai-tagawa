@@ -10,6 +10,7 @@ import {
 import { getErrorMessage } from "@/lib/utils/get-error-message";
 import { type BillCreateInput, billCreateSchema } from "../../shared/types";
 import { createBillRecord } from "../repositories/bill-edit-repository";
+import { resequenceFeaturedPrioritiesAfterSave } from "../services/resequence-featured-priorities-service";
 
 export async function createBill(input: BillCreateInput) {
   try {
@@ -27,7 +28,17 @@ export async function createBill(input: BillCreateInput) {
     };
 
     // Supabaseに挿入
-    await createBillRecord(insertData);
+    const inserted = await createBillRecord(insertData);
+
+    // 新規に「注目の議案」として作成された場合のみ、表示順を自動整列する
+    // （非featuredで新規作成される場合は既存の並びに影響しないためスキップ）
+    if (validatedData.is_featured) {
+      await resequenceFeaturedPrioritiesAfterSave({
+        id: inserted.id,
+        is_featured: validatedData.is_featured,
+        featured_priority: validatedData.featured_priority ?? null,
+      });
+    }
 
     // web側のキャッシュを無効化
     await invalidateWebCache([WEB_CACHE_TAGS.BILLS]);
