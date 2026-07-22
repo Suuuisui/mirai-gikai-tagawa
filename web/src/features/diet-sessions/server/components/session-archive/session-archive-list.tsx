@@ -1,8 +1,8 @@
-import type { SessionArchiveItem } from "../../loaders/get-session-archive";
 import {
   formatEraGroupHeading,
   groupDietSessionsByEraYear,
 } from "../../../shared/utils/group-diet-sessions-by-era";
+import type { SessionArchiveItem } from "../../loaders/get-session-archive";
 import { SessionArchiveCard } from "./session-archive-card";
 
 interface SessionArchiveListProps {

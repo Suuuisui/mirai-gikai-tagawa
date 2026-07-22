@@ -6,6 +6,7 @@ import {
   Landmark,
   type LucideIcon,
   Menu,
+  Search,
   Users,
 } from "lucide-react";
 import type { Route } from "next";
@@ -28,6 +29,7 @@ type NavLinkItem = {
 
 const NAV_LINKS: NavLinkItem[] = [
   { label: "ホーム", href: routes.home(), icon: Home },
+  { label: "議案を検索", href: routes.search(), icon: Search },
   {
     label: "議会ごとのまとめ",
     href: routes.sessionArchive(),

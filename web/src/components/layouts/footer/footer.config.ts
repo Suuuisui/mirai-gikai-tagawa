@@ -19,6 +19,10 @@ export const primaryLinks: FooterLink[] = [
     href: routes.home(),
   },
   {
+    label: "議案を検索",
+    href: routes.search(),
+  },
+  {
     label: "議会ごとのまとめ",
     href: routes.sessionArchive(),
   },
