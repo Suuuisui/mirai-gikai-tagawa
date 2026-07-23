@@ -188,13 +188,14 @@ export async function MemberListPage() {
                           </span>
                           <ChevronRight className="h-4 w-4 shrink-0 text-mirai-text-muted" />
                         </span>
-                        <p className="text-xs text-mirai-text-muted">
+                        {/* スマホの2カラムでは1行に収まらないため、項目ごとに縦に積む */}
+                        <p className="flex flex-col gap-0.5 text-xs text-mirai-text-muted">
                           <span className="whitespace-nowrap">
                             投票記録 {member.billCount}議案
                           </span>
                           {proposalCount ? (
                             <span className="whitespace-nowrap">
-                              ・提出 {proposalCount}件
+                              提出 {proposalCount}件
                             </span>
                           ) : (
                             ""
