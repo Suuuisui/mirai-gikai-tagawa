@@ -30,6 +30,31 @@ export async function findAllTagsWithBillCount() {
   return data;
 }
 
+/**
+ * 複数タグの featured_priority を一括更新する
+ * （トップページ編集画面のタグ別セクション保存用）。
+ */
+export async function updateTagFeaturedPriorities(
+  updates: Array<{ id: string; featured_priority: number | null }>
+) {
+  const supabase = createAdminClient();
+
+  await Promise.all(
+    updates.map(async ({ id, featured_priority }) => {
+      const { error } = await supabase
+        .from("tags")
+        .update({ featured_priority, updated_at: new Date().toISOString() })
+        .eq("id", id);
+
+      if (error) {
+        throw new Error(
+          `タグ表示設定の更新に失敗しました (${id}): ${error.message}`
+        );
+      }
+    })
+  );
+}
+
 export async function createTagRecord(input: {
   label: string;
   description?: string | null;

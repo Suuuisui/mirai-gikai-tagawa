@@ -192,17 +192,27 @@ export async function findFeaturedBillPriorities(excludeBillId?: string) {
 
 /**
  * 複数議案の featured_priority を一括更新する。
+ * is_featured を含む行はそれも同時に更新する（トップページ編集画面が
+ * 注目の議案の追加・削除に使う。議案編集画面の自動整列は priority のみ）。
  */
 export async function updateBillFeaturedPriorities(
-  updates: Array<{ id: string; featured_priority: number | null }>
+  updates: Array<{
+    id: string;
+    featured_priority: number | null;
+    is_featured?: boolean;
+  }>
 ) {
   const supabase = createAdminClient();
 
   await Promise.all(
-    updates.map(async ({ id, featured_priority }) => {
+    updates.map(async ({ id, featured_priority, is_featured }) => {
       const { error } = await supabase
         .from("bills")
-        .update({ featured_priority, updated_at: new Date().toISOString() })
+        .update({
+          featured_priority,
+          ...(is_featured !== undefined && { is_featured }),
+          updated_at: new Date().toISOString(),
+        })
         .eq("id", id);
 
       if (error) {

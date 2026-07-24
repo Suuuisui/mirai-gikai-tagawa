@@ -9,6 +9,7 @@
 // ── 静的ルート ──────────────────────────────────────
 export const routes = {
   login: () => "/login" as const,
+  homepage: () => "/homepage" as const,
   bills: () => "/bills" as const,
   billNew: () => "/bills/new" as const,
   admins: () => "/admins" as const,

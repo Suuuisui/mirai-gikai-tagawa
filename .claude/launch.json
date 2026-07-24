@@ -1,0 +1,37 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "exec",
+        "dotenv",
+        "-e",
+        ".env",
+        "--",
+        "pnpm",
+        "--filter",
+        "web",
+        "dev"
+      ],
+      "port": 3000
+    },
+    {
+      "name": "admin",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "exec",
+        "dotenv",
+        "-e",
+        ".env",
+        "--",
+        "pnpm",
+        "--filter",
+        "admin",
+        "dev"
+      ],
+      "port": 3001
+    }
+  ]
+}

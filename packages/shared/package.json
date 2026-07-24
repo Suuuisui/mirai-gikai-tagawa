@@ -72,6 +72,26 @@
       "types": "./src/interview-prompts/summary.ts",
       "default": "./src/interview-prompts/summary.ts"
     },
+    "./top-page/interest-score": {
+      "types": "./src/top-page/interest-score.ts",
+      "default": "./src/top-page/interest-score.ts"
+    },
+    "./top-page/sort-bills-by-tag-sections": {
+      "types": "./src/top-page/sort-bills-by-tag-sections.ts",
+      "default": "./src/top-page/sort-bills-by-tag-sections.ts"
+    },
+    "./top-page/select-tag-section-bills": {
+      "types": "./src/top-page/select-tag-section-bills.ts",
+      "default": "./src/top-page/select-tag-section-bills.ts"
+    },
+    "./top-page/explanation-materials": {
+      "types": "./src/top-page/explanation-materials.ts",
+      "default": "./src/top-page/explanation-materials.ts"
+    },
+    "./top-page/config": {
+      "types": "./src/top-page/config.ts",
+      "default": "./src/top-page/config.ts"
+    },
     "./interview-report/schema": {
       "types": "./src/interview-report/schema.ts",
       "default": "./src/interview-report/schema.ts"

@@ -1,9 +1,9 @@
 import "server-only";
+import { selectTagSectionBills } from "@mirai-gikai/shared/top-page/select-tag-section-bills";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import {
   computeBillInterestScore,
-  sortBillsTagRowsByInterestDesc,
   sortByInterestKey,
 } from "../../shared/utils/interest-score";
 import { sortBillsTagRowsByDateDesc } from "../../shared/utils/map-bills-tag-rows";
@@ -472,18 +472,21 @@ export async function findPublishedBillsByTag(
     throw new Error(`Failed to fetch bills for tag: ${error.message}`);
   }
 
+  // bills_tags を起点にした select では referencedTable 指定の .order() が
+  // 最上位の行順に反映されないため、取得後にアプリ側で並べ替える。
+  // トップページ用の "interest" は、adminのトップページ編集画面のプレビューと
+  // 結果がずれないよう、除外→並べ替え→limit を共有関数に集約している
+  if (order === "interest") {
+    return selectTagSectionBills(data, excludeBillIds ?? new Set(), limit);
+  }
+
   // excludeBillIdsによる除外は、limitで件数を絞る前に行う（後段で除外すると
   // 指定件数に満たなくなり、除外前提でしか成立しないlimitの意味が崩れるため）
   const filtered = excludeBillIds
     ? data.filter((row) => !excludeBillIds.has(row.bill_id))
     : data;
 
-  // bills_tags を起点にした select では referencedTable 指定の .order() が
-  // 最上位の行順に反映されないため、取得後にアプリ側で並べ替える
-  const sorted =
-    order === "interest"
-      ? sortBillsTagRowsByInterestDesc(filtered)
-      : sortBillsTagRowsByDateDesc(filtered);
+  const sorted = sortBillsTagRowsByDateDesc(filtered);
   return limit ? sorted.slice(0, limit) : sorted;
 }
 
