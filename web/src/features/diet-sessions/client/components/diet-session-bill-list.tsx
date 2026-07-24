@@ -36,7 +36,7 @@ export function DietSessionBillList({ session, bills }: Props) {
       <div className="flex flex-col gap-0.5">
         <h2 className="text-[22px] font-bold text-black leading-[1.48] flex items-center gap-4">
           {startDate.getFullYear()}年 {session.name}の提出議案
-          <span>{bills.length}件</span>
+          <span className="shrink-0 whitespace-nowrap">{bills.length}件</span>
         </h2>
         <p className="text-xs font-medium text-mirai-text">
           {sessionDescription}

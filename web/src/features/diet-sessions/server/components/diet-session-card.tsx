@@ -19,7 +19,7 @@ export function DietSessionCard({ session, billCount }: DietSessionCardProps) {
     return null;
   }
 
-  const sessionBillsUrl = routes.kokkaiSessionBills(session.slug);
+  const sessionBillsUrl = routes.archiveSessionBills(session.slug);
 
   return (
     <Link href={sessionBillsUrl as Route} className="group block">

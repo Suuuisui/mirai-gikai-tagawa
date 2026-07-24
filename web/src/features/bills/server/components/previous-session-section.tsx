@@ -29,7 +29,7 @@ export function PreviousSessionSection({
     return null;
   }
 
-  const sessionBillsUrl = routes.kokkaiSessionBills(session.slug);
+  const sessionBillsUrl = routes.archiveSessionBills(session.slug);
   const startDate = new Date(session.start_date);
   const endDate = new Date(session.end_date);
   const sessionDescription = `${startDate.getFullYear()}.${startDate.getMonth() + 1}月〜${endDate.getMonth() + 1}月に実施された${session.name}`;
@@ -49,7 +49,7 @@ export function PreviousSessionSection({
             />
           </h2>
           <Link
-            href={routes.kokkaiSessionArchive() as Route}
+            href={routes.archive() as Route}
             className="group flex items-center gap-0.5 text-xs font-bold text-mirai-text shrink-0"
           >
             すべての会期を見る

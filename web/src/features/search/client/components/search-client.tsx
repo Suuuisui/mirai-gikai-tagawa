@@ -4,12 +4,17 @@ import { Search } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { SearchItem } from "../../shared/types";
+import { collectPopularTags } from "../../shared/utils/collect-popular-tags";
 import { searchBills } from "../../shared/utils/search-bills";
+
+/** 初期状態で表示するタグ数 */
+const POPULAR_TAG_LIMIT = 12;
 
 interface SearchClientProps {
   items: SearchItem[];
@@ -21,6 +26,10 @@ export function SearchClient({ items }: SearchClientProps) {
   const results = useMemo(
     () => (trimmedQuery === "" ? [] : searchBills(items, query)),
     [items, query, trimmedQuery]
+  );
+  const popularTags = useMemo(
+    () => collectPopularTags(items, POPULAR_TAG_LIMIT),
+    [items]
   );
 
   return (
@@ -39,10 +48,30 @@ export function SearchClient({ items }: SearchClientProps) {
       </div>
 
       {trimmedQuery === "" ? (
-        <p className="text-xs text-mirai-text-secondary">
-          全{items.length}
-          件の議案からキーワードで検索できます。議案名・概要・タグに含まれる言葉で絞り込めます。
-        </p>
+        <div className="flex flex-col gap-4">
+          <p className="text-xs text-mirai-text-secondary">
+            全{items.length}
+            件の議案からキーワードで検索できます。議案名・概要・タグに含まれる言葉で絞り込めます。
+          </p>
+          {popularTags.length > 0 && (
+            <div className="flex flex-col gap-3 rounded-2xl bg-white p-5">
+              <p className="text-sm font-bold text-mirai-text">タグから探す</p>
+              <div className="flex flex-wrap gap-2">
+                {popularTags.map((tag) => (
+                  <Button
+                    key={tag}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setQuery(tag)}
+                    className="rounded-full border-mirai-border bg-mirai-surface-tag px-4 text-xs font-medium text-black shadow-none hover:bg-mirai-surface-tag/70"
+                  >
+                    {tag}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       ) : results.length === 0 ? (
         <div className="flex flex-col gap-2 rounded-2xl bg-white p-6 text-center">
           <p className="text-sm font-bold text-mirai-text">

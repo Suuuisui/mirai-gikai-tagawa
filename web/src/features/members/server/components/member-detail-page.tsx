@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
+import { ShowMoreList } from "@/components/ui/show-more-list";
 import {
   VOTE_ARIA_LABEL,
   VOTE_CHIP_CLASS,
@@ -154,22 +155,24 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
             <h2 className="text-lg font-bold text-mirai-text">
               賛成者として連署した議案
             </h2>
-            {supportedBills.map(({ bill }) => (
-              <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-                <Card className="flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
-                      {bill.bill_content?.title || bill.name}
-                    </h3>
-                    <span className={SPONSOR_CHIP_CLASS}>賛成者</span>
-                  </div>
-                  <p className="text-xs text-mirai-text-muted">
-                    {bill.submitted_date &&
-                      `${formatDateWithDots(bill.submitted_date)} 議決`}
-                  </p>
-                </Card>
-              </Link>
-            ))}
+            <ShowMoreList initialCount={5} className="flex flex-col gap-3">
+              {supportedBills.map(({ bill }) => (
+                <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
+                  <Card className="flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
+                        {bill.bill_content?.title || bill.name}
+                      </h3>
+                      <span className={SPONSOR_CHIP_CLASS}>賛成者</span>
+                    </div>
+                    <p className="text-xs text-mirai-text-muted">
+                      {bill.submitted_date &&
+                        `${formatDateWithDots(bill.submitted_date)} 議決`}
+                    </p>
+                  </Card>
+                </Link>
+              ))}
+            </ShowMoreList>
           </section>
         )}
 
@@ -178,28 +181,34 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
           <h2 className="text-lg font-bold text-mirai-text">
             議案ごとの投票（新しい順）
           </h2>
-          {records.map(({ bill, vote, faction }) => (
-            <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-              <Card className="flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
-                <div className="flex items-start justify-between gap-3">
-                  <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
-                    {bill.bill_content?.title || bill.name}
-                  </h3>
-                  <span
-                    className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${VOTE_CHIP_CLASS[vote]}`}
-                  >
-                    {VOTE_ARIA_LABEL[vote]}
-                    <span aria-hidden="true">{VOTE_LABEL[vote]}</span>
-                  </span>
-                </div>
-                <p className="text-xs text-mirai-text-muted">
-                  {bill.submitted_date &&
-                    `${formatDateWithDots(bill.submitted_date)} 議決・`}
-                  {faction}
-                </p>
-              </Card>
-            </Link>
-          ))}
+          <ShowMoreList
+            initialCount={10}
+            step={50}
+            className="flex flex-col gap-3"
+          >
+            {records.map(({ bill, vote, faction }) => (
+              <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
+                <Card className="flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
+                      {bill.bill_content?.title || bill.name}
+                    </h3>
+                    <span
+                      className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${VOTE_CHIP_CLASS[vote]}`}
+                    >
+                      {VOTE_ARIA_LABEL[vote]}
+                      <span aria-hidden="true">{VOTE_LABEL[vote]}</span>
+                    </span>
+                  </div>
+                  <p className="text-xs text-mirai-text-muted">
+                    {bill.submitted_date &&
+                      `${formatDateWithDots(bill.submitted_date)} 議決・`}
+                    {faction}
+                  </p>
+                </Card>
+              </Link>
+            ))}
+          </ShowMoreList>
         </section>
 
         <div className="mt-10 rounded-md bg-white px-4 py-4 text-xs leading-[1.8] text-mirai-text-note">

@@ -2,6 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { ShowMoreList } from "@/components/ui/show-more-list";
 import { CompactBillCard } from "@/features/bills/client/components/bill-list/compact-bill-card";
 import { routes } from "@/lib/routes";
 import { groupBillsByEraYear } from "../../shared/utils/group-bills-by-era-year";
@@ -45,7 +46,7 @@ export async function ProposerBillsPage({ proposer }: ProposerBillsPageProps) {
               <h2 className="text-lg font-bold text-mirai-text">
                 {group.label}
               </h2>
-              <div className="flex flex-col gap-3">
+              <ShowMoreList initialCount={10} className="flex flex-col gap-3">
                 {group.bills.map((bill) => (
                   <Link
                     key={bill.id}
@@ -54,7 +55,7 @@ export async function ProposerBillsPage({ proposer }: ProposerBillsPageProps) {
                     <CompactBillCard bill={bill} />
                   </Link>
                 ))}
-              </div>
+              </ShowMoreList>
             </section>
           ))}
         </div>

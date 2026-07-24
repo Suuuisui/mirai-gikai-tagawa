@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { ShowMoreList } from "@/components/ui/show-more-list";
 import { BillCard } from "@/features/bills/client/components/bill-list/bill-card";
 import { getBillsByTag } from "@/features/bills/server/loaders/get-bills-by-tag";
 import { routes } from "@/lib/routes";
@@ -53,14 +54,18 @@ export default async function TagBillsPage({ params }: Props) {
           <p className="text-xs text-mirai-text-secondary">{bills.length}件</p>
         </div>
 
-        {/* 議案カード一覧 */}
-        <div className="flex flex-col gap-4">
+        {/* 議案カード一覧（多いタグでは段階表示） */}
+        <ShowMoreList
+          initialCount={10}
+          step={30}
+          className="flex flex-col gap-4"
+        >
           {bills.map((bill) => (
             <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
               <BillCard bill={bill} />
             </Link>
           ))}
-        </div>
+        </ShowMoreList>
       </Container>
 
       {/* パンくずリスト */}

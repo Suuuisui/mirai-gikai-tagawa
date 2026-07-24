@@ -6,6 +6,21 @@ const nextConfig: NextConfig = {
   experimental: {
     serverSourceMaps: true,
   },
+  // 旧URL（fork元の名残の /kokkai）からの恒久リダイレクト
+  async redirects() {
+    return [
+      {
+        source: "/kokkai",
+        destination: "/archive",
+        permanent: true,
+      },
+      {
+        source: "/kokkai/:slug/bills",
+        destination: "/archive/:slug/bills",
+        permanent: true,
+      },
+    ];
+  },
   typedRoutes: true,
   turbopack: {
     root: "../",

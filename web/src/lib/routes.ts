@@ -44,9 +44,9 @@ export const routes = {
   legacyReportChatLog: (reportId: string) =>
     `/report/${reportId}/chat-log` as const,
 
-  // ── 田川市議会セッション ────────────────────────────────
-  kokkaiSessionArchive: () => "/kokkai" as const,
-  kokkaiSessionBills: (slug: string) => `/kokkai/${slug}/bills` as const,
+  // ── 田川市議会セッション（過去の議案アーカイブ） ─────────────
+  archive: () => "/archive" as const,
+  archiveSessionBills: (slug: string) => `/archive/${slug}/bills` as const,
 
   // ── 会期まとめ ────────────────────────────────────
   sessionArchive: () => "/sessions" as const,
