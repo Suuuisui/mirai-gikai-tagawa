@@ -110,6 +110,10 @@ export const ChatButton = forwardRef<ChatButtonRef, ChatButtonProps>(
 
     return (
       <>
+        {/* チャットを持つページのマーカー。globals.cssの
+            `.main-column:has([data-chat-sidebar])` が検知して、静的HTMLでも
+            チャットサイドバー用のレイアウト余白を適用する */}
+        <span data-chat-sidebar className="hidden" />
         <div className="fixed max-w-[460px] mx-auto left-6 right-6 bottom-4 z-50 md:bottom-8 flex justify-center pc:hidden">
           <div
             className="relative rounded-[50px] bg-gradient-to-tr from-mirai-gradient-start to-mirai-gradient-end p-[2px] shadow-[2px_2px_2px_0px_rgba(0,0,0,0.25)] origin-center flex transition-[flex-basis] ease-in-out"

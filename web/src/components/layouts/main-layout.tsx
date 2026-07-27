@@ -21,7 +21,13 @@ export function MainLayout({ children }: MainLayoutProps) {
         // lg以上（1段ヘッダー）よりも大きめの上余白を確保する。
         // ヒーロー/カバー画像を画面最上部まで表示するメインページ（TOP・議案詳細）と
         // インタビューセクションのみ、モバイルでは上余白なしで最上部から描画する
-        "relative max-w-[700px] mx-auto lg:mt-24",
+        //
+        // 注意: TOP・議案詳細はISRの静的生成時にusePathnameが確定せず、
+        // 下のpathname判定クラスが静的HTMLに入らない。そのためチャット用
+        // レイアウトはglobals.cssの `.main-column:has([data-chat-sidebar])`
+        // でも適用している（マーカーはChatButtonが描画）。値を変えるときは
+        // globals.css側も揃えること
+        "main-column relative max-w-[700px] mx-auto lg:mt-24",
         useSidebarLayout || isInterview ? "md:mt-36" : "mt-36",
         // インタビューページ以外ではshadowを表示
         !isInterview && "sm:shadow-lg",

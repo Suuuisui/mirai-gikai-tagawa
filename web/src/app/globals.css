@@ -521,3 +521,44 @@ button {
     display: none; /* Chrome/Safari */
   }
 }
+
+/* ============================================================
+   チャットサイドバー用レイアウト（静的HTML対応）
+
+   TOP・議案詳細はISRで静的生成されるが、ビルド時のプリレンダリングでは
+   usePathname() が確定しないため、MainLayout / MainContent の
+   pathname 判定によるサイドバー用クラスが静的HTMLに焼き込まれない
+   （Reactは本番hydrationで属性差分を修正しないため、そのまま表示される）。
+
+   そこで、チャットを持つページ（ChatButtonを描画するページ）が出す
+   マーカー [data-chat-sidebar] を :has() で検知してCSS側で適用する。
+   値は main-layout.tsx / main-content.tsx のクラスと一致させること。
+   ============================================================ */
+
+/* チャットウィンドウ(450px)ぶん右に余白（pc: 1000px以上） */
+@media (min-width: 1000px) {
+  .main-column:has([data-chat-sidebar]) {
+    margin-right: 500px;
+  }
+
+  /* xl以上はメイン+チャット計1180pxを中央寄せ */
+  @media (min-width: 1280px) {
+    .main-column:has([data-chat-sidebar]) {
+      margin-left: calc(calc(100vw - 1180px) / 2);
+    }
+  }
+}
+
+/* ヒーローを画面最上部から表示（md未満は上余白なし = md:mt-36 相当） */
+@media (max-width: 699.98px) {
+  .main-column:has([data-chat-sidebar]) {
+    margin-top: 0;
+  }
+}
+
+/* 固定チャットボタンに最後のコンテンツが隠れないよう下余白（pc未満） */
+@media (max-width: 999.98px) {
+  main:has([data-chat-sidebar]) {
+    padding-bottom: 6rem;
+  }
+}
