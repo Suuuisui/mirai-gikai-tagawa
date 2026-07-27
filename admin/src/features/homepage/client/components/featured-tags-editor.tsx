@@ -13,50 +13,31 @@ import { Button } from "@/components/ui/button";
 import { saveFeaturedTags } from "../../server/actions/save-featured-tags";
 import type { FeaturedTagSection, HiddenTag } from "../../shared/types";
 import { useSortableList } from "../hooks/use-sortable-list";
-import { BillCurationCard } from "./bill-curation-card";
 import { EditorHeader } from "./editor-header";
 import { SortableRow } from "./sortable-row";
+import { TagPinEditor } from "./tag-pin-editor";
 
 /**
- * タグ枠の自動選定プレビュー。
- * まだ保存していないタグはプレビューを計算できないため案内文を出す。
+ * タグ枠に表示される議案の編集エリア。
+ * まだ保存していないタグは表示議案を計算できないため案内文を出す。
  */
-function TagSectionPreview({
-  section,
-}: {
-  section: FeaturedTagSection | null;
-}) {
+function TagSectionBills({ section }: { section: FeaturedTagSection | null }) {
   if (!section) {
     return (
       <p className="text-xs text-gray-500">
-        保存すると、この枠に自動選定される議案のプレビューが表示されます
+        保存すると、この枠に表示される議案のプレビューと固定（ピン留め）設定が使えるようになります
       </p>
     );
   }
 
-  if (section.previewBills.length === 0) {
-    return (
-      <p className="text-xs text-gray-500">
-        このタグ枠に表示できる議案がありません（該当議案がすべて「注目の議案」に入っている場合など）
-      </p>
-    );
-  }
-
-  return (
-    <div className="space-y-1.5">
-      <p className="text-xs text-gray-500">この枠に自動選定で表示される議案:</p>
-      {section.previewBills.map((bill) => (
-        <BillCurationCard key={bill.id} bill={bill} compact />
-      ))}
-    </div>
-  );
+  return <TagPinEditor section={section} />;
 }
 
 /**
  * トップページ「タグ別セクション」の編集UI。
- * どのタグをどの順で出すかをドラッグで設定する。各タグ枠に出る議案3件は
- * 自動選定のため、ここではプレビューとして表示するだけ（変更したい場合は
- * 「注目の議案」に入れる）。
+ * どのタグをどの順で出すかをドラッグで設定する。各タグ枠に出る議案3件は、
+ * 固定（ピン留め）した議案が先頭に並び、残りは興味度スコア順の自動選定
+ * （枠内の編集は TagPinEditor が担当し、即時保存される）。
  */
 export function FeaturedTagsEditor({
   sections,
@@ -155,7 +136,7 @@ export function FeaturedTagsEditor({
                           <X className="size-4" />
                         </Button>
                       </div>
-                      <TagSectionPreview section={section} />
+                      <TagSectionBills section={section} />
                     </div>
                   </SortableRow>
                 );

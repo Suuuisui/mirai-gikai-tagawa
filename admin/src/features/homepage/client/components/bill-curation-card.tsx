@@ -21,11 +21,13 @@ export function BillCurationCard({
   return (
     <div
       className={cn(
-        "flex items-start justify-between gap-3 rounded-lg border bg-white",
+        // flex-wrap + 本文のbasis指定: スマホ幅で操作ボタンが本文を圧迫する
+        // 場合はボタンを下の行に折り返し、本文の幅を確保する
+        "flex flex-wrap items-start justify-between gap-3 rounded-lg border bg-white",
         compact ? "px-3 py-2" : "p-4"
       )}
     >
-      <div className="min-w-0 flex-1 space-y-1">
+      <div className="min-w-0 flex-1 basis-44 space-y-1">
         <div className="flex flex-wrap items-center gap-2">
           <span
             className={cn(

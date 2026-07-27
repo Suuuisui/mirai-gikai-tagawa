@@ -25,6 +25,8 @@ type ScoredBill = {
   featuredPriority: number | null;
   /** selectTagSectionBills に渡すための素の形 */
   scoreInput: BillForInterestScore & { id: string };
+  /** タグIDごとのピン留め順位（bills_tags.pinned_priority。未設定はnull） */
+  pinnedPriorityByTagId: Map<string, number | null>;
 };
 
 /**
@@ -52,6 +54,12 @@ export async function loadHomepageData(): Promise<HomepageData> {
       .map((bt) => bt.tags)
       .filter((tag): tag is NonNullable<typeof tag> => tag !== null);
 
+    const pinnedPriorityByTagId = new Map(
+      row.bills_tags
+        .filter((bt) => bt.tags !== null)
+        .map((bt) => [bt.tags?.id ?? "", bt.pinned_priority])
+    );
+
     return {
       curation: {
         id: row.id,
@@ -68,6 +76,7 @@ export async function loadHomepageData(): Promise<HomepageData> {
       isFeatured: row.is_featured,
       featuredPriority: row.featured_priority,
       scoreInput,
+      pinnedPriorityByTagId,
     };
   });
 
@@ -101,12 +110,38 @@ export async function loadHomepageData(): Promise<HomepageData> {
     .map((tag) => {
       const rows = scoredBills
         .filter((bill) => bill.curation.tags.some((t) => t.id === tag.id))
-        .map((bill) => ({ bills: bill.scoreInput, curation: bill.curation }));
+        .map((bill) => ({
+          bills: bill.scoreInput,
+          curation: bill.curation,
+          // このタグとの紐付け行に設定されたピン留め順位（タグごとに独立）
+          pinned_priority: bill.pinnedPriorityByTagId.get(tag.id) ?? null,
+        }));
 
-      const previewBills = selectTagSectionBills(
+      const selectedRows = selectTagSectionBills(
         rows,
         featuredBillIds,
         BILLS_PER_TAG
+      );
+      const previewBills = selectedRows.map((row) => row.curation);
+      const previewIds = new Set(previewBills.map((bill) => bill.id));
+
+      const pinnedBillIds = selectedRows
+        .filter((row) => row.pinned_priority != null)
+        .map((row) => row.curation.id);
+
+      // ピン留め候補: このタグの公開議案のうち、枠に出ておらず
+      // 「注目の議案」にも入っていないもの（興味度スコア降順）
+      const pinCandidates = sortByInterestKey(
+        rows.filter(
+          (row) =>
+            !previewIds.has(row.curation.id) &&
+            !featuredBillIds.has(row.curation.id)
+        ),
+        (row) => ({
+          score: row.curation.interestScore,
+          submittedDate: row.bills.submitted_date,
+          id: row.curation.id,
+        })
       ).map((row) => row.curation);
 
       return {
@@ -115,6 +150,8 @@ export async function loadHomepageData(): Promise<HomepageData> {
         description: tag.description,
         billCount: tag.bills_tags[0]?.count ?? 0,
         previewBills,
+        pinnedBillIds,
+        pinCandidates,
         isHot: previewBills.some((bill) => bill.isHot),
       };
     });

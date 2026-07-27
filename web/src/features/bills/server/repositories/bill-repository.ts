@@ -437,6 +437,7 @@ export async function findPublishedBillsByTag(
     .select(
       `
       bill_id,
+      pinned_priority,
       bills!inner (
         *,
         bill_contents!inner (

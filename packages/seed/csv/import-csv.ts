@@ -9,6 +9,11 @@ import {
   resolveFeaturedBillUpdates,
 } from "./featured-bills-restore";
 import {
+  billsTagsLinkKey,
+  type PinnedTagSnapshot,
+  resolvePinnedTagUpdates,
+} from "./pinned-tags-restore";
+import {
   type NewTagInfo,
   resolveTagSettingsUpdates,
   type TagSettingsSnapshot,
@@ -173,6 +178,98 @@ async function restoreInterviewData(
 }
 
 /**
+ * クリア前に admin画面で設定されたタグ枠のピン留め
+ * （bills_tags.pinned_priority）を「タグラベル + 会期slug::議案名」で
+ * スナップショットする。CSVのbills_tagsにはピン情報が無いため、
+ * このスナップショットが無いと再シードで消えてしまう
+ */
+async function snapshotPinnedTags(
+  supabase: AdminClient
+): Promise<PinnedTagSnapshot[]> {
+  const { data, error } = await supabase
+    .from("bills_tags")
+    .select(
+      "pinned_priority, tags ( label ), bills ( id, name, diet_session_id, diet_sessions ( slug ) )"
+    )
+    .not("pinned_priority", "is", null);
+
+  if (error) {
+    throw new Error(`Failed to snapshot pinned tags: ${error.message}`);
+  }
+
+  const snapshots: PinnedTagSnapshot[] = [];
+  for (const row of data ?? []) {
+    const slug = row.bills?.diet_sessions?.slug;
+    const name = row.bills?.name;
+    const label = row.tags?.label;
+    if (row.pinned_priority == null || !slug || !name || !label) continue;
+    snapshots.push({
+      tagLabel: label,
+      billMatchKey: `${slug}::${name}`,
+      pinned_priority: row.pinned_priority,
+    });
+  }
+  return snapshots;
+}
+
+/**
+ * スナップショットしたピン留めを、タグラベルと会期slug::議案名の一致で
+ * 新しい bills_tags 行へ復元する。初回投入（スナップショット空）は何もしない
+ */
+async function restorePinnedTags(
+  supabase: AdminClient,
+  snapshots: PinnedTagSnapshot[],
+  newTags: NewTagInfo[],
+  newBills: BillInfo[],
+  newSessions: SessionInfo[]
+): Promise<void> {
+  if (snapshots.length === 0) {
+    return;
+  }
+
+  const { data: linkRows, error: linkError } = await supabase
+    .from("bills_tags")
+    .select("tag_id, bill_id");
+  if (linkError) {
+    throw new Error(
+      `Failed to fetch bills_tags for pinned restore: ${linkError.message}`
+    );
+  }
+  const existingLinkKeys = new Set(
+    (linkRows ?? []).map((row) => billsTagsLinkKey(row.tag_id, row.bill_id))
+  );
+
+  const { restored, skipped } = resolvePinnedTagUpdates(
+    snapshots,
+    newTags,
+    buildMatchKeyToBillId(newBills, newSessions),
+    existingLinkKeys
+  );
+
+  for (const update of restored) {
+    const { error } = await supabase
+      .from("bills_tags")
+      .update({ pinned_priority: update.pinned_priority } as never)
+      .eq("tag_id", update.tag_id)
+      .eq("bill_id", update.bill_id);
+    if (error) {
+      throw new Error(
+        `Failed to restore pinned tag (tag=${update.tag_id}, bill=${update.bill_id}): ${error.message}`
+      );
+    }
+  }
+
+  console.log(
+    `\n🔄 タグ枠ピン留めの復元: ${restored.length}件復元 / ${skipped.length}件スキップ`
+  );
+  for (const s of skipped) {
+    console.warn(
+      `  ⚠️ 復元できませんでした: "${s.tagLabel}" × "${s.billMatchKey}" — ${s.reason}`
+    );
+  }
+}
+
+/**
  * クリア前に admin画面で設定された「注目の議案」
  * （is_featured / featured_priority）をスナップショットする。
  * 再投入CSVには featured-bills-data.ts 由来の初期値が入っているが、
@@ -313,6 +410,7 @@ async function importFromCsv() {
       await snapshotInterviewData(supabase);
     const featuredSnapshots = await snapshotFeaturedBills(supabase);
     const tagSettingsSnapshots = await snapshotTagSettings(supabase);
+    const pinnedTagSnapshots = await snapshotPinnedTags(supabase);
 
     await clearAllData(supabase);
 
@@ -365,6 +463,13 @@ async function importFromCsv() {
 
     await restoreFeaturedBills(supabase, featuredSnapshots, importedBills);
     await restoreTagSettings(supabase, tagSettingsSnapshots, importedTags);
+    await restorePinnedTags(
+      supabase,
+      pinnedTagSnapshots,
+      importedTags,
+      importedBills,
+      importedSessions
+    );
 
     console.log("\n🎉 CSV import completed successfully!");
     console.log("\n📊 Summary:");

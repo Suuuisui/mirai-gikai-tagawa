@@ -48,4 +48,38 @@ describe("selectTagSectionBills", () => {
     const result = selectTagSectionBills(rows, new Set(["b"]));
     expect(result).toHaveLength(2);
   });
+
+  it("ピン留めされた議案がpinned_priority昇順で先頭に並び、残りは自動選定", () => {
+    const rows = [
+      row("rejected", { status_note: "否決" }),
+      { ...row("pin2"), pinned_priority: 2 },
+      { ...row("pin1"), pinned_priority: 1 },
+      row("plain"),
+    ];
+    const result = selectTagSectionBills(rows, new Set(), 3);
+    // ピン2件が先頭、3枠目は興味度スコア最上位（否決）で自動補充
+    expect(result.map((r) => r.bills.id)).toEqual([
+      "pin1",
+      "pin2",
+      "rejected",
+    ]);
+  });
+
+  it("ピン留めされた議案でも除外ID（注目の議案）に含まれる場合は表示しない", () => {
+    const rows = [
+      { ...row("pinned-featured"), pinned_priority: 1 },
+      row("plain"),
+    ];
+    const result = selectTagSectionBills(rows, new Set(["pinned-featured"]), 3);
+    expect(result.map((r) => r.bills.id)).toEqual(["plain"]);
+  });
+
+  it("pinned_priorityがnullの行はピン留め扱いにならない", () => {
+    const rows = [
+      { ...row("auto"), pinned_priority: null },
+      { ...row("pinned"), pinned_priority: 1 },
+    ];
+    const result = selectTagSectionBills(rows, new Set(), 2);
+    expect(result[0]?.bills.id).toBe("pinned");
+  });
 });

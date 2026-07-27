@@ -93,8 +93,8 @@ export type Database = {
           published_at: string | null
           share_thumbnail_url: string | null
           shugiin_url: string | null
-          sponsors: Json | null
           slug: string | null
+          sponsors: Json | null
           status: Database["public"]["Enums"]["bill_status_enum"]
           status_note: string | null
           status_order: number | null
@@ -120,8 +120,8 @@ export type Database = {
           published_at?: string | null
           share_thumbnail_url?: string | null
           shugiin_url?: string | null
-          sponsors?: Json | null
           slug?: string | null
+          sponsors?: Json | null
           status: Database["public"]["Enums"]["bill_status_enum"]
           status_note?: string | null
           status_order?: number | null
@@ -147,8 +147,8 @@ export type Database = {
           published_at?: string | null
           share_thumbnail_url?: string | null
           shugiin_url?: string | null
-          sponsors?: Json | null
           slug?: string | null
+          sponsors?: Json | null
           status?: Database["public"]["Enums"]["bill_status_enum"]
           status_note?: string | null
           status_order?: number | null
@@ -171,16 +171,19 @@ export type Database = {
         Row: {
           bill_id: string
           created_at: string
+          pinned_priority: number | null
           tag_id: string
         }
         Insert: {
           bill_id: string
           created_at?: string
+          pinned_priority?: number | null
           tag_id: string
         }
         Update: {
           bill_id?: string
           created_at?: string
+          pinned_priority?: number | null
           tag_id?: string
         }
         Relationships: [

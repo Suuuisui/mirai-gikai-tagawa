@@ -22,7 +22,7 @@ export async function findPublishedBillsForCuration() {
       explanation_material_urls,
       diet_sessions ( name ),
       bill_contents ( title, summary, content, difficulty_level ),
-      bills_tags ( tags ( id, label ) )
+      bills_tags ( pinned_priority, tags ( id, label ) )
     `
     )
     .eq("publish_status", "published")
@@ -35,6 +35,61 @@ export async function findPublishedBillsForCuration() {
   }
 
   return data ?? [];
+}
+
+/**
+ * タグ枠のピン留め設定を保存する。
+ * 対象タグの既存ピンをすべて解除してから、指定された議案に1始まりの
+ * 優先順位を振り直す（orderedBillIdsの並び＝表示順）。
+ */
+export async function updateTagPinnedBills(
+  tagId: string,
+  orderedBillIds: string[]
+) {
+  const supabase = createAdminClient();
+
+  const { error: clearError } = await supabase
+    .from("bills_tags")
+    .update({ pinned_priority: null })
+    .eq("tag_id", tagId)
+    .not("pinned_priority", "is", null);
+
+  if (clearError) {
+    throw new Error(`ピン留めの解除に失敗しました: ${clearError.message}`);
+  }
+
+  await Promise.all(
+    orderedBillIds.map(async (billId, index) => {
+      const { error } = await supabase
+        .from("bills_tags")
+        .update({ pinned_priority: index + 1 })
+        .eq("tag_id", tagId)
+        .eq("bill_id", billId);
+
+      if (error) {
+        throw new Error(
+          `ピン留めの保存に失敗しました (${billId}): ${error.message}`
+        );
+      }
+    })
+  );
+}
+
+/**
+ * 指定タグに紐づく議案IDを返す（ピン留め保存時の検証用）。
+ */
+export async function findBillIdsByTag(tagId: string) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills_tags")
+    .select("bill_id")
+    .eq("tag_id", tagId);
+
+  if (error) {
+    throw new Error(`タグの議案取得に失敗しました: ${error.message}`);
+  }
+
+  return new Set((data ?? []).map((row) => row.bill_id));
 }
 
 /**

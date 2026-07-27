@@ -33,8 +33,12 @@ export type FeaturedTagSection = {
   description: string | null;
   /** タグに紐づく公開議案の総数 */
   billCount: number;
-  /** このタグ枠に自動選定で表示される議案（上位3件） */
+  /** このタグ枠に表示される議案（ピン留め→自動選定の順、上位3件） */
   previewBills: CurationBill[];
+  /** ピン留め中の議案ID（pinned_priority昇順。previewBillsの先頭と一致する） */
+  pinnedBillIds: string[];
+  /** ピン留め候補（このタグの公開議案のうち枠外のもの。興味度スコア降順） */
+  pinCandidates: CurationBill[];
   /** 話題性の高い議案を含み、設定順より上に自動昇格しているか */
   isHot: boolean;
 };
