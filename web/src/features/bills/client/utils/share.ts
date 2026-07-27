@@ -1,6 +1,6 @@
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { getOrigin } from "@/lib/utils/url";
+import { env } from "@/lib/env";
 import type { BillWithContent } from "../../shared/types";
 
 /**
@@ -24,17 +24,16 @@ export function createShareMessage(bill: BillWithContent): string {
 
 /**
  * シェアに必要なコンテキスト情報を取得
+ *
+ * originはリクエストヘッダーではなく環境変数（正規ドメイン）から取る。
+ * headers() を使うと動的APIになり、ISR（静的生成）される議案詳細ページが
+ * 実行時に DYNAMIC_SERVER_USAGE で500になるため
  */
 export async function getShareContext(): Promise<{
   origin: string;
   difficulty: DifficultyLevelEnum;
 }> {
-  const [origin, difficulty] = await Promise.all([
-    getOrigin(),
-    getDifficultyLevel(),
-  ]);
-
-  return { origin, difficulty };
+  return { origin: env.webUrl, difficulty: await getDifficultyLevel() };
 }
 
 /**

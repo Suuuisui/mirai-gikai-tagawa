@@ -22,8 +22,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Supabaseセッションをリフレッシュ（トークン期限切れ時に自動更新）
-  const response = await updateSupabaseSession(request);
+  // Supabaseセッションをリフレッシュ（トークン期限切れ時に自動更新）。
+  // サーバー側でユーザーセッションを読むのはAPIルートとインタビュー系
+  // ページだけなので、それ以外（ISR配信される公開ページ）ではスキップする。
+  // 全ページで実行すると匿名ログイン済みユーザーの全リクエストが
+  // Supabase Authへの往復を伴い、キャッシュHIT時のTTFBを悪化させる。
+  // （通常ページのトークン更新はクライアント側supabase-jsのautoRefreshが担う）
+  const response = _needsSessionRefresh(request.nextUrl.pathname)
+    ? await updateSupabaseSession(request)
+    : NextResponse.next({ request });
 
   // URLパラメータからdifficulty Cookieをセット
   _applyDifficultyCookie(request, response);
@@ -78,6 +85,19 @@ function _applyDifficultyCookie(
       DIFFICULTY_COOKIE_OPTIONS
     );
   }
+}
+
+/**
+ * サーバー側でSupabaseセッション（cookie）を読むルートかどうか。
+ * ここに該当しないルートはミドルウェアでのセッションリフレッシュを
+ * スキップする（対象を増やす場合はこの判定に追記すること）
+ */
+function _needsSessionRefresh(pathname: string): boolean {
+  return (
+    pathname.startsWith("/api/") ||
+    pathname.includes("/interview") ||
+    pathname.startsWith("/report/")
+  );
 }
 
 export function isHtmlAcceptHeader(accept: string): boolean {
