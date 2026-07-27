@@ -1,6 +1,5 @@
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { env } from "@/lib/env";
 import type { BillWithContent } from "../../shared/types";
 
 /**
@@ -27,13 +26,16 @@ export function createShareMessage(bill: BillWithContent): string {
  *
  * originはリクエストヘッダーではなく環境変数（正規ドメイン）から取る。
  * headers() を使うと動的APIになり、ISR（静的生成）される議案詳細ページが
- * 実行時に DYNAMIC_SERVER_USAGE で500になるため
+ * 実行時に DYNAMIC_SERVER_USAGE で500になるため。
+ * `@/lib/env` はimport時に他の環境変数を必須検証してテストで落ちるので、
+ * ここでは process.env を直接読む
  */
 export async function getShareContext(): Promise<{
   origin: string;
   difficulty: DifficultyLevelEnum;
 }> {
-  return { origin: env.webUrl, difficulty: await getDifficultyLevel() };
+  const origin = process.env.NEXT_PUBLIC_WEB_URL || "http://localhost:3000";
+  return { origin, difficulty: await getDifficultyLevel() };
 }
 
 /**
