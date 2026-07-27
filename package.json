@@ -16,6 +16,7 @@
     "test:integration:coverage": "dotenv -e .env -- vitest run --config tests/supabase/vitest.config.mts && dotenv -e .env -- vitest run --config tests/mcp/vitest.config.mts && pnpm -r run test:integration:coverage",
     "build": "dotenv -e .env -- pnpm -r run build",
     "build:ci": "pnpm -r run build:ci",
+    "smoke:visual": "node scripts/visual-smoke.mjs",
     "typecheck": "pnpm -r run typecheck",
     "lint": "biome format . && biome lint .",
     "lint:fix": "biome format --write . && biome lint --write .",
@@ -26,6 +27,7 @@
     "@supabase/supabase-js": "^2.49.4",
     "dotenv-cli": "^7.4.2",
     "lint-staged": "^15.5.2",
+    "playwright": "^1.61.1",
     "simple-git-hooks": "^2.13.1",
     "vitest": "^3.2.4"
   },

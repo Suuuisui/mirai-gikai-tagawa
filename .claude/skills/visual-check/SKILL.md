@@ -34,6 +34,18 @@ pnpm exec dotenv -e .env -- pnpm --filter admin dev  # 管理画面 :3001
 
 ## 手順
 
+### 0. 機械チェックを先に回す（推奨）
+
+```bash
+# web devサーバー(:3000)が起動している状態で
+pnpm smoke:visual
+```
+
+主要ページ×スマホ/PC幅の「HTTPエラー・横はみ出し・コンソールエラー・要素の重なり」を
+一括検査する（CIの visual-smoke ジョブと同一、`scripts/visual-smoke.mjs`）。
+ここで落ちたものを直してから、以下の目視確認に進むと手戻りが少ない。
+スクリーンショットも `smoke-artifacts/` に全ページ分保存されるので、目視の材料にできる。
+
 ### 1. 対象ページを開く
 
 公開サイト（ログイン不要）:

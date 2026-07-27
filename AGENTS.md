@@ -47,7 +47,10 @@ cd ../mirai-gikai-<branch-name> && pnpm install --frozen-lockfile
 両方を通過したら、ユーザーに確認せずそのままコミット → push → PR作成まで一気に進めること（`gh pr create`）。
 
 ### UI変更時のビジュアル確認必須（コミット前）
-変更差分にUI関連ファイル（`web/src/`, `admin/src/` 配下の `.tsx`, `.css` 等）が含まれる場合は、**コミットする前に必ず `/visual-check` スキルを実行**すること。スマホ幅（375px）とPC幅（1280px）の両方でフルページスクリーンショットを撮り、画像を実際に開いて目視確認する。はみ出し・不自然な改行・崩れがあれば修正→再確認を繰り返し、確認が取れてからコミットする。推測だけで「表示は問題ないはず」としてコミットするのは禁止。
+変更差分にUI関連ファイル（`web/src/`, `admin/src/` 配下の `.tsx`, `.css` 等）が含まれる場合は、**コミットする前に必ず次の2段階を実行**すること。
+
+1. **機械チェック**: devサーバー（web :3000）を起動した状態で `pnpm smoke:visual` を実行し、主要ページ×スマホ/PC幅の「HTTPエラー・横はみ出し・コンソールエラー・要素の重なり」検査を通過させる（CIの visual-smoke ジョブと同一。`scripts/visual-smoke.mjs`）
+2. **目視確認**: `/visual-check` スキルを実行する。スマホ幅（375px）とPC幅（1280px）の両方でフルページスクリーンショットを撮り、画像を実際に開いて目視確認する。はみ出し・不自然な改行・崩れがあれば修正→再確認を繰り返し、確認が取れてからコミットする。推測だけで「表示は問題ないはず」としてコミットするのは禁止。
 
 ### UI変更時のスクリーンショット必須（PR運用の場合）
 PR作成後、変更差分にUI関連ファイルが含まれる場合は、必ず `/pr-screenshot` スキルを実行すること。スキルが自動でdevサーバー起動→スクリーンショット撮影→R2アップロード→PR本文更新まで行う。
@@ -145,10 +148,11 @@ Repository レイヤーの詳細は [docs/repository-layer.md](docs/repository-l
 ## Commit & Pull Request Guidelines
 - **push前のローカル検証（必須）**: `git push` の前に、CIと同じ検証コマンドをローカルで実行して通過を確認すること。CIで落ちてから直すのではなく、手元で事前に検知する。
   ```bash
-  pnpm lint        # Biome format + lint チェック
-  pnpm typecheck   # TypeScript 型チェック
-  pnpm build       # Next.js ビルドチェック
-  pnpm test        # 全ワークスペースのテスト実行
+  pnpm lint          # Biome format + lint チェック
+  pnpm typecheck     # TypeScript 型チェック
+  pnpm build         # Next.js ビルドチェック
+  pnpm test          # 全ワークスペースのテスト実行
+  pnpm smoke:visual  # UI変更時のみ: 主要ページのレイアウト機械検査（web devサーバー起動が前提）
   ```
 - **push / PR作成前のGitHub状態確認（必須）**: `git push` やPR作成を行う前に、必ず `gh pr list` や `gh pr view <番号>` でGitHub上のPR状態（open/merged/closed）を確認すること。マージ済みブランチへの追加pushや、既にクローズされたPRとの重複を防ぐ。
 - **PRのスコープを厳守**: PRには現在のタスクに関係する変更のみを含めること。レビューやセルフレビューで無関係な変更（別タスクの修正、ついでのリファクタ等）が混入していた場合は、コミット前に取り除く。
