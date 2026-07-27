@@ -107,9 +107,14 @@ export async function BillDetailLayout({
               データが無い議案（市長提出等）では非表示 */}
           <SponsorsSection bill={bill} memberNameSet={memberNameSet} />
 
-          {/* 議員別の賛否（賛否が分かれた案件のみ市が公開。データが無い議案では非表示）
+          {/* 議員別の賛否。賛否が分かれた案件は市公開の○×表を、
+              賛否が分かれなかった案件は「全会一致」の表示を出す
+              （判定はvote-disclosure.ts。判定不能な議案では非表示）。
               「賛否が分かれた」事実は議案の一番のニュースのため、長文解説より前に配置する */}
-          <MemberVotesSection bill={bill} />
+          <MemberVotesSection
+            bill={bill}
+            sessionSlug={dietSession?.slug ?? null}
+          />
 
           <BillContent bill={bill} />
         </Container>
