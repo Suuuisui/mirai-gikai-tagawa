@@ -51,11 +51,17 @@ const DYNAMIC_ROUTE_PATTERNS = [
   /^\/archive\/[^/]+\/bills$/,
 ];
 
-/** 外部要因のコンソールノイズは失敗扱いにしない */
+/**
+ * 外部要因のコンソールノイズは失敗扱いにしない。
+ * エラーメッセージには発生元URLを付与してから照合する（素の
+ * 「Failed to load resource: 404」だけではどのリソースか判別できないため）
+ */
 const IGNORED_CONSOLE_PATTERNS = [
   /google-analytics|googletagmanager|gtag/i,
   /net::ERR_BLOCKED_BY_CLIENT/i,
-  /Failed to load resource.*(analytics|vitals|speed-insights)/i,
+  // Vercel専用のスクリプト/API（CI・ローカルのnext startでは404になる）
+  /\/_vercel\//i,
+  /speed-insights|web-vitals/i,
   // 開発サーバーのHMR関連
   /\[HMR\]|\[Fast Refresh\]/i,
 ];
@@ -152,10 +158,19 @@ async function main() {
       const page = await context.newPage();
       const consoleErrors = [];
       page.on("console", (msg) => {
-        if (msg.type() === "error") consoleErrors.push(msg.text());
+        if (msg.type() === "error") {
+          const url = msg.location()?.url ?? "";
+          consoleErrors.push(`${msg.text()}${url ? ` (${url})` : ""}`);
+        }
       });
       page.on("pageerror", (error) => {
         consoleErrors.push(`pageerror: ${error.message}`);
+      });
+      // リソース読み込み失敗はレスポンスURL付きで記録する
+      page.on("response", (res) => {
+        if (res.status() >= 400) {
+          consoleErrors.push(`resource ${res.status()}: ${res.url()}`);
+        }
       });
 
       const label = `${viewport.name} ${path}`;
