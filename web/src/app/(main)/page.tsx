@@ -14,6 +14,10 @@ import { CurrentDietSession } from "@/features/diet-sessions/client/components/c
 import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/get-current-diet-session";
 import { getJapanTime } from "@/lib/utils/date";
 
+// ISR: データ更新時は /api/revalidate（revalidateTag）で即時反映され、
+// 会期バナー等の日付起因の表示は最長10分で追従する
+export const revalidate = 600;
+
 export const metadata: Metadata = {
   alternates: {
     canonical: "/",

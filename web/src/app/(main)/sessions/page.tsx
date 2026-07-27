@@ -3,6 +3,10 @@ import { SessionArchiveLayout } from "@/features/diet-sessions/server/components
 import { getSessionArchive } from "@/features/diet-sessions/server/loaders/get-session-archive";
 import { routes } from "@/lib/routes";
 
+// ISR: データ更新時は /api/revalidate（revalidateTag）で即時反映され、
+// 会期バナー等の日付起因の表示は最長10分で追従する
+export const revalidate = 600;
+
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "議会ごとのまとめ",

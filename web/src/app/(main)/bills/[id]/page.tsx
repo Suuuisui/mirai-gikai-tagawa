@@ -14,6 +14,16 @@ interface BillDetailPageProps {
   }>;
 }
 
+// ISR: データ更新時は /api/revalidate（revalidateTag）で即時反映され、
+// 会期バナー等の日付起因の表示は最長10分で追従する
+export const revalidate = 600;
+
+// 全パスをリクエスト時に生成してキャッシュする（オンデマンドISR）。
+// これが無いと動的パラメータルートはISR対象にならず毎回SSRされる
+export function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({
   params,
 }: BillDetailPageProps): Promise<Metadata> {

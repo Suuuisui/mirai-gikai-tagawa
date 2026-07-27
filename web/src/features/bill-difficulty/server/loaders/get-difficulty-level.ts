@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import type { DifficultyLevelEnum } from "../../shared/types";
 
 /**
@@ -10,14 +9,14 @@ import type { DifficultyLevelEnum } from "../../shared/types";
  * （bill_difficulty_level=hard）が残っているブラウザで、
  * bill_contents!inner 結合により全議案が空表示になる不具合を防ぐ。
  * hard コンテンツを整備して難易度トグルを再有効化する際は、
- * Cookie から取得する実装（git履歴参照）に戻すこと。
+ * Cookie から取得する実装（git履歴参照）に戻すこと。ただし cookies() を
+ * 読むとページが動的レンダリングに戻り、ISR（各ページの
+ * `export const revalidate`）が無効になる点に注意。難易度はクライアント側で
+ * 出し分ける等、キャッシュを壊さない設計を検討すること。
  *
- * cookies() の呼び出しは、この関数を経由するページ（sitemap.xml 含む）の
- * 動的レンダリング特性を従来どおり維持するために残している。
- * 外すとビルド時プリレンダリングに変わり、DB接続のないCI環境で
- * next build が失敗する。
+ * CI（DB接続なし）の next build は compile モード（build:ci）で
+ * プリレンダリングをスキップするため、この関数が静的になっても問題ない。
  */
 export async function getDifficultyLevel(): Promise<DifficultyLevelEnum> {
-  await cookies();
   return "normal";
 }

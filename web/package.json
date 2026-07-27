@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
+    "build:ci": "next build --turbopack --experimental-build-mode compile",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

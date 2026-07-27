@@ -32,8 +32,10 @@ jobs:
       - name: Run TypeScript type checking
         run: pnpm run typecheck
 
+      # web はISRページがビルド時プリレンダリングでDB接続を必要とするため、
+      # DBのないCIでは compile モード（プリレンダリングなし）でビルド検証する
       - name: Run build
-        run: pnpm run build
+        run: pnpm run build:ci
         env:
           NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_dummy-for-build-check

@@ -8,6 +8,9 @@ import { PROPOSER_TYPES } from "@/features/members/shared/utils/proposer";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 
+// ISR: 議案データ更新時は /api/revalidate で即時反映（タイマーは保険）
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = env.webUrl;
 

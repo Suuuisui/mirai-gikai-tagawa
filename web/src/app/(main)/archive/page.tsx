@@ -6,6 +6,10 @@ import { DietSessionArchiveList } from "@/features/bills/server/components/diet-
 import { getDietSessionArchive } from "@/features/bills/server/loaders/get-diet-session-archive";
 import { routes } from "@/lib/routes";
 
+// ISR: データ更新時は /api/revalidate（revalidateTag）で即時反映され、
+// 会期バナー等の日付起因の表示は最長10分で追従する
+export const revalidate = 600;
+
 export const metadata = {
   title: "田川市議会 会期一覧",
   description:

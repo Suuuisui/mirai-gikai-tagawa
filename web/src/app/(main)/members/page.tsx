@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { MemberListPage } from "@/features/members/server/components/member-list-page";
 
+// ISR: データ更新時は /api/revalidate（revalidateTag）で即時反映され、
+// 会期バナー等の日付起因の表示は最長10分で追従する
+export const revalidate = 600;
+
 export const metadata: Metadata = {
   title: "議員・提出者から見る",
   description:
