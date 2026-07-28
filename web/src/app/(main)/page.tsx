@@ -40,6 +40,7 @@ export default async function Home() {
 
   const toBillChatContext = (bill: BillWithContent) => {
     return {
+      id: bill.id,
       name: `${bill.bill_content?.title}（${bill.name}）`,
       summary: bill.bill_content?.summary,
       tags: bill.tags?.map((tag) => tag.label) || [],

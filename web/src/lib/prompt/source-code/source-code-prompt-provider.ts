@@ -41,7 +41,8 @@ const PROMPT_BUILDERS: Record<string, (variables: PromptVariables) => string> =
         v.billContent,
         v.knowledgeSource,
         v.memberVotes,
-        v.sponsors
+        v.sponsors,
+        v.billUrl
       );
     },
     "bill-chat-system-hard": (v) => {
@@ -53,7 +54,8 @@ const PROMPT_BUILDERS: Record<string, (variables: PromptVariables) => string> =
         v.billContent,
         v.knowledgeSource,
         v.memberVotes,
-        v.sponsors
+        v.sponsors,
+        v.billUrl
       );
     },
   };

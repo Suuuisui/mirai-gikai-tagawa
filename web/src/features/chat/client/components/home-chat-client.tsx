@@ -6,6 +6,7 @@ import { ChatButton } from "./chat-button";
 interface HomeChatClientProps {
   currentDifficulty: DifficultyLevelEnum;
   bills: Array<{
+    id: string;
     name: string;
     summary?: string;
     tags?: string[];

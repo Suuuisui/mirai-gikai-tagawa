@@ -19,6 +19,7 @@ import {
   SUGGEST_INTERVIEW_TOOL_TYPE,
 } from "@/features/chat/shared/constants";
 import { ChatError, ChatErrorCode } from "@/features/chat/shared/types/errors";
+import { formatBillSummariesForPrompt } from "@/features/chat/shared/utils/format-bill-summaries-for-prompt";
 import { formatMemberVotesForPrompt } from "@/features/chat/shared/utils/format-member-votes-for-prompt";
 import { formatSponsorsForPrompt } from "@/features/chat/shared/utils/format-sponsors-for-prompt";
 import { pickChatKnowledgeSource } from "@/features/chat/shared/utils/pick-chat-knowledge-source";
@@ -30,6 +31,7 @@ import {
   createPromptProvider,
   type PromptProvider,
 } from "@/lib/prompt";
+import { routes } from "@/lib/routes";
 import { isWithinDailyCostLimit, recordChatUsage } from "./cost-tracker";
 import {
   checkSystemDailyCostLimit,
@@ -41,7 +43,13 @@ export type ChatMessageMetadata = {
   hasInterviewConfig?: boolean;
   pageContext?: {
     type: "home" | "bill";
-    bills?: Array<{ id: string; name: string; summary?: string }>;
+    bills?: Array<{
+      id: string;
+      name: string;
+      summary?: string;
+      tags?: string[];
+      isFeatured?: boolean;
+    }>;
   };
   difficultyLevel: DifficultyLevelEnum;
   sessionId: string;
@@ -202,7 +210,9 @@ async function buildPrompt(
   let variables: Record<string, string>;
   if (context.pageContext?.type === "home") {
     variables = {
-      billSummary: JSON.stringify(context.pageContext.bills ?? ""),
+      billSummary: formatBillSummariesForPrompt(
+        context.pageContext.bills ?? []
+      ),
     };
   } else {
     const billId = context.billContext?.id;
@@ -217,6 +227,9 @@ async function buildPrompt(
       billTitle: serverContent?.title ?? "",
       billSummary: serverContent?.summary ?? "",
       billContent: serverContent?.content ?? "",
+      // AIが議案詳細ページへMarkdownリンクを案内できるよう、サーバー側で
+      // 公開確認済みの bill からのみURLを生成する（クライアント由来のidは使わない）
+      billUrl: serverBill ? routes.billDetail(serverBill.id) : "",
       knowledgeSource: pickChatKnowledgeSource(serverBill),
       memberVotes: formatMemberVotesForPrompt(serverBill?.member_votes),
       sponsors: formatSponsorsForPrompt(serverBill?.sponsors),

@@ -71,4 +71,31 @@ describe("buildBillChatSystemHardPrompt", () => {
 
     expect(result).not.toContain("議員別の賛否・提出者情報");
   });
+
+  it("billUrl を渡すと詳細ページURLが含まれる", () => {
+    const result = buildBillChatSystemHardPrompt(
+      "a",
+      "b",
+      "c",
+      "d",
+      "",
+      "",
+      "",
+      "/bills/xyz"
+    );
+
+    expect(result).toContain("詳細ページURL: /bills/xyz");
+  });
+
+  it("billUrl を省略すると詳細ページURLの行が出ない", () => {
+    const result = buildBillChatSystemHardPrompt("a", "b", "c", "d");
+
+    expect(result).not.toContain("- 詳細ページURL:");
+  });
+
+  it("議案へのリンク案内ルールが含まれる", () => {
+    const result = buildBillChatSystemHardPrompt("a", "b", "c", "d");
+
+    expect(result).toContain("議案へのリンク案内について");
+  });
 });

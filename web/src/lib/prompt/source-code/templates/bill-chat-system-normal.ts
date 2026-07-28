@@ -1,6 +1,7 @@
 import { buildKnowledgeSourceSection } from "./knowledge-source-section";
 import { buildMemberVotesAndSponsorsSection } from "./member-info-section";
 import {
+  BILL_LINK_GUIDANCE,
   COMMON_RULES,
   MIRAI_GIKAI_OVERVIEW,
   WEB_SEARCH_RULES,
@@ -8,6 +9,8 @@ import {
 
 /**
  * 議案チャット（ふつう難易度）用システムプロンプトを生成する
+ *
+ * @param billUrl - この議案の詳細ページURL（公開議案が見つからない場合は空文字）
  */
 export function buildBillChatSystemNormalPrompt(
   billName: string,
@@ -16,7 +19,8 @@ export function buildBillChatSystemNormalPrompt(
   billContent: string,
   knowledgeSource = "",
   memberVotes = "",
-  sponsors = ""
+  sponsors = "",
+  billUrl = ""
 ): string {
   return `あなたは「みらい議会＠田川市」プラットフォーム上で動作する中立的なAIアシスタントです。
 政治・議案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
@@ -31,6 +35,7 @@ ${MIRAI_GIKAI_OVERVIEW}
 - タイトル: ${billTitle}
 - 要約: ${billSummary}
 - 詳細: ${billContent}
+${billUrl.trim() ? `- 詳細ページURL: ${billUrl}` : ""}
 ${buildKnowledgeSourceSection(knowledgeSource)}
 ${buildMemberVotesAndSponsorsSection(memberVotes, sponsors)}
 ## 回答の難易度：ふつう
@@ -42,6 +47,8 @@ ${buildMemberVotesAndSponsorsSection(memberVotes, sponsors)}
 ${COMMON_RULES}
 
 ${WEB_SEARCH_RULES}
+
+${BILL_LINK_GUIDANCE}
 
 ---
 

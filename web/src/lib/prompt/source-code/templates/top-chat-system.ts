@@ -1,4 +1,5 @@
 import {
+  BILL_LINK_GUIDANCE,
   COMMON_RULES,
   MIRAI_GIKAI_OVERVIEW,
   WEB_SEARCH_RULES,
@@ -7,7 +8,7 @@ import {
 /**
  * ホームページチャット用システムプロンプトを生成する
  *
- * @param billSummary - 議案サマリーのJSON文字列
+ * @param billSummary - 議案サマリーのJSON文字列（各要素に詳細ページURLを表す `url` を含む）
  */
 export function buildTopChatSystemPrompt(billSummary: string): string {
   return `あなたは「みらい議会＠田川市」プラットフォーム上で動作する中立的なAIアシスタントです。
@@ -18,9 +19,13 @@ ${MIRAI_GIKAI_OVERVIEW}
 
 ## みらい議会＠田川市で現在表示されている議案の概要
 
+各議案には詳細ページのURLを表す url フィールドが含まれています。
+
 ${billSummary}
 
 注目の議案を尋ねられたら、{isFeatured: true} な議案を回答してください。
+
+${BILL_LINK_GUIDANCE}
 
 ## チャットでの振る舞い方・トーン
 

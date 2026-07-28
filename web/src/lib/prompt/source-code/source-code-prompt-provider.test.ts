@@ -169,4 +169,37 @@ describe("SourceCodePromptProvider", () => {
     expect(result.content).toContain("/members");
     expect(result.content).toContain("評価・批判する表現はしないでください");
   });
+
+  it("top-chat-system に議案へのリンク案内ルールが含まれる", async () => {
+    const result = await provider.getPrompt("top-chat-system", {
+      billSummary: '[{"name":"テスト法案","url":"/bills/abc"}]',
+    });
+
+    expect(result.content).toContain("議案へのリンク案内について");
+    expect(result.content).toContain('"url":"/bills/abc"');
+  });
+
+  it("billUrl を渡すと bill-chat-system-normal の出力に含まれる", async () => {
+    const result = await provider.getPrompt("bill-chat-system-normal", {
+      billName: "n",
+      billTitle: "t",
+      billSummary: "s",
+      billContent: "c",
+      billUrl: "/bills/abc-123",
+    });
+
+    expect(result.content).toContain("詳細ページURL: /bills/abc-123");
+  });
+
+  it("billUrl を渡すと bill-chat-system-hard の出力に含まれる", async () => {
+    const result = await provider.getPrompt("bill-chat-system-hard", {
+      billName: "n",
+      billTitle: "t",
+      billSummary: "s",
+      billContent: "c",
+      billUrl: "/bills/abc-123",
+    });
+
+    expect(result.content).toContain("詳細ページURL: /bills/abc-123");
+  });
 });
