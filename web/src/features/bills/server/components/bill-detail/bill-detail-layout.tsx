@@ -14,12 +14,14 @@ import { BillDisclaimer } from "../../../client/components/bill-detail/bill-disc
 import { BillStatusProgress } from "../../../client/components/bill-detail/bill-status-progress";
 import { MiraiStanceCard } from "../../../client/components/bill-detail/mirai-stance-card";
 import type { BillWithContent } from "../../../shared/types";
+import { isMemberVotesSectionVisible } from "../../../shared/utils/member-votes-visibility";
 import { getAdjacentSessionBills } from "../../loaders/get-adjacent-session-bills";
 import { BillShareButtons } from "../share/bill-share-buttons";
 import { BillAdjacentNav } from "./bill-adjacent-nav";
 import { BillContent } from "./bill-content";
 import { BillDetailHeader } from "./bill-detail-header";
 import { BillSessionLink } from "./bill-session-link";
+import { BillToc } from "./bill-toc";
 import { ExplanationMaterialsSection } from "./explanation-materials-section";
 import { MemberVotesSection } from "./member-votes-section";
 import { SponsorsSection } from "./sponsors-section";
@@ -103,6 +105,18 @@ export async function BillDetailLayout({
             </div>
           )}
 
+          {/* 目次: 解説が長いページでもセクションへジャンプできるようにする
+              （本文h2が少ない議案では非表示） */}
+          <div className="mb-8">
+            <BillToc
+              markdownContent={bill.bill_content?.content}
+              showMemberVotes={isMemberVotesSectionVisible(
+                bill,
+                dietSession?.slug ?? null
+              )}
+            />
+          </div>
+
           {/* 提出者・賛成者（連署議員）。議員提出・委員会提出議案のみデータがあり、
               データが無い議案（市長提出等）では非表示 */}
           <SponsorsSection bill={bill} memberNameSet={memberNameSet} />
@@ -111,10 +125,12 @@ export async function BillDetailLayout({
               賛否が分かれなかった案件は「全会一致」の表示を出す
               （判定はvote-disclosure.ts。判定不能な議案では非表示）。
               「賛否が分かれた」事実は議案の一番のニュースのため、長文解説より前に配置する */}
-          <MemberVotesSection
-            bill={bill}
-            sessionSlug={dietSession?.slug ?? null}
-          />
+          <div id="member-votes" className="scroll-mt-32">
+            <MemberVotesSection
+              bill={bill}
+              sessionSlug={dietSession?.slug ?? null}
+            />
+          </div>
 
           <BillContent bill={bill} />
         </Container>

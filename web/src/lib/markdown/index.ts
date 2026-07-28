@@ -10,6 +10,7 @@ import { unified } from "unified";
 import { LongPressSection } from "@/features/bills/client/components/bill-detail/long-press-section";
 import { rehypeEmbedYouTube } from "./rehype-embed-youtube";
 import { rehypeExternalLinks } from "./rehype-external-links";
+import { rehypeHeadingIds } from "./rehype-heading-ids";
 import { rehypeInjectElement } from "./rehype-inject-element";
 import { rehypeWrapSections } from "./rehype-wrap-sections";
 
@@ -56,6 +57,8 @@ export async function parseMarkdown(markdown: string): Promise<ReactElement> {
       ],
     })
     .use(rehypeSanitize, sanitizeSchema)
+    // 目次（BillToc）用のアンカーid。sanitizeにidを除去されないよう後段に置く
+    .use(rehypeHeadingIds)
     .use(rehypeExternalLinks)
     .use(rehypeEmbedYouTube)
     .run(mdast);

@@ -88,7 +88,11 @@ export function PreviousSessionSection({
       {/* 議案カードリスト */}
       <div className="relative flex flex-col gap-3">
         {visibleBills.map((bill) => (
-          <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
+          <Link
+            key={bill.id}
+            href={routes.billDetail(bill.id) as Route}
+            aria-label={bill.bill_content?.title || bill.name}
+          >
             <CompactBillCard bill={bill} />
           </Link>
         ))}

@@ -18,3 +18,6 @@ infra/cloud-run/config.env.*
 *-key.json
 .vercel
 .env*
+
+# visual-smoke のローカル実行成果物
+smoke-artifacts/

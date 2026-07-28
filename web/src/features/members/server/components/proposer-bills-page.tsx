@@ -51,6 +51,7 @@ export async function ProposerBillsPage({ proposer }: ProposerBillsPageProps) {
                   <Link
                     key={bill.id}
                     href={routes.billDetail(bill.id) as Route}
+                    aria-label={bill.bill_content?.title || bill.name}
                   >
                     <CompactBillCard bill={bill} />
                   </Link>

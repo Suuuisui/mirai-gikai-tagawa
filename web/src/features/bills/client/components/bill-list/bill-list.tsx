@@ -20,7 +20,11 @@ export function BillList({ bills }: BillListProps) {
   return (
     <div className="grid gap-4">
       {bills.map((bill) => (
-        <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
+        <Link
+          key={bill.id}
+          href={routes.billDetail(bill.id) as Route}
+          aria-label={bill.bill_content?.title || bill.name}
+        >
           <BillCard bill={bill} />
         </Link>
       ))}

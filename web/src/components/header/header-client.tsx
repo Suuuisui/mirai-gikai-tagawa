@@ -11,6 +11,7 @@ import { InterviewHeaderActions } from "@/features/interview-session/client/comp
 import { isInterviewPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
 import { HamburgerMenu } from "./hamburger-menu";
+import { useHideOnScroll } from "./use-hide-on-scroll";
 
 type NavLinkItem = {
   label: string;
@@ -51,9 +52,16 @@ const MOBILE_QUICK_LINKS: NavLinkItem[] = [
 export function HeaderClient() {
   const pathname = usePathname();
   const showInterviewActions = isInterviewPage(pathname);
+  // モバイルではヘッダーが画面の約15%を占めるため、下スクロール中は隠して
+  // 本文を広く見せる（上スクロールで即座に再表示）。lg以上では常に表示
+  const isHidden = useHideOnScroll();
 
   return (
-    <header className="px-3 fixed top-4 left-0 right-0 z-40 max-w-[1440px] mx-auto">
+    <header
+      className={`px-3 fixed top-4 left-0 right-0 z-40 max-w-[1440px] mx-auto transition-transform duration-300 lg:translate-y-0 ${
+        isHidden ? "-translate-y-[calc(100%+1rem)]" : "translate-y-0"
+      }`}
+    >
       <div className="rounded-2xl bg-white shadow-sm mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-2">
           {/* Logo / Site Title */}
@@ -114,21 +122,28 @@ export function HeaderClient() {
         </div>
 
         {/* モバイル用クイックナビ（lg未満のみ表示、横スクロール） */}
-        <nav
-          className="flex items-center gap-1.5 overflow-x-auto pt-0.5 pb-2.5 scrollbar-hide lg:hidden"
-          aria-label="クイックナビゲーション"
-        >
-          {MOBILE_QUICK_LINKS.map(({ label, href, icon: Icon }) => (
-            <Link
-              key={label}
-              href={href as Route}
-              className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-mirai-border bg-mirai-surface px-3 py-1.5 text-sm font-medium text-mirai-text shadow-xs transition-all hover:bg-muted/50 active:scale-95"
-            >
-              <Icon className="h-4 w-4 shrink-0 text-primary-accent" />
-              {label}
-            </Link>
-          ))}
-        </nav>
+        <div className="relative lg:hidden">
+          <nav
+            className="flex items-center gap-1.5 overflow-x-auto pt-0.5 pb-2.5 pr-6 scrollbar-hide"
+            aria-label="クイックナビゲーション"
+          >
+            {MOBILE_QUICK_LINKS.map(({ label, href, icon: Icon }) => (
+              <Link
+                key={label}
+                href={href as Route}
+                className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-mirai-border bg-mirai-surface px-3 py-1.5 text-sm font-medium text-mirai-text shadow-xs transition-all hover:bg-muted/50 active:scale-95"
+              >
+                <Icon className="h-4 w-4 shrink-0 text-primary-accent" />
+                {label}
+              </Link>
+            ))}
+          </nav>
+          {/* 右端のフェード: ナビが横スクロールできることを視覚的に示す */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent"
+          />
+        </div>
       </div>
     </header>
   );

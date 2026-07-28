@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Container } from "@/components/layouts/container";
 import { About } from "@/components/top/about";
 import { Hero } from "@/components/top/hero";
+import {
+  SectionJumpNav,
+  TOP_SECTION_IDS,
+} from "@/components/top/section-jump-nav";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import { BillDisclaimer } from "@/features/bills/client/components/bill-detail/bill-disclaimer";
 import { BillsByTagSection } from "@/features/bills/server/components/bills-by-tag-section";
@@ -54,6 +58,12 @@ export default async function Home() {
       <Container className="">
         <div className="py-10">
           <main className="flex flex-col gap-16">
+            {/* セクションジャンプナビ（トップが長いため各カテゴリへ直接移動できる） */}
+            <SectionJumpNav
+              tagLabels={billsByTag.map(({ tag }) => tag.label)}
+              hasPreviousSession={previousSessionData != null}
+            />
+
             {/* 注目の議案セクション */}
             <FeaturedBillSection bills={featuredBills} />
 
@@ -65,7 +75,10 @@ export default async function Home() {
 
       {/* 前回の田川市議会セクション（Archive） */}
       {previousSessionData && (
-        <div className="bg-mirai-surface-muted py-10">
+        <div
+          id={TOP_SECTION_IDS.previousSession}
+          className="bg-mirai-surface-muted py-10 scroll-mt-24"
+        >
           <Container>
             <PreviousSessionSection
               session={previousSessionData.session}

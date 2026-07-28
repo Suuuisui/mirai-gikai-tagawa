@@ -1,6 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { tagSectionId } from "@/components/top/section-jump-nav";
 import { Button } from "@/components/ui/button";
 import { routes } from "@/lib/routes";
 import { BillCard } from "../../client/components/bill-list/bill-card";
@@ -18,7 +19,11 @@ export function BillsByTagSection({ billsByTag }: BillsByTagSectionProps) {
   return (
     <div className="flex flex-col gap-12">
       {billsByTag.map(({ tag, bills }) => (
-        <section key={tag.id} className="flex flex-col gap-6">
+        <section
+          key={tag.id}
+          id={tagSectionId(tag.label)}
+          className="flex flex-col gap-6 scroll-mt-24"
+        >
           {/* タグヘッダー */}
           <div className="flex flex-col gap-1.5">
             <h2 className="text-[22px] font-bold text-black leading-[1.48]">
@@ -34,7 +39,11 @@ export function BillsByTagSection({ billsByTag }: BillsByTagSectionProps) {
           {/* 議案カード一覧 */}
           <div className="flex flex-col gap-4">
             {bills.map((bill) => (
-              <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
+              <Link
+                key={bill.id}
+                href={routes.billDetail(bill.id) as Route}
+                aria-label={bill.bill_content?.title || bill.name}
+              >
                 <BillCard bill={bill} />
               </Link>
             ))}

@@ -60,7 +60,8 @@
   /* Text */
   --color-mirai-text: #1f2937;
   --color-mirai-text-secondary: #404040;
-  --color-mirai-text-muted: #8e8e93;
+  /* 日付等の小サイズテキストにも使うため、白背景でWCAG AA(4.5:1)を満たす明度にする */
+  --color-mirai-text-muted: #6d6d74;
   --color-mirai-text-placeholder: #aeaeb2;
   --color-mirai-text-note: #4c4c4c;
   --color-mirai-text-subtle: #666666;
@@ -161,7 +162,8 @@
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.656 0 0);
+  /* text-xs の日付等にも使うため、白背景でWCAG AA(4.5:1)を満たす明度にする */
+  --muted-foreground: oklch(0.52 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);

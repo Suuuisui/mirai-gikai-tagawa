@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { BillStatusBadge } from "@/features/bills/client/components/bill-list/bill-status-badge";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { SearchItem } from "../../shared/types";
@@ -88,16 +89,23 @@ export function SearchClient({ items }: SearchClientProps) {
           </p>
           <div className="flex flex-col gap-3">
             {results.map((item) => (
-              <Link key={item.id} href={routes.billDetail(item.id) as Route}>
+              <Link
+                key={item.id}
+                href={routes.billDetail(item.id) as Route}
+                aria-label={item.title}
+              >
                 <Card className="flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
                   <h2 className="line-clamp-2 text-[15px] font-bold leading-[1.6] text-mirai-text">
                     {item.title}
                   </h2>
-                  {item.submittedDate && (
-                    <time className="text-xs text-mirai-text-muted">
-                      {formatDateWithDots(item.submittedDate)} 議決
-                    </time>
-                  )}
+                  <div className="flex items-center gap-3">
+                    <BillStatusBadge status={item.status} className="w-fit" />
+                    {item.submittedDate && (
+                      <time className="text-xs text-mirai-text-muted">
+                        {formatDateWithDots(item.submittedDate)} 議決
+                      </time>
+                    )}
+                  </div>
                   {item.summary && (
                     <p className="line-clamp-2 text-xs leading-relaxed text-mirai-text-secondary">
                       {item.summary}

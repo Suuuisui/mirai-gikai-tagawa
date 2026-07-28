@@ -26,7 +26,11 @@ export function SessionHighlightsSection({
       </h2>
       <div className="flex flex-col gap-4">
         {bills.map((bill) => (
-          <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
+          <Link
+            key={bill.id}
+            href={routes.billDetail(bill.id) as Route}
+            aria-label={bill.bill_content?.title || bill.name}
+          >
             <BillCard bill={bill} />
           </Link>
         ))}
