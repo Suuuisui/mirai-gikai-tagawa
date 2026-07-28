@@ -22,7 +22,7 @@ export function BillsByTagSection({ billsByTag }: BillsByTagSectionProps) {
         <section
           key={tag.id}
           id={tagSectionId(tag.label)}
-          className="flex flex-col gap-6 scroll-mt-24"
+          className="flex flex-col gap-6 scroll-mt-36"
         >
           {/* タグヘッダー */}
           <div className="flex flex-col gap-1.5">

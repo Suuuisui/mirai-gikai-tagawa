@@ -125,7 +125,7 @@ export async function BillDetailLayout({
               賛否が分かれなかった案件は「全会一致」の表示を出す
               （判定はvote-disclosure.ts。判定不能な議案では非表示）。
               「賛否が分かれた」事実は議案の一番のニュースのため、長文解説より前に配置する */}
-          <div id="member-votes" className="scroll-mt-32">
+          <div id="member-votes" className="scroll-mt-36">
             <MemberVotesSection
               bill={bill}
               sessionSlug={dietSession?.slug ?? null}

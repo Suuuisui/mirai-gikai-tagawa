@@ -77,7 +77,7 @@ export default async function Home() {
       {previousSessionData && (
         <div
           id={TOP_SECTION_IDS.previousSession}
-          className="bg-mirai-surface-muted py-10 scroll-mt-24"
+          className="bg-mirai-surface-muted py-10 scroll-mt-36"
         >
           <Container>
             <PreviousSessionSection

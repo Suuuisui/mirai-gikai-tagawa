@@ -17,7 +17,7 @@ export function FeaturedBillSection({ bills }: FeaturedBillSectionProps) {
   return (
     <section
       id={TOP_SECTION_IDS.featured}
-      className="flex flex-col gap-6 scroll-mt-24"
+      className="flex flex-col gap-6 scroll-mt-36"
     >
       {/* セクションヘッダー */}
       <div className="flex flex-col gap-1.5">
