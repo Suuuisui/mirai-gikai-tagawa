@@ -35,6 +35,9 @@ export async function generateMetadata({ params }: Props) {
     description:
       billsByTag.tag.description ??
       `「${billsByTag.tag.label}」タグが付与された議案の一覧です。`,
+    alternates: {
+      canonical: routes.tagBills(tagId),
+    },
   };
 }
 

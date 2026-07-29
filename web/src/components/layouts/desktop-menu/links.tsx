@@ -26,6 +26,11 @@ const links: FooterLinkItem[] = [
     external: false,
   },
   {
+    label: "過去の会期",
+    href: routes.archive(),
+    external: false,
+  },
+  {
     label: "利用規約",
     href: routes.terms(),
     external: false,

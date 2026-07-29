@@ -33,6 +33,9 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: `${session.name}の議案一覧`,
     description: `${session.name}（${session.start_date}〜${session.end_date}）に提出された議案の一覧です。`,
+    alternates: {
+      canonical: routes.archiveSessionBills(slug),
+    },
   };
 }
 

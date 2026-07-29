@@ -31,6 +31,10 @@ export const primaryLinks: FooterLink[] = [
     href: routes.memberArchive(),
   },
   {
+    label: "過去の会期",
+    href: routes.archive(),
+  },
+  {
     label: "みらい議会とは",
     href: EXTERNAL_LINKS.ABOUT_NOTE,
     external: true,

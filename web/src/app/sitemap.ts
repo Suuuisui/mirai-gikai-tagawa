@@ -48,6 +48,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   );
 
+  // 会期別議案一覧（/archive/{slug}/bills）。slug未設定の会期は除外
+  const archiveSessionUrls = sessions
+    .filter(
+      (session): session is typeof session & { slug: string } =>
+        session.slug !== null
+    )
+    .map((session) => ({
+      url: `${baseUrl}${routes.archiveSessionBills(session.slug)}`,
+      lastModified: new Date(session.updated_at),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    }));
+
+  // タグ別議案一覧（/tags/{tagId}）。取得済みの議案データから一意なタグを導出
+  const tagIds = [
+    ...new Set(bills.flatMap((bill) => bill.tags.map((t) => t.id))),
+  ];
+  const tagUrls = tagIds.map((tagId) => ({
+    url: `${baseUrl}${routes.tagBills(tagId)}`,
+    lastModified: latestBillUpdatedAt,
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
+
   const proposerUrls = PROPOSER_TYPES.map((proposer) => ({
     url: `${baseUrl}${routes.proposerBills(proposer)}`,
     lastModified: latestBillUpdatedAt,
@@ -80,8 +104,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}${routes.archive()}`,
+      lastModified: latestBillUpdatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    },
+    // 利用規約・プライバシーポリシーはbillデータと無関係な固定ページのため、
+    // 他エントリと違いlastModifiedにlatestBillUpdatedAtを流用しない（省略可能）
+    {
+      url: `${baseUrl}${routes.terms()}`,
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
+    },
+    {
+      url: `${baseUrl}${routes.privacy()}`,
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
+    },
     ...billUrls,
     ...sessionUrls,
+    ...archiveSessionUrls,
+    ...tagUrls,
     ...memberUrls,
     ...proposerUrls,
   ];

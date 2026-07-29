@@ -2,6 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layouts/container";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
 import { ShowMoreList } from "@/components/ui/show-more-list";
@@ -10,6 +11,7 @@ import {
   VOTE_CHIP_CLASS,
   VOTE_LABEL,
 } from "@/features/bills/shared/utils/member-vote-display";
+import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import { ROSTER_AS_OF } from "../../shared/data/member-profiles";
@@ -81,8 +83,30 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
   const displayName = resolveMemberDisplayName(name, allSponsorNames);
   const profile = resolveMemberProfile(name);
 
+  // 議員個人の構造化データ（Person）。検索エンジンが人物ページとして理解できるようにする
+  // profileがMEMBER_PROFILESに未収録（＝現職/元職が公式名簿から確認できていない）の
+  // 場合、可視UI（下記の元議員表示）と同様にjobTitleを断定しない
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: displayName,
+    url: new URL(routes.memberDetail(name), env.webUrl).toString(),
+    ...(profile && {
+      jobTitle: profile.isIncumbent ? "田川市議会議員" : "元田川市議会議員",
+    }),
+    affiliation: summary.factions.map((faction) => ({
+      "@type": "Organization",
+      name: faction,
+    })),
+    memberOf: {
+      "@type": "GovernmentOrganization",
+      name: "田川市議会",
+    },
+  };
+
   return (
     <div className="bg-mirai-surface-muted">
+      <JsonLd data={personJsonLd} />
       <Container className="py-8">
         <div className="flex flex-col gap-1.5 pb-6">
           <h1 className="text-[22px] font-bold text-black leading-[1.48]">

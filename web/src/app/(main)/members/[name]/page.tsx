@@ -3,6 +3,7 @@ import { MemberDetailPage } from "@/features/members/server/components/member-de
 import { getBillsWithSponsors } from "@/features/members/server/loaders/get-member-vote-data";
 import { resolveMemberDisplayName } from "@/features/members/shared/utils/resolve-member-display";
 import { collectSponsorNames } from "@/features/members/shared/utils/sponsors";
+import { routes } from "@/lib/routes";
 
 type Props = {
   params: Promise<{ name: string }>;
@@ -34,6 +35,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${displayName} 議員の記録`,
     description: `田川市議会 ${decodedName} 議員が賛成・反対・欠席した議案の一覧です。賛否が分かれた案件での投票記録を公開データから確認できます。`,
+    alternates: {
+      canonical: routes.memberDetail(decodedName),
+    },
   };
 }
 

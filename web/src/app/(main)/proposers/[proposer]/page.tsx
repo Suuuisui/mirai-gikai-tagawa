@@ -5,6 +5,7 @@ import {
   isProposerType,
   PROPOSER_LABELS,
 } from "@/features/members/shared/utils/proposer";
+import { routes } from "@/lib/routes";
 
 type Props = {
   params: Promise<{ proposer: string }>;
@@ -29,6 +30,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${label}の議案一覧`,
     description: `田川市議会の${label}議案の一覧です。議決結果とあわせて確認できます。`,
+    alternates: {
+      canonical: routes.proposerBills(proposer),
+    },
   };
 }
 

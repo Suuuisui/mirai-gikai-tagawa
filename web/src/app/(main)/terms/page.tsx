@@ -7,10 +7,14 @@ import {
   LegalSectionTitle,
   LegalSubSectionTitle,
 } from "@/components/layouts/legal-page-layout";
+import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = {
   title: "利用規約",
   description: "みらい議会＠田川市の利用規約",
+  alternates: {
+    canonical: routes.terms(),
+  },
 };
 
 export default function TermsPage() {

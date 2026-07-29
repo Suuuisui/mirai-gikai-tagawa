@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { getBills } from "@/features/bills/server/loaders/get-bills";
@@ -27,7 +28,10 @@ export async function SearchPage() {
           </p>
         </div>
 
-        <SearchClient items={items} />
+        {/* useSearchParams（?q= 初期クエリ）を静的レンダリングと両立させるためSuspenseで包む */}
+        <Suspense>
+          <SearchClient items={items} />
+        </Suspense>
       </Container>
 
       <Container className="py-8">

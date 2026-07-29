@@ -1,6 +1,11 @@
-import type { Route } from "next";
+import type { Metadata, Route } from "next";
 import { redirect } from "next/navigation";
 import { routes } from "@/lib/routes";
+
+// 常に別URLへredirectするだけの旧URL互換ルートのためnoindex
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 interface ChatLogPageProps {
   params: Promise<{

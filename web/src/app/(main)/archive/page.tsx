@@ -14,6 +14,9 @@ export const metadata = {
   title: "田川市議会 会期一覧",
   description:
     "田川市議会の全ての会期を一覧で確認できます。会期を選ぶと、その会期に提出された議案の一覧を見ることができます。",
+  alternates: {
+    canonical: routes.archive(),
+  },
 };
 
 export default async function DietSessionArchivePage() {

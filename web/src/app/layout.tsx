@@ -5,6 +5,7 @@ import NextTopLoader from "nextjs-toploader";
 import type { ReactNode } from "react";
 import { JsonLd } from "@/components/seo/json-ld";
 import { env } from "@/lib/env";
+import { routes } from "@/lib/routes";
 
 const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
@@ -99,6 +100,14 @@ const websiteJsonLd = {
     "@type": "Organization",
     name: "田川市政ラボ",
     url: env.webUrl,
+  },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${env.webUrl}${routes.search()}?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
   },
 };
 

@@ -6,10 +6,14 @@ import {
   LegalParagraph,
   LegalSectionTitle,
 } from "@/components/layouts/legal-page-layout";
+import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = {
   title: "プライバシーポリシー",
   description: "みらい議会＠田川市のプライバシーポリシー",
+  alternates: {
+    canonical: routes.privacy(),
+  },
 };
 
 export default function PrivacyPage() {

@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
+
+// AIインタビューのチャット画面そのもの。検索結果に出す意味がないためnoindex
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";

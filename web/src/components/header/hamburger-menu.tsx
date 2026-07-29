@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  History,
   Home,
   Info,
   Landmark,
@@ -39,6 +40,11 @@ const NAV_LINKS: NavLinkItem[] = [
     label: "議員・提出者から見る",
     href: routes.memberArchive(),
     icon: Users,
+  },
+  {
+    label: "過去の会期から議案を見る",
+    href: routes.archive(),
+    icon: History,
   },
   // トップページのAboutセクション（id="about"）へのアンカーリンク
   { label: "みらい議会とは", href: `${routes.home()}#about`, icon: Info },

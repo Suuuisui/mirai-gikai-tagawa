@@ -3,6 +3,7 @@
 import { Search } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -22,7 +23,9 @@ interface SearchClientProps {
 }
 
 export function SearchClient({ items }: SearchClientProps) {
-  const [query, setQuery] = useState("");
+  // 検索エンジンのSearchAction（/search?q=...）や共有URLからの初期クエリに対応
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
   const trimmedQuery = query.trim();
   const results = useMemo(
     () => (trimmedQuery === "" ? [] : searchBills(items, query)),
