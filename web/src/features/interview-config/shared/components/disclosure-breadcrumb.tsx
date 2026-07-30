@@ -8,11 +8,14 @@ import {
 interface DisclosureBreadcrumbProps {
   billId: string;
   previewToken?: string;
+  /** ページ下部の2つ目のパンくずではJSON-LDの重複出力を抑止する */
+  withJsonLd?: boolean;
 }
 
 export function DisclosureBreadcrumb({
   billId,
   previewToken,
+  withJsonLd,
 }: DisclosureBreadcrumbProps) {
   const items = [
     { label: "TOP", href: routes.home() },
@@ -24,5 +27,5 @@ export function DisclosureBreadcrumb({
     { label: "情報開示" },
   ];
 
-  return <Breadcrumb items={items} />;
+  return <Breadcrumb items={items} withJsonLd={withJsonLd} />;
 }

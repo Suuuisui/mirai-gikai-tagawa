@@ -108,29 +108,12 @@ export default async function BillDetailPage({ params }: BillDetailPageProps) {
       name: "みらい議会＠田川市",
     },
   };
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "ホーム",
-        item: env.webUrl,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: billWithContent.name,
-        item: billUrl,
-      },
-    ],
-  };
+  // パンくずのBreadcrumbListは、BillDetailLayout内の表示用Breadcrumbが
+  // 同じitemsから自動出力する
 
   return (
     <>
       <JsonLd data={articleJsonLd} />
-      <JsonLd data={breadcrumbJsonLd} />
       <BillDetailLayout
         bill={billWithContent}
         currentDifficulty={currentDifficulty}

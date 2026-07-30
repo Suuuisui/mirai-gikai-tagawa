@@ -1,8 +1,7 @@
-import { ChevronRight } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layouts/container";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { getBillsByDietSession } from "@/features/bills/server/loaders/get-bills-by-diet-session";
 import { DietSessionBillList } from "@/features/diet-sessions/client/components/diet-session-bill-list";
 import { getDietSessionBySlug } from "@/features/diet-sessions/server/loaders/get-diet-session-by-slug";
@@ -70,13 +69,13 @@ export default async function DietSessionBillsPage({ params }: Props) {
 
       {/* パンくずリスト */}
       <Container className="py-8">
-        <nav className="flex items-center gap-2 text-[15px]">
-          <Link href={routes.home()} className="text-black">
-            TOP
-          </Link>
-          <ChevronRight className="h-5 w-5 text-black" />
-          <span className="text-black">過去の議案</span>
-        </nav>
+        <Breadcrumb
+          items={[
+            { label: "TOP", href: routes.home() },
+            { label: "会期一覧", href: routes.archive() },
+            { label: `${session.name}の議案一覧` },
+          ]}
+        />
       </Container>
     </div>
   );

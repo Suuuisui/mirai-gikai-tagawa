@@ -1,7 +1,6 @@
-import { ChevronRight } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { Container } from "@/components/layouts/container";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { DietSessionArchiveList } from "@/features/bills/server/components/diet-session-archive-list";
 import { getDietSessionArchive } from "@/features/bills/server/loaders/get-diet-session-archive";
 import { routes } from "@/lib/routes";
@@ -61,13 +60,9 @@ export default async function DietSessionArchivePage() {
 
       {/* パンくずリスト */}
       <Container className="py-8">
-        <nav className="flex items-center gap-2 text-[15px]">
-          <Link href={routes.home()} className="text-black">
-            TOP
-          </Link>
-          <ChevronRight className="h-5 w-5 text-black" />
-          <span className="text-black">会期一覧</span>
-        </nav>
+        <Breadcrumb
+          items={[{ label: "TOP", href: routes.home() }, { label: "会期一覧" }]}
+        />
       </Container>
     </div>
   );

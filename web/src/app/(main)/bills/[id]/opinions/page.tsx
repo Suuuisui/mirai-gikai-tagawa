@@ -8,6 +8,16 @@ interface OpinionsPageProps {
   }>;
 }
 
+// ISR: 公開レポートデータはrevalidateTag未配線のため、公開後の反映は
+// 最長10分のタイマー再検証のみ（議案情報はbillsタグで即時反映可能）
+export const revalidate = 600;
+
+// 全パスをリクエスト時に生成してキャッシュする（オンデマンドISR）。
+// これが無いと動的パラメータルートはISR対象にならず毎回SSRされる
+export function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({
   params,
 }: OpinionsPageProps): Promise<Metadata> {

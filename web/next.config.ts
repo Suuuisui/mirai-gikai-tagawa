@@ -6,6 +6,32 @@ const nextConfig: NextConfig = {
   experimental: {
     serverSourceMaps: true,
   },
+  // セキュリティヘッダー。CSPは外部リソース（Google Fonts, GA,
+  // Supabase Storage, AI Gateway等）の洗い出しが必要なため別途対応とし、
+  // ここでは既存機能を壊さず安全に追加できる基本ヘッダーのみ設定する
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+        ],
+      },
+    ];
+  },
   // 旧URL（fork元の名残の /kokkai）からの恒久リダイレクト
   async redirects() {
     return [

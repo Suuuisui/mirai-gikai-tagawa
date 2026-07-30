@@ -174,7 +174,11 @@ export function InterviewDisclosurePage({
           systemPrompt={props.systemPrompt}
           summaryPrompt={props.summaryPrompt}
         />
-        <DisclosureBreadcrumb billId={billId} previewToken={previewToken} />
+        <DisclosureBreadcrumb
+          billId={billId}
+          previewToken={previewToken}
+          withJsonLd={false}
+        />
       </div>
     </div>
   );
