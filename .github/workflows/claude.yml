@@ -1,0 +1,83 @@
+# MissionControl クラウド executor:
+# GAS triage が起票する @claude メンション Issue を受けて、クラウド上で
+# 実装 → PR 作成 → テスト（既存 code_check 相当） → 自動マージまで行う。
+# 必要な Secret: CLAUDE_CODE_OAUTH_TOKEN（claude setup-token で発行）
+name: Claude Cloud Executor
+on:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
+  actions: write
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issues' && contains(github.event.issue.body, '@claude')) ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Claude Code 実行
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+      - name: Claude が作成した PR を検出
+        id: findpr
+        run: |
+          PR=$(gh pr list --state open --json number,headRefName \
+            --jq 'first(.[] | select(.headRefName | startswith("claude/")).number)' || true)
+          echo "pr=$PR" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: PR ブランチに切り替え
+        if: steps.findpr.outputs.pr != ''
+        run: gh pr checkout "${{ steps.findpr.outputs.pr }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Install pnpm
+        if: steps.findpr.outputs.pr != ''
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+
+      - name: Setup Node.js
+        if: steps.findpr.outputs.pr != ''
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: テスト（lint / typecheck / build:ci / test）
+        if: steps.findpr.outputs.pr != ''
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run lint
+          pnpm run typecheck
+          pnpm run build:ci
+          pnpm run test
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_dummy-for-build-check
+
+      - name: 自動マージ
+        if: steps.findpr.outputs.pr != ''
+        run: gh pr merge "${{ steps.findpr.outputs.pr }}" --squash --delete-branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: デプロイを起動（deploy.yml）
+        if: steps.findpr.outputs.pr != ''
+        run: gh workflow run deploy.yml --ref main || echo "deploy.yml が workflow_dispatch 非対応の場合はスキップ"
+        env:
+          GH_TOKEN: ${{ github.token }}
