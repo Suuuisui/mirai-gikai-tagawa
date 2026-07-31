@@ -19,8 +19,8 @@ export const topicFilterOptions: { value: TopicFilterChip; label: string }[] = [
   { value: "citizen", label: "市民" },
 ];
 
-/** 有効な全フィルタ値（URL クエリのバリデーション用）。 */
-const ALL_TOPIC_FILTERS: TopicFilter[] = [
+/** 有効な全フィルタ値（URL クエリのバリデーションとフィルタ別事前計算用）。 */
+export const ALL_TOPIC_FILTERS: TopicFilter[] = [
   "all",
   ...topicFilterOptions.map((o) => o.value),
 ];

@@ -1,7 +1,11 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import {
+  invalidateWebCache,
+  WEB_CACHE_TAGS,
+} from "@/lib/utils/cache-invalidation";
 import {
   findInterviewReportBySessionId,
   updateReportVisibility,
@@ -49,7 +53,8 @@ export async function updateReportVisibilityAction(
 
     // Revalidate bill interview pages (reports are under interview config)
     revalidatePath(`/bills/${billId}`, "layout");
-    revalidateTag("public-interview-reports");
+    // web側の回答一覧・トピックページ（ISR + billsタグ依存）にも即時反映する
+    await invalidateWebCache([WEB_CACHE_TAGS.BILLS]);
 
     return { success: true };
   } catch (error) {

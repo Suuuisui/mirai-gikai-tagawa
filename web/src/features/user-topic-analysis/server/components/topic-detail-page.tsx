@@ -1,126 +1,85 @@
 import "server-only";
 
-import { ChevronLeft, ChevronRight, Undo2 } from "lucide-react";
+import { Undo2 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { Container } from "@/components/layouts/container";
-import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
 import { InterviewLandingSection } from "@/features/interview-config/client/components/interview-landing-section";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { countPublicReportsByBillId } from "@/features/interview-report/server/repositories/interview-report-repository";
 import { routes } from "@/lib/routes";
+import { TopicDetailBreadcrumb } from "../../client/components/topic-detail-breadcrumb";
+import { TopicNav } from "../../client/components/topic-nav";
 import { TopicOpinionList } from "../../client/components/topic-opinion-list";
 import {
   TopicCategoryChips,
   TopicSentiment,
 } from "../../shared/components/topic-meta";
-import {
-  type TopicFilter,
-  topicFilterLabel,
-} from "../../shared/utils/filter-topics";
+import { TopicNavView } from "../../shared/components/topic-nav-view";
+import { locateTopic } from "../../shared/utils/locate-topic";
 import { splitSummaryLines } from "../../shared/utils/split-summary-lines";
-import { getPublicTopicDetail } from "../loaders/get-public-topic-detail";
-
-function TopicNav({
-  billId,
-  position,
-  total,
-  prevTopicId,
-  nextTopicId,
-  filter,
-}: {
-  billId: string;
-  position: number;
-  total: number;
-  prevTopicId: string | null;
-  nextTopicId: string | null;
-  filter: TopicFilter;
-}) {
-  return (
-    // 3カラムグリッドで中央の位置カウンタを常に中央寄せにする
-    // （前後リンクの有無にかかわらず位置がぶれないようにする）。
-    <div className="grid grid-cols-3 items-center text-[13px] font-medium text-mirai-text">
-      {/* 先頭では「前のトピック」を非表示にする。 */}
-      <div className="justify-self-start">
-        {prevTopicId && (
-          <Link
-            href={routes.billTopicDetail(billId, prevTopicId, filter) as Route}
-            className="flex items-center gap-1 text-primary-accent hover:underline"
-          >
-            <ChevronLeft className="size-4 shrink-0" />
-            前のトピック
-          </Link>
-        )}
-      </div>
-
-      <span className="justify-self-center text-mirai-text-muted">
-        {position}/{total}
-      </span>
-
-      {/* 末尾では「次のトピック」を非表示にする。 */}
-      <div className="justify-self-end">
-        {nextTopicId && (
-          <Link
-            href={routes.billTopicDetail(billId, nextTopicId, filter) as Route}
-            className="flex items-center gap-1 text-primary-accent hover:underline"
-          >
-            次のトピック
-            <ChevronRight className="size-4 shrink-0" />
-          </Link>
-        )}
-      </div>
-    </div>
-  );
-}
+import {
+  buildTopicNavByFilter,
+  topicDetailBreadcrumbItems,
+} from "../../shared/utils/topic-detail-nav";
+import { getPublicTopicAnalysis } from "../loaders/get-public-topic-analysis";
 
 interface TopicDetailPageProps {
   billId: string;
   topicId: string;
-  /** 一覧から引き継いだフィルタ。前後トピックの並びとリンクに反映する。 */
-  filter?: TopicFilter;
 }
 
 export async function TopicDetailPage({
   billId,
   topicId,
-  filter = "all",
 }: TopicDetailPageProps) {
-  const [bill, detail, publicReportCount, interviewConfig] = await Promise.all([
-    getBillById(billId),
-    getPublicTopicDetail(billId, topicId, filter),
-    countPublicReportsByBillId(billId),
-    getInterviewConfig(billId),
-  ]);
+  const [bill, analysis, publicReportCount, interviewConfig] =
+    await Promise.all([
+      getBillById(billId),
+      getPublicTopicAnalysis(billId),
+      countPublicReportsByBillId(billId),
+      getInterviewConfig(billId),
+    ]);
 
-  if (!bill || !detail) {
+  if (!bill || !analysis) {
+    notFound();
+  }
+
+  // トピック本体（全件並び）と、?filter= 別の前後ナビ位置を導出する。
+  // フィルタの解決は Client 側（TopicNav）で行うため、全フィルタ分を事前計算して渡す。
+  const detail = locateTopic(analysis.topics, topicId);
+  const navByFilter = buildTopicNavByFilter(analysis.topics, topicId);
+  if (!detail || !navByFilter) {
     notFound();
   }
 
   // 相対日時はサーバーで基準時刻を固定し、クライアントでの再計算ずれを防ぐ。
   const nowMs = Date.now();
 
-  const { topic, position, total, prevTopicId, nextTopicId } = detail;
+  const { topic } = detail;
   const billTitle = bill.bill_content?.title || bill.name;
-
-  const filterLabel = topicFilterLabel(filter);
-  const breadcrumbItems: BreadcrumbItem[] = [
-    { label: "議案詳細", href: routes.billDetail(billId) },
-    {
-      label: filterLabel ? `トピック一覧（${filterLabel}）` : "トピック一覧",
-      href: routes.billTopics(billId),
-    },
-    { label: "トピック詳細" },
-  ];
 
   return (
     <div className="min-h-dvh bg-mirai-surface">
       <Container>
         <div className="flex flex-col gap-6 pb-8 md:pt-8">
-          {/* パンくず + 議案タイトル */}
+          {/* パンくず + 議案タイトル。
+              パンくずと前後ナビは ?filter= に依存するため Client 側で解決する
+              （Server Component で searchParams を読むと動的レンダリングに戻り
+              ISRが効かなくなる）。Suspense フォールバックにはフィルタ無し（all）の
+              内容を出し、静的HTMLにもパンくず・前後リンクが含まれるようにする */}
           <div className="flex flex-col gap-2">
-            <Breadcrumb items={breadcrumbItems} />
+            <Suspense
+              fallback={
+                <Breadcrumb items={topicDetailBreadcrumbItems(billId, "all")} />
+              }
+            >
+              <TopicDetailBreadcrumb billId={billId} />
+            </Suspense>
             <Link
               href={routes.billDetail(billId) as Route}
               className="inline-flex items-center gap-2 text-[15px] font-medium leading-6 text-black"
@@ -134,14 +93,13 @@ export async function TopicDetailPage({
             💬トピックに含まれる意見
           </h1>
 
-          <TopicNav
-            billId={billId}
-            position={position}
-            total={total}
-            prevTopicId={prevTopicId}
-            nextTopicId={nextTopicId}
-            filter={filter}
-          />
+          <Suspense
+            fallback={
+              <TopicNavView billId={billId} filter="all" {...navByFilter.all} />
+            }
+          >
+            <TopicNav billId={billId} navByFilter={navByFilter} />
+          </Suspense>
 
           {/* トピックヘッダー */}
           <div className="flex flex-col gap-3 rounded-2xl bg-white px-4 py-5">

@@ -8,8 +8,10 @@ interface OpinionsPageProps {
   }>;
 }
 
-// ISR: 公開レポートデータはrevalidateTag未配線のため、公開後の反映は
-// 最長10分のタイマー再検証のみ（議案情報はbillsタグで即時反映可能）
+// ISR: adminのレポート公開・トピック公開アクションが web の /api/revalidate
+// （billsタグ）を叩き、getBillById経由でbillsタグに依存する本ルートの
+// キャッシュも即時破棄される。revalidateは配線外の更新（手動のデータ投入等）に
+// 対するフォールバック
 export const revalidate = 600;
 
 // 全パスをリクエスト時に生成してキャッシュする（オンデマンドISR）。

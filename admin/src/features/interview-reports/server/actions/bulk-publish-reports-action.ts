@@ -1,8 +1,11 @@
 "use server";
 
 import { createAdminClient } from "@mirai-gikai/supabase";
-import { revalidateTag } from "next/cache";
 import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import {
+  invalidateWebCache,
+  WEB_CACHE_TAGS,
+} from "@/lib/utils/cache-invalidation";
 import { verifyConfigBelongsToBill } from "../services/verify-config-belongs-to-bill";
 
 interface BulkPublishParams {
@@ -39,7 +42,8 @@ export async function bulkPublishReportsAction(
 
     const updatedCount = data ?? 0;
 
-    revalidateTag("public-interview-reports");
+    // web側の回答一覧・トピックページ（ISR + billsタグ依存）にも即時反映する
+    await invalidateWebCache([WEB_CACHE_TAGS.BILLS]);
 
     return { success: true, updatedCount };
   } catch (error) {

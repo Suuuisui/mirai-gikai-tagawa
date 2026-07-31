@@ -3,20 +3,30 @@ import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
 import { resolveBillShareImageUrl } from "@/features/bills/shared/utils/bill-share-image";
 import { TopicDetailPage } from "@/features/user-topic-analysis/server/components/topic-detail-page";
 import { getPublicTopicDetail } from "@/features/user-topic-analysis/server/loaders/get-public-topic-detail";
-import { parseTopicFilter } from "@/features/user-topic-analysis/shared/utils/filter-topics";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 
 interface TopicDetailRouteProps {
   params: Promise<{ id: string; topicId: string }>;
-  searchParams: Promise<{ filter?: string }>;
+}
+
+// ISR: adminのトピック公開・レポート公開アクションが web の /api/revalidate
+// （billsタグ）を叩き、getBillById経由でbillsタグに依存する本ルートの
+// キャッシュも即時破棄される。revalidateは配線外の更新（手動のデータ投入等）に
+// 対するフォールバック。?filter= はClient側（useSearchParams）で解決するため
+// 静的化を妨げない
+export const revalidate = 600;
+
+// 全パスをリクエスト時に生成してキャッシュする（オンデマンドISR）。
+// これが無いと動的パラメータルートはISR対象にならず毎回SSRされる
+export function generateStaticParams() {
+  return [];
 }
 
 export async function generateMetadata({
   params,
 }: TopicDetailRouteProps): Promise<Metadata> {
   const { id, topicId } = await params;
-  // タイトル/説明はフィルタに依存しないため絞り込みなし（all）で取得する。
   // DB取得は getPublicTopicAnalysis の React cache() でページ本体と共有され、
   // リクエスト内で重複クエリにならない。
   const [bill, location] = await Promise.all([
@@ -61,15 +71,7 @@ export async function generateMetadata({
 
 export default async function TopicDetailRoute({
   params,
-  searchParams,
 }: TopicDetailRouteProps) {
   const { id, topicId } = await params;
-  const { filter } = await searchParams;
-  return (
-    <TopicDetailPage
-      billId={id}
-      topicId={topicId}
-      filter={parseTopicFilter(filter)}
-    />
-  );
+  return <TopicDetailPage billId={id} topicId={topicId} />;
 }
