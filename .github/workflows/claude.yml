@@ -1,7 +1,8 @@
 # MissionControl クラウド executor:
 # GAS triage が起票する @claude メンション Issue を受けて、クラウド上で
-# 実装 → PR 作成 → テスト（既存 code_check 相当） → 自動マージまで行う。
-# 必要な Secret: CLAUDE_CODE_OAUTH_TOKEN（claude setup-token で発行）
+# 実装 → PR 作成 → テスト → 自動マージまで行う。
+# Claude 自身が PR を作れない場合も、push されたブランチからワークフローが PR を作成する。
+# 必要な Secret: CLAUDE_CODE_OAUTH_TOKEN（claude setup-token で発行。Max サブスクの枠で動く）
 name: Claude Cloud Executor
 on:
   issues:
@@ -23,7 +24,7 @@ jobs:
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude'))
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -32,14 +33,25 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
-      - name: Claude が作成した PR を検出
+      - name: PR を検出（無ければ Claude のブランチから作成）
         id: findpr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUM: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
         run: |
           PR=$(gh pr list --state open --json number,headRefName \
             --jq 'first(.[] | select(.headRefName | startswith("claude/")).number)' || true)
+          if [ -z "$PR" ]; then
+            BR=$(gh api "repos/${GITHUB_REPOSITORY}/branches" --paginate \
+              --jq "[.[].name | select(startswith(\"claude/issue-${ISSUE_NUM}-\"))] | last // empty")
+            if [ -n "$BR" ]; then
+              gh pr create --head "$BR" --title "$ISSUE_TITLE" \
+                --body "Closes #${ISSUE_NUM} — MissionControl 自動生成 PR"
+              PR=$(gh pr list --state open --head "$BR" --json number --jq '.[0].number')
+            fi
+          fi
           echo "pr=$PR" >> "$GITHUB_OUTPUT"
-        env:
-          GH_TOKEN: ${{ github.token }}
 
       - name: PR ブランチに切り替え
         if: steps.findpr.outputs.pr != ''
@@ -78,6 +90,6 @@ jobs:
 
       - name: デプロイを起動（deploy.yml）
         if: steps.findpr.outputs.pr != ''
-        run: gh workflow run deploy.yml --ref main || echo "deploy.yml が workflow_dispatch 非対応の場合はスキップ"
+        run: gh workflow run deploy.yml --ref main
         env:
           GH_TOKEN: ${{ github.token }}
