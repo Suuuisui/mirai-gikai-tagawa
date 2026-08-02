@@ -17,7 +17,7 @@ export async function SearchPage() {
   const items = buildSearchItems(bills);
 
   return (
-    <div className="bg-mirai-surface-muted">
+    <div className="bg-mirai-surface-muted" data-wide-column>
       <Container className="py-8">
         <div className="flex flex-col gap-1.5 pb-8">
           <h1 className="text-[22px] font-bold text-black leading-[1.48]">

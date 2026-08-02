@@ -29,7 +29,8 @@ export function DietSessionArchiveList({ items }: DietSessionArchiveListProps) {
       {groups.map((group) => (
         <section key={group.label} className="flex flex-col gap-3">
           <h2 className="text-lg font-bold text-mirai-text">{group.label}</h2>
-          <div className="flex flex-col gap-3">
+          {/* PC幅では2カラムにして縦スクロール量を減らす */}
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {group.sessions.map((session) => (
               <DietSessionCard
                 key={session.id}

@@ -37,7 +37,8 @@ export function SessionArchiveList({ items }: SessionArchiveListProps) {
           <h2 className="text-lg font-bold text-mirai-text">
             {formatEraGroupHeading(group)}
           </h2>
-          <div className="flex flex-col gap-3">
+          {/* PC幅では2カラムにして縦スクロール量を減らす */}
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {group.sessions.map((session) => {
               const stats = statsBySessionId.get(session.id);
               return (

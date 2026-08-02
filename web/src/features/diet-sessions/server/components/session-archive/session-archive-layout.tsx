@@ -14,7 +14,7 @@ interface SessionArchiveLayoutProps {
  */
 export function SessionArchiveLayout({ items }: SessionArchiveLayoutProps) {
   return (
-    <div className="bg-mirai-surface-muted">
+    <div className="bg-mirai-surface-muted" data-wide-column>
       <Container className="py-8">
         <div className="flex flex-col gap-8">
           <Breadcrumb

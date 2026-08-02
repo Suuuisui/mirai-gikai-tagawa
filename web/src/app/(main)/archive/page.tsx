@@ -22,7 +22,7 @@ export default async function DietSessionArchivePage() {
   const items = await getDietSessionArchive();
 
   return (
-    <div className="bg-mirai-surface-muted">
+    <div className="bg-mirai-surface-muted" data-wide-column>
       {/* ヒーロー画像 */}
       <div className="relative w-full h-[285px]">
         <Image

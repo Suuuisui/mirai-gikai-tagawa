@@ -537,6 +537,17 @@ button {
    値は main-layout.tsx / main-content.tsx のクラスと一致させること。
    ============================================================ */
 
+/* グリッドや全幅リストを持つ一覧ページ（data-wide-columnを置いたページ）は
+   PC幅でカラムを広げ、スマホレイアウトの引き伸ばし感を解消する。
+   マーカー方式なのはmax-w-[634px]設計のBillCardを使うページ等を
+   巻き込まないため。MainLayoutのpathname判定はISRの静的生成時に
+   効かないことがあるため、チャットレイアウト同様 :has() で判定する */
+@media (min-width: 1000px) {
+  .main-column:has([data-wide-column]) {
+    max-width: 880px;
+  }
+}
+
 /* チャットウィンドウ(450px)ぶん右に余白（pc: 1000px以上） */
 @media (min-width: 1000px) {
   .main-column:has([data-chat-sidebar]) {
