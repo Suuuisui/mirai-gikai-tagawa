@@ -1,14 +1,15 @@
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { formatDateWithDots } from "@/lib/utils/date";
-import type { BillWithContent } from "../../../shared/types";
+import type { BillWithContentLite } from "../../../shared/types";
 import { isDefaultThumbnail } from "../../../shared/utils/bill-cover";
 import { ReviewCompleteBadge } from "../bill-detail/review-status-banner";
 import { BillCover } from "./bill-cover";
 import { BillStatusBadge } from "./bill-status-badge";
 
 interface CompactBillCardProps {
-  bill: BillWithContent;
+  // 本文（content）は使わないため軽量版で受ける（フル版もそのまま渡せる）
+  bill: BillWithContentLite;
   className?: string;
 }
 

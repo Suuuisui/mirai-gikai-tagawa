@@ -23,9 +23,10 @@ import {
   findPreviewToken,
   findPreviousSessionBills,
   findPublishedBillById,
+  findPublishedBillProposerSources,
   findPublishedBillsByDietSession,
   findPublishedBillsByTag,
-  findPublishedBillsWithContents,
+  findPublishedBillsLiteWithContents,
   findTagsByBillId,
   findTagsByBillIds,
 } from "./bill-repository";
@@ -51,11 +52,11 @@ describe("bill-repository 統合テスト", () => {
   });
 
   // ============================================================
-  // findPublishedBillsWithContents
+  // findPublishedBillProposerSources
   // ============================================================
 
-  describe("findPublishedBillsWithContents", () => {
-    it("公開済み議案を難易度コンテンツ付きで取得できる", async () => {
+  describe("findPublishedBillProposerSources", () => {
+    it("公開済み議案の議案名と本文を取得できる", async () => {
       const bill = await createTestBill({
         publish_status: "published",
         submitted_date: new Date().toISOString(),
@@ -63,16 +64,16 @@ describe("bill-repository 統合テスト", () => {
       billIds.push(bill.id);
       await createTestBillContent(bill.id, {
         difficulty_level: "normal",
-        title: "テストタイトル",
+        content: "- **提出者**: 市長提出",
       });
 
-      const result = await findPublishedBillsWithContents("normal");
+      const result = await findPublishedBillProposerSources("normal");
 
       const found = result.find((b) => b.id === bill.id);
       expect(found).toBeDefined();
+      expect(found?.name).toBe(bill.name);
       expect(found?.bill_contents).toHaveLength(1);
-      expect(found?.bill_contents[0].title).toBe("テストタイトル");
-      expect(found?.bill_contents[0].difficulty_level).toBe("normal");
+      expect(found?.bill_contents[0].content).toBe("- **提出者**: 市長提出");
     });
 
     it("下書き議案は含まれない", async () => {
@@ -80,7 +81,7 @@ describe("bill-repository 統合テスト", () => {
       billIds.push(bill.id);
       await createTestBillContent(bill.id, { difficulty_level: "normal" });
 
-      const result = await findPublishedBillsWithContents("normal");
+      const result = await findPublishedBillProposerSources("normal");
 
       const found = result.find((b) => b.id === bill.id);
       expect(found).toBeUndefined();
@@ -94,7 +95,59 @@ describe("bill-repository 統合テスト", () => {
       billIds.push(bill.id);
       await createTestBillContent(bill.id, { difficulty_level: "hard" });
 
-      const result = await findPublishedBillsWithContents("normal");
+      const result = await findPublishedBillProposerSources("normal");
+
+      const found = result.find((b) => b.id === bill.id);
+      expect(found).toBeUndefined();
+    });
+  });
+
+  // ============================================================
+  // findPublishedBillsLiteWithContents
+  // ============================================================
+
+  describe("findPublishedBillsLiteWithContents", () => {
+    it("公開済み議案を取得でき、bill_contentsに長文のcontentを含まない", async () => {
+      const bill = await createTestBill({
+        publish_status: "published",
+        submitted_date: new Date().toISOString(),
+      });
+      billIds.push(bill.id);
+      // contentは必ず入るデフォルトで作成し、取得結果に含まれないことを検証する
+      await createTestBillContent(bill.id, {
+        difficulty_level: "normal",
+        title: "テストタイトル",
+      });
+
+      const result = await findPublishedBillsLiteWithContents("normal");
+
+      const found = result.find((b) => b.id === bill.id);
+      expect(found).toBeDefined();
+      expect(found?.bill_contents).toHaveLength(1);
+      expect(found?.bill_contents[0].title).toBe("テストタイトル");
+      expect(found?.bill_contents[0]).not.toHaveProperty("content");
+    });
+
+    it("下書き議案は含まれない", async () => {
+      const bill = await createTestBill({ publish_status: "draft" });
+      billIds.push(bill.id);
+      await createTestBillContent(bill.id, { difficulty_level: "normal" });
+
+      const result = await findPublishedBillsLiteWithContents("normal");
+
+      const found = result.find((b) => b.id === bill.id);
+      expect(found).toBeUndefined();
+    });
+
+    it("指定した難易度のコンテンツがない議案は含まれない", async () => {
+      const bill = await createTestBill({
+        publish_status: "published",
+        submitted_date: new Date().toISOString(),
+      });
+      billIds.push(bill.id);
+      await createTestBillContent(bill.id, { difficulty_level: "hard" });
+
+      const result = await findPublishedBillsLiteWithContents("normal");
 
       const found = result.find((b) => b.id === bill.id);
       expect(found).toBeUndefined();

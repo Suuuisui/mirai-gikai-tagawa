@@ -1,4 +1,4 @@
-import type { BillWithContent } from "@/features/bills/shared/types";
+import type { BillWithContentLite } from "@/features/bills/shared/types";
 import type { SearchItem } from "../types";
 
 /** 検索結果カードに表示するsummaryの最大文字数 */
@@ -12,10 +12,10 @@ function truncateSummary(summary?: string | null): string {
 }
 
 /**
- * 議案データ（本文含む）から検索ページ用の軽量データを作る
+ * 議案データから検索ページ用の軽量データを作る
  * contentは含めないため、ページに渡すデータ量を抑えられる
  */
-export function buildSearchItems(bills: BillWithContent[]): SearchItem[] {
+export function buildSearchItems(bills: BillWithContentLite[]): SearchItem[] {
   return bills.map((bill) => ({
     id: bill.id,
     title: bill.bill_content?.title || bill.name,

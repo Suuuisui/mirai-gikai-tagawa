@@ -1,23 +1,38 @@
 import { unstable_cache } from "next/cache";
+import { cache } from "react";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { CACHE_TAGS } from "@/lib/cache-tags";
-import type { BillWithContent } from "../../shared/types";
+import type { BillWithContentLite } from "../../shared/types";
 import {
   findBillIdsWithPublicInterview,
-  findPublishedBillsWithContents,
+  findPublishedBillsLiteWithContents,
   findTagsByBillIds,
 } from "../repositories/bill-repository";
 
-export async function getBills(): Promise<BillWithContent[]> {
+/**
+ * 公開済み議案の全件一覧を軽量フィールド（bill_contents.contentなし）で取得する。
+ *
+ * content込みの全件レスポンスは約2.2MBあり、Vercel Data Cacheの
+ * 1エントリ2MB上限を超えてキャッシュ自体が保存されず、ISR再生成のたびに
+ * Supabaseから全件を引き直していた（クローラー巡回で月間Egress上限を超過）。
+ * 本文が必要な画面は個別議案のローダー（getBillById等）を使うこと。
+ *
+ * React cache() でリクエスト内の呼び出しを重複排除する（unstable_cacheには
+ * リクエスト内メモ化が無く、generateMetadataとページ本体・同一ページ内の
+ * 複数ローダーが並行で呼ぶとData Cache読みとmiss時のDBアクセスが多重になる）
+ */
+export const getBillsLite = cache(async (): Promise<BillWithContentLite[]> => {
   // キャッシュ外でcookiesにアクセス
   const difficultyLevel = await getDifficultyLevel();
-  return _getCachedBills(difficultyLevel);
-}
+  return _getCachedBillsLite(difficultyLevel);
+});
 
-const _getCachedBills = unstable_cache(
-  async (difficultyLevel: DifficultyLevelEnum): Promise<BillWithContent[]> => {
-    const data = await findPublishedBillsWithContents(difficultyLevel);
+const _getCachedBillsLite = unstable_cache(
+  async (
+    difficultyLevel: DifficultyLevelEnum
+  ): Promise<BillWithContentLite[]> => {
+    const data = await findPublishedBillsLiteWithContents(difficultyLevel);
 
     // タグ情報とインタビュー状態を一括取得
     const billIds = data.map((item) => item.id);
@@ -26,7 +41,7 @@ const _getCachedBills = unstable_cache(
       findBillIdsWithPublicInterview(billIds),
     ]);
 
-    const billsWithContent: BillWithContent[] = data.map((item) => {
+    const bills: BillWithContentLite[] = data.map((item) => {
       const { bill_contents, ...bill } = item;
       return {
         ...bill,
@@ -38,11 +53,13 @@ const _getCachedBills = unstable_cache(
       };
     });
 
-    return billsWithContent;
+    return bills;
   },
-  ["bills-list"],
+  ["bills-list-lite"],
   {
-    revalidate: 600, // 10分（600秒）
+    // データ更新はadmin操作時の/api/revalidate（revalidateTag）で即時反映される
+    // ため、タイマーは保険。Egress削減のため短い間隔での引き直しはしない
+    revalidate: 3600,
     tags: [CACHE_TAGS.BILLS, CACHE_TAGS.INTERVIEW_CONFIGS],
   }
 );

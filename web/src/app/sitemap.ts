@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getBills } from "@/features/bills/server/loaders/get-bills";
+import { getBillsLite } from "@/features/bills/server/loaders/get-bills";
 import { getLatestUpdatedAt } from "@/features/bills/shared/utils/latest-updated-at";
 import { getAllDietSessions } from "@/features/diet-sessions/server/loaders/get-all-diet-sessions";
 import { getBillsWithMemberVotes } from "@/features/members/server/loaders/get-member-vote-data";
@@ -15,7 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = env.webUrl;
 
   const [bills, sessions, billsWithMemberVotes] = await Promise.all([
-    getBills(),
+    getBillsLite(),
     getAllDietSessions(),
     getBillsWithMemberVotes(),
   ]);

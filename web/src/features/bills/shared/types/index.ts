@@ -45,6 +45,15 @@ export type BillWithContent = Bill & {
   hasPublicInterview?: boolean;
 };
 
+// content（長文Markdown。全議案分で約1.4MBある）を除いた軽量版。
+// 一覧・検索・sitemap・議員集計など本文が不要な用途はこちらを使うことで、
+// SupabaseからのEgressとNext.js Data Cacheのエントリサイズを抑える
+export type BillContentLite = Omit<BillContent, "content">;
+
+export type BillWithContentLite = Omit<BillWithContent, "bill_content"> & {
+  bill_content?: BillContentLite;
+};
+
 // タグごとにグループ化された議案
 export type BillsByTag = {
   tag: BillTag & { description?: string; priority: number };
