@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { getBills } from "@/features/bills/server/loaders/get-bills";
+import { getBillsLite } from "@/features/bills/server/loaders/get-bills";
 import { routes } from "@/lib/routes";
 import { SearchClient } from "../../client/components/search-client";
 import { buildSearchItems } from "../../shared/utils/build-search-items";
@@ -9,11 +9,11 @@ import { buildSearchItems } from "../../shared/utils/build-search-items";
 /**
  * 議案をキーワードで検索するページ
  *
- * 検索対象データはgetBills()（キャッシュ済み）から軽量化して作り、
+ * 検索対象データはgetBillsLite()（キャッシュ済み）から軽量化して作り、
  * 実際の絞り込みはSearchClient（Client Component）側で行う
  */
 export async function SearchPage() {
-  const bills = await getBills();
+  const bills = await getBillsLite();
   const items = buildSearchItems(bills);
 
   return (

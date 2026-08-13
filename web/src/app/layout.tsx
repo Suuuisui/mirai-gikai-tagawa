@@ -1,4 +1,5 @@
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Lexend_Giga, Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
@@ -124,6 +125,7 @@ export default function RootLayout({
         <NextTopLoader showSpinner={false} color="#b5432a" />
         <JsonLd data={websiteJsonLd} />
         {children}
+        <Analytics />
       </body>
     </html>
   );

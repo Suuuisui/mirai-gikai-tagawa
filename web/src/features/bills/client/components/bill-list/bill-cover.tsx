@@ -14,7 +14,7 @@ import {
   Users,
   Zap,
 } from "lucide-react";
-import type { BillWithContent } from "../../../shared/types";
+import type { BillWithContentLite } from "../../../shared/types";
 import {
   extractBillNumberLabel,
   formatSubmittedYearMonth,
@@ -22,7 +22,8 @@ import {
 } from "../../../shared/utils/bill-cover";
 
 interface BillCoverProps {
-  bill: BillWithContent;
+  // 本文（content）は使わないため軽量版で受ける（フル版もそのまま渡せる）
+  bill: BillWithContentLite;
   /** CompactBillCard の小サムネイル枠用。タイポグラフィを省きアイコンのみ表示する */
   compact?: boolean;
 }

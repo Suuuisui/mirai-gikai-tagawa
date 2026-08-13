@@ -13,9 +13,41 @@ import { sortBillsTagRowsByDateDesc } from "../../shared/utils/map-bills-tag-row
 // ============================================================
 
 /**
- * 公開済み議案を難易度コンテンツ付きで取得
+ * 提出者区分の判定に必要な最小フィールド（議案名と本文）だけを取得する。
+ * 本文（content）は全議案分で約1.4MBあるため、呼び出しは提出者区分の
+ * 判定結果キャッシュ（get-member-vote-data.ts）のmiss時のみに限定している
  */
-export async function findPublishedBillsWithContents(
+export async function findPublishedBillProposerSources(
+  difficultyLevel: DifficultyLevelEnum
+) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("bills")
+    .select(
+      `
+      id,
+      name,
+      bill_contents!inner (
+        content
+      )
+    `
+    )
+    .eq("publish_status", "published")
+    .eq("bill_contents.difficulty_level", difficultyLevel);
+
+  if (error) {
+    throw new Error(`Failed to fetch bill proposer sources: ${error.message}`);
+  }
+
+  return data;
+}
+
+/**
+ * 公開済み議案を難易度コンテンツ付きで取得（bill_contents.contentなしの軽量版）。
+ * 全件レスポンスを約2.2MB→約0.8MBに抑え、Next.js Data Cacheの
+ * 1エントリ2MB上限内に収めてキャッシュ可能にする
+ */
+export async function findPublishedBillsLiteWithContents(
   difficultyLevel: DifficultyLevelEnum
 ) {
   const supabase = createAdminClient();
@@ -29,7 +61,6 @@ export async function findPublishedBillsWithContents(
         bill_id,
         title,
         summary,
-        content,
         difficulty_level,
         created_at,
         updated_at
@@ -41,7 +72,7 @@ export async function findPublishedBillsWithContents(
     .order("submitted_date", { ascending: false, nullsFirst: false });
 
   if (error) {
-    throw new Error(`Failed to fetch bills: ${error.message}`);
+    throw new Error(`Failed to fetch bills (lite): ${error.message}`);
   }
 
   return data;
