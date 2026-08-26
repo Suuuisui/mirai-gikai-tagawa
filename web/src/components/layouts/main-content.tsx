@@ -23,7 +23,7 @@ export function MainContent({ children }: MainContentProps) {
     <main
       className={cn(
         // md〜lg未満はヘッダーが2段になり高さが増えるため、その分を差し引く
-        "min-h-dvh bg-mirai-surface md:min-h-[calc(100dvh-144px)] lg:min-h-[calc(100dvh-96px)]",
+        "min-h-dvh bg-background md:min-h-[calc(100dvh-144px)] lg:min-h-[calc(100dvh-96px)]",
         hasFixedChatButton && "pb-24 pc:pb-0"
       )}
     >

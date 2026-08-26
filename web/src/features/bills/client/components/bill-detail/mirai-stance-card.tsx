@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { SectionHeading } from "@/components/ui/section-heading";
 import type { BillStatusEnum, MiraiStance } from "../../../shared/types";
 import { getStanceStyles } from "../../../shared/utils/stance-styles";
 
@@ -22,11 +23,9 @@ export function MiraiStanceCard({ stance, billStatus }: MiraiStanceCardProps) {
 
   return (
     <>
-      <h2 className="text-[22px] font-bold mb-4">
-        <span aria-hidden="true">🗳️</span>運営者の見解
-      </h2>
-      <div className="relative p-1 rounded-2xl bg-mirai-gradient">
-        <div className="bg-white rounded-lg px-6 pb-8 pt-10">
+      <SectionHeading className="mb-4">運営者の見解</SectionHeading>
+      <div className="relative rounded-lg border border-mirai-border bg-white">
+        <div className="px-6 pb-8 pt-10">
           <div className="flex flex-col gap-8">
             {/* ヘッダー部分：ロゴとスタンスバッジ */}
             <div className="flex flex-col items-center gap-8">

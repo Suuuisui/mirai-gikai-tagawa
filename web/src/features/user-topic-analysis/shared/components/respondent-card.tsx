@@ -34,7 +34,7 @@ export function RespondentCard({ respondent, now }: RespondentCardProps) {
     <Link
       href={routes.publicReport(respondent.id) as Route}
       prefetch={false}
-      className="flex items-start gap-3 rounded-2xl bg-white p-4 shadow-sm transition-colors hover:bg-mirai-surface-gray"
+      className="flex items-start gap-3 rounded-lg bg-white p-4 shadow-sm transition-colors hover:bg-mirai-surface-gray"
     >
       {/* アバター */}
       <PersonAvatar sentiment={respondent.bill_sentiment} />
@@ -64,7 +64,7 @@ export function RespondentCard({ respondent, now }: RespondentCardProps) {
                 {respondent.bill_sentiment}
               </span>
             )}
-            <span className="inline-flex items-center gap-1 rounded-xl bg-topic-chip-bg px-2 py-1 text-[13px] font-medium text-mirai-text">
+            <span className="inline-flex items-center gap-1 rounded-md bg-topic-chip-bg px-2 py-1 text-[13px] font-medium text-mirai-text">
               <CategoryIcon
                 className={cn(
                   "size-[14px] shrink-0",

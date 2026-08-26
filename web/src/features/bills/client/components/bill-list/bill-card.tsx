@@ -29,13 +29,13 @@ export function BillCard({ bill }: BillCardProps) {
     : null;
 
   return (
-    <Card className="border border-black hover:bg-muted/50 transition-colors relative overflow-hidden max-w-[634px]">
+    <Card className="border border-mirai-border hover:bg-muted/50 transition-colors relative overflow-hidden max-w-[634px]">
       <div className="flex flex-col">
         {/* 注目バッジエリア（サムネイル領域は動的カバー含め常に表示されるため常に絶対配置） */}
         {bill.is_featured && (
           <div className="absolute top-3 left-3 z-1">
-            <span className="inline-flex items-center justify-center px-3 py-0.5 text-xs font-medium text-mirai-text bg-mirai-highlight rounded-[20px]">
-              注目<span aria-hidden="true">🔥</span>
+            <span className="inline-flex items-center justify-center px-3 py-0.5 text-xs font-bold text-white bg-primary rounded-md">
+              注目
             </span>
           </div>
         )}
@@ -96,7 +96,7 @@ export function BillCard({ bill }: BillCardProps) {
                     <BillTag key={tag.id} tag={tag} />
                   ))}
                   {bill.hasPublicInterview && (
-                    <span className="inline-flex items-center justify-center px-3 py-1 text-xs font-medium text-black bg-mirai-light-gradient rounded-full">
+                    <span className="inline-flex items-center justify-center px-3 py-1 text-xs font-medium text-primary-accent bg-mirai-surface-key-subtle rounded-md">
                       AIインタビュー受付中
                     </span>
                   )}

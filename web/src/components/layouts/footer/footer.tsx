@@ -19,7 +19,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="bg-mirai-gradient text-slate-900">
+    <footer className="border-t border-mirai-border-muted bg-white text-mirai-text">
       <div className="mx-auto flex w-full max-w-[500px] flex-col items-center px-6 py-14 pb-20 text-center">
         <FooterLogoSection />
         <FooterPrimaryLinks />
@@ -35,13 +35,24 @@ export function Footer() {
 function FooterLogoSection() {
   return (
     <div className="flex flex-col items-center text-center mb-9">
-      <Link href={routes.home()} aria-label="みらい議会＠田川市 トップページ">
+      <Link
+        href={routes.home()}
+        aria-label="みらい議会＠田川市 トップページ"
+        className="flex items-center gap-2"
+      >
         <Image
           src="/img/logo.svg"
+          alt=""
+          width={42}
+          height={36}
+          className="shrink-0"
+        />
+        <Image
+          src="/img/service-logo.svg"
           alt="みらい議会＠田川市"
-          width={150}
-          height={128}
-          className="h-auto"
+          width={136}
+          height={25}
+          className="h-auto w-[136px]"
         />
       </Link>
     </div>
@@ -53,7 +64,7 @@ function FooterPrimaryLinks() {
     <nav aria-label="主要リンク" className="w-full mb-5">
       <ul
         className="
-      flex flex-row flex-wrap items-center justify-center gap-x-5 gap-y-3 text-[14px] font-semibold text-slate-800
+      flex flex-row flex-wrap items-center justify-center gap-x-5 gap-y-3 text-[14px] font-semibold text-mirai-text-secondary
       "
       >
         {primaryLinks.map((link) => (
@@ -62,7 +73,7 @@ function FooterPrimaryLinks() {
               href={link.href as Route}
               target={link.external ? "_blank" : undefined}
               rel={link.external ? "noreferrer" : undefined}
-              className="transition-colors hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              className="transition-colors hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               {link.label}
             </Link>
@@ -75,7 +86,7 @@ function FooterPrimaryLinks() {
 
 function FooterPolicies() {
   return (
-    <div className="flex flex-col items-center text-[12px] font-semibold text-slate-800 mb-5">
+    <div className="flex flex-col items-center text-[12px] font-semibold text-mirai-text-secondary mb-5">
       <ul className="flex flex-wrap justify-center gap-x-2 gap-y-1">
         {policyLinks.map((policy, index) => (
           <li key={policy.label} className="flex items-center gap-2">
@@ -83,7 +94,7 @@ function FooterPolicies() {
               href={policy.href as Route}
               target={policy.external ? "_blank" : undefined}
               rel={policy.external ? "noreferrer" : undefined}
-              className="whitespace-nowrap transition-colors hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              className="whitespace-nowrap transition-colors hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               {policy.label}
             </Link>
@@ -103,7 +114,7 @@ function FooterSocialLinks() {
         target="_blank"
         rel="noreferrer"
         aria-label="Instagram（田川市政ラボ）"
-        className="text-slate-800 transition-colors hover:text-slate-900"
+        className="text-mirai-text-secondary transition-colors hover:text-primary"
       >
         <Instagram className="size-6" />
       </a>
@@ -145,7 +156,7 @@ function FooterDisclaimer() {
 
 function FooterCopyright() {
   return (
-    <div className="text-center text-sm font-medium text-slate-800">
+    <div className="text-center text-sm font-medium text-mirai-text-secondary">
       © 2026 田川市政ラボ All rights Reserved
     </div>
   );

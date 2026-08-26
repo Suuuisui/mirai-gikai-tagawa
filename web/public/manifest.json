@@ -4,8 +4,8 @@
   "description": "田川市議会で今どんな議案が検討されているか、わかりやすく伝えるプラットフォーム",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F7F4F0",
-  "theme_color": "#b5432a",
+  "background_color": "#ffffff",
+  "theme_color": "#0017c1",
   "orientation": "portrait-primary",
   "icons": [
     {

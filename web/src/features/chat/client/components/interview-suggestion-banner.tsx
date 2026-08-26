@@ -14,14 +14,14 @@ export function InterviewSuggestionBanner({
   billName,
 }: InterviewSuggestionBannerProps) {
   return (
-    <div className="flex gap-3 rounded-2xl bg-mirai-surface-light p-4">
-      <div className="flex-shrink-0 size-10 rounded-lg bg-mirai-gradient flex items-center justify-center">
+    <div className="flex gap-3 rounded-lg bg-mirai-surface-light p-4">
+      <div className="flex-shrink-0 size-10 rounded-lg bg-mirai-surface-key flex items-center justify-center">
         <BotMessageSquare className="size-8 text-black" />
       </div>
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-2">
           <div className="flex">
-            <span className="inline-flex items-center px-3 py-1 bg-mirai-surface-muted rounded-2xl text-xs font-medium text-black leading-none">
+            <span className="inline-flex items-center px-3 py-1 bg-mirai-surface-muted rounded-lg text-xs font-medium text-black leading-none">
               議案の当事者の方へ
             </span>
           </div>
@@ -51,10 +51,7 @@ export function InterviewSuggestionBanner({
             </div>
           </div>
         </div>
-        <Button
-          asChild
-          className="bg-mirai-gradient text-black border border-black rounded-3xl h-9 px-4 font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2.5"
-        >
+        <Button asChild className="h-9 px-4 font-medium text-sm gap-2.5">
           <Link href={getInterviewLPLink(billId) as Route}>
             <span>AIインタビューを受ける</span>
             <ArrowRight className="size-3" />

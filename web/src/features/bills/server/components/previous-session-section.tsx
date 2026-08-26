@@ -1,8 +1,8 @@
 import { ChevronRight } from "lucide-react";
 import type { Route } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { SectionHeading } from "@/components/ui/section-heading";
 import type { DietSession } from "@/features/diet-sessions/shared/types";
 import { routes } from "@/lib/routes";
 import { CompactBillCard } from "../../client/components/bill-list/compact-bill-card";
@@ -37,26 +37,18 @@ export function PreviousSessionSection({
   return (
     <section className="flex flex-col gap-6">
       {/* Archiveヘッダー */}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between gap-2">
-          <h2>
-            <Image
-              src="/icons/archive-typography.svg"
-              alt="Archive"
-              width={156}
-              height={36}
-              priority
-            />
-          </h2>
+          <SectionHeading>過去の議会アーカイブ</SectionHeading>
           <Link
             href={routes.archive() as Route}
-            className="group flex items-center gap-0.5 text-xs font-bold text-mirai-text shrink-0"
+            className="group flex items-center gap-0.5 text-xs font-bold text-primary shrink-0"
           >
             すべての会期を見る
-            <ChevronRight className="h-4 w-4 text-mirai-text group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight className="h-4 w-4 text-primary group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
-        <p className="text-sm font-bold text-primary-accent">
+        <p className="text-sm text-mirai-text-muted">
           過去の田川市議会に提出された議案
         </p>
       </div>
@@ -99,13 +91,13 @@ export function PreviousSessionSection({
 
         {/* もっと読むリンク（グラデーションオーバーレイ付き） */}
         {showMoreButton && (
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[118px] bg-mirai-white-fade rounded-b-2xl">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[118px] bg-mirai-white-fade rounded-b-lg">
             <div className="absolute inset-x-0 bottom-6 flex justify-center pointer-events-auto">
               <Button
                 variant="outline"
                 size="lg"
                 asChild
-                className="w-[214px] h-12 text-base font-bold border-mirai-text rounded-full hover:bg-gray-50 bg-white"
+                className="w-[214px] h-12 text-base font-bold"
               >
                 <Link href={sessionBillsUrl as Route}>もっと読む</Link>
               </Button>

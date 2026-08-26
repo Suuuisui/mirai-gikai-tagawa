@@ -1,5 +1,6 @@
 import type { Route } from "next";
 import Link from "next/link";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { BillCard } from "@/features/bills/client/components/bill-list/bill-card";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { routes } from "@/lib/routes";
@@ -21,9 +22,7 @@ export function SessionHighlightsSection({
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-[22px] font-bold text-mirai-text leading-[1.48]">
-        <span aria-hidden="true">🔥</span> この会期のハイライト
-      </h2>
+      <SectionHeading>この会期のハイライト</SectionHeading>
       <div className="flex flex-col gap-4">
         {bills.map((bill) => (
           <Link

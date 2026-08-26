@@ -43,7 +43,7 @@ function ReviewCheckIcon({
  */
 export function ReviewInProgressBanner() {
   return (
-    <div className="flex gap-2 items-center rounded-2xl bg-mirai-surface-gray px-4 py-2">
+    <div className="flex gap-2 items-center rounded-lg bg-mirai-surface-gray px-4 py-2">
       <Info className="size-5 shrink-0 text-mirai-text" />
       <p className="text-[13px] font-medium leading-[1.5] text-mirai-text">
         この記事は、運営者がAIを活用して公開情報を基に作成したものです。内容は随時見直しており、今後変更されることがあります。

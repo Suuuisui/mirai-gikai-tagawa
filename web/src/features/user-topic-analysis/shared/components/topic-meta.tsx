@@ -96,8 +96,10 @@ export function TopicCategoryChips({
           <span
             key={category}
             className={cn(
-              "inline-flex items-center gap-1 rounded-xl px-1.5 py-1",
-              isHighlighted ? "bg-mirai-gradient font-bold" : "bg-topic-chip-bg"
+              "inline-flex items-center gap-1 rounded-md px-1.5 py-1",
+              isHighlighted
+                ? "bg-mirai-surface-key font-bold"
+                : "bg-topic-chip-bg"
             )}
           >
             <Icon

@@ -65,12 +65,12 @@ export function TopicFilterChips({
         variant="ghost"
         onClick={() => onSelect("all")}
         className={cn(
-          "h-auto shrink-0 rounded-[50px] border border-mirai-text px-3 py-1.5 text-[13px] font-bold text-mirai-text",
-          // フォーカス時にプライマリ（緑）の枠線/リングが出るのを抑止する
-          "focus-visible:border-mirai-text! focus-visible:ring-0 focus-visible:ring-offset-0",
+          "h-auto shrink-0 rounded-lg border px-3 py-1.5 text-[13px] font-bold",
+          // フォーカス時にキーカラーの枠線/リングが出るのを抑止する
+          "focus-visible:ring-0 focus-visible:ring-offset-0",
           allActive
-            ? "bg-mirai-gradient hover:opacity-90"
-            : "bg-white hover:bg-mirai-surface-gray"
+            ? "border-primary bg-mirai-surface-key text-primary-accent hover:opacity-90 focus-visible:border-primary!"
+            : "border-mirai-text bg-white text-mirai-text hover:bg-mirai-surface-gray focus-visible:border-mirai-text!"
         )}
       >
         すべて
@@ -88,12 +88,12 @@ export function TopicFilterChips({
             variant="ghost"
             onClick={() => onSelect(option.value)}
             className={cn(
-              "h-auto shrink-0 gap-1 rounded-[50px] border border-mirai-text px-3 py-1.5 text-[13px] font-bold text-mirai-text",
-              // フォーカス時にプライマリ（緑）の枠線/リングが出るのを抑止する
-              "focus-visible:border-mirai-text! focus-visible:ring-0 focus-visible:ring-offset-0",
+              "h-auto shrink-0 gap-1 rounded-lg border px-3 py-1.5 text-[13px] font-bold",
+              // フォーカス時にキーカラーの枠線/リングが出るのを抑止する
+              "focus-visible:ring-0 focus-visible:ring-offset-0",
               isActive
-                ? "bg-mirai-gradient hover:opacity-90"
-                : "bg-white hover:bg-mirai-surface-gray"
+                ? "border-primary bg-mirai-surface-key text-primary-accent hover:opacity-90 focus-visible:border-primary!"
+                : "border-mirai-text bg-white text-mirai-text hover:bg-mirai-surface-gray focus-visible:border-mirai-text!"
             )}
           >
             <Icon

@@ -99,7 +99,7 @@ export async function BillDetailHeader({
           {proposerType && (
             <Link
               href={routes.proposerBills(proposerType) as Route}
-              className="rounded-full bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text-secondary transition-colors hover:bg-mirai-surface-tag"
+              className="rounded-md bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text-secondary transition-colors hover:bg-mirai-surface-tag"
             >
               {PROPOSER_LABELS[proposerType]}
             </Link>
@@ -108,7 +108,7 @@ export async function BillDetailHeader({
           {dietSession && (
             <Link
               href={routes.sessionSummary(dietSession.id) as Route}
-              className="rounded-full bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text-secondary transition-colors hover:bg-mirai-surface-tag"
+              className="rounded-md bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text-secondary transition-colors hover:bg-mirai-surface-tag"
             >
               {dietSession.name}
             </Link>
@@ -160,10 +160,10 @@ export async function BillDetailHeader({
         <div className="flex items-center gap-2">
           {hasInterviewConfig && (
             <Button
-              variant="default"
+              variant="outline"
               size="sm"
               asChild
-              className="bg-mirai-light-gradient text-[13px] font-bold text-gray-800 gap-1.5 py-1 px-3"
+              className="text-[13px] font-bold gap-1.5 py-1 px-3"
             >
               <Link href={getInterviewLPLink(bill.id) as Route}>
                 <Image

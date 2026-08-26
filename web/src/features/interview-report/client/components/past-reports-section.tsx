@@ -20,7 +20,7 @@ export function PastReportsSection({ reports }: PastReportsSectionProps) {
         {reports.map((report) => (
           <div
             key={report.id}
-            className="border border-black rounded-lg overflow-hidden"
+            className="border border-mirai-border rounded-lg overflow-hidden"
           >
             <ReportCard
               report={report}

@@ -53,7 +53,7 @@ function CategoryChip({
 }) {
   if (opinion.user_category === "citizen" && !includeCitizen) return null;
   return (
-    <span className="inline-flex items-center gap-1 rounded-xl bg-topic-chip-bg px-1.5 py-1 text-[13px] font-medium text-mirai-text">
+    <span className="inline-flex items-center gap-1 rounded-md bg-topic-chip-bg px-1.5 py-1 text-[13px] font-medium text-mirai-text">
       <UserRound
         className={cn(
           "size-[13px] shrink-0",
@@ -117,7 +117,7 @@ export function OpinionCard({
       )
     : routes.publicReport(opinion.interview_report_id);
   return (
-    <div className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm">
+    <div className="flex flex-col gap-3 rounded-lg bg-white p-4 shadow-sm">
       {/* アバター + 意見タイトル */}
       <div className="flex items-center gap-2.5">
         <PersonAvatar sentiment={opinion.bill_sentiment} />

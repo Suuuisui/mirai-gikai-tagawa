@@ -19,7 +19,7 @@ function StaticDisclosureSection() {
       <h1 className="text-2xl font-bold text-black leading-[1.5] my-4">
         AIインタビューに関する情報開示
       </h1>
-      <div className="bg-white rounded-2xl p-6 space-y-4">
+      <div className="bg-white rounded-lg p-6 space-y-4">
         <h2 className="text-[22px] font-bold text-black leading-[1.64]">
           AIインタビューの透明性および技術仕様に関する開示事項
         </h2>
@@ -100,7 +100,7 @@ function ModelSection({
       <h1 className="text-2xl font-bold text-black leading-[1.5]">
         使用モデル
       </h1>
-      <div className="bg-white rounded-2xl p-6 space-y-2">
+      <div className="bg-white rounded-lg p-6 space-y-2">
         <p className="text-sm leading-[1.83] text-black">
           対話エンジンには以下のモデルを採用しています。
         </p>
@@ -126,7 +126,7 @@ function PromptSection({
         AIに与えられているプロンプト
       </h1>
 
-      <div className="bg-white rounded-2xl p-6 space-y-4">
+      <div className="bg-white rounded-lg p-6 space-y-4">
         <p className="text-[15px] font-normal text-black leading-[1.87]">
           {billName}に関するAIインタビューにおけるプロンプト
         </p>
@@ -141,7 +141,7 @@ function PromptSection({
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl p-6 space-y-4">
+      <div className="bg-white rounded-lg p-6 space-y-4">
         <div className="space-y-2">
           <p className="text-sm font-bold text-black">
             要約・レポート生成用プロンプト（指示書）
@@ -164,7 +164,7 @@ export function InterviewDisclosurePage({
   ...props
 }: InterviewDisclosurePageProps) {
   return (
-    <div className="flex flex-col gap-8 pb-8 bg-mirai-light-gradient">
+    <div className="flex flex-col gap-8 pb-8 bg-mirai-surface-key-subtle">
       <div className="flex flex-col gap-8 px-4 pt-24 md:pt-12 max-w-[600px] mx-auto w-full">
         <DisclosureBreadcrumb billId={billId} previewToken={previewToken} />
         <StaticDisclosureSection />

@@ -47,7 +47,7 @@ export function SearchClient({ items }: SearchClientProps) {
           onChange={(event) => setQuery(event.target.value)}
           placeholder="例: 給食費、水道、防災 …"
           aria-label="議案をキーワードで検索"
-          className="h-12 rounded-full border-mirai-border bg-white pl-11 text-sm"
+          className="h-12 rounded-lg border-mirai-border bg-white pl-11 text-sm"
         />
       </div>
 
@@ -58,7 +58,7 @@ export function SearchClient({ items }: SearchClientProps) {
             件の議案からキーワードで検索できます。議案名・概要・タグに含まれる言葉で絞り込めます。
           </p>
           {popularTags.length > 0 && (
-            <div className="flex flex-col gap-3 rounded-2xl bg-white p-5">
+            <div className="flex flex-col gap-3 rounded-lg bg-white p-5">
               <p className="text-sm font-bold text-mirai-text">タグから探す</p>
               <div className="flex flex-wrap gap-2">
                 {popularTags.map((tag) => (
@@ -67,7 +67,7 @@ export function SearchClient({ items }: SearchClientProps) {
                     variant="outline"
                     size="sm"
                     onClick={() => setQuery(tag)}
-                    className="rounded-full border-mirai-border bg-mirai-surface-tag px-4 text-xs font-medium text-black shadow-none hover:bg-mirai-surface-tag/70"
+                    className="rounded-md border-mirai-border bg-white px-4 text-xs font-medium text-mirai-text-secondary shadow-none hover:bg-mirai-surface-tag"
                   >
                     {tag}
                   </Button>
@@ -77,7 +77,7 @@ export function SearchClient({ items }: SearchClientProps) {
           )}
         </div>
       ) : results.length === 0 ? (
-        <div className="flex flex-col gap-2 rounded-2xl bg-white p-6 text-center">
+        <div className="flex flex-col gap-2 rounded-lg bg-white p-6 text-center">
           <p className="text-sm font-bold text-mirai-text">
             見つかりませんでした
           </p>
@@ -97,7 +97,7 @@ export function SearchClient({ items }: SearchClientProps) {
                 href={routes.billDetail(item.id) as Route}
                 aria-label={item.title}
               >
-                <Card className="flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
+                <Card className="flex flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
                   <h2 className="line-clamp-2 text-[15px] font-bold leading-[1.6] text-mirai-text">
                     {item.title}
                   </h2>
@@ -119,7 +119,7 @@ export function SearchClient({ items }: SearchClientProps) {
                       {item.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex items-center justify-center rounded-full bg-mirai-surface-tag px-3 py-1 text-xs font-medium text-black"
+                          className="inline-flex items-center justify-center rounded-md bg-mirai-surface-tag px-3 py-1 text-xs font-medium text-mirai-text-secondary"
                         >
                           {tag}
                         </span>

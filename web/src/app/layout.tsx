@@ -1,7 +1,7 @@
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
-import { Lexend_Giga, Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
+import { Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import type { ReactNode } from "react";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -12,12 +12,6 @@ const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
   subsets: ["latin"],
   weight: ["400", "500", "700"],
-});
-
-const lexendGiga = Lexend_Giga({
-  variable: "--font-lexend-giga",
-  subsets: ["latin"],
-  weight: ["400", "500", "700", "800", "900"],
 });
 
 // トピックの代表意見など、引用文を明朝体で表示するために使用
@@ -87,7 +81,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#b5432a",
+  themeColor: "#0017c1",
 };
 
 const websiteJsonLd = {
@@ -120,9 +114,9 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${notoSansJP.variable} ${lexendGiga.variable} ${notoSerifJP.variable} font-sans antialiased bg-mirai-surface-light`}
+        className={`${notoSansJP.variable} ${notoSerifJP.variable} font-sans antialiased bg-background`}
       >
-        <NextTopLoader showSpinner={false} color="#b5432a" />
+        <NextTopLoader showSpinner={false} color="#0017c1" />
         <JsonLd data={websiteJsonLd} />
         {children}
         <Analytics />

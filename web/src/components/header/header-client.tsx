@@ -58,11 +58,11 @@ export function HeaderClient() {
 
   return (
     <header
-      className={`px-3 fixed top-4 left-0 right-0 z-40 max-w-[1440px] mx-auto transition-transform duration-300 lg:translate-y-0 ${
-        isHidden ? "-translate-y-[calc(100%+1rem)]" : "translate-y-0"
+      className={`fixed top-0 left-0 right-0 z-40 bg-white border-b border-mirai-border-muted transition-transform duration-300 lg:translate-y-0 ${
+        isHidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
-      <div className="rounded-2xl bg-white shadow-sm mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-2">
           {/* Logo / Site Title */}
           <Link
@@ -131,7 +131,7 @@ export function HeaderClient() {
               <Link
                 key={label}
                 href={href as Route}
-                className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-mirai-border bg-mirai-surface px-3 py-1.5 text-sm font-medium text-mirai-text shadow-xs transition-all hover:bg-muted/50 active:scale-95"
+                className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border border-mirai-border bg-white px-3 py-1.5 text-sm font-medium text-mirai-text transition-all hover:bg-mirai-surface-key active:scale-95"
               >
                 <Icon className="h-4 w-4 shrink-0 text-primary-accent" />
                 {label}

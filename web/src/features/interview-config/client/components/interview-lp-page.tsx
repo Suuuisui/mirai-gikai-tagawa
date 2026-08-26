@@ -82,7 +82,7 @@ function _InterviewLPHero({
   return (
     <div className="flex flex-col items-center gap-6 px-4">
       <div className="flex flex-col items-center gap-3">
-        <div className="inline-flex items-center justify-center gap-2 px-6 py-1 mb-3 bg-primary rounded-2xl">
+        <div className="inline-flex items-center justify-center gap-2 px-6 py-1 mb-3 bg-primary rounded-lg">
           <span className="text-[13px] font-medium text-white leading-tight">
             当事者・有識者の方へ
           </span>
@@ -143,7 +143,7 @@ function _InterviewOverviewSection({
   const billLink = getBillDetailLink(billId, previewToken);
 
   return (
-    <div className="w-full max-w-[560px] mx-auto bg-white rounded-2xl p-6 space-y-4">
+    <div className="w-full max-w-[560px] mx-auto bg-white rounded-lg p-6 space-y-4">
       <h2 className="text-[22px] font-bold text-black leading-[1.64]">
         インタビュー概要
       </h2>
@@ -166,7 +166,7 @@ function _InterviewOverviewSection({
         <Link href={billLink as Route}>
           <Button
             variant="outline"
-            className="w-full border border-black rounded-[100px] h-[48px] px-6 font-bold text-[15px] hover:opacity-90 transition-opacity flex items-center justify-center gap-4"
+            className="w-full h-[48px] px-6 font-bold text-[15px] gap-4"
           >
             <span>議案詳細はこちら</span>
             <ArrowRight className="size-4" />
@@ -189,7 +189,7 @@ function _InterviewDurationSection({
   }
 
   return (
-    <div className="w-full max-w-[560px] mx-auto bg-white rounded-2xl p-6 space-y-2">
+    <div className="w-full max-w-[560px] mx-auto bg-white rounded-lg p-6 space-y-2">
       <h2 className="text-[22px] font-bold text-black leading-[1.64]">
         予定時間
       </h2>
@@ -210,7 +210,7 @@ function _InterviewThemesSection({
   }
 
   return (
-    <div className="w-full max-w-[560px] mx-auto bg-white rounded-2xl p-6 space-y-4">
+    <div className="w-full max-w-[560px] mx-auto bg-white rounded-lg p-6 space-y-4">
       <h2 className="text-[22px] font-bold text-black leading-[1.64]">
         質問テーマ
       </h2>
@@ -238,7 +238,7 @@ function _InterviewThemesSection({
 
 function _InterviewNoticeSection() {
   return (
-    <div className="w-full max-w-[560px] mx-auto bg-white rounded-2xl p-6 space-y-4">
+    <div className="w-full max-w-[560px] mx-auto bg-white rounded-lg p-6 space-y-4">
       <h2 className="text-[22px] font-bold text-black leading-[1.64]">
         注意事項
       </h2>
@@ -312,7 +312,7 @@ export function InterviewLPPage({
   userReports,
 }: InterviewLPPageProps) {
   return (
-    <div className="flex flex-col gap-8 pb-8 bg-mirai-light-gradient">
+    <div className="flex flex-col gap-8 pb-8 bg-mirai-surface-key-subtle">
       <_InterviewLPHeader bill={bill} />
       <div className="flex flex-col items-center gap-8 px-4">
         <_InterviewLPHero

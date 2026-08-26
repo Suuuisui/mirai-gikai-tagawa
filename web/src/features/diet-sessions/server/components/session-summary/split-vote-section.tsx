@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
+import { SectionHeading } from "@/components/ui/section-heading";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import {
   countVotes,
@@ -45,9 +46,7 @@ export function SplitVoteSection({ bills }: SplitVoteSectionProps) {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-[22px] font-bold text-mirai-text leading-[1.48]">
-        <span aria-hidden="true">🗳️</span> 賛否が分かれた案件
-      </h2>
+      <SectionHeading>賛否が分かれた案件</SectionHeading>
       <div className="flex flex-col gap-3">
         {splitVoteBills.map(({ bill, yes, no }) => {
           const title = bill.bill_content?.title || bill.name;
@@ -56,7 +55,7 @@ export function SplitVoteSection({ bills }: SplitVoteSectionProps) {
           return (
             <Card
               key={bill.id}
-              className="relative flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50"
+              className="relative flex flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50"
             >
               {/* カード全体をクリック可能にするオーバーレイリンク（下部の
                   「議員ごとの賛否を見る」リンクは pointer-events-auto で

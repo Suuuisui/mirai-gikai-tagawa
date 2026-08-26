@@ -82,7 +82,7 @@ export function ReportCard({ report, children, href }: ReportCardProps) {
               {stanceLabel && (
                 <span
                   className={cn(
-                    "inline-flex items-center justify-center px-3 py-0.5 rounded-2xl text-xs font-medium leading-3 flex-shrink-0",
+                    "inline-flex items-center justify-center px-3 py-0.5 rounded-lg text-xs font-medium leading-3 flex-shrink-0",
                     stanceBadgeBg,
                     stanceTextColor
                   )}

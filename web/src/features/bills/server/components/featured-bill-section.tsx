@@ -1,6 +1,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { TOP_SECTION_IDS } from "@/components/top/section-jump-nav";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { routes } from "@/lib/routes";
 import { BillCard } from "../../client/components/bill-list/bill-card";
 import type { BillWithContent } from "../../shared/types";
@@ -21,10 +22,8 @@ export function FeaturedBillSection({ bills }: FeaturedBillSectionProps) {
     >
       {/* セクションヘッダー */}
       <div className="flex flex-col gap-1.5">
-        <h2 className="text-[22px] font-bold text-mirai-text leading-[1.48]">
-          注目の議案<span aria-hidden="true">🔥</span>
-        </h2>
-        <p className="text-xs font-medium text-mirai-text-secondary leading-[1.67]">
+        <SectionHeading>注目の議案</SectionHeading>
+        <p className="text-xs font-medium text-mirai-text-muted leading-[1.67]">
           田川市議会に提出された注目議案
         </p>
       </div>

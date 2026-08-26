@@ -120,8 +120,7 @@ export async function GET(request: Request) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundImage:
-          "linear-gradient(177deg, rgb(251, 228, 218) 0%, rgb(253, 241, 233) 100%)",
+        backgroundColor: "#e8f1fe",
       }}
     >
       {/* グラデーションborder用ラッパー */}
@@ -131,8 +130,7 @@ export async function GET(request: Request) {
           width: 1140,
           height: 560,
           borderRadius: 30,
-          backgroundImage:
-            "linear-gradient(-30deg, rgb(245, 217, 200) 1%, rgb(232, 160, 140) 99%)",
+          backgroundColor: "#0017c1",
           padding: 6,
           position: "relative",
         }}
@@ -154,7 +152,7 @@ export async function GET(request: Request) {
               display: "flex",
               fontSize: 38,
               fontWeight: 800,
-              color: "#1f2937",
+              color: "#1a1a1a",
               lineHeight: 1.8,
               flex: 1,
               width: 740,
@@ -172,7 +170,7 @@ export async function GET(request: Request) {
               maxHeight: OG_BILL_NAME_MAX_HEIGHT,
               fontSize: 32,
               fontWeight: 800,
-              color: "#8f2f1c",
+              color: "#00118f",
               lineHeight: 1.5,
               overflow: "hidden",
               wordBreak: "break-all",
@@ -197,15 +195,14 @@ export async function GET(request: Request) {
             paddingBottom: 10,
             borderBottomLeftRadius: 30,
             borderTopRightRadius: 30,
-            backgroundImage:
-              "linear-gradient(-30deg, rgb(245, 217, 200) 1%, rgb(232, 160, 140) 99%)",
+            backgroundColor: "#0017c1",
           }}
         >
           <span
             style={{
               fontSize: 28,
               fontWeight: 800,
-              color: "#1f2937",
+              color: "white",
               letterSpacing: "0.03em",
             }}
           >

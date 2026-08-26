@@ -23,7 +23,7 @@ export function DietSessionCard({ session, billCount }: DietSessionCardProps) {
 
   return (
     <Link href={sessionBillsUrl as Route} className="group block">
-      <Card className="border-[0.5px] border-mirai-text-placeholder rounded-2xl shadow-none hover:bg-muted/50 transition-colors p-4">
+      <Card className="border-mirai-border hover:bg-muted/50 transition-colors p-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex flex-col gap-1 min-w-0">
             <h3 className="font-bold text-[15px] leading-[1.6] truncate">

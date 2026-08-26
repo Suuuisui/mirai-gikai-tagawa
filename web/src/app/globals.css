@@ -17,7 +17,6 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-noto-sans-jp);
-  --font-lexend: var(--font-lexend-giga);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -55,109 +54,114 @@
 
   --color-gray-300: #c7c7cc;
 
-  /* --- Mirai Design System Color Tokens --- */
+  /* --- Mirai Design System Color Tokens ---
+     デジタル庁デザインシステム（DADS）のプリミティブカラーに準拠。
+     https://design.digital.go.jp/ 参照。値は @digital-go-jp/design-tokens の
+     solid-gray / blue / green / red / yellow 等のスケールにスナップしている */
 
-  /* Text */
-  --color-mirai-text: #1f2937;
-  --color-mirai-text-secondary: #404040;
+  /* Text（DADS solid-gray スケール） */
+  --color-mirai-text: #1a1a1a;
+  --color-mirai-text-secondary: #333333;
   /* 日付等の小サイズテキストにも使うため、白背景でWCAG AA(4.5:1)を満たす明度にする */
-  --color-mirai-text-muted: #6d6d74;
-  --color-mirai-text-placeholder: #aeaeb2;
-  --color-mirai-text-note: #4c4c4c;
+  --color-mirai-text-muted: #666666;
+  --color-mirai-text-placeholder: #949494;
+  --color-mirai-text-note: #4d4d4d;
   --color-mirai-text-subtle: #666666;
-  --color-mirai-text-close: #9f9b9b;
+  --color-mirai-text-close: #767676;
 
-  /* Surface / Background */
-  --color-mirai-surface: #f7f4f0;
-  --color-mirai-surface-light: #eeeeee;
-  --color-mirai-surface-grouped: #f2f2f7;
-  --color-mirai-surface-muted: #e5e5ea;
-  --color-mirai-surface-tag: #e8e8e8;
-  --color-mirai-surface-warm: #eae6dd;
-  --color-mirai-surface-gray: #f6f6f6;
+  /* Surface / Background（DADS solid-gray 50-100）。
+     刷新前は用途別に別色だった6トークンを同値 #f2f2f2 に統一している。
+     使用箇所の意味（通常面/タグ面など）は保存しつつ、将来トーンを再分離
+     できるようトークン名は維持 */
+  --color-mirai-surface: #f2f2f2;
+  --color-mirai-surface-light: #f2f2f2;
+  --color-mirai-surface-grouped: #f2f2f2;
+  --color-mirai-surface-muted: #e6e6e6;
+  --color-mirai-surface-tag: #f2f2f2;
+  --color-mirai-surface-warm: #f2f2f2;
+  --color-mirai-surface-gray: #f2f2f2;
+  /* キーカラーの薄い面（DADS blue-50 / light-blue-50）。ヒーロー・タイトルバンド・
+     選択中チップ・ユーザー発言バブル等の「面」専用。区切り線には mirai-border、
+     この面の上の文字には primary-accent を使う */
+  --color-mirai-surface-key: #e8f1fe;
+  --color-mirai-surface-key-subtle: #f0f9ff;
 
-  /* Border */
-  --color-mirai-border: #d2d2d2;
-  --color-mirai-border-light: #b1b1b1;
-  --color-mirai-border-muted: #bebcbc;
+  /* Border（DADS solid-gray 100-200。borderは標準、border-mutedは薄い区切り） */
+  --color-mirai-border: #cccccc;
+  --color-mirai-border-muted: #e6e6e6;
 
-  /* Stance semantic colors */
-  --color-stance-for-bg: #ecfcf1;
-  --color-stance-for-badge-start: #e2f6f3;
-  --color-stance-for-badge-end: #eef6e2;
-  --color-stance-against: #c9272a;
-  --color-stance-against-light: #d23c3f;
-  --color-stance-against-bg: #fff1f1;
-  --color-stance-against-badge-bg: #ffeaea;
-  --color-stance-neutral: #805f34;
-  --color-stance-neutral-badge-bg: #f7e8db;
+  /* Stance semantic colors（DADS green-50 / red-50〜900 / yellow-50〜900） */
+  --color-stance-for-bg: #e6f5ec;
+  --color-stance-against: #ce0000;
+  --color-stance-against-light: #ec0000;
+  --color-stance-against-bg: #fdeeee;
+  --color-stance-against-badge-bg: #fdeeee;
+  --color-stance-neutral: #927200;
+  --color-stance-neutral-badge-bg: #fbf5e0;
 
   /* Member vote semantic colors（議員別の賛否: 賛成=緑系。反対はstance-againstを流用） */
-  --color-vote-for: #2f7d4f;
-  --color-vote-for-bg: #e6f4ea;
+  --color-vote-for: #197a4b;
+  --color-vote-for-bg: #e6f5ec;
 
   /* Reaction */
   --color-mirai-reaction-active: #dd425f;
   --color-mirai-reaction-inactive: var(--color-mirai-text-muted);
 
-  /* Accent */
+  /* Accent（DADS yellow-100〜200 / blue-200） */
   --color-mirai-star: #ff9500;
-  --color-mirai-highlight: #f4ff5f;
-  --color-mirai-badge-yellow: #fffd96;
-  --color-mirai-info-blue: #b2d3e8;
+  --color-mirai-badge-yellow: #fff0b3;
+  --color-mirai-info-blue: #c5d7fb;
 
-  /* Progress */
-  --color-mirai-progress-track: #d9d9d9;
-  --color-mirai-progress-fill: #a9e89d;
+  /* Progress（DADS solid-gray-100 / green-200） */
+  --color-mirai-progress-track: #e6e6e6;
+  --color-mirai-progress-fill: #9bd4b5;
 
-  /* Gradient endpoints */
-  --color-mirai-gradient-start: #e8a08c;
-  --color-mirai-gradient-end: #f5d9c8;
+  /* BillCover背景（議案カード用の動的カバー）: カテゴリ系統 × 濃淡3段階。
+     DADS プリミティブの 50/100/200 の薄い色面（フラット） */
+  --color-cover-terracotta-1: #ffeee2;
+  --color-cover-terracotta-2: #ffdfca;
+  --color-cover-terracotta-3: #ffc199;
+  --color-cover-slate-1: #e8f1fe;
+  --color-cover-slate-2: #d9e6ff;
+  --color-cover-slate-3: #c5d7fb;
+  --color-cover-sage-1: #e6f5ec;
+  --color-cover-sage-2: #c2e5d1;
+  --color-cover-sage-3: #9bd4b5;
+  --color-cover-ochre-1: #fbf5e0;
+  --color-cover-ochre-2: #fff0b3;
+  --color-cover-ochre-3: #ffe380;
+  --color-cover-brown-1: #f2f2f2;
+  --color-cover-brown-2: #e6e6e6;
+  --color-cover-brown-3: #cccccc;
+  --color-cover-beige-1: #f1eafa;
+  --color-cover-beige-2: #ecddff;
+  --color-cover-beige-3: #ddc2ff;
 
-  /* BillCover背景（議案カード用の動的カバー）: カテゴリ系統 × 濃淡3段階 */
-  --color-cover-terracotta-1: #f5d9c8;
-  --color-cover-terracotta-2: #edc0aa;
-  --color-cover-terracotta-3: #e0a888;
-  --color-cover-slate-1: #dde3e8;
-  --color-cover-slate-2: #c7d1d9;
-  --color-cover-slate-3: #aebcc7;
-  --color-cover-sage-1: #dfe6dc;
-  --color-cover-sage-2: #c9d4c3;
-  --color-cover-sage-3: #b0c0a8;
-  --color-cover-ochre-1: #ede0c0;
-  --color-cover-ochre-2: #e3cd9c;
-  --color-cover-ochre-3: #d6ba7c;
-  --color-cover-brown-1: #e3d3c4;
-  --color-cover-brown-2: #cdb69f;
-  --color-cover-brown-3: #b49579;
-  --color-cover-beige-1: #ece8e1;
-  --color-cover-beige-2: #ddd7cc;
-  --color-cover-beige-3: #cac1b1;
-
-  /* Topic analysis */
-  --color-topic-info-bg: #e5f3f0;
-  --color-topic-chip-bg: #f1f1f1;
-  --color-topic-count: #6b7775;
-  --color-topic-label: #909090;
-  --color-topic-affected: #c8642a;
-  --color-topic-industry: #2563a8;
-  --color-topic-expert: #8f2f1c;
-  --color-topic-citizen: #909090;
+  /* Topic analysis（DADS orange-800 / blue-800 / purple-800 / solid-gray） */
+  --color-topic-info-bg: #e8f1fe;
+  --color-topic-chip-bg: #f2f2f2;
+  --color-topic-count: #666666;
+  --color-topic-label: #767676;
+  --color-topic-affected: #c74700;
+  --color-topic-industry: #0031d8;
+  --color-topic-expert: #5c10be;
+  --color-topic-citizen: #767676;
 
   /* 引用文の明朝体（Noto Serif JP） */
   --font-mirai-serif: var(--font-noto-serif-jp);
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: #f7f4ee;
+  /* DADS準拠: 角丸は8px基調、背景は白、キーカラーは blue-900 / blue-1000 */
+  --radius: 0.5rem;
+  --background: #ffffff;
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #b5432a;
-  --primary-accent: #8f2f1c;
+  --primary: #0017c1;
+  --primary-accent: #00118f;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -168,7 +172,7 @@
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
+  --input: #b3b3b3;
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -271,18 +275,6 @@
 }
 
 @layer components {
-  .bg-mirai-gradient {
-    background-image: linear-gradient(
-      to bottom right,
-      var(--color-mirai-gradient-start),
-      var(--color-mirai-gradient-end)
-    );
-  }
-
-  .bg-mirai-light-gradient {
-    background-image: linear-gradient(to bottom, #fbe4da, #fdf1e9);
-  }
-
   .bg-mirai-white-fade {
     background-image: linear-gradient(
       180deg,
@@ -291,165 +283,18 @@
     );
   }
 
-  .border-mirai-gradient {
-    border: 2px solid transparent;
-    background-image:
-      linear-gradient(white, white),
-      linear-gradient(
-        -45deg,
-        var(--color-mirai-gradient-end) 0%,
-        var(--color-mirai-gradient-start) 100%
-      );
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-  }
-
-  .font-lexend {
-    font-family: var(--font-lexend-giga), system-ui, sans-serif;
-  }
-
-  /* BillCover用の斜めグラデーション: 系統×濃淡3段階（variant 0/1/2）を巡回させる */
-  .bg-cover-terracotta-0 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-terracotta-1),
-      var(--color-cover-terracotta-2)
-    );
-  }
-  .bg-cover-terracotta-1 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-terracotta-2),
-      var(--color-cover-terracotta-3)
-    );
-  }
-  .bg-cover-terracotta-2 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-terracotta-3),
-      var(--color-cover-terracotta-1)
-    );
-  }
-
-  .bg-cover-slate-0 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-slate-1),
-      var(--color-cover-slate-2)
-    );
-  }
-  .bg-cover-slate-1 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-slate-2),
-      var(--color-cover-slate-3)
-    );
-  }
-  .bg-cover-slate-2 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-slate-3),
-      var(--color-cover-slate-1)
-    );
-  }
-
-  .bg-cover-sage-0 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-sage-1),
-      var(--color-cover-sage-2)
-    );
-  }
-  .bg-cover-sage-1 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-sage-2),
-      var(--color-cover-sage-3)
-    );
-  }
-  .bg-cover-sage-2 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-sage-3),
-      var(--color-cover-sage-1)
-    );
-  }
-
-  .bg-cover-ochre-0 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-ochre-1),
-      var(--color-cover-ochre-2)
-    );
-  }
-  .bg-cover-ochre-1 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-ochre-2),
-      var(--color-cover-ochre-3)
-    );
-  }
-  .bg-cover-ochre-2 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-ochre-3),
-      var(--color-cover-ochre-1)
-    );
-  }
-
-  .bg-cover-brown-0 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-brown-1),
-      var(--color-cover-brown-2)
-    );
-  }
-  .bg-cover-brown-1 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-brown-2),
-      var(--color-cover-brown-3)
-    );
-  }
-  .bg-cover-brown-2 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-brown-3),
-      var(--color-cover-brown-1)
-    );
-  }
-
-  .bg-cover-beige-0 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-beige-1),
-      var(--color-cover-beige-2)
-    );
-  }
-  .bg-cover-beige-1 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-beige-2),
-      var(--color-cover-beige-3)
-    );
-  }
-  .bg-cover-beige-2 {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-cover-beige-3),
-      var(--color-cover-beige-1)
-    );
-  }
+  /* BillCoverの色面は @theme の --color-cover-{family}-{1|2|3} から
+     自動生成される bg-cover-{family}-{1|2|3} ユーティリティをそのまま使う
+     （bill-cover.tsx / OG route の COVER_COLORS と対応） */
 
   /* BillCover用の薄いドットパターン装飾（過剰にならない程度の控えめな模様）。
-     background-image を直接指定すると .bg-cover-* のグラデーションを上書きして
-     しまうため、::before の重ね描きにしている（要 position 済みの親） */
+     背景色の上に ::before で重ね描きしている（要 position 済みの親） */
   .bg-cover-dots::before {
     content: "";
     position: absolute;
     inset: 0;
     background-image: radial-gradient(
-      rgba(31, 41, 55, 0.08) 1px,
+      rgba(26, 26, 26, 0.08) 1px,
       transparent 1px
     );
     background-size: 12px 12px;
@@ -477,21 +322,6 @@
 .animate-shake {
   animation: shake 0.4s ease-in-out;
   animation-iteration-count: 1;
-}
-
-@keyframes bounce-gentle {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(5px);
-  }
-}
-
-.animate-bounce-gentle {
-  animation: bounce-gentle 2s ease-in-out infinite;
 }
 
 @keyframes fade-in {

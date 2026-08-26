@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
@@ -23,11 +24,7 @@ export function LinkButton({
   rel = "noopener noreferrer",
 }: LinkButtonProps) {
   return (
-    <Button
-      asChild
-      variant="outline"
-      className="w-fit rounded-full px-6 py-3 h-auto"
-    >
+    <Button asChild variant="outline" className="w-fit px-6 py-3 h-auto">
       <a href={href} target={target} rel={rel}>
         <Image
           src={icon.src}
@@ -37,13 +34,7 @@ export function LinkButton({
           className="flex-shrink-0"
         />
         <span className="text-[15px] font-bold">{children}</span>
-        <Image
-          src="/icons/arrow-right.svg"
-          alt=""
-          width={16}
-          height={15}
-          className="flex-shrink-0"
-        />
+        <ArrowRight aria-hidden className="size-4 flex-shrink-0" />
       </a>
     </Button>
   );

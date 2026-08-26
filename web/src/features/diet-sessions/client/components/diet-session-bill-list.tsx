@@ -1,5 +1,5 @@
 import { ExternalLink } from "lucide-react";
-import Image from "next/image";
+import { SectionHeading } from "@/components/ui/section-heading";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import type { DietSession } from "../../shared/types";
 import { BillListWithStatusFilter } from "./bill-list-with-status-filter";
@@ -17,27 +17,19 @@ export function DietSessionBillList({ session, bills }: Props) {
   return (
     <div className="flex flex-col gap-8">
       {/* Archiveヘッダー */}
-      <div className="flex flex-col gap-1">
-        <h1>
-          <Image
-            src="/icons/archive-typography.svg"
-            alt="Archive"
-            width={156}
-            height={36}
-            priority
-          />
-        </h1>
-        <p className="text-sm font-bold text-primary-accent">
+      <div className="flex flex-col gap-1.5">
+        <SectionHeading as="h1">過去の議会アーカイブ</SectionHeading>
+        <p className="text-sm text-mirai-text-muted">
           過去の田川市議会に提出された議案
         </p>
       </div>
 
       {/* セクションヘッダー */}
       <div className="flex flex-col gap-0.5">
-        <h2 className="text-[22px] font-bold text-black leading-[1.48] flex items-center gap-4">
+        <SectionHeading className="flex items-center gap-4">
           {startDate.getFullYear()}年 {session.name}の提出議案
           <span className="shrink-0 whitespace-nowrap">{bills.length}件</span>
-        </h2>
+        </SectionHeading>
         <p className="text-xs font-medium text-mirai-text">
           {sessionDescription}
         </p>

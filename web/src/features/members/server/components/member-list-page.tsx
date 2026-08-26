@@ -123,7 +123,7 @@ export async function MemberListPage() {
               const Icon = PROPOSER_ICONS[type];
               return (
                 <Link key={type} href={routes.proposerBills(type) as Route}>
-                  <Card className="flex h-full flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
+                  <Card className="flex h-full flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
                     <div className="flex items-center justify-between">
                       <span className="flex items-center gap-1.5 font-bold text-mirai-text">
                         <Icon className="h-4 w-4 shrink-0 text-primary-accent" />
@@ -176,7 +176,7 @@ export async function MemberListPage() {
                       key={member.name}
                       href={routes.memberDetail(member.name) as Route}
                     >
-                      <Card className="flex h-full flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
+                      <Card className="flex h-full flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
                         <span className="flex items-center justify-between gap-2 font-bold text-mirai-text">
                           <span className="flex flex-col">
                             {displayName}

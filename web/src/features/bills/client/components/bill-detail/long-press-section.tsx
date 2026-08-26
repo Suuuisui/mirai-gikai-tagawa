@@ -4,7 +4,7 @@ import { ManualRuby } from "@/lib/rubyful/manual-ruby";
 
 export function LongPressSection() {
   return (
-    <section className="relative bg-white rounded-2xl !px-3 !py-10 overflow-hidden">
+    <section className="relative bg-white rounded-lg !px-3 !py-10 overflow-hidden">
       {/* コンテンツエリア */}
       <div className="relative h-full flex items-center justify-between px-3 gap-6">
         {/* 左側：テキストコンテンツ */}

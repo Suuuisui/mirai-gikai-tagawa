@@ -21,7 +21,7 @@ export function IntervieweeInfo({
       <Heading className="text-xl font-bold text-gray-800">
         👫インタビューを受けた人
       </Heading>
-      <div className="bg-white rounded-2xl p-6">
+      <div className="bg-white rounded-lg p-6">
         <div className="text-sm text-gray-800 whitespace-pre-wrap font-medium">
           {lines.map((line, index) => (
             <p key={`${index}-${line.slice(0, 20)}`}>{line}</p>

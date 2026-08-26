@@ -1,0 +1,13 @@
+<svg width="260" height="190" viewBox="0 0 260 190" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 田川の炭坑遺産「二本煙突」のシンボル（ロゴと同モチーフの拡大版） -->
+  <!-- 背景の山なみ（香春岳を簡略化した稜線） -->
+  <path d="M0 168 L52 108 L96 150 L150 84 L214 168 Z" fill="#d9e6ff" />
+  <path d="M118 168 L180 96 L260 168 Z" fill="#c5d7fb" />
+  <!-- 二本煙突 -->
+  <rect x="84" y="34" width="30" height="120" rx="4" fill="#9db7f9" />
+  <rect x="78" y="22" width="42" height="14" rx="4" fill="#7096f8" />
+  <rect x="152" y="58" width="30" height="96" rx="4" fill="#9db7f9" />
+  <rect x="146" y="46" width="42" height="14" rx="4" fill="#7096f8" />
+  <!-- 基壇 -->
+  <rect x="52" y="154" width="156" height="10" rx="5" fill="#7096f8" />
+</svg>

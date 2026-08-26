@@ -17,7 +17,7 @@ interface SponsorsSectionProps {
 }
 
 const CHIP_CLASS =
-  "inline-flex items-center rounded-full bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text";
+  "inline-flex items-center rounded-md bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text";
 
 function SponsorChip({
   person,

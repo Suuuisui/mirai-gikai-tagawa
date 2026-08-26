@@ -34,7 +34,7 @@ export function RestartConfirmDialog({
           <DialogTitle className="text-lg font-bold text-primary text-center">
             最初からやり直しますか？
           </DialogTitle>
-          <div className="h-[1px] bg-mirai-gradient mt-6" />
+          <div className="border-t border-mirai-border-muted mt-6" />
         </DialogHeader>
 
         <div className="flex flex-col gap-6 mt-6">
