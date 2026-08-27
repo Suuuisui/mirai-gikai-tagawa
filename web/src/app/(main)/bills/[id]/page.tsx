@@ -5,6 +5,10 @@ import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/ge
 import { BillDetailLayout } from "@/features/bills/server/components/bill-detail/bill-detail-layout";
 import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
 import { resolveBillOgImageUrl } from "@/features/bills/shared/utils/bill-og-image";
+import {
+  buildBillMetaDescription,
+  buildBillPageTitle,
+} from "@/features/bills/shared/utils/bill-seo";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 
@@ -36,8 +40,11 @@ export async function generateMetadata({
     };
   }
 
-  // bill_contentのsummaryがあればそれを使用、なければデフォルト値を使用
-  const description = bill.bill_content?.summary || "議案の詳細情報";
+  // title/h1/OGタイトル/Article headlineで解決順を統一する
+  // （やさしい見出し優先・未整備は正式議案名）。descriptionは正式議案名を
+  // 先頭に置いて要約をスニペット長に切り詰める
+  const title = buildBillPageTitle(bill);
+  const description = buildBillMetaDescription(bill);
 
   // シェア用OGP画像。share_thumbnail_url/thumbnail_urlが未設定（＝カテゴリ共通の
   // デフォルトサムネイルのまま）の議案はBillCoverと同デザインの動的OG画像を、
@@ -45,28 +52,31 @@ export async function generateMetadata({
   const shareImageUrl = resolveBillOgImageUrl(bill, env.webUrl);
 
   return {
-    title: bill.name,
-    description: description,
+    title,
+    description,
     alternates: {
       canonical: routes.billDetail(bill.id),
     },
     openGraph: {
-      title: bill.name,
-      description: description,
+      title,
+      description,
+      siteName: "みらい議会＠田川市",
+      url: routes.billDetail(bill.id),
       type: "article",
       publishedTime: bill.submitted_date ?? undefined,
       modifiedTime: bill.updated_at,
       images: [
         {
+          // 個別サムネイル画像は寸法が一定でないため width/height は指定しない
           url: shareImageUrl,
-          alt: `${bill.name} のOGPイメージ`,
+          alt: `${title} のOGPイメージ`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: bill.name,
-      description: description,
+      title,
+      description,
       images: [shareImageUrl],
     },
   };
@@ -90,12 +100,11 @@ export default async function BillDetailPage({ params }: BillDetailPageProps) {
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: billWithContent.bill_content?.title || billWithContent.name,
+    headline: buildBillPageTitle(billWithContent),
+    alternativeHeadline: billWithContent.name,
     description: billWithContent.bill_content?.summary || undefined,
-    image:
-      billWithContent.share_thumbnail_url ||
-      billWithContent.thumbnail_url ||
-      new URL("/ogp.jpg", env.webUrl).toString(),
+    // metadata（OGP）と同じ解決ロジックで画像を統一する
+    image: resolveBillOgImageUrl(billWithContent, env.webUrl),
     datePublished: billWithContent.submitted_date ?? undefined,
     dateModified: billWithContent.updated_at,
     mainEntityOfPage: billUrl,

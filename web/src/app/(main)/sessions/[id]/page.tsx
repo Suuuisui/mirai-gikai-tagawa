@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ItemListJsonLd } from "@/components/seo/item-list-json-ld";
+import { buildBillPageTitle } from "@/features/bills/shared/utils/bill-seo";
 import { SessionSummaryLayout } from "@/features/diet-sessions/server/components/session-summary/session-summary-layout";
 import { getSessionSummary } from "@/features/diet-sessions/server/loaders/get-session-summary";
 import { routes } from "@/lib/routes";
@@ -33,13 +35,21 @@ export async function generateMetadata({
   }
 
   const { session } = data;
-  const description = `${session.name}で審議された議案の集計・ハイライトをまとめて紹介します。`;
+  const title = `田川市議会 ${session.name}のまとめ`;
+  const description = `田川市議会 ${session.name}で審議された議案の集計・議決結果・ハイライトをまとめて紹介します。`;
 
   return {
-    title: `${session.name}のまとめ`,
+    title,
     description,
     alternates: {
       canonical: routes.sessionSummary(session.id),
+    },
+    // SNSシェア時にサイト共通OGではなく会期固有のタイトルを出す
+    openGraph: {
+      title,
+      description,
+      siteName: "みらい議会＠田川市",
+      url: routes.sessionSummary(session.id),
     },
   };
 }
@@ -54,5 +64,15 @@ export default async function SessionSummaryPage({
     notFound();
   }
 
-  return <SessionSummaryLayout session={data.session} bills={data.bills} />;
+  return (
+    <>
+      <ItemListJsonLd
+        items={data.bills.map((bill) => ({
+          url: routes.billDetail(bill.id),
+          name: buildBillPageTitle(bill),
+        }))}
+      />
+      <SessionSummaryLayout session={data.session} bills={data.bills} />
+    </>
+  );
 }

@@ -9,9 +9,9 @@ export const revalidate = 600;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "議会ごとのまとめ",
+    title: "田川市議会 会期ごとのまとめ一覧",
     description:
-      "田川市議会の全ての会期のまとめページへの入り口です。会期ごとの提出議案数や賛否が分かれた議案数を一覧で確認できます。",
+      "田川市議会の会期（定例会・臨時会）ごとのまとめ一覧。会期の日程、提出議案数や賛否が分かれた議案数を確認できます。",
     alternates: {
       canonical: routes.sessionArchive(),
     },

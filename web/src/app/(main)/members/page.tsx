@@ -7,7 +7,7 @@ import { routes } from "@/lib/routes";
 export const revalidate = 600;
 
 export const metadata: Metadata = {
-  title: "議員・提出者から見る",
+  title: "田川市議会の議員一覧｜賛否・提出議案",
   description:
     "田川市議会の議員ごとの賛否（賛成・反対・欠席）と、市長・議員・委員会など提出者別の議案一覧。誰が提出し、誰が賛成・反対したのかを公開データから確認できます。",
   alternates: {
