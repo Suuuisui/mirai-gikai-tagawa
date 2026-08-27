@@ -76,9 +76,9 @@ function FeedbackPhase({
             key={tag}
             variant="ghost"
             onClick={() => onToggleTag(tag)}
-            className={`h-auto rounded-full border px-4 py-1 text-sm font-medium ${
+            className={`h-auto rounded-lg border px-4 py-1 text-sm font-medium ${
               selectedTags.has(tag)
-                ? "border-primary bg-gradient-to-r from-mirai-gradient-start to-mirai-gradient-end text-mirai-text"
+                ? "border-primary bg-mirai-surface-key text-primary-accent"
                 : "border-primary bg-white text-primary-accent"
             }`}
           >

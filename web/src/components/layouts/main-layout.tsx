@@ -29,8 +29,6 @@ export function MainLayout({ children }: MainLayoutProps) {
         // globals.css側も揃えること
         "main-column relative max-w-[700px] mx-auto lg:mt-24",
         useSidebarLayout || isInterview ? "md:mt-36" : "mt-36",
-        // インタビューページ以外ではshadowを表示
-        !isInterview && "sm:shadow-lg",
         // TOPページと議案詳細ページのみ、チャットサイドバー用のオフセット
         useSidebarLayout && "pc:mr-[500px] xl:ml-[calc(calc(100vw-1180px)/2)]"
       )}

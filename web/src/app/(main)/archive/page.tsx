@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { DietSessionArchiveList } from "@/features/bills/server/components/diet-session-archive-list";
@@ -22,40 +21,19 @@ export default async function DietSessionArchivePage() {
   const items = await getDietSessionArchive();
 
   return (
-    <div className="bg-mirai-surface-muted" data-wide-column>
-      {/* ヒーロー画像 */}
-      <div className="relative w-full h-[285px]">
-        <Image
-          src="/img/archive-hero-7f3d06.png"
-          alt="田川市議会 会期一覧"
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-          quality={85}
-        />
+    <div data-wide-column>
+      {/* ページタイトル（薄青の色面） */}
+      <div className="bg-mirai-surface-key md:rounded-lg">
+        <Container className="py-8">
+          <h1 className="text-2xl font-bold text-mirai-text">会期一覧</h1>
+          <p className="mt-1 text-sm text-mirai-text-muted">
+            田川市議会の全ての会期
+          </p>
+        </Container>
       </div>
 
       <Container className="py-8">
-        <div className="flex flex-col gap-8">
-          {/* ヘッダー */}
-          <div className="flex flex-col gap-1">
-            <h1>
-              <Image
-                src="/icons/archive-typography.svg"
-                alt="Archive"
-                width={156}
-                height={36}
-                priority
-              />
-            </h1>
-            <p className="text-sm font-bold text-primary-accent">
-              田川市議会の全ての会期
-            </p>
-          </div>
-
-          <DietSessionArchiveList items={items} />
-        </div>
+        <DietSessionArchiveList items={items} />
       </Container>
 
       {/* パンくずリスト */}

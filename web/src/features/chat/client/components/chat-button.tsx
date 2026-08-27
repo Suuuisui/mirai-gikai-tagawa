@@ -133,8 +133,10 @@ export const ChatButton = forwardRef<ChatButtonRef, ChatButtonProps>(
             チャットサイドバー用のレイアウト余白を適用する */}
         <span data-chat-sidebar className="hidden" />
         <div className="fixed max-w-[460px] mx-auto left-6 right-6 bottom-4 z-50 md:bottom-8 flex justify-center pc:hidden">
+          {/* フローティングのAI質問ボタンは、タップ領域の識別性を優先して
+              フラット基調の例外としてピル形状（rounded-[50px]）を維持している */}
           <div
-            className="relative rounded-[50px] bg-gradient-to-tr from-mirai-gradient-start to-mirai-gradient-end p-[2px] shadow-[2px_2px_2px_0px_rgba(0,0,0,0.25)] origin-center flex transition-[flex-basis] ease-in-out"
+            className="relative rounded-[50px] bg-primary p-[2px] shadow-md origin-center flex transition-[flex-basis] ease-in-out"
             style={{
               flexBasis: isCompact ? "120px" : "100%",
               transitionDuration: `${ANIMATION_DURATION.SIZE_TRANSITION}ms`,
@@ -161,7 +163,7 @@ export const ChatButton = forwardRef<ChatButtonRef, ChatButtonProps>(
                 {isLabelCompact ? "AIに質問" : "わからないことをAIに質問する"}
               </span>
               {!isCompact && (
-                <div className="relative w-10 h-10 rounded-[20px] bg-mirai-gradient flex items-center justify-center flex-shrink-0">
+                <div className="relative w-10 h-10 flex items-center justify-center flex-shrink-0">
                   <Image
                     src="/icons/chat-button-icon.svg"
                     alt="チャット"

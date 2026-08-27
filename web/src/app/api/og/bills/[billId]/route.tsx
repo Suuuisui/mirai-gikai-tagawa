@@ -67,34 +67,30 @@ const CATEGORY_STYLE: Record<string, { family: CoverFamily; icon: string }> = {
 const DEFAULT_CATEGORY_STYLE = { family: "beige" as const, icon: FileText };
 
 // globals.css `--color-cover-{family}-{1|2|3}` の実値
-const GRADIENT_COLORS: Record<CoverFamily, readonly [string, string, string]> =
-  {
-    terracotta: ["#f5d9c8", "#edc0aa", "#e0a888"],
-    slate: ["#dde3e8", "#c7d1d9", "#aebcc7"],
-    sage: ["#dfe6dc", "#c9d4c3", "#b0c0a8"],
-    ochre: ["#ede0c0", "#e3cd9c", "#d6ba7c"],
-    brown: ["#e3d3c4", "#cdb69f", "#b49579"],
-    beige: ["#ece8e1", "#ddd7cc", "#cac1b1"],
-  };
+const COVER_COLORS: Record<CoverFamily, readonly [string, string, string]> = {
+  terracotta: ["#ffeee2", "#ffdfca", "#ffc199"],
+  slate: ["#e8f1fe", "#d9e6ff", "#c5d7fb"],
+  sage: ["#e6f5ec", "#c2e5d1", "#9bd4b5"],
+  ochre: ["#fbf5e0", "#fff0b3", "#ffe380"],
+  brown: ["#f2f2f2", "#e6e6e6", "#cccccc"],
+  beige: ["#f1eafa", "#ecddff", "#ddc2ff"],
+};
 
 // globals.css `--color-mirai-text` / `--color-mirai-text-subtle` の実値
-const MIRAI_TEXT = "#1f2937";
+const MIRAI_TEXT = "#1a1a1a";
 const MIRAI_TEXT_SUBTLE = "#666666";
 // bg-cover-dots のドット色（--color-mirai-text の8%不透明度）とアイコンの15%不透明度
-const DOT_COLOR = "rgba(31, 41, 55, 0.08)";
-const ICON_COLOR = "rgba(31, 41, 55, 0.15)";
+const DOT_COLOR = "rgba(26, 26, 26, 0.08)";
+const ICON_COLOR = "rgba(26, 26, 26, 0.15)";
 
 const VARIANT_COUNT = 3;
 
 /**
- * variant(0〜2)に対応する135度斜めグラデーション
- * bg-cover-{family}-{variant} ユーティリティクラスと同一の配色順
+ * variant(0〜2)に対応するフラットな背景色
+ * bg-cover-{family}-{variant} ユーティリティクラスと同一の配色
  */
-function buildGradient(family: CoverFamily, variant: number): string {
-  const colors = GRADIENT_COLORS[family];
-  const from = colors[variant];
-  const to = colors[(variant + 1) % colors.length];
-  return `linear-gradient(135deg, ${from}, ${to})`;
+function pickCoverColor(family: CoverFamily, variant: number): string {
+  return COVER_COLORS[family][variant];
 }
 
 /**
@@ -163,7 +159,7 @@ export async function GET(
   const categoryStyle =
     (categoryLabel && CATEGORY_STYLE[categoryLabel]) || DEFAULT_CATEGORY_STYLE;
   const variant = pickCoverVariant(bill.id, VARIANT_COUNT);
-  const gradient = buildGradient(categoryStyle.family, variant);
+  const coverColor = pickCoverColor(categoryStyle.family, variant);
 
   // SVG文字列の色・線幅・サイズをBillCover相当に差し替えてdata URI化する
   const iconSvg = categoryStyle.icon
@@ -187,7 +183,7 @@ export async function GET(
         display: "flex",
         position: "relative",
         overflow: "hidden",
-        backgroundImage: gradient,
+        backgroundColor: coverColor,
         fontFamily: "Noto Sans JP",
       }}
     >

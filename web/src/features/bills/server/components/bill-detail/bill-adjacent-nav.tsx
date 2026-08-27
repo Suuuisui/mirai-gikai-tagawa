@@ -27,7 +27,7 @@ export function BillAdjacentNav({ previous, next }: BillAdjacentNavProps) {
           href={routes.billDetail(previous.id) as Route}
           className="group block"
         >
-          <Card className="flex h-full items-center gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
+          <Card className="flex h-full items-center gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
             <ChevronLeft className="h-5 w-5 shrink-0 text-gray-600 transition-transform group-hover:-translate-x-0.5" />
             <div className="min-w-0">
               <p className="text-xs font-medium text-mirai-text-muted">
@@ -46,7 +46,7 @@ export function BillAdjacentNav({ previous, next }: BillAdjacentNavProps) {
           href={routes.billDetail(next.id) as Route}
           className="group block sm:col-start-2"
         >
-          <Card className="flex h-full items-center justify-end gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 text-right shadow-none transition-colors hover:bg-muted/50">
+          <Card className="flex h-full items-center justify-end gap-2 border-mirai-border p-4 text-right transition-colors hover:bg-muted/50">
             <div className="min-w-0">
               <p className="text-xs font-medium text-mirai-text-muted">
                 次の議案

@@ -28,7 +28,7 @@ interface BillCoverProps {
   compact?: boolean;
 }
 
-// カテゴリ系統（globals.css の `.bg-cover-{family}-{0|1|2}` ユーティリティに対応）
+// カテゴリ系統（globals.css の `--color-cover-{family}-{1|2|3}` トークンに対応）
 type CoverFamily =
   | "terracotta"
   | "slate"
@@ -61,20 +61,20 @@ const CATEGORY_STYLE: Record<
 // 未知のタグ（カテゴリ判定外）の場合のフォールバック
 const DEFAULT_CATEGORY_STYLE = { family: "beige" as const, icon: FileText };
 
-// 系統×濃淡3段階のグラデーションクラス（pickCoverVariantの結果に対応）
-const GRADIENT_CLASSES: Record<CoverFamily, readonly [string, string, string]> =
-  {
-    terracotta: [
-      "bg-cover-terracotta-0",
-      "bg-cover-terracotta-1",
-      "bg-cover-terracotta-2",
-    ],
-    slate: ["bg-cover-slate-0", "bg-cover-slate-1", "bg-cover-slate-2"],
-    sage: ["bg-cover-sage-0", "bg-cover-sage-1", "bg-cover-sage-2"],
-    ochre: ["bg-cover-ochre-0", "bg-cover-ochre-1", "bg-cover-ochre-2"],
-    brown: ["bg-cover-brown-0", "bg-cover-brown-1", "bg-cover-brown-2"],
-    beige: ["bg-cover-beige-0", "bg-cover-beige-1", "bg-cover-beige-2"],
-  };
+// 系統×濃淡3段階の色面クラス（pickCoverVariantの結果に対応。
+// globals.css の --color-cover-{family}-{1|2|3} トークンから自動生成される）
+const COVER_CLASSES: Record<CoverFamily, readonly [string, string, string]> = {
+  terracotta: [
+    "bg-cover-terracotta-1",
+    "bg-cover-terracotta-2",
+    "bg-cover-terracotta-3",
+  ],
+  slate: ["bg-cover-slate-1", "bg-cover-slate-2", "bg-cover-slate-3"],
+  sage: ["bg-cover-sage-1", "bg-cover-sage-2", "bg-cover-sage-3"],
+  ochre: ["bg-cover-ochre-1", "bg-cover-ochre-2", "bg-cover-ochre-3"],
+  brown: ["bg-cover-brown-1", "bg-cover-brown-2", "bg-cover-brown-3"],
+  beige: ["bg-cover-beige-1", "bg-cover-beige-2", "bg-cover-beige-3"],
+};
 
 const VARIANT_COUNT = 3;
 
@@ -98,13 +98,13 @@ export function BillCover({ bill, compact = false }: BillCoverProps) {
   const categoryStyle =
     (categoryLabel && CATEGORY_STYLE[categoryLabel]) || DEFAULT_CATEGORY_STYLE;
   const variant = pickCoverVariant(bill.id, VARIANT_COUNT);
-  const gradientClass = GRADIENT_CLASSES[categoryStyle.family][variant];
+  const coverClass = COVER_CLASSES[categoryStyle.family][variant];
   const Icon = categoryStyle.icon;
 
   if (compact) {
     return (
       <div
-        className={`relative flex h-full w-full items-center justify-center overflow-hidden ${gradientClass} bg-cover-dots`}
+        className={`relative flex h-full w-full items-center justify-center overflow-hidden ${coverClass} bg-cover-dots`}
       >
         <Icon aria-hidden className="h-7 w-7 text-mirai-text/30" />
       </div>
@@ -119,7 +119,7 @@ export function BillCover({ bill, compact = false }: BillCoverProps) {
 
   return (
     <div
-      className={`relative h-full w-full overflow-hidden ${gradientClass} bg-cover-dots`}
+      className={`relative h-full w-full overflow-hidden ${coverClass} bg-cover-dots`}
     >
       <Icon
         aria-hidden

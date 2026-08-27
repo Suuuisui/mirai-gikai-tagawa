@@ -151,7 +151,7 @@ export function MemberVotesSection({
                 <Link
                   key={member.name}
                   href={routes.memberDetail(member.name) as Route}
-                  className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium underline decoration-dotted underline-offset-[3px] transition-opacity hover:opacity-70 ${VOTE_CHIP_CLASS[member.vote]}`}
+                  className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium underline decoration-dotted underline-offset-[3px] transition-opacity hover:opacity-70 ${VOTE_CHIP_CLASS[member.vote]}`}
                 >
                   {member.name}
                   <span aria-hidden="true">{VOTE_LABEL[member.vote]}</span>

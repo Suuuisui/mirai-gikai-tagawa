@@ -55,7 +55,7 @@ export function ChatLogSection({
   return (
     <section id="chat-log" className="flex flex-col gap-4 scroll-mt-24">
       <h2 className="text-xl font-bold text-gray-800">🎤すべての会話ログ</h2>
-      <div className="bg-white rounded-2xl p-6">
+      <div className="bg-white rounded-lg p-6">
         <div className="flex flex-col gap-4">
           {messages.map((message) => (
             <ChatMessage
@@ -101,10 +101,10 @@ function ChatMessage({ message, highlightQuote }: ChatMessageProps) {
       id={`message-${message.id}`}
       className="flex flex-col items-end gap-2 scroll-mt-24"
     >
-      <div className="w-9 h-9 rounded-full bg-mirai-light-gradient flex items-center justify-center">
+      <div className="w-9 h-9 rounded-full bg-mirai-surface-key-subtle flex items-center justify-center">
         <UserRound size={20} className="text-gray-600" />
       </div>
-      <div className="bg-mirai-light-gradient rounded-2xl px-4 py-3 max-w-[85%]">
+      <div className="bg-mirai-surface-key-subtle rounded-lg px-4 py-3 max-w-[85%]">
         <MessageText text={message.content} quote={highlightQuote} />
       </div>
     </div>

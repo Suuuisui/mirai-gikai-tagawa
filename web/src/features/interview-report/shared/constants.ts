@@ -23,7 +23,7 @@ export const stanceTextColors: Record<string, string> = {
  * スタンスバッジの背景スタイルマッピング
  */
 export const stanceBadgeBgStyles: Record<string, string> = {
-  for: "bg-linear-to-b from-stance-for-badge-start to-stance-for-badge-end",
+  for: "bg-stance-for-bg",
   against: "bg-stance-against-badge-bg",
   neutral: "bg-stance-neutral-badge-bg",
 };

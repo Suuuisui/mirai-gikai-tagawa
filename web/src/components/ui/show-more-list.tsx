@@ -43,7 +43,7 @@ export function ShowMoreList({
             onClick={() =>
               setVisibleCount((count) => count + (step ?? remaining))
             }
-            className="h-12 min-w-[214px] rounded-full border-mirai-text bg-white text-base font-bold hover:bg-gray-50"
+            className="h-12 min-w-[214px] text-base font-bold"
           >
             もっと見る（残り{remaining}件）
           </Button>

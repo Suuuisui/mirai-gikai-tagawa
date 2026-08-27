@@ -1,5 +1,6 @@
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { SectionHeading } from "@/components/ui/section-heading";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { routes } from "@/lib/routes";
 import { formatDate } from "@/lib/utils/date";
@@ -63,9 +64,7 @@ export async function SessionSummaryLayout({
           <SplitVoteSection bills={bills} />
 
           <section className="flex flex-col gap-4">
-            <h2 className="text-[22px] font-bold text-mirai-text leading-[1.48]">
-              全議案リスト
-            </h2>
+            <SectionHeading>全議案リスト</SectionHeading>
             {bills.length === 0 ? (
               <p className="py-12 text-center text-muted-foreground">
                 この会期の議案はまだありません

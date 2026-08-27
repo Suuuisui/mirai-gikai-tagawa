@@ -37,10 +37,7 @@ export function InterviewSessionErrorView({
       </div>
 
       <Link href={lpLink as Route}>
-        <Button
-          variant="outline"
-          className="flex items-center gap-2 border-black rounded-[100px] font-bold"
-        >
+        <Button variant="outline" className="flex items-center gap-2 font-bold">
           <ArrowLeft className="w-4 h-4" />
           インタビュートップに戻る
         </Button>

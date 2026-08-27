@@ -22,7 +22,7 @@ export function BillSessionLink({
       href={routes.sessionSummary(sessionId) as Route}
       className="group block"
     >
-      <Card className="flex items-center justify-between gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
+      <Card className="flex items-center justify-between gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
         <p className="text-sm font-medium text-mirai-text">
           📋 この議案が審議された会期：
           <span className="font-bold text-primary-accent">{sessionName}</span>

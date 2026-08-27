@@ -32,8 +32,10 @@ function StatusBadge({ message }: StatusBadgeProps) {
 
   return (
     <div className="w-full max-w-md relative">
-      <div className="w-full text-center bg-mirai-gradient rounded-lg px-4 py-3.5">
-        <span className="text-base font-medium text-black">{message}</span>
+      <div className="w-full text-center bg-mirai-surface-key rounded-lg px-4 py-3.5">
+        <span className="text-base font-medium text-primary-accent">
+          {message}
+        </span>
       </div>
       {/* 下向き三角形 */}
       <div
@@ -41,7 +43,7 @@ function StatusBadge({ message }: StatusBadgeProps) {
         style={{
           borderLeft: "7.5px solid transparent",
           borderRight: "7.5px solid transparent",
-          borderTop: "7.5px solid var(--color-mirai-progress-fill)",
+          borderTop: "7.5px solid var(--color-mirai-surface-key)",
         }}
       />
     </div>

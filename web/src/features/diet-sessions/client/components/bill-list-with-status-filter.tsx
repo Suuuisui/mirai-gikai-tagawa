@@ -76,7 +76,7 @@ function BillGroupCollapsible({
       <CollapsibleTrigger asChild>
         <Button
           variant="ghost"
-          className="group h-auto w-full justify-between gap-3 whitespace-normal rounded-2xl border-[0.5px] border-mirai-text-placeholder bg-white p-4 text-left shadow-none hover:bg-muted/50"
+          className="group h-auto w-full justify-between gap-3 whitespace-normal border border-mirai-border bg-white p-4 text-left hover:bg-muted/50"
         >
           <span className="flex flex-col gap-1">
             <span className="text-[15px] font-bold leading-[1.6] text-mirai-text">
@@ -132,7 +132,7 @@ export function BillListWithStatusFilter({ bills }: Props) {
             onClick={() => setActiveFilter(filter.key)}
             className={`h-[29px] px-4 py-1.5 rounded-full text-sm font-bold transition-colors ${
               activeFilter === filter.key
-                ? "bg-mirai-gradient text-black hover:bg-mirai-gradient"
+                ? "bg-mirai-surface-key text-primary-accent"
                 : "bg-mirai-surface-grouped text-mirai-text-muted hover:bg-mirai-surface-muted"
             }`}
           >

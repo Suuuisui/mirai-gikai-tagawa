@@ -6,7 +6,7 @@ import Link from "next/link";
 
 /** 回答者の多様性を表す装飾用アバタークラスタの色。 */
 const AVATAR_CLASSES = [
-  "bg-mirai-gradient",
+  "bg-mirai-info-blue",
   "bg-topic-industry",
   "bg-primary",
   "bg-topic-affected",

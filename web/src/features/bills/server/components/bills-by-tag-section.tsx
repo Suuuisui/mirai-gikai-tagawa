@@ -3,6 +3,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { tagSectionId } from "@/components/top/section-jump-nav";
 import { Button } from "@/components/ui/button";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { routes } from "@/lib/routes";
 import { BillCard } from "../../client/components/bill-list/bill-card";
 import type { BillsByTag } from "../../shared/types";
@@ -26,13 +27,9 @@ export function BillsByTagSection({ billsByTag }: BillsByTagSectionProps) {
         >
           {/* タグヘッダー */}
           <div className="flex flex-col gap-1.5">
-            <h2 className="text-[22px] font-bold text-black leading-[1.48]">
-              {tag.label}
-            </h2>
+            <SectionHeading>{tag.label}</SectionHeading>
             {tag.description && (
-              <p className="text-xs text-mirai-text-secondary">
-                {tag.description}
-              </p>
+              <p className="text-xs text-mirai-text-muted">{tag.description}</p>
             )}
           </div>
 
@@ -55,7 +52,7 @@ export function BillsByTagSection({ billsByTag }: BillsByTagSectionProps) {
               variant="outline"
               size="lg"
               asChild
-              className="h-12 w-full gap-2.5 rounded-full border-mirai-text bg-white text-[15px] font-medium text-mirai-text hover:bg-mirai-surface-gray"
+              className="h-12 w-full gap-2.5 text-[15px] font-medium"
             >
               <Link href={routes.tagBills(tag.id) as Route}>
                 {tag.label}の議案をすべて見る

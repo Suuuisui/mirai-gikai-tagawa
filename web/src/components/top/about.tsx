@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { EXTERNAL_LINKS } from "@/config/external-links";
 import { LinkButton } from "./link-button";
 
@@ -7,20 +7,7 @@ export function About() {
     <div id="about" className="py-10 scroll-mt-24">
       <div className="flex flex-col gap-4">
         {/* ヘッダー */}
-        <div className="flex flex-col gap-4">
-          <h2>
-            <Image
-              src="/icons/about-typography.svg"
-              alt="About"
-              width={143}
-              height={36}
-              priority
-            />
-          </h2>
-          <p className="text-sm font-bold text-primary-accent">
-            みらい議会とは
-          </p>
-        </div>
+        <SectionHeading>みらい議会とは</SectionHeading>
 
         {/* コンテンツ */}
         <div className="flex flex-col gap-6">

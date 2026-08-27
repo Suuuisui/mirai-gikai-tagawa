@@ -44,7 +44,7 @@ export function SectionJumpNav({
         <a
           key={entry.href}
           href={entry.href}
-          className="rounded-full bg-white px-3.5 py-1.5 text-[13px] font-medium text-mirai-text-secondary shadow-xs transition-colors hover:bg-mirai-surface-gray"
+          className="rounded-lg border border-mirai-border bg-white px-3.5 py-1.5 text-[13px] font-medium text-mirai-text-secondary transition-colors hover:bg-mirai-surface-key"
         >
           {entry.label}
         </a>

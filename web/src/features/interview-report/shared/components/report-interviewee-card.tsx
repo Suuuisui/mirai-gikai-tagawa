@@ -67,10 +67,10 @@ export function ReportIntervieweeCard({
   const category = mapRoleToCategory(role);
 
   return (
-    <div className="flex flex-col gap-4 rounded-2xl bg-white p-6">
+    <div className="flex flex-col gap-4 rounded-lg bg-white p-6">
       {/* アバター + 立場 + 期待懸念/カテゴリ */}
       <div className="flex items-center gap-4">
-        <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-mirai-light-gradient">
+        <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-mirai-surface-key-subtle">
           <UserRound className="size-7 text-mirai-text-secondary" />
         </span>
         <div className="flex min-w-0 flex-col gap-1.5">
@@ -86,7 +86,7 @@ export function ReportIntervieweeCard({
               </span>
             )}
             {category !== "citizen" && (
-              <span className="inline-flex items-center gap-1 rounded-xl bg-topic-chip-bg px-1.5 py-1 text-[13px] font-medium text-mirai-text">
+              <span className="inline-flex items-center gap-1 rounded-md bg-topic-chip-bg px-1.5 py-1 text-[13px] font-medium text-mirai-text">
                 <UserRound
                   className={cn(
                     "size-[13px] shrink-0",

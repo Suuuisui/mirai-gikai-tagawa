@@ -41,9 +41,9 @@ function _FilterChip({
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-1 px-3 py-1.5 rounded-[50px] h-[29px] text-sm font-bold transition-colors",
+        "inline-flex items-center gap-1 px-3 py-1.5 rounded-md h-[29px] text-sm font-bold transition-colors",
         isActive
-          ? "bg-mirai-gradient text-mirai-text"
+          ? "bg-mirai-surface-key text-mirai-text"
           : "bg-white text-gray-300"
       )}
     >

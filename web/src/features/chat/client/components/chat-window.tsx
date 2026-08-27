@@ -114,7 +114,7 @@ function ChatMessages({
                 key={question}
                 type="button"
                 disabled={isResponding}
-                className="px-3 py-1 text-xs leading-[2] text-primary-accent border border-primary rounded-2xl hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1 text-xs leading-[2] text-primary-accent border border-primary rounded-lg hover:bg-mirai-surface-key disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => {
                   sendMessage({
                     text: question,
@@ -238,8 +238,8 @@ export function ChatWindow({
       <div
         // xlサイズでは、横幅1180px（メイン + チャット）の中央寄せにする
         className={`fixed inset-x-0 bottom-0 z-50
-          bg-white shadow-md rounded-t-2xl flex flex-col
-          md:bottom-4 md:right-4 md:left-auto md:w-[450px] md:rounded-2xl
+          bg-white border border-mirai-border-muted shadow-sm rounded-t-lg flex flex-col
+          md:bottom-4 md:right-4 md:left-auto md:w-[450px] md:rounded-lg
 					pc:visible pc:opacity-100 h-[80vh] pc:h-[70vh]
           xl:right-[calc(calc(100%-1180px)/2)]
 					${isOpen ? "visible opacity-100" : "invisible opacity-0 pc:visible pc:opacity-100"}
@@ -279,7 +279,7 @@ export function ChatWindow({
         <div className="px-6 pb-4 pt-2">
           <PromptInput
             onSubmit={handleSubmit}
-            className="flex items-end gap-2.5 py-2 pl-6 pr-4 bg-white rounded-[50px] border-mirai-gradient divide-y-0"
+            className="flex items-end gap-2.5 py-2 pl-6 pr-4 bg-white rounded-lg border border-mirai-border divide-y-0"
           >
             <PromptInputBody className="flex-1">
               <PromptInputTextarea

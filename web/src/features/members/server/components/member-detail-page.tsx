@@ -40,7 +40,7 @@ interface MemberDetailPageProps {
 // 提出者・賛成者チップの共通スタイル（vote チップと視覚的に区別するため
 // bg-mirai-surface-muted の単色トーンにしている）
 const SPONSOR_CHIP_CLASS =
-  "inline-flex shrink-0 items-center gap-1 rounded-full bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text-secondary";
+  "inline-flex shrink-0 items-center gap-1 rounded-md bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text-secondary";
 
 /**
  * 議員個人ページ
@@ -156,7 +156,7 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
             <h2 className="text-lg font-bold text-mirai-text">提出した議案</h2>
             {proposedBills.map(({ bill }) => (
               <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-                <Card className="flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
+                <Card className="flex flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
                   <div className="flex items-start justify-between gap-3">
                     <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
                       {bill.bill_content?.title || bill.name}
@@ -182,7 +182,7 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
             <ShowMoreList initialCount={5} className="flex flex-col gap-3">
               {supportedBills.map(({ bill }) => (
                 <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-                  <Card className="flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
+                  <Card className="flex flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
                     <div className="flex items-start justify-between gap-3">
                       <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
                         {bill.bill_content?.title || bill.name}
@@ -212,13 +212,13 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
           >
             {records.map(({ bill, vote, faction }) => (
               <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-                <Card className="flex flex-col gap-2 rounded-2xl border-[0.5px] border-mirai-text-placeholder p-4 shadow-none transition-colors hover:bg-muted/50">
+                <Card className="flex flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
                   <div className="flex items-start justify-between gap-3">
                     <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
                       {bill.bill_content?.title || bill.name}
                     </h3>
                     <span
-                      className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${VOTE_CHIP_CLASS[vote]}`}
+                      className={`inline-flex shrink-0 items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium ${VOTE_CHIP_CLASS[vote]}`}
                     >
                       {VOTE_ARIA_LABEL[vote]}
                       <span aria-hidden="true">{VOTE_LABEL[vote]}</span>

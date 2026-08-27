@@ -82,7 +82,7 @@ export function BillShareModal({
       onKeyDown={handleBackgroundKeyDown}
       tabIndex={-1}
     >
-      <div className="bg-white rounded-2xl p-7 w-[370px] max-w-full flex flex-col items-center gap-9">
+      <div className="bg-white rounded-lg p-7 w-[370px] max-w-full flex flex-col items-center gap-9">
         {/* タイトル */}
         <h2 className="text-xl font-bold text-gray-800 text-center w-full">
           記事を共有する
@@ -133,7 +133,7 @@ export function BillShareModal({
         <button
           type="button"
           onClick={onClose}
-          className="w-[287px] max-w-full rounded-full px-6 py-3 font-bold text-base bg-mirai-gradient text-gray-800 border border-gray-800"
+          className="w-[287px] max-w-full rounded-lg px-6 py-3 font-bold text-base border border-primary bg-white text-primary hover:bg-mirai-surface-key"
         >
           このまま閉じる
         </button>

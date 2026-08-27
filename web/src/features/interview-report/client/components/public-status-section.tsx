@@ -41,7 +41,7 @@ export function PublicStatusSection({
     <>
       <div className="flex flex-col items-center gap-2">
         {isPublic ? (
-          <span className="inline-flex items-center gap-1 bg-mirai-gradient text-black text-sm font-bold px-4 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1 bg-mirai-surface-key text-primary-accent text-sm font-bold px-4 py-1.5 rounded-md">
             公開
           </span>
         ) : (

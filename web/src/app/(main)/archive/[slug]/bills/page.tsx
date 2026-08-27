@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -49,20 +48,7 @@ export default async function DietSessionBillsPage({ params }: Props) {
   const bills = await getBillsByDietSession(session.id);
 
   return (
-    <div className="bg-mirai-surface-muted" data-wide-column>
-      {/* ヒーロー画像 */}
-      <div className="relative w-full h-[285px]">
-        <Image
-          src="/img/archive-hero-7f3d06.png"
-          alt={`${session.name}の議案一覧`}
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-          quality={85}
-        />
-      </div>
-
+    <div data-wide-column>
       <Container className="py-8">
         <DietSessionBillList session={session} bills={bills} />
       </Container>

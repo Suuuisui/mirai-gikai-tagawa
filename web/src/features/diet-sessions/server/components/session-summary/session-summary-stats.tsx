@@ -1,3 +1,4 @@
+import { SectionHeading } from "@/components/ui/section-heading";
 import type { SessionResultsSummary } from "../../../shared/utils/session-summary";
 
 interface StatCardProps {
@@ -7,7 +8,7 @@ interface StatCardProps {
 
 function StatCard({ label, value }: StatCardProps) {
   return (
-    <div className="flex flex-col items-center gap-1 rounded-2xl border border-mirai-text-placeholder bg-white px-4 py-5 text-center">
+    <div className="flex flex-col items-center gap-1 rounded-lg border border-mirai-border bg-white px-4 py-5 text-center">
       <span className="text-3xl font-bold text-mirai-text">{value}</span>
       <span className="text-xs font-medium text-mirai-text-muted">{label}</span>
     </div>
@@ -25,9 +26,7 @@ interface SessionSummaryStatsProps {
 export function SessionSummaryStats({ summary }: SessionSummaryStatsProps) {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-[22px] font-bold text-mirai-text leading-[1.48]">
-        数字でみるこの会期
-      </h2>
+      <SectionHeading>数字でみるこの会期</SectionHeading>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard label="提出議案" value={summary.total} />
         <StatCard label="可決・同意・承認・認定など" value={summary.passed} />
