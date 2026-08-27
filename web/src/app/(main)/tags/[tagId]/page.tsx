@@ -2,10 +2,12 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layouts/container";
+import { ItemListJsonLd } from "@/components/seo/item-list-json-ld";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ShowMoreList } from "@/components/ui/show-more-list";
 import { BillCard } from "@/features/bills/client/components/bill-list/bill-card";
 import { getBillsByTag } from "@/features/bills/server/loaders/get-bills-by-tag";
+import { buildBillPageTitle } from "@/features/bills/shared/utils/bill-seo";
 import { routes } from "@/lib/routes";
 
 type Props = {
@@ -31,7 +33,7 @@ export async function generateMetadata({ params }: Props) {
   }
 
   return {
-    title: `${billsByTag.tag.label}の議案一覧`,
+    title: `${billsByTag.tag.label}の議案一覧（田川市議会）`,
     description:
       billsByTag.tag.description ??
       `「${billsByTag.tag.label}」タグが付与された議案の一覧です。`,
@@ -53,6 +55,12 @@ export default async function TagBillsPage({ params }: Props) {
 
   return (
     <div className="bg-mirai-surface-muted">
+      <ItemListJsonLd
+        items={bills.map((bill) => ({
+          url: routes.billDetail(bill.id),
+          name: buildBillPageTitle(bill),
+        }))}
+      />
       <Container className="py-8">
         {/* タグヘッダー */}
         <div className="flex flex-col gap-1.5 pb-8">

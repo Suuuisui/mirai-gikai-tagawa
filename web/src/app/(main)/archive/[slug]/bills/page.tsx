@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layouts/container";
+import { ItemListJsonLd } from "@/components/seo/item-list-json-ld";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { getBillsByDietSession } from "@/features/bills/server/loaders/get-bills-by-diet-session";
+import { buildBillPageTitle } from "@/features/bills/shared/utils/bill-seo";
 import { DietSessionBillList } from "@/features/diet-sessions/client/components/diet-session-bill-list";
 import { getDietSessionBySlug } from "@/features/diet-sessions/server/loaders/get-diet-session-by-slug";
 import { routes } from "@/lib/routes";
@@ -29,7 +31,7 @@ export async function generateMetadata({ params }: Props) {
   }
 
   return {
-    title: `${session.name}の議案一覧`,
+    title: `田川市議会 ${session.name}の議案一覧`,
     description: `${session.name}（${session.start_date}〜${session.end_date}）に提出された議案の一覧です。`,
     alternates: {
       canonical: routes.archiveSessionBills(slug),
@@ -49,6 +51,12 @@ export default async function DietSessionBillsPage({ params }: Props) {
 
   return (
     <div data-wide-column>
+      <ItemListJsonLd
+        items={bills.map((bill) => ({
+          url: routes.billDetail(bill.id),
+          name: buildBillPageTitle(bill),
+        }))}
+      />
       <Container className="py-8">
         <DietSessionBillList session={session} bills={bills} />
       </Container>

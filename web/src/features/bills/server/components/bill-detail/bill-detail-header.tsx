@@ -21,6 +21,7 @@ import { BillTag } from "../../../client/components/bill-list/bill-tag";
 import { getBillShareData } from "../../../client/utils/share";
 import type { BillWithContent } from "../../../shared/types";
 import { isDefaultThumbnail } from "../../../shared/utils/bill-cover";
+import { buildBillPageTitle } from "../../../shared/utils/bill-seo";
 
 interface BillDetailHeaderProps {
   bill: BillWithContent;
@@ -40,7 +41,8 @@ export async function BillDetailHeader({
   topicCount,
   dietSession,
 }: BillDetailHeaderProps) {
-  const displayTitle = bill.bill_content?.title;
+  // titleタグ・OG・Article headlineと同じ解決順（見出し未整備は正式議案名）
+  const displayTitle = buildBillPageTitle(bill);
   const displaySummary = bill.bill_content?.summary;
 
   // 提出者区分（市長/議員/委員会）。判定できない議案ではバッジを表示しない

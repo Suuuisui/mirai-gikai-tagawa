@@ -82,7 +82,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      // トップも他の一覧系と同じく実データの更新に連動させる
+      lastModified: latestBillUpdatedAt,
       changeFrequency: "daily" as const,
       priority: 1,
     },

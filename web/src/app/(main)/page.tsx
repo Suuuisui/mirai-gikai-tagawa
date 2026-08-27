@@ -23,6 +23,13 @@ import { getJapanTime } from "@/lib/utils/date";
 export const revalidate = 600;
 
 export const metadata: Metadata = {
+  // 検索意図「田川市議会」に合わせ、トップだけはサイト名先行の
+  // defaultタイトルを使わず絶対指定にする
+  title: {
+    absolute: "田川市議会の議案・議決結果をやさしく解説｜みらい議会＠田川市",
+  },
+  description:
+    "田川市議会に提出された議案・予算・条例・意見書をAIがやさしい言葉で解説。議決結果、議員ごとの賛否、会期（定例会・臨時会）ごとのまとめを無料で確認できます。",
   alternates: {
     canonical: "/",
   },

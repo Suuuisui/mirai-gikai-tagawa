@@ -32,11 +32,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   );
   const displayName = resolveMemberDisplayName(decodedName, allSponsorNames);
 
+  const title = `${displayName} 議員（田川市議会）の賛否・提出議案`;
+  const description = `田川市議会 ${decodedName} 議員が賛成・反対・欠席した議案の一覧です。賛否が分かれた案件での投票記録を公開データから確認できます。`;
+
   return {
-    title: `${displayName} 議員の記録`,
-    description: `田川市議会 ${decodedName} 議員が賛成・反対・欠席した議案の一覧です。賛否が分かれた案件での投票記録を公開データから確認できます。`,
+    title,
+    description,
     alternates: {
       canonical: routes.memberDetail(decodedName),
+    },
+    // SNSシェア時にサイト共通OGではなく議員固有のタイトルを出す
+    openGraph: {
+      title,
+      description,
+      siteName: "みらい議会＠田川市",
+      url: routes.memberDetail(decodedName),
     },
   };
 }
