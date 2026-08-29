@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ClipboardList,
   History,
   Home,
   Info,
@@ -45,6 +46,11 @@ const NAV_LINKS: NavLinkItem[] = [
     label: "過去の会期から議案を見る",
     href: routes.archive(),
     icon: History,
+  },
+  {
+    label: "委員会の記録",
+    href: routes.committees(),
+    icon: ClipboardList,
   },
   // トップページのAboutセクション（id="about"）へのアンカーリンク
   { label: "みらい議会とは", href: `${routes.home()}#about`, icon: Info },
