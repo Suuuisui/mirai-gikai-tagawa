@@ -286,6 +286,57 @@ export type Database = {
           },
         ]
       }
+      committee_meetings: {
+        Row: {
+          agenda_items: Json
+          attendees: Json
+          committee_name: string
+          created_at: string
+          id: string
+          key_points: Json
+          meeting_date: string
+          minutes_text: string | null
+          source_note: string | null
+          source_type: string
+          summary: string | null
+          title: string
+          updated_at: string
+          youtube_url: string | null
+        }
+        Insert: {
+          agenda_items?: Json
+          attendees?: Json
+          committee_name: string
+          created_at?: string
+          id?: string
+          key_points?: Json
+          meeting_date: string
+          minutes_text?: string | null
+          source_note?: string | null
+          source_type: string
+          summary?: string | null
+          title: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Update: {
+          agenda_items?: Json
+          attendees?: Json
+          committee_name?: string
+          created_at?: string
+          id?: string
+          key_points?: Json
+          meeting_date?: string
+          minutes_text?: string | null
+          source_note?: string | null
+          source_type?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Relationships: []
+      }
       diet_sessions: {
         Row: {
           created_at: string

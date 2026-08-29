@@ -1,7 +1,7 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { Info, Landmark, Search, Users } from "lucide-react";
+import { ClipboardList, Info, Landmark, Search, Users } from "lucide-react";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -32,6 +32,7 @@ const DESKTOP_NAV_LINKS: NavLinkItem[] = [
     href: routes.memberArchive(),
     icon: Users,
   },
+  { label: "委員会の記録", href: routes.committees(), icon: ClipboardList },
   { label: "みらい議会とは", href: `${routes.home()}#about`, icon: Info },
 ];
 
@@ -44,6 +45,7 @@ const MOBILE_QUICK_LINKS: NavLinkItem[] = [
     href: routes.memberArchive(),
     icon: Users,
   },
+  { label: "委員会の記録", href: routes.committees(), icon: ClipboardList },
 ];
 
 // 難易度切り替え（説明をもっと詳しく）は、田川市版では hard 難易度の
