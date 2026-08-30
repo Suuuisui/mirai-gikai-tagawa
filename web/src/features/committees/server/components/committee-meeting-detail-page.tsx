@@ -1,9 +1,11 @@
-import { ExternalLink, FileText, Info, Youtube } from "lucide-react";
+import { BookOpen, ExternalLink, FileText, Info, Youtube } from "lucide-react";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
+import { pickGlossaryTerms } from "../../shared/data/committee-glossary";
+import { getCommitteeProfile } from "../../shared/data/committee-profiles";
 import type { CommitteeMeeting } from "../../shared/types";
 import { sourceTypeLabel } from "../../shared/utils/committee-meeting-parser";
 
@@ -14,22 +16,29 @@ interface CommitteeMeetingDetailPageProps {
 export function CommitteeMeetingDetailPage({
   meeting,
 }: CommitteeMeetingDetailPageProps) {
+  const profile = getCommitteeProfile(meeting.committee_name);
+  const glossary = pickGlossaryTerms([
+    meeting.summary ?? "",
+    ...meeting.key_points,
+    ...meeting.agenda_items,
+  ]);
+
   return (
     <div>
       {/* ページタイトル（薄青の色面） */}
       <div className="bg-mirai-surface-key md:rounded-lg">
         <Container className="py-8">
           <p className="text-sm font-bold text-primary-accent">
-            {meeting.committee_name}
+            {profile.shortName || meeting.committee_name}
           </p>
-          <h1 className="mt-1 text-2xl font-bold text-mirai-text">
-            {meeting.title}
+          <h1 className="mt-1 text-2xl font-bold leading-relaxed text-mirai-text">
+            {formatDateWithDots(meeting.meeting_date)} の会議
           </h1>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <time className="text-sm font-medium text-mirai-text-secondary">
-              {formatDateWithDots(meeting.meeting_date)} 開催
-            </time>
-            <span className="inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-0.5 text-xs font-medium text-mirai-text-secondary">
+          <p className="mt-2 text-sm leading-relaxed text-mirai-text-secondary">
+            {profile.description}
+          </p>
+          <div className="mt-3">
+            <span className="inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-1 text-xs font-medium text-mirai-text-secondary">
               {meeting.source_type === "disclosure" ? (
                 <FileText aria-hidden className="size-3.5" />
               ) : (
@@ -43,71 +52,106 @@ export function CommitteeMeetingDetailPage({
 
       <Container className="py-8">
         <div className="flex flex-col gap-10">
-          {/* 要約 */}
+          {/* 要約（この会議で何が起きたか） */}
           {meeting.summary && (
             <section className="flex flex-col gap-4">
-              <SectionHeading>この会議の概要</SectionHeading>
-              <p className="leading-relaxed text-mirai-text">
+              <SectionHeading>この会議で決まったこと</SectionHeading>
+              <p className="rounded-lg bg-mirai-surface-key-subtle p-5 text-[15px] leading-loose text-mirai-text">
                 {meeting.summary}
               </p>
             </section>
           )}
 
-          {/* 要点 */}
+          {/* 要点（番号付きで読み進めやすく） */}
           {meeting.key_points.length > 0 && (
             <section className="flex flex-col gap-4">
-              <SectionHeading>議論の要点</SectionHeading>
-              <ul className="flex list-disc flex-col gap-2 pl-5">
-                {meeting.key_points.map((point) => (
+              <SectionHeading>詳しい内容</SectionHeading>
+              <ol className="flex flex-col gap-3">
+                {meeting.key_points.map((point, index) => (
                   <li
                     key={point}
-                    className="text-sm leading-relaxed text-mirai-text"
+                    className="flex gap-3 rounded-lg border border-mirai-border-muted bg-white p-4"
                   >
-                    {point}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {/* 議題 */}
-          {meeting.agenda_items.length > 0 && (
-            <section className="flex flex-col gap-4">
-              <SectionHeading>議題</SectionHeading>
-              <ol className="flex list-decimal flex-col gap-1.5 pl-5">
-                {meeting.agenda_items.map((item) => (
-                  <li
-                    key={item}
-                    className="text-sm leading-relaxed text-mirai-text"
-                  >
-                    {item}
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-mirai-surface-key text-xs font-bold text-primary-accent">
+                      {index + 1}
+                    </span>
+                    <span className="text-sm leading-relaxed text-mirai-text">
+                      {point}
+                    </span>
                   </li>
                 ))}
               </ol>
             </section>
           )}
 
-          {/* 出席者 */}
-          {meeting.attendees.length > 0 && (
-            <section className="flex flex-col gap-4">
-              <SectionHeading>出席委員</SectionHeading>
-              <div className="flex flex-wrap gap-2">
-                {meeting.attendees.map((name) => (
-                  <span
-                    key={name}
-                    className="rounded-md bg-mirai-surface-tag px-2.5 py-1 text-xs font-medium text-mirai-text-secondary"
-                  >
-                    {name}
-                  </span>
-                ))}
-              </div>
+          {/* 議題・出席者（補足情報として横並び） */}
+          {(meeting.agenda_items.length > 0 ||
+            meeting.attendees.length > 0) && (
+            <section className="flex flex-col gap-6 md:flex-row md:gap-8">
+              {meeting.agenda_items.length > 0 && (
+                <div className="flex flex-1 flex-col gap-3">
+                  <h2 className="text-sm font-bold text-mirai-text-secondary">
+                    この日の議題
+                  </h2>
+                  <ol className="flex list-decimal flex-col gap-1.5 pl-5">
+                    {meeting.agenda_items.map((item) => (
+                      <li
+                        key={item}
+                        className="text-sm leading-relaxed text-mirai-text-secondary"
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+
+              {meeting.attendees.length > 0 && (
+                <div className="flex flex-1 flex-col gap-3">
+                  <h2 className="text-sm font-bold text-mirai-text-secondary">
+                    出席した議員
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {meeting.attendees.map((name) => (
+                      <span
+                        key={name}
+                        className="rounded-md bg-mirai-surface-tag px-2.5 py-1 text-xs font-medium text-mirai-text-secondary"
+                      >
+                        {name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </section>
           )}
 
-          {/* YouTube中継 */}
-          {meeting.youtube_url && (
-            <section className="flex flex-col gap-4">
-              <SectionHeading>中継動画</SectionHeading>
+          {/* 議会用語の解説（この会議の内容に出てくるものだけ） */}
+          {glossary.length > 0 && (
+            <section className="flex flex-col gap-3 rounded-lg border border-mirai-border-muted bg-mirai-surface px-5 py-4">
+              <h2 className="flex items-center gap-1.5 text-sm font-bold text-mirai-text">
+                <BookOpen aria-hidden className="size-4 text-primary-accent" />
+                このページに出てくる議会のことば
+              </h2>
+              <dl className="flex flex-col gap-3">
+                {glossary.map((entry) => (
+                  <div key={entry.term} className="flex flex-col gap-0.5">
+                    <dt className="text-sm font-bold text-mirai-text">
+                      {entry.term}
+                    </dt>
+                    <dd className="text-xs leading-relaxed text-mirai-text-secondary">
+                      {entry.description}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          )}
+
+          {/* 中継動画・全文（原典への導線） */}
+          <section className="flex flex-col gap-4">
+            <SectionHeading>もとの記録を確認する</SectionHeading>
+            {meeting.youtube_url && (
               <a
                 href={meeting.youtube_url}
                 target="_blank"
@@ -118,23 +162,18 @@ export function CommitteeMeetingDetailPage({
                 公式YouTubeで中継を見る
                 <ExternalLink aria-hidden className="size-3.5" />
               </a>
-            </section>
-          )}
-
-          {/* 全文 */}
-          {meeting.minutes_text && (
-            <section className="flex flex-col gap-4">
-              <SectionHeading>記録全文</SectionHeading>
+            )}
+            {meeting.minutes_text && (
               <details className="rounded-lg border border-mirai-border bg-white">
                 <summary className="cursor-pointer px-4 py-3 text-sm font-bold text-primary">
-                  全文を開く（長文）
+                  記録の全文を開く（長文）
                 </summary>
                 <div className="whitespace-pre-wrap border-t border-mirai-border-muted px-4 py-4 text-sm leading-relaxed text-mirai-text-secondary">
                   {meeting.minutes_text}
                 </div>
               </details>
-            </section>
-          )}
+            )}
+          </section>
 
           {/* 出典・注意書き */}
           <div className="flex gap-2 rounded-lg bg-mirai-surface px-4 py-3.5 text-xs leading-relaxed text-mirai-text-note">
@@ -145,6 +184,8 @@ export function CommitteeMeetingDetailPage({
                 ? "田川市への情報開示請求により入手した文書"
                 : "田川市議会の公式YouTube中継の自動字幕"}
               をもとに、運営者がAIを活用して整理・要約したものです。
+              {meeting.source_type === "youtube" &&
+                "自動字幕には聞き取りの誤りが含まれる場合があります。"}
               {meeting.source_note && ` ${meeting.source_note}`}
               正確な内容は原本・中継映像をご確認ください。誤りに気づかれた場合はお問い合わせからご連絡ください。
             </p>
@@ -158,7 +199,9 @@ export function CommitteeMeetingDetailPage({
           items={[
             { label: "TOP", href: routes.home() },
             { label: "委員会の記録", href: routes.committees() },
-            { label: meeting.title },
+            {
+              label: `${profile.shortName || meeting.committee_name}（${formatDateWithDots(meeting.meeting_date)}）`,
+            },
           ]}
         />
       </Container>
