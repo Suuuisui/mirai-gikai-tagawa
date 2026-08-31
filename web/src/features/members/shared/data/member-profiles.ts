@@ -5,10 +5,10 @@
  * 議員名簿から転記した人物情報を紐づける。捏造禁止。出典に無い項目は
  * undefined のままにすること。
  *
- * ## 出典（2026-02-25更新の公式名簿を2026-07-22に転記）
+ * ## 出典（2026-08-27更新の公式名簿を2026-08-31に転記）
  * - 議員名簿（議席順）: https://www.joho.tagawa.fukuoka.jp/kiji003149/index.html
  *   （氏名・ふりがな・会派・当選回数）
- * - 議会構成（令和8年2月19日〜）: https://www.joho.tagawa.fukuoka.jp/kiji003280/index.html
+ * - 議会構成（令和8年8月10日〜）: https://www.joho.tagawa.fukuoka.jp/kiji003280/index.html
  *   （議長・副議長・監査委員）
  * - 元議員のフルネーム: 議案説明資料PDF（bill-sponsors-data.ts の転記元）の
  *   提出者・賛成者欄
@@ -19,12 +19,14 @@
  *   公式名簿側の異体字（村𠮷・榊󠄀原・高瀬）とは意図的に揃えていない
  * - 会派・役職・当選回数は名簿更新日時点のスナップショット。改選・辞職で
  *   変わるため、更新時は ROSTER_AS_OF も併せて更新すること
- * - 令和8年7月12日執行の市議補選で当選した議員は、公式名簿への反映を
- *   確認してから追加する（賛否データにもまだ登場しない）
+ * - 令和8年7月12日執行の市議補欠選挙で今村寿人・世羅翔二郎の両議員が当選し、
+ *   同年8月の名簿更新で会派が大きく再編された（孔志会の一部と新風会が解散し、
+ *   清風会・新政会・翔誠クラブ・社民・市民クラブが発足）。ここに載る会派は
+ *   最新名簿の所属であり、議決当時の会派は member_votes 側のデータを使う
  */
 
 /** 公式名簿の基準日（名簿ページの更新日） */
-export const ROSTER_AS_OF = "2026年2月25日";
+export const ROSTER_AS_OF = "2026年8月27日";
 
 export interface MemberProfile {
   /** フルネーム（姓 名、半角スペース区切り） */
@@ -45,10 +47,11 @@ export interface MemberProfile {
 
 /**
  * 姓（member_votesの表記）→ プロフィール。
- * 賛否データに登場する全25姓を収録（現職16・元議員9）
+ * 賛否データに登場する全25姓に、補欠選挙で初当選した世羅議員を加えた26姓を
+ * 収録（現職18・元議員8）
  */
 export const MEMBER_PROFILES: Record<string, MemberProfile> = {
-  // ── 現職（議員名簿〈議席順〉2026-02-25更新より） ──
+  // ── 現職（議員名簿〈議席順〉2026-08-27更新より） ──
   陸田: {
     fullName: "陸田 孝則",
     reading: "りくた たかのり",
@@ -81,7 +84,7 @@ export const MEMBER_PROFILES: Record<string, MemberProfile> = {
   佐々木: {
     fullName: "佐々木 博",
     reading: "ささき ひろし",
-    faction: "孔志会",
+    faction: "清風会",
     electedCount: 2,
     isIncumbent: true,
   },
@@ -99,14 +102,6 @@ export const MEMBER_PROFILES: Record<string, MemberProfile> = {
     electedCount: 1,
     isIncumbent: true,
   },
-  村吉: {
-    fullName: "村吉 勇介",
-    reading: "むらよし ゆうすけ",
-    faction: "シン・タガワ",
-    electedCount: 1,
-    role: "副議長",
-    isIncumbent: true,
-  },
   榊原: {
     fullName: "榊原 大祐",
     reading: "さかきばら だいすけ",
@@ -115,12 +110,35 @@ export const MEMBER_PROFILES: Record<string, MemberProfile> = {
     role: "監査委員",
     isIncumbent: true,
   },
+  村吉: {
+    fullName: "村吉 勇介",
+    reading: "むらよし ゆうすけ",
+    faction: "シン・タガワ",
+    electedCount: 1,
+    role: "副議長",
+    isIncumbent: true,
+  },
+  香月: {
+    fullName: "香月 隆一",
+    reading: "かつき りゅういち",
+    faction: "社民・市民クラブ",
+    electedCount: 8,
+    isIncumbent: true,
+  },
   尾﨑: {
     fullName: "尾﨑 行人",
     reading: "おざき ゆきひと",
+    faction: "清風会",
+    electedCount: 4,
+    isIncumbent: true,
+  },
+  今村: {
+    fullName: "今村 寿人",
+    reading: "いまむら ひさひと",
     faction: "孔志会",
     electedCount: 4,
     isIncumbent: true,
+    note: "令和8年7月12日執行の補欠選挙で返り咲き",
   },
   髙瀬: {
     fullName: "髙瀬 冨士夫",
@@ -129,44 +147,44 @@ export const MEMBER_PROFILES: Record<string, MemberProfile> = {
     electedCount: 5,
     isIncumbent: true,
   },
-  香月: {
-    fullName: "香月 隆一",
-    reading: "かつき りゅういち",
-    faction: "社民党市議会議員団",
-    electedCount: 8,
+  梶原: {
+    fullName: "梶原 みつ子",
+    reading: "かじわら みつこ",
+    faction: "新政会",
+    electedCount: 2,
     isIncumbent: true,
   },
   石松: {
     fullName: "石松 和幸",
     reading: "いしまつ かずゆき",
-    faction: "社民党市議会議員団",
+    faction: "新政会",
     electedCount: 6,
     isIncumbent: true,
   },
-  梶原: {
-    fullName: "梶原 みつ子",
-    reading: "かじわら みつこ",
-    faction: "新風会",
-    electedCount: 2,
+  世羅: {
+    fullName: "世羅 翔二郎",
+    reading: "せら しょうじろう",
+    faction: "翔誠クラブ",
+    electedCount: 1,
     isIncumbent: true,
+    note: "令和8年7月12日執行の補欠選挙で初当選",
   },
   原田: {
     fullName: "原田 誠",
     reading: "はらだ まこと",
-    faction: "新風会",
+    faction: "翔誠クラブ",
     electedCount: 3,
     isIncumbent: true,
   },
   小林: {
     fullName: "小林 義憲",
     reading: "こばやし よしのり",
-    faction: "新風会",
+    faction: "社民・市民クラブ",
     electedCount: 7,
     isIncumbent: true,
   },
 
   // ── 元議員（在任当時の賛否データに登場。フルネームは議案説明資料PDFより） ──
-  今村: { fullName: "今村 寿人", isIncumbent: false },
   辻: { fullName: "辻 智之", isIncumbent: false },
   白石: { fullName: "白石 天一", isIncumbent: false },
   加藤: { fullName: "加藤 秀彦", isIncumbent: false },
@@ -177,6 +195,6 @@ export const MEMBER_PROFILES: Record<string, MemberProfile> = {
   村上: {
     fullName: "村上 卓哉",
     isIncumbent: false,
-    note: "のち田川市長に就任",
+    note: "のち田川市長に就任し、令和8年5月31日に退職",
   },
 };
