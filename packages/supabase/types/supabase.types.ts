@@ -292,6 +292,7 @@ export type Database = {
           attendees: Json
           committee_name: string
           created_at: string
+          headline: string | null
           id: string
           key_points: Json
           meeting_date: string
@@ -300,6 +301,7 @@ export type Database = {
           source_type: string
           summary: string | null
           title: string
+          topics: Json
           updated_at: string
           youtube_url: string | null
         }
@@ -308,6 +310,7 @@ export type Database = {
           attendees?: Json
           committee_name: string
           created_at?: string
+          headline?: string | null
           id?: string
           key_points?: Json
           meeting_date: string
@@ -316,6 +319,7 @@ export type Database = {
           source_type: string
           summary?: string | null
           title: string
+          topics?: Json
           updated_at?: string
           youtube_url?: string | null
         }
@@ -324,6 +328,7 @@ export type Database = {
           attendees?: Json
           committee_name?: string
           created_at?: string
+          headline?: string | null
           id?: string
           key_points?: Json
           meeting_date?: string
@@ -332,6 +337,7 @@ export type Database = {
           source_type?: string
           summary?: string | null
           title?: string
+          topics?: Json
           updated_at?: string
           youtube_url?: string | null
         }

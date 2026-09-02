@@ -1,25 +1,19 @@
 import { describe, expect, it } from "vitest";
-import type { CommitteeMeetingSummary } from "../types";
+import type { CommitteeMeetingListItem } from "../types";
 import { buildCommitteeGroups, formatPeriodLabel } from "./committee-groups";
 
 function makeMeeting(
   committee_name: string,
   meeting_date: string,
   source_type: "disclosure" | "youtube" = "youtube"
-): CommitteeMeetingSummary {
+): CommitteeMeetingListItem {
   return {
     id: `${committee_name}-${meeting_date}`,
     committee_name,
     meeting_date,
-    title: `${committee_name}（${meeting_date}）`,
-    summary: null,
-    key_points: [],
-    agenda_items: [],
-    attendees: [],
+    headline: null,
+    topics: [],
     source_type,
-    source_note: null,
-    youtube_url: null,
-    updated_at: "2026-01-01T00:00:00Z",
   };
 }
 

@@ -32,7 +32,10 @@ export async function generateMetadata({
     };
   }
 
-  const title = `田川市議会 ${meeting.title}`;
+  // 見出しがあれば検索結果でも中身が伝わるため優先する
+  const title = meeting.headline
+    ? `${meeting.headline}｜田川市議会 ${meeting.committee_name}`
+    : `田川市議会 ${meeting.title}`;
   const description = meeting.summary
     ? truncateForSnippet(meeting.summary)
     : `田川市議会 ${meeting.committee_name}（${meeting.meeting_date}開催）の審議内容の記録です。`;

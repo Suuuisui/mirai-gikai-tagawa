@@ -2,7 +2,7 @@ import {
   type CommitteeKind,
   getCommitteeProfile,
 } from "../data/committee-profiles";
-import type { CommitteeMeetingSummary } from "../types";
+import type { CommitteeMeetingListItem } from "../types";
 
 /** 一覧に表示する委員会ごとのまとまり */
 export interface CommitteeGroup {
@@ -10,7 +10,7 @@ export interface CommitteeGroup {
   shortName: string;
   kind: CommitteeKind;
   description: string;
-  meetings: CommitteeMeetingSummary[];
+  meetings: CommitteeMeetingListItem[];
   /** 開催期間（meeting_date の最古〜最新。1回のみなら同じ日付） */
   period: { from: string; to: string };
   /** 情報開示請求で入手した文書に基づく会議の数 */
@@ -29,9 +29,9 @@ const KIND_ORDER: Record<CommitteeKind, number> = {
  * 各グループ内の会議は開催日の降順（新しい順）を保つ
  */
 export function buildCommitteeGroups(
-  meetings: CommitteeMeetingSummary[]
+  meetings: readonly CommitteeMeetingListItem[]
 ): CommitteeGroup[] {
-  const byCommittee = new Map<string, CommitteeMeetingSummary[]>();
+  const byCommittee = new Map<string, CommitteeMeetingListItem[]>();
   for (const meeting of meetings) {
     const list = byCommittee.get(meeting.committee_name);
     if (list) {

@@ -6,8 +6,8 @@
  *
  * 入力JSON: 以下の形式のレコード配列
  *   {
- *     committee_name, meeting_date(YYYY-MM-DD), title, summary,
- *     key_points[], agenda_items[], attendees[], minutes_text,
+ *     committee_name, meeting_date(YYYY-MM-DD), title, headline, topics[],
+ *     summary, key_points[], agenda_items[], attendees[], minutes_text,
  *     source_type("disclosure"|"youtube"), source_note, youtube_url
  *   }
  *
@@ -52,6 +52,8 @@ const rows = records.map((r) => ({
   committee_name: r.committee_name,
   meeting_date: r.meeting_date,
   title: r.title,
+  headline: r.headline ?? null,
+  topics: r.topics ?? [],
   summary: r.summary ?? null,
   key_points: r.key_points ?? [],
   agenda_items: r.agenda_items ?? [],
