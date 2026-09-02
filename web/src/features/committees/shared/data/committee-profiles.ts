@@ -67,9 +67,9 @@ export const COMMITTEE_PROFILES: Record<string, CommitteeProfile> = {
     description:
       "情報公開請求をした人の個人情報が外部に漏れた疑いを調べるために設置された特別委員会です。",
   },
-  一般廃棄物処理事業特別委員会: {
+  一般廃棄物処理業務に関する調査特別委員会: {
     kind: "special",
-    shortName: "ごみ処理事業 特別委員会",
+    shortName: "ごみ処理業務 調査特別委員会",
     description:
       "家庭ごみ・事業系ごみの収集運搬の許可や委託契約が適正だったかを調べる特別委員会です。",
   },

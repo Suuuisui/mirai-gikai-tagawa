@@ -1,21 +1,18 @@
 "use client";
 
-import { ChevronDown, FileText, Youtube } from "lucide-react";
-import type { Route } from "next";
-import Link from "next/link";
+import { ChevronDown, FileText } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { routes } from "@/lib/routes";
-import { formatDateWithDots } from "@/lib/utils/date";
 import type { CommitteeGroup } from "../../shared/utils/committee-groups";
 import { formatPeriodLabel } from "../../shared/utils/committee-groups";
+import { CommitteeMeetingRow } from "./committee-meeting-row";
 
 interface CommitteeGroupSectionProps {
   group: CommitteeGroup;
 }
 
 /** 最初に見せる会議数。多い委員会は残りを折りたたむ */
-const INITIAL_COUNT = 5;
+const INITIAL_COUNT = 3;
 
 /**
  * 委員会1つ分のカード。何を審議する場かの説明と開催期間を見せ、
@@ -56,31 +53,7 @@ export function CommitteeGroupSection({ group }: CommitteeGroupSectionProps) {
       <ul className="mt-4 flex flex-col divide-y divide-mirai-border-muted border-t border-mirai-border-muted">
         {visibleMeetings.map((meeting) => (
           <li key={meeting.id}>
-            <Link
-              href={routes.committeeMeeting(meeting.id) as Route}
-              className="flex flex-col gap-1 py-3 transition-colors hover:bg-mirai-surface-key-subtle"
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                <time className="text-sm font-bold text-mirai-text">
-                  {formatDateWithDots(meeting.meeting_date)}
-                </time>
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-mirai-text-muted">
-                  {meeting.source_type === "disclosure" ? (
-                    <FileText aria-hidden className="size-3.5" />
-                  ) : (
-                    <Youtube aria-hidden className="size-3.5" />
-                  )}
-                  {meeting.source_type === "disclosure"
-                    ? "開示文書"
-                    : "中継字幕"}
-                </span>
-              </div>
-              {meeting.summary && (
-                <p className="line-clamp-2 text-sm leading-relaxed text-mirai-text-secondary">
-                  {meeting.summary}
-                </p>
-              )}
-            </Link>
+            <CommitteeMeetingRow meeting={meeting} />
           </li>
         ))}
       </ul>

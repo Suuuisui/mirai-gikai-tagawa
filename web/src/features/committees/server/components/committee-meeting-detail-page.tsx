@@ -6,6 +6,7 @@ import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import { pickGlossaryTerms } from "../../shared/data/committee-glossary";
 import { getCommitteeProfile } from "../../shared/data/committee-profiles";
+import { resolveTopics } from "../../shared/data/committee-topics";
 import type { CommitteeMeeting } from "../../shared/types";
 import { sourceTypeLabel } from "../../shared/utils/committee-meeting-parser";
 
@@ -17,6 +18,7 @@ export function CommitteeMeetingDetailPage({
   meeting,
 }: CommitteeMeetingDetailPageProps) {
   const profile = getCommitteeProfile(meeting.committee_name);
+  const topics = resolveTopics(meeting.topics);
   const glossary = pickGlossaryTerms([
     meeting.summary ?? "",
     ...meeting.key_points,
@@ -30,14 +32,26 @@ export function CommitteeMeetingDetailPage({
         <Container className="py-8">
           <p className="text-sm font-bold text-primary-accent">
             {profile.shortName || meeting.committee_name}
+            <span className="ml-2 font-medium text-mirai-text-secondary">
+              {formatDateWithDots(meeting.meeting_date)}
+            </span>
           </p>
-          <h1 className="mt-1 text-2xl font-bold leading-relaxed text-mirai-text">
-            {formatDateWithDots(meeting.meeting_date)} の会議
+          <h1 className="mt-1.5 text-2xl font-bold leading-relaxed text-mirai-text">
+            {meeting.headline ??
+              `${formatDateWithDots(meeting.meeting_date)} の会議`}
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-mirai-text-secondary">
             {profile.description}
           </p>
-          <div className="mt-3">
+          <div className="mt-3 flex flex-wrap gap-2">
+            {topics.map((topic) => (
+              <span
+                key={topic.id}
+                className="rounded-md bg-white px-2.5 py-1 text-xs font-bold text-primary-accent"
+              >
+                {topic.label}
+              </span>
+            ))}
             <span className="inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-1 text-xs font-medium text-mirai-text-secondary">
               {meeting.source_type === "disclosure" ? (
                 <FileText aria-hidden className="size-3.5" />

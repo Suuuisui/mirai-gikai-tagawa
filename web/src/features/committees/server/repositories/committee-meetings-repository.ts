@@ -11,6 +11,8 @@ type CommitteeMeetingRow = {
   committee_name: string;
   meeting_date: string;
   title: string;
+  headline: string | null;
+  topics: unknown;
   summary: string | null;
   key_points: unknown;
   agenda_items: unknown;
@@ -28,6 +30,8 @@ function toMeeting(row: CommitteeMeetingRow): CommitteeMeeting {
     committee_name: row.committee_name,
     meeting_date: row.meeting_date,
     title: row.title,
+    headline: row.headline,
+    topics: toStringArray(row.topics),
     summary: row.summary,
     key_points: toStringArray(row.key_points),
     agenda_items: toStringArray(row.agenda_items),
@@ -41,7 +45,7 @@ function toMeeting(row: CommitteeMeetingRow): CommitteeMeeting {
 }
 
 const SUMMARY_COLUMNS =
-  "id, committee_name, meeting_date, title, summary, key_points, agenda_items, attendees, source_type, source_note, youtube_url, updated_at";
+  "id, committee_name, meeting_date, title, headline, topics, summary, key_points, agenda_items, attendees, source_type, source_note, youtube_url, updated_at";
 
 /** 全会議録を開催日の降順で取得（一覧用・本文なし） */
 export async function findAllCommitteeMeetings(): Promise<

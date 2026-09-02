@@ -1,25 +1,19 @@
 import { describe, expect, it } from "vitest";
-import type { CommitteeMeetingSummary } from "../types";
+import type { CommitteeMeetingListItem } from "../types";
 import { buildCommitteeGroups, formatPeriodLabel } from "./committee-groups";
 
 function makeMeeting(
   committee_name: string,
   meeting_date: string,
   source_type: "disclosure" | "youtube" = "youtube"
-): CommitteeMeetingSummary {
+): CommitteeMeetingListItem {
   return {
     id: `${committee_name}-${meeting_date}`,
     committee_name,
     meeting_date,
-    title: `${committee_name}（${meeting_date}）`,
-    summary: null,
-    key_points: [],
-    agenda_items: [],
-    attendees: [],
+    headline: null,
+    topics: [],
     source_type,
-    source_note: null,
-    youtube_url: null,
-    updated_at: "2026-01-01T00:00:00Z",
   };
 }
 
@@ -27,7 +21,7 @@ describe("buildCommitteeGroups", () => {
   it("委員会ごとにまとめ、常任→特別→その他の順に並べる", () => {
     const groups = buildCommitteeGroups([
       makeMeeting("全員協議会", "2026-01-10"),
-      makeMeeting("一般廃棄物処理事業特別委員会", "2026-01-11"),
+      makeMeeting("一般廃棄物処理業務に関する調査特別委員会", "2026-01-11"),
       makeMeeting("総務文教委員会", "2026-01-12"),
     ]);
     expect(groups.map((g) => g.kind)).toEqual(["standing", "special", "other"]);
