@@ -52,6 +52,9 @@ export const routes = {
   sessionArchive: () => "/sessions" as const,
   sessionSummary: (id: string) => `/sessions/${id}` as const,
 
+  // ── 市長 ──────────────────────────────────────────
+  mayor: () => "/mayor" as const,
+
   // ── 委員会 ────────────────────────────────────────
   committees: () => "/committees" as const,
   committeeMeeting: (id: string) => `/committees/${id}` as const,

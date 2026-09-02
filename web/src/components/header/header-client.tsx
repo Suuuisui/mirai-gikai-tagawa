@@ -1,7 +1,14 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { ClipboardList, Info, Landmark, Search, Users } from "lucide-react";
+import {
+  ClipboardList,
+  Info,
+  Landmark,
+  Search,
+  UserCheck,
+  Users,
+} from "lucide-react";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -33,12 +40,14 @@ const DESKTOP_NAV_LINKS: NavLinkItem[] = [
     icon: Users,
   },
   { label: "委員会の記録", href: routes.committees(), icon: ClipboardList },
+  { label: "新市長の動き", href: routes.mayor(), icon: UserCheck },
   { label: "みらい議会とは", href: `${routes.home()}#about`, icon: Info },
 ];
 
 // lg未満（モバイル）: ヘッダー2段目の横スクロールクイックナビ
 const MOBILE_QUICK_LINKS: NavLinkItem[] = [
   { label: "議会まとめ", href: routes.sessionArchive(), icon: Landmark },
+  { label: "新市長の動き", href: routes.mayor(), icon: UserCheck },
   { label: "議案を検索", href: routes.search(), icon: Search },
   {
     label: "議員・提出者から見る",
