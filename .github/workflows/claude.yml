@@ -32,6 +32,8 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: >-
+            --allowedTools "Bash(npm:*),Bash(npx:*),Bash(node:*),Bash(pnpm:*),Bash(python3:*),Bash(pip:*),Bash(pip3:*),Bash(pytest:*)"
 
       - name: PR を検出（無ければ Claude のブランチから作成）
         id: findpr
