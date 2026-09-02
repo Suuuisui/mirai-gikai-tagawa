@@ -39,6 +39,10 @@ export const primaryLinks: FooterLink[] = [
     href: routes.committees(),
   },
   {
+    label: "新市長の動き",
+    href: routes.mayor(),
+  },
+  {
     label: "みらい議会とは",
     href: EXTERNAL_LINKS.ABOUT_NOTE,
     external: true,

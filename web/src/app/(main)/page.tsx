@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/layouts/container";
 import { About } from "@/components/top/about";
 import { Hero } from "@/components/top/hero";
+import { MayorBanner } from "@/components/top/mayor-banner";
 import {
   SectionJumpNav,
   TOP_SECTION_IDS,
@@ -40,8 +41,9 @@ export default async function Home() {
     await loadHomeData();
 
   // ゆくゆくタグ機能がマージされたらBFFに統合する
+  const now = getJapanTime();
   const [currentSession, currentDifficulty] = await Promise.all([
-    getCurrentDietSession(getJapanTime()),
+    getCurrentDietSession(now),
     getDifficultyLevel(),
   ]);
 
@@ -61,6 +63,9 @@ export default async function Home() {
 
       {/* 本日の田川市議会セクション */}
       <CurrentDietSession session={currentSession} />
+
+      {/* 新市長の特設ページへの導線（市長交代直後で関心が高い） */}
+      <MayorBanner now={now} />
 
       {/* 議案一覧セクション */}
       <Container className="">

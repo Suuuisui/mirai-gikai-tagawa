@@ -35,6 +35,7 @@ const STATIC_PATHS = [
   "/",
   "/sessions",
   "/members",
+  "/mayor",
   "/archive",
   "/search",
   "/proposers/mayor",

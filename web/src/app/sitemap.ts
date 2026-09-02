@@ -109,6 +109,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.7,
     },
+    // /mayor の中身は委員会記録が主なので、その更新日時に連動させる
+    {
+      url: `${baseUrl}${routes.mayor()}`,
+      lastModified: getLatestUpdatedAt(committeeMeetings, latestBillUpdatedAt),
+      changeFrequency: "weekly" as const,
+      // 市長交代直後で関心が高いため、一覧ページ（0.7）より少し高くする
+      priority: 0.8,
+    },
     {
       url: `${baseUrl}${routes.memberArchive()}`,
       lastModified: latestBillUpdatedAt,

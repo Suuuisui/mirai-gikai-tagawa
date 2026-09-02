@@ -9,6 +9,7 @@ import {
   type LucideIcon,
   Menu,
   Search,
+  UserCheck,
   Users,
 } from "lucide-react";
 import type { Route } from "next";
@@ -52,6 +53,7 @@ const NAV_LINKS: NavLinkItem[] = [
     href: routes.committees(),
     icon: ClipboardList,
   },
+  { label: "新市長の動き", href: routes.mayor(), icon: UserCheck },
   // トップページのAboutセクション（id="about"）へのアンカーリンク
   { label: "みらい議会とは", href: `${routes.home()}#about`, icon: Info },
 ];
