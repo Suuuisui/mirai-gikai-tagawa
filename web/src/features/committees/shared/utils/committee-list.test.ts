@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
-import type {
-  CommitteeMeetingListItem,
-  CommitteeMeetingSummary,
-} from "../types";
-import { filterByTopic, sortByDateDesc, toListItems } from "./committee-list";
+import type { CommitteeMeetingListItem } from "../types";
+import {
+  filterByTopic,
+  findAdjacentMeetings,
+  sortByDateDesc,
+} from "./committee-list";
 
 function listItem(
   overrides: Partial<CommitteeMeetingListItem> = {}
@@ -19,38 +20,6 @@ function listItem(
   };
 }
 
-describe("toListItems", () => {
-  it("一覧に使わない要約や要点を落とす", () => {
-    const summary: CommitteeMeetingSummary = {
-      id: "id-1",
-      committee_name: "厚生委員会",
-      meeting_date: "2026-02-03",
-      title: "厚生委員会（令和8年2月3日）",
-      headline: "保育料の改定案を審査",
-      topics: ["welfare"],
-      summary: "長い要約",
-      key_points: ["要点1", "要点2"],
-      agenda_items: ["議題1"],
-      attendees: ["佐藤 俊一"],
-      source_type: "disclosure",
-      source_note: null,
-      youtube_url: null,
-      updated_at: "2026-02-04T00:00:00Z",
-    };
-
-    expect(toListItems([summary])).toEqual([
-      {
-        id: "id-1",
-        committee_name: "厚生委員会",
-        meeting_date: "2026-02-03",
-        headline: "保育料の改定案を審査",
-        topics: ["welfare"],
-        source_type: "disclosure",
-      },
-    ]);
-  });
-});
-
 describe("filterByTopic", () => {
   it("指定トピックを含む会議だけを返す", () => {
     const meetings = [
@@ -59,6 +28,16 @@ describe("filterByTopic", () => {
     ];
 
     expect(filterByTopic(meetings, "welfare").map((m) => m.id)).toEqual(["a"]);
+  });
+
+  it("絞り込んだトピックを topics の先頭に置く", () => {
+    const meetings = [listItem({ topics: ["money", "welfare", "waste"] })];
+
+    expect(filterByTopic(meetings, "waste")[0].topics).toEqual([
+      "waste",
+      "money",
+      "welfare",
+    ]);
   });
 
   it("トピック未指定なら全件を返す", () => {
@@ -106,5 +85,64 @@ describe("sortByDateDesc", () => {
     sortByDateDesc(meetings);
 
     expect(meetings[0].id).toBe("old");
+  });
+});
+
+describe("findAdjacentMeetings", () => {
+  const meetings = [
+    listItem({
+      id: "a-old",
+      committee_name: "厚生委員会",
+      meeting_date: "2026-01-10",
+    }),
+    listItem({
+      id: "a-mid",
+      committee_name: "厚生委員会",
+      meeting_date: "2026-03-10",
+    }),
+    listItem({
+      id: "a-new",
+      committee_name: "厚生委員会",
+      meeting_date: "2026-05-10",
+    }),
+    listItem({
+      id: "b",
+      committee_name: "総務文教委員会",
+      meeting_date: "2026-04-01",
+    }),
+  ];
+
+  it("同じ委員会の前後の会議を返し、他の委員会は無視する", () => {
+    const result = findAdjacentMeetings(meetings, {
+      id: "a-mid",
+      committee_name: "厚生委員会",
+    });
+
+    expect(result.older?.id).toBe("a-old");
+    expect(result.newer?.id).toBe("a-new");
+  });
+
+  it("最新の会議には次が無く、最古の会議には前が無い", () => {
+    expect(
+      findAdjacentMeetings(meetings, {
+        id: "a-new",
+        committee_name: "厚生委員会",
+      }).newer
+    ).toBeNull();
+    expect(
+      findAdjacentMeetings(meetings, {
+        id: "a-old",
+        committee_name: "厚生委員会",
+      }).older
+    ).toBeNull();
+  });
+
+  it("一覧に無い会議なら両方 null", () => {
+    expect(
+      findAdjacentMeetings(meetings, {
+        id: "zzz",
+        committee_name: "厚生委員会",
+      })
+    ).toEqual({ older: null, newer: null });
   });
 });

@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { CommitteeMeetingListItem } from "../types";
-import { buildCommitteeGroups, formatPeriodLabel } from "./committee-groups";
+import {
+  buildCommitteeGroups,
+  committeeSectionId,
+  formatPeriodLabel,
+} from "./committee-groups";
 
 function makeMeeting(
   committee_name: string,
@@ -86,6 +90,14 @@ describe("formatPeriodLabel", () => {
   it("同じ年なら単年で表示する", () => {
     expect(formatPeriodLabel({ from: "2026-01-10", to: "2026-08-04" })).toBe(
       "2026年"
+    );
+  });
+});
+
+describe("committeeSectionId", () => {
+  it("委員会名をURLに使える形にしてアンカーidにする", () => {
+    expect(committeeSectionId("厚生委員会")).toBe(
+      `committee-${encodeURIComponent("厚生委員会")}`
     );
   });
 });

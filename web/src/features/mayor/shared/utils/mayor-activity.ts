@@ -1,8 +1,10 @@
 import type { Route } from "next";
 import { getCommitteeProfile } from "@/features/committees/shared/data/committee-profiles";
 import { routes } from "@/lib/routes";
-import { toDateString } from "@/lib/utils/date";
-import type { TimelineSource } from "../data/mayor-profile";
+import { formatDateWithDots, toDateString } from "@/lib/utils/date";
+import type { TimelineSource, UpcomingSession } from "../data/mayor-profile";
+
+const DAY_MS = 86_400_000;
 
 /** ISO日付文字列（YYYY-MM-DD…）の日付部分をUTC深夜のミリ秒に変換する */
 function toDayMs(dateString: string): number {
@@ -10,20 +12,14 @@ function toDayMs(dateString: string): number {
   return Date.UTC(year, month - 1, day);
 }
 
+/** now（getJapanTime() が返すJST基準のDate）の日付部分をUTC深夜のミリ秒に */
+function todayMs(now: Date): number {
+  return Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
 /** 「浦野 仁」→「浦野仁」。見出しや文中で分かち書きしない箇所に使う */
 export function compactName(name: string): string {
   return name.replace(/\s+/g, "");
-}
-
-/**
- * 次の定例会の予告を出すか。就任後の議案が公開済みか、会期がDBに登録されて
- * 会期中になっていれば、情報源が二重になるので出さない
- */
-export function shouldShowUpcomingSession(
-  billCount: number,
-  inSession: boolean
-): boolean {
-  return billCount === 0 && !inSession;
 }
 
 /** 満年齢を求める（now は getJapanTime() が返すJST基準のDate） */
@@ -40,22 +36,37 @@ export function daysSinceInauguration(
   inaugurationDate: string,
   now: Date
 ): number {
-  const diff =
-    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) -
-    toDayMs(inaugurationDate);
-  return diff < 0 ? 0 : Math.floor(diff / 86_400_000) + 1;
+  const diff = todayMs(now) - toDayMs(inaugurationDate);
+  return diff < 0 ? 0 : Math.floor(diff / DAY_MS) + 1;
+}
+
+/** 指定日まであと何日か。当日は0、過ぎていれば負の数 */
+export function daysUntil(dateString: string, now: Date): number {
+  return Math.round((toDayMs(dateString) - todayMs(now)) / DAY_MS);
 }
 
 /**
- * 基準日以降に開かれた会議を返す。並び順は入力のまま
- * （getCommitteeMeetings() は開催日の降順で返す）
+ * 予定されている会期の見出しに添える一言。開会前は「あとN日で開会」、
+ * 会期中は「会期中（閉会日まで）」、閉会後は null（予告を出さない合図）
  */
-export function filterMeetingsSince<T extends { meeting_date: string }>(
-  meetings: readonly T[],
-  since: string
+export function sessionTimingLabel(
+  session: Pick<UpcomingSession, "startDate" | "endDate">,
+  now: Date
+): string | null {
+  const untilStart = daysUntil(session.startDate, now);
+  if (untilStart > 0) return `あと${untilStart}日で開会`;
+  if (untilStart === 0) return "きょう開会";
+  if (daysUntil(session.endDate, now) >= 0) {
+    return `会期中（${formatDateWithDots(session.endDate)}まで）`;
+  }
+  return null;
+}
+
+/** 日付の新しい順に並べ替える（同じ日は元の順を保つ。元の配列は変えない） */
+export function newestFirst<T extends { date: string }>(
+  events: readonly T[]
 ): T[] {
-  const sinceMs = toDayMs(since);
-  return meetings.filter((meeting) => toDayMs(meeting.meeting_date) >= sinceMs);
+  return [...events].sort((a, b) => b.date.localeCompare(a.date));
 }
 
 /**
@@ -73,25 +84,24 @@ export function filterBillsSince<T extends { submitted_date: string | null }>(
   );
 }
 
-export interface PointPatterns {
-  include: RegExp;
-  exclude: RegExp;
+export interface VoteShare {
+  /** 候補者の得票合計に占める割合（%、小数1桁） */
+  percent: number;
+  /** 最多得票を100としたときの長さ（棒グラフ用、整数） */
+  relative: number;
 }
 
-/**
- * 要点のうち include に当たり exclude に当たらないものを最大max件拾う。
- * 語そのものはデータ層（mayor-profile.ts の MAYOR_POINT_PATTERNS）が持つ
- */
-export function pickPointsMatching(
-  points: readonly string[],
-  patterns: PointPatterns,
-  max = 3
-): string[] {
-  return points
-    .filter(
-      (point) => patterns.include.test(point) && !patterns.exclude.test(point)
-    )
-    .slice(0, max);
+/** 各候補者に得票率と、最多得票を基準にした棒の長さを添えて返す（順序は入力のまま） */
+export function calculateVoteShares<T extends { votes: number }>(
+  candidates: readonly T[]
+): (T & VoteShare)[] {
+  const total = candidates.reduce((sum, c) => sum + c.votes, 0);
+  const max = Math.max(0, ...candidates.map((c) => c.votes));
+  return candidates.map((c) => ({
+    ...c,
+    percent: total === 0 ? 0 : Math.round((c.votes / total) * 1000) / 10,
+    relative: max === 0 ? 0 : Math.round((c.votes / max) * 100),
+  }));
 }
 
 /** 出典へのリンク。外部は新しいタブで開き、内部は typedRoutes の Route を保つ */

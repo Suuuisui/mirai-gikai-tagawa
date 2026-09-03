@@ -3,8 +3,13 @@
 import { ChevronDown, FileText } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import type { CommitteeGroup } from "../../shared/utils/committee-groups";
-import { formatPeriodLabel } from "../../shared/utils/committee-groups";
+import { jumpTargetClassName } from "@/components/ui/jump-nav";
+import { cn } from "@/lib/utils";
+import {
+  type CommitteeGroup,
+  committeeSectionId,
+  formatPeriodLabel,
+} from "../../shared/utils/committee-groups";
 import { CommitteeMeetingRow } from "./committee-meeting-row";
 
 interface CommitteeGroupSectionProps {
@@ -27,8 +32,11 @@ export function CommitteeGroupSection({ group }: CommitteeGroupSectionProps) {
 
   return (
     <section
-      id={`committee-${encodeURIComponent(group.committeeName)}`}
-      className="scroll-mt-36 rounded-lg border border-mirai-border bg-white p-5"
+      id={committeeSectionId(group.committeeName)}
+      className={cn(
+        jumpTargetClassName,
+        "rounded-lg border border-mirai-border bg-white p-5"
+      )}
     >
       <h2 className="text-lg font-bold text-mirai-text">{group.shortName}</h2>
       <p className="mt-1.5 text-sm leading-relaxed text-mirai-text-secondary">

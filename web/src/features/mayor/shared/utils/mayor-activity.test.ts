@@ -1,32 +1,19 @@
 import { describe, expect, it } from "vitest";
 import {
   calculateAge,
+  calculateVoteShares,
   compactName,
   createSourceResolver,
   daysSinceInauguration,
+  daysUntil,
   filterBillsSince,
-  filterMeetingsSince,
-  pickPointsMatching,
-  shouldShowUpcomingSession,
+  newestFirst,
+  sessionTimingLabel,
 } from "./mayor-activity";
 
 describe("compactName", () => {
   it("姓名の間の空白を詰める", () => {
     expect(compactName("浦野 仁")).toBe("浦野仁");
-  });
-});
-
-describe("shouldShowUpcomingSession", () => {
-  it("就任後の議案が無く閉会中なら予告を出す", () => {
-    expect(shouldShowUpcomingSession(0, false)).toBe(true);
-  });
-
-  it("就任後の議案が公開済みなら出さない", () => {
-    expect(shouldShowUpcomingSession(1, false)).toBe(false);
-  });
-
-  it("会期中なら出さない（会期の情報源を二重にしない）", () => {
-    expect(shouldShowUpcomingSession(0, true)).toBe(false);
   });
 });
 
@@ -54,17 +41,62 @@ describe("daysSinceInauguration", () => {
   });
 });
 
-describe("filterMeetingsSince", () => {
-  it("基準日以降だけを入力の順のまま返す", () => {
-    const meetings = [
-      { meeting_date: "2026-08-19" },
-      { meeting_date: "2026-07-13" },
-      { meeting_date: "2026-07-01" },
+describe("daysUntil", () => {
+  it("未来の日付までの日数を返す", () => {
+    expect(daysUntil("2026-09-07", new Date(2026, 8, 3))).toBe(4);
+  });
+
+  it("当日は0", () => {
+    expect(daysUntil("2026-09-07", new Date(2026, 8, 7))).toBe(0);
+  });
+
+  it("過ぎた日付は負の数", () => {
+    expect(daysUntil("2026-09-07", new Date(2026, 8, 10))).toBe(-3);
+  });
+});
+
+describe("sessionTimingLabel", () => {
+  const session = { startDate: "2026-09-07", endDate: "2026-10-08" };
+
+  it("開会前は残り日数を添える", () => {
+    expect(sessionTimingLabel(session, new Date(2026, 8, 3))).toBe(
+      "あと4日で開会"
+    );
+  });
+
+  it("開会当日は「きょう開会」", () => {
+    expect(sessionTimingLabel(session, new Date(2026, 8, 7))).toBe(
+      "きょう開会"
+    );
+  });
+
+  it("会期中は閉会日を添える（最終日も会期中）", () => {
+    expect(sessionTimingLabel(session, new Date(2026, 9, 8))).toBe(
+      "会期中（2026.10.8まで）"
+    );
+  });
+
+  it("閉会後は null（予告を出さない）", () => {
+    expect(sessionTimingLabel(session, new Date(2026, 9, 9))).toBeNull();
+  });
+});
+
+describe("newestFirst", () => {
+  it("日付の新しい順に並べ、同じ日は元の順を保つ", () => {
+    const events = [
+      { date: "2026-07-13", title: "就任" },
+      { date: "2026-08-04", title: "あいさつ" },
+      { date: "2026-08-04", title: "条例の方針" },
+      { date: "2026-08-19", title: "定例会の説明" },
     ];
 
-    expect(
-      filterMeetingsSince(meetings, "2026-07-13").map((m) => m.meeting_date)
-    ).toEqual(["2026-08-19", "2026-07-13"]);
+    expect(newestFirst(events).map((e) => e.title)).toEqual([
+      "定例会の説明",
+      "あいさつ",
+      "条例の方針",
+      "就任",
+    ]);
+    expect(events[0].title).toBe("就任");
   });
 });
 
@@ -85,32 +117,32 @@ describe("filterBillsSince", () => {
   });
 });
 
-describe("pickPointsMatching", () => {
-  const patterns = { include: /市長/, exclude: /前市長/ };
-
-  it("includeに当たる要点だけを拾う", () => {
-    const points = [
-      "市長が就任の挨拶を行いました。",
-      "会期は9月7日から10月8日までです。",
-      "副市長の選任に同意を求める議案です。",
-    ];
-
-    expect(pickPointsMatching(points, patterns)).toEqual([
-      "市長が就任の挨拶を行いました。",
-      "副市長の選任に同意を求める議案です。",
+describe("calculateVoteShares", () => {
+  it("各候補者に得票率と最多得票を100とした長さを添えて入力の順で返す", () => {
+    expect(
+      calculateVoteShares([
+        { name: "a", votes: 6000 },
+        { name: "b", votes: 3000 },
+        { name: "c", votes: 1000 },
+      ])
+    ).toEqual([
+      { name: "a", votes: 6000, percent: 60, relative: 100 },
+      { name: "b", votes: 3000, percent: 30, relative: 50 },
+      { name: "c", votes: 1000, percent: 10, relative: 17 },
     ]);
   });
 
-  it("excludeに当たる要点は除く", () => {
+  it("得票率は小数1桁に丸める", () => {
     expect(
-      pickPointsMatching(["前市長の給料減額条例は廃止する方針です。"], patterns)
-    ).toEqual([]);
+      calculateVoteShares([{ votes: 8345 }, { votes: 4637 }])[0].percent
+    ).toBe(64.3);
   });
 
-  it("最大件数で打ち切る", () => {
-    expect(
-      pickPointsMatching(["市長A", "市長B", "市長C"], patterns, 2)
-    ).toEqual(["市長A", "市長B"]);
+  it("候補者がいなければ空、得票0でも割り算で壊れない", () => {
+    expect(calculateVoteShares([])).toEqual([]);
+    expect(calculateVoteShares([{ votes: 0 }])).toEqual([
+      { votes: 0, percent: 0, relative: 0 },
+    ]);
   });
 });
 

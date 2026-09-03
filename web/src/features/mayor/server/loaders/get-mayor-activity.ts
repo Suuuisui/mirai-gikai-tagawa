@@ -1,11 +1,10 @@
 import "server-only";
 import { getBillsLite } from "@/features/bills/server/loaders/get-bills";
 import type { BillWithContentLite } from "@/features/bills/shared/types";
-import { getCommitteeMeetings } from "@/features/committees/server/loaders/get-committee-meetings";
-import type { CommitteeMeetingSummary } from "@/features/committees/shared/types";
-import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/get-current-diet-session";
+import { getCommitteeMeetingListItems } from "@/features/committees/server/loaders/get-committee-meeting-list-items";
 import { getBillsByProposer } from "@/features/members/server/loaders/get-member-vote-data";
 import {
+  MAYOR_ACTIONS,
   MAYOR_PROFILE,
   ROAD_TO_INAUGURATION,
   type TimelineEvent,
@@ -15,9 +14,9 @@ import {
 import {
   createSourceResolver,
   filterBillsSince,
-  filterMeetingsSince,
+  newestFirst,
   type ResolvedLink,
-  shouldShowUpcomingSession,
+  sessionTimingLabel,
 } from "../../shared/utils/mayor-activity";
 
 export interface TimelineItem extends TimelineEvent {
@@ -25,18 +24,21 @@ export interface TimelineItem extends TimelineEvent {
   link: ResolvedLink | null;
 }
 
+export type UpcomingSessionView = UpcomingSession & {
+  /** 「あと4日で開会」「会期中（10.8まで）」のような今の段階 */
+  timingLabel: string;
+  link: ResolvedLink | null;
+};
+
 export interface MayorActivity {
-  /** 就任日以降に開かれた委員会の記録（新しい順） */
-  meetingsSinceInauguration: CommitteeMeetingSummary[];
+  /** 就任後にしたこと（新しい順、出典リンク解決済み） */
+  actions: TimelineItem[];
   /** 就任日以降に提出された市長提出議案 */
   billsSinceInauguration: BillWithContentLite[];
-  /** 就任までの経緯（出典リンク解決済み） */
-  timeline: TimelineItem[];
-  /**
-   * 次の定例会の予告。就任後の議案が既に公開されているか、会期が始まって
-   * いる（DBの会期に入っている）ときは null にして二重の情報源を作らない
-   */
-  upcoming: (UpcomingSession & { link: ResolvedLink | null }) | null;
+  /** 市長交代の経緯（古い順、出典リンク解決済み） */
+  background: TimelineItem[];
+  /** 次の定例会の予告。会期が終わっていれば null */
+  upcoming: UpcomingSessionView | null;
 }
 
 /**
@@ -45,34 +47,32 @@ export interface MayorActivity {
  * （getBillsByProposer 内の getBillsLite は React cache() で重複排除される）
  */
 export async function getMayorActivity(now: Date): Promise<MayorActivity> {
-  const [allMeetings, allBills, mayorBills, currentSession] = await Promise.all(
-    [
-      getCommitteeMeetings(),
-      getBillsLite(),
-      getBillsByProposer("mayor"),
-      getCurrentDietSession(now),
-    ]
-  );
+  const [meetings, allBills, mayorBills] = await Promise.all([
+    getCommitteeMeetingListItems(),
+    getBillsLite(),
+    getBillsByProposer("mayor"),
+  ]);
 
-  const since = MAYOR_PROFILE.inaugurationDate;
-  const billsSinceInauguration = filterBillsSince(mayorBills, since);
-  const resolve = createSourceResolver({
-    meetings: allMeetings,
-    bills: allBills,
+  const resolve = createSourceResolver({ meetings, bills: allBills });
+  const withLink = (event: TimelineEvent): TimelineItem => ({
+    ...event,
+    link: resolve(event.source),
   });
+  const timingLabel = sessionTimingLabel(UPCOMING_SESSION, now);
 
   return {
-    meetingsSinceInauguration: filterMeetingsSince(allMeetings, since),
-    billsSinceInauguration,
-    timeline: ROAD_TO_INAUGURATION.map((event) => ({
-      ...event,
-      link: resolve(event.source),
-    })),
-    upcoming: shouldShowUpcomingSession(
-      billsSinceInauguration.length,
-      currentSession !== null
-    )
-      ? { ...UPCOMING_SESSION, link: resolve(UPCOMING_SESSION.source) }
+    actions: newestFirst(MAYOR_ACTIONS).map(withLink),
+    billsSinceInauguration: filterBillsSince(
+      mayorBills,
+      MAYOR_PROFILE.inaugurationDate
+    ),
+    background: ROAD_TO_INAUGURATION.map(withLink),
+    upcoming: timingLabel
+      ? {
+          ...UPCOMING_SESSION,
+          timingLabel,
+          link: resolve(UPCOMING_SESSION.source),
+        }
       : null,
   };
 }

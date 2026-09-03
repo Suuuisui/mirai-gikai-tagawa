@@ -1,3 +1,5 @@
+import { JumpNav, type JumpNavEntry } from "@/components/ui/jump-nav";
+
 /** トップページのセクションに付与するアンカーid */
 export const TOP_SECTION_IDS = {
   featured: "featured-bills",
@@ -26,7 +28,7 @@ export function SectionJumpNav({
   tagLabels,
   hasPreviousSession,
 }: SectionJumpNavProps) {
-  const entries = [
+  const entries: JumpNavEntry[] = [
     { label: "注目の議案", href: `#${TOP_SECTION_IDS.featured}` },
     ...tagLabels.map((label) => ({
       label,
@@ -38,17 +40,5 @@ export function SectionJumpNav({
     { label: "みらい議会とは", href: `#${TOP_SECTION_IDS.about}` },
   ];
 
-  return (
-    <nav aria-label="ページ内セクション" className="flex flex-wrap gap-2">
-      {entries.map((entry) => (
-        <a
-          key={entry.href}
-          href={entry.href}
-          className="rounded-lg border border-mirai-border bg-white px-3.5 py-1.5 text-[13px] font-medium text-mirai-text-secondary transition-colors hover:bg-mirai-surface-key"
-        >
-          {entry.label}
-        </a>
-      ))}
-    </nav>
-  );
+  return <JumpNav entries={entries} />;
 }

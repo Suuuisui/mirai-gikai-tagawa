@@ -72,6 +72,11 @@ export function buildCommitteeGroups(
   });
 }
 
+/** 一覧ページで委員会カードに付けるアンカーid（詳細ページの「一覧へ」リンクと共有） */
+export function committeeSectionId(committeeName: string): string {
+  return `committee-${encodeURIComponent(committeeName)}`;
+}
+
 /** 「2021年〜2026年」のような開催期間の表示文字列を作る */
 export function formatPeriodLabel(period: {
   from: string;

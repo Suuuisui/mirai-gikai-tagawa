@@ -3,8 +3,20 @@ import {
   COMMITTEE_TOPICS,
   countMeetingsByTopic,
   isCommitteeTopicId,
+  parseCommitteeTopicParam,
   resolveTopics,
 } from "./committee-topics";
+
+describe("parseCommitteeTopicParam", () => {
+  it("定義済みのidならそのまま返す", () => {
+    expect(parseCommitteeTopicParam("waste")).toBe("waste");
+  });
+
+  it("未指定・未定義のidは null", () => {
+    expect(parseCommitteeTopicParam(null)).toBeNull();
+    expect(parseCommitteeTopicParam("sports")).toBeNull();
+  });
+});
 
 describe("isCommitteeTopicId", () => {
   it("定義済みのidを受け入れる", () => {

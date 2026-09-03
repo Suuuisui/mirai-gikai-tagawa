@@ -110,6 +110,13 @@ export function isCommitteeTopicId(value: string): value is CommitteeTopicId {
   return TOPIC_MAP.has(value as CommitteeTopicId);
 }
 
+/** URLのクエリ値からトピックidを読む。未指定・未定義なら null */
+export function parseCommitteeTopicParam(
+  value: string | null
+): CommitteeTopicId | null {
+  return value !== null && isCommitteeTopicId(value) ? value : null;
+}
+
 /** id列からトピック定義を引く。未定義のidは黙って捨てる */
 export function resolveTopics(ids: readonly string[]): CommitteeTopic[] {
   const resolved: CommitteeTopic[] = [];

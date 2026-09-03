@@ -6,6 +6,9 @@
  * 新しいページを追加したらここにもルートを追加し、テストを通すこと。
  */
 
+/** 委員会記録一覧でテーマ絞り込みを載せるクエリ名（routes.committeesByTopic と CommitteeExplorer が共有） */
+export const COMMITTEE_TOPIC_PARAM = "topic";
+
 export const routes = {
   // ── 静的ルート ──────────────────────────────────────
   home: () => "/" as const,
@@ -57,6 +60,9 @@ export const routes = {
 
   // ── 委員会 ────────────────────────────────────────
   committees: () => "/committees" as const,
+  /** テーマで絞り込み済みの委員会記録一覧（CommitteeExplorer がクエリを読む） */
+  committeesByTopic: (topicId: string) =>
+    `/committees?${COMMITTEE_TOPIC_PARAM}=${encodeURIComponent(topicId)}` as const,
   committeeMeeting: (id: string) => `/committees/${id}` as const,
 
   // ── タグ ──────────────────────────────────────────

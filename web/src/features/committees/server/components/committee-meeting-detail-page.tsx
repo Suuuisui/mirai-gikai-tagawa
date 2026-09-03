@@ -1,5 +1,8 @@
 import { BookOpen, ExternalLink, FileText, Info, Youtube } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
 import { Container } from "@/components/layouts/container";
+import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { routes } from "@/lib/routes";
@@ -8,16 +11,22 @@ import { pickGlossaryTerms } from "../../shared/data/committee-glossary";
 import { getCommitteeProfile } from "../../shared/data/committee-profiles";
 import { resolveTopics } from "../../shared/data/committee-topics";
 import type { CommitteeMeeting } from "../../shared/types";
+import type { AdjacentMeetings } from "../../shared/utils/committee-list";
 import { sourceTypeLabel } from "../../shared/utils/committee-meeting-parser";
+import { NeighborNav } from "./neighbor-nav";
 
 interface CommitteeMeetingDetailPageProps {
   meeting: CommitteeMeeting;
+  /** 同じ委員会の前後の会議（無ければ両方 null） */
+  neighbors: AdjacentMeetings;
 }
 
 export function CommitteeMeetingDetailPage({
   meeting,
+  neighbors,
 }: CommitteeMeetingDetailPageProps) {
   const profile = getCommitteeProfile(meeting.committee_name);
+  const committeeLabel = profile.shortName;
   const topics = resolveTopics(meeting.topics);
   const glossary = pickGlossaryTerms([
     meeting.summary ?? "",
@@ -31,7 +40,7 @@ export function CommitteeMeetingDetailPage({
       <div className="bg-mirai-surface-key md:rounded-lg">
         <Container className="py-8">
           <p className="text-sm font-bold text-primary-accent">
-            {profile.shortName || meeting.committee_name}
+            {committeeLabel}
             <span className="ml-2 font-medium text-mirai-text-secondary">
               {formatDateWithDots(meeting.meeting_date)}
             </span>
@@ -44,13 +53,17 @@ export function CommitteeMeetingDetailPage({
             {profile.description}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
+            {/* テーマは同じテーマの記録一覧への入口にする */}
             {topics.map((topic) => (
-              <span
+              <Badge
                 key={topic.id}
-                className="rounded-md bg-white px-2.5 py-1 text-xs font-bold text-primary-accent"
+                asChild
+                className="bg-white px-2.5 py-1 font-bold hover:bg-mirai-surface-key-subtle"
               >
-                {topic.label}
-              </span>
+                <Link href={routes.committeesByTopic(topic.id) as Route}>
+                  {topic.label}の記録
+                </Link>
+              </Badge>
             ))}
             <span className="inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-1 text-xs font-medium text-mirai-text-secondary">
               {meeting.source_type === "disclosure" ? (
@@ -69,7 +82,7 @@ export function CommitteeMeetingDetailPage({
           {/* 要約（この会議で何が起きたか） */}
           {meeting.summary && (
             <section className="flex flex-col gap-4">
-              <SectionHeading>この会議で決まったこと</SectionHeading>
+              <SectionHeading>この会議で何があったか</SectionHeading>
               <p className="rounded-lg bg-mirai-surface-key-subtle p-5 text-[15px] leading-loose text-mirai-text">
                 {meeting.summary}
               </p>
@@ -189,6 +202,13 @@ export function CommitteeMeetingDetailPage({
             )}
           </section>
 
+          {/* 同じ委員会の前後の会議（読み終えた人が続きをたどれるように） */}
+          <NeighborNav
+            committeeLabel={committeeLabel}
+            committeeName={meeting.committee_name}
+            neighbors={neighbors}
+          />
+
           {/* 出典・注意書き */}
           <div className="flex gap-2 rounded-lg bg-mirai-surface px-4 py-3.5 text-xs leading-relaxed text-mirai-text-note">
             <Info aria-hidden className="mt-0.5 size-4 shrink-0" />
@@ -214,7 +234,7 @@ export function CommitteeMeetingDetailPage({
             { label: "TOP", href: routes.home() },
             { label: "委員会の記録", href: routes.committees() },
             {
-              label: `${profile.shortName || meeting.committee_name}（${formatDateWithDots(meeting.meeting_date)}）`,
+              label: `${committeeLabel}（${formatDateWithDots(meeting.meeting_date)}）`,
             },
           ]}
         />
