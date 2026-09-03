@@ -10,7 +10,7 @@
  *   https://www.joho.tagawa.fukuoka.jp/kiji0033669/index.html
  * - 令和8年7月12日執行 田川市長選挙及び田川市議会議員補欠選挙「投・開票速報」:
  *   https://www.joho.tagawa.fukuoka.jp/kiji00311845/index.html
- * - 就任までの経緯: 当サイトの委員会記録（committee_meetings）の見出し
+ * - 就任後の動き・就任までの経緯: 当サイトの委員会記録（committee_meetings）
  */
 
 export interface MayorProfile {
@@ -19,7 +19,7 @@ export interface MayorProfile {
   reading: string;
   /** YYYY-MM-DD */
   birthDate: string;
-  /** 就任日（YYYY-MM-DD）。この日以降の記録・議案を「新市長の動き」として扱う */
+  /** 就任日（YYYY-MM-DD）。この日以降の議案を「新市長の提出議案」として扱う */
   inaugurationDate: string;
   term: string;
   /** 公式プロフィールの記載順 */
@@ -46,18 +46,6 @@ export const MAYOR_PROFILE: MayorProfile = {
     "https://www.joho.tagawa.fukuoka.jp/kiji0033669/index.html",
   profileAsOf: "2026年7月13日",
 };
-
-/**
- * 会議の要点から「現市長に関わるもの」を拾うための語。
- * 要点（committee_meetings.key_points）は素の文字列配列で主語の構造を
- * 持たないため、取り込み側で構造を持たせるまでの暫定として表示層で選別する。
- * exclude は前市長についてだけ述べた要点を落とすためのもの。
- * include は「副市長」にも当たるが、副市長の選任は新市長の動きなので意図して含める
- */
-export const MAYOR_POINT_PATTERNS = {
-  include: /浦野|市長/,
-  exclude: /前市長|元市長|村上/,
-} as const;
 
 export interface ElectionCandidate {
   /** 公式速報の表記（ひらがな表記の候補者はそのまま） */
@@ -105,14 +93,16 @@ export const COUNCIL_BY_ELECTION: ByElectionResult = {
   ],
 };
 
-/** タイムラインの出典。会議・議案は名前で持ち、IDはローダーが一覧から引く */
+/** 出来事の出典。会議・議案は名前で持ち、IDはローダーが一覧から引く */
 export type TimelineSource =
   | { kind: "meeting"; committeeName: string; meetingDate: string }
   | { kind: "bill"; billName: string }
   | { kind: "official"; url: string; label: string };
 
 export interface TimelineEvent {
+  /** YYYY-MM-DD */
   date: string;
+  /** 何が起きたかが一目で分かる見出し（30字以内） */
   title: string;
   /** 出典の見出し・記載の範囲で書く（推測を足さない） */
   description: string;
@@ -120,7 +110,88 @@ export interface TimelineEvent {
 }
 
 /**
- * 前市長の問題が表面化してから新市長就任までの経緯。
+ * 就任後に市長と市役所（執行部）が議会でしたこと【古い順・手で追記する】
+ *
+ * 委員会記録を取り込んだら、市長に関わる事実をここに追記する。
+ * 要点の文字列から「市長」を含む文を機械的に拾う方式は、前市長を指す文まで
+ * 新市長の動きとして出してしまったため、人が読んで書く。
+ * title は「何をしたか」の形、description は出典の記録に書かれた範囲に留める
+ */
+export const MAYOR_ACTIONS: readonly TimelineEvent[] = [
+  {
+    date: "2026-07-13",
+    title: "田川市長に就任",
+    description:
+      "前市長の退職に伴う7月12日の市長選で初当選し、翌13日に就任しました（1期目）。",
+    source: {
+      kind: "official",
+      url: MAYOR_PROFILE.officialProfileUrl,
+      label: "田川市 市長プロフィール",
+    },
+  },
+  {
+    date: "2026-08-04",
+    title: "総務文教委員会で就任のあいさつ",
+    description:
+      "委員会の冒頭で就任のあいさつを行いました。同じ日、補欠選挙で当選した世羅翔二郎議員も委員として紹介されています。",
+    source: {
+      kind: "meeting",
+      committeeName: "総務文教委員会",
+      meetingDate: "2026-08-04",
+    },
+  },
+  {
+    date: "2026-08-04",
+    title: "ハラスメント防止条例をつくる方針を市が報告",
+    description:
+      "市長・副市長・教育長・議員・職員を対象にハラスメントを禁止し、外部の相談窓口を設ける条例です。早ければ9月議会に提案します。前市長の給料5割減額の条例は、退職に伴い廃止する方針も示されました。",
+    source: {
+      kind: "meeting",
+      committeeName: "総務文教委員会",
+      meetingDate: "2026-08-04",
+    },
+  },
+  {
+    date: "2026-08-10",
+    title: "8月臨時会に議案2件を提出",
+    description:
+      "前市長の給料5割減額の期間を退職日の5月31日までに短縮する条例改正と、新しい副市長の選任に議会の同意を求める議案です。本会議の冒頭では就任のあいさつを行いました。副市長選任の採決方法は、議会運営委員会で意見が分かれ、委員長裁定で無記名投票に決まりました。",
+    source: {
+      kind: "meeting",
+      committeeName: "議会運営委員会",
+      meetingDate: "2026-08-10",
+    },
+  },
+  {
+    date: "2026-08-17",
+    title: "東高校跡地の請願、新市長の方針を聞くため継続審査に",
+    description:
+      "建設経済委員会で、田川東高校跡地の活用の早期実現を求める請願が、新市長の方針を聞いてから判断するとして継続審査になりました。",
+    source: {
+      kind: "meeting",
+      committeeName: "建設経済委員会",
+      meetingDate: "2026-08-17",
+    },
+  },
+  {
+    date: "2026-08-19",
+    title: "9月定例会に20議案を提出予定と説明",
+    description:
+      "9月7日開会の定例会に、令和7年度決算の認定6件、補正予算5件、条例3件などの計20議案と報告4件を出す予定です。令和7年度の一般会計決算は実質収支7億9445万円の黒字でした。",
+    source: {
+      kind: "meeting",
+      committeeName: "議会運営委員会",
+      meetingDate: "2026-08-19",
+    },
+  },
+];
+
+/** 市長交代の経緯セクションの導入文。タイムラインを読む前の3行まとめ */
+export const ROAD_TO_INAUGURATION_SUMMARY =
+  "前市長の公務出張中の不倫やハラスメント問題を受け、議会は給料の5割減額や第三者調査委員会の設置で対応し、不信任決議案は2度とも否決されました。第三者委員会の報告後、前市長は2026年5月31日に退職し、7月12日の市長選で浦野氏が当選しました。";
+
+/**
+ * 前市長の問題が表面化してから新市長就任までの経緯【古い順】。
  * title/description は各出典（委員会記録の見出し等）の範囲内に留める
  */
 export const ROAD_TO_INAUGURATION: readonly TimelineEvent[] = [
@@ -139,7 +210,7 @@ export const ROAD_TO_INAUGURATION: readonly TimelineEvent[] = [
     date: "2025-03-19",
     title: "市長の給料5割減額条例が可決",
     description:
-      "総務文教委員会で減額条例を可決。「問題の幕引きは許さない」との討論もありました。同日の議会運営委員会では不信任決議・百条委員会設置・辞職勧告の扱いを協議しています。",
+      "総務文教委員会で減額条例を可決。「問題の幕引きは許さない」との討論もありました。同じ日に出された最初の市長不信任決議案（議案第38号）は否決されています。",
     source: {
       kind: "meeting",
       committeeName: "総務文教委員会",
@@ -148,13 +219,12 @@ export const ROAD_TO_INAUGURATION: readonly TimelineEvent[] = [
   },
   {
     date: "2025-04-30",
-    title: "市長不信任決議案を臨時会で採決",
+    title: "2度目の市長不信任決議案も臨時会で否決",
     description:
-      "市民からは起立採決の要望が出ましたが、採決方法は無記名投票に決まりました。",
+      "市民からは起立採決の要望が出ましたが、採決方法は無記名投票に決まり、決議案（議案第41号）は否決されました。",
     source: {
-      kind: "meeting",
-      committeeName: "議会運営委員会",
-      meetingDate: "2025-04-30",
+      kind: "bill",
+      billName: "議案第41号　村上卓哉田川市長に対する不信任決議について",
     },
   },
   {
@@ -213,7 +283,7 @@ export const ROAD_TO_INAUGURATION: readonly TimelineEvent[] = [
   {
     date: "2026-07-13",
     title: "浦野仁市長が就任（1期目）",
-    description: "8月4日の総務文教委員会で就任の挨拶を行いました。",
+    description: "8月4日の総務文教委員会で就任のあいさつを行いました。",
     source: {
       kind: "official",
       url: MAYOR_PROFILE.officialProfileUrl,
@@ -224,23 +294,36 @@ export const ROAD_TO_INAUGURATION: readonly TimelineEvent[] = [
 
 export interface UpcomingSession {
   name: string;
+  /** YYYY-MM-DD */
   startDate: string;
+  /** YYYY-MM-DD */
   endDate: string;
+  /** 「就任後はじめての定例会」のような、注目する理由の一言 */
+  note: string;
   /** 議会運営委員会で説明された提出予定の議案数（予報値。DBには無い） */
   billCount: number;
+  /** 見どころ（出典の範囲内で3つまで） */
+  highlights: readonly string[];
   source: TimelineSource;
 }
 
 /**
- * 就任後に控える定例会の予告。8月19日の議会運営委員会で説明された内容に基づく。
- * 会期がDBに登録されて会期中になるか、就任後の議案が公開されたら表示しない
- * （判定はローダー側）。会期が終わったらこの定数ごと消す
+ * 就任後に控える定例会の予告。8月19日の議会運営委員会で説明された内容に基づく
+ * （ハラスメント防止条例の見どころだけは8月4日の総務文教委員会）。
+ * 会期が終わると表示されなくなる（判定はローダー側）ので、終わったら
+ * 次の定例会の内容に書き換えるか、この定数ごと消す
  */
 export const UPCOMING_SESSION: UpcomingSession = {
   name: "令和8年第6回9月定例会",
   startDate: "2026-09-07",
   endDate: "2026-10-08",
+  note: "就任後はじめての定例会",
   billCount: 20,
+  highlights: [
+    "令和7年度決算の認定6件（一般会計は実質収支7億9445万円の黒字）",
+    "補正予算5件。老朽化したコミュニティバスを更新するノンステップバスの購入費など",
+    "ハラスメント防止条例（市長・議員も対象）は早ければこの定例会に提案予定",
+  ],
   source: {
     kind: "meeting",
     committeeName: "議会運営委員会",

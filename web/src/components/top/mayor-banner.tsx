@@ -1,9 +1,13 @@
 import { ChevronRight, UserCheck } from "lucide-react";
 import Link from "next/link";
-import { MAYOR_PROFILE } from "@/features/mayor/shared/data/mayor-profile";
+import {
+  MAYOR_ACTIONS,
+  MAYOR_PROFILE,
+} from "@/features/mayor/shared/data/mayor-profile";
 import {
   compactName,
   daysSinceInauguration,
+  newestFirst,
 } from "@/features/mayor/shared/utils/mayor-activity";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
@@ -15,10 +19,12 @@ interface MayorBannerProps {
 
 /**
  * トップページから新市長の特設ページへ誘導するバナー。
- * 市長交代で関心が高いため、会期バナーの直下に置く
+ * 市長交代で関心が高いため、会期バナーの直下に置き、最新の動きを一行で見せる
  */
 export function MayorBanner({ now }: MayorBannerProps) {
   const days = daysSinceInauguration(MAYOR_PROFILE.inaugurationDate, now);
+  // MAYOR_ACTIONS は就任の項目を必ず含む（mayor-profile.test.ts で担保）
+  const latest = newestFirst(MAYOR_ACTIONS)[0];
 
   return (
     <Link
@@ -42,8 +48,7 @@ export function MayorBanner({ now }: MayorBannerProps) {
             {compactName(MAYOR_PROFILE.name)}市長は議会で何をしているか
           </p>
           <p className="text-xs leading-relaxed text-mirai-text-secondary">
-            {formatDateWithDots(MAYOR_PROFILE.inaugurationDate)}
-            就任。就任後の委員会の記録・提出議案・就任までの経緯を1ページで
+            最新: {latest.title}（{formatDateWithDots(latest.date)}）
           </p>
         </div>
         <ChevronRight

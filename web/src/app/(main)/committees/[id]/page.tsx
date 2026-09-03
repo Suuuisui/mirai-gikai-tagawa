@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { truncateForSnippet } from "@/features/bills/shared/utils/bill-seo";
 import { CommitteeMeetingDetailPage } from "@/features/committees/server/components/committee-meeting-detail-page";
 import { getCommitteeMeetingById } from "@/features/committees/server/loaders/get-committee-meeting-by-id";
+import { getCommitteeMeetingWithNeighbors } from "@/features/committees/server/loaders/get-committee-meeting-with-neighbors";
 import { routes } from "@/lib/routes";
 
 interface CommitteeMeetingPageProps {
@@ -59,11 +60,16 @@ export default async function CommitteeMeetingPage({
   params,
 }: CommitteeMeetingPageProps) {
   const { id } = await params;
-  const meeting = await getCommitteeMeetingById(id);
+  const result = await getCommitteeMeetingWithNeighbors(id);
 
-  if (!meeting) {
+  if (!result) {
     notFound();
   }
 
-  return <CommitteeMeetingDetailPage meeting={meeting} />;
+  return (
+    <CommitteeMeetingDetailPage
+      meeting={result.meeting}
+      neighbors={result.neighbors}
+    />
+  );
 }

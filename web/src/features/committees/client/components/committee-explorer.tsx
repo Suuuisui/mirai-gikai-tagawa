@@ -1,16 +1,19 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { COMMITTEE_TOPIC_PARAM, routes } from "@/lib/routes";
 import {
   COMMITTEE_KIND_LABELS,
   type CommitteeKind,
 } from "../../shared/data/committee-profiles";
 import {
-  countMeetingsByTopic,
   type CommitteeTopicId,
+  countMeetingsByTopic,
+  parseCommitteeTopicParam,
 } from "../../shared/data/committee-topics";
 import type { CommitteeMeetingListItem } from "../../shared/types";
 import { buildCommitteeGroups } from "../../shared/utils/committee-groups";
@@ -40,14 +43,48 @@ const KIND_DESCRIPTIONS: Record<CommitteeKind, string> = {
 const RECENT_COUNT = 6;
 
 /**
+ * URLのクエリと選択中のテーマを同期する。
+ * useSearchParams は静的ページでは Suspense 境界までをCSRに落とすため、
+ * 何も描画しないこの部品に閉じ込め、一覧本体は静的HTMLのまま保つ。
+ * ?topic= 付きで開いたときの初期値に加え、ヘッダーから /committees へ戻る
+ * ようなソフトナビゲーションにも追従する
+ */
+function TopicUrlSync({
+  onChange,
+}: {
+  onChange: (topic: CommitteeTopicId | null) => void;
+}) {
+  const topic = parseCommitteeTopicParam(
+    useSearchParams().get(COMMITTEE_TOPIC_PARAM)
+  );
+  useEffect(() => {
+    onChange(topic);
+  }, [topic, onChange]);
+  return null;
+}
+
+/**
  * 委員会記録の入口。
  *
  * 委員会名だけでは何の話か分からないため、まず暮らしのテーマ（お金・子育て・
  * ごみ…）で横断して選べるようにし、テーマ未選択のときは直近の記録と
- * 委員会別の一覧を見せる
+ * 委員会別の一覧を見せる。
+ *
+ * 選択中のテーマはURLのクエリに写し（TopicUrlSync）、詳細ページのテーマや
+ * 外部から絞り込み済みの一覧へ直接来られるようにする
  */
 export function CommitteeExplorer({ meetings }: CommitteeExplorerProps) {
   const [activeTopic, setActiveTopic] = useState<CommitteeTopicId | null>(null);
+
+  const selectTopic = (topic: CommitteeTopicId | null) => {
+    setActiveTopic(topic);
+    // 履歴は増やさない。native の replaceState でも useSearchParams は追従する
+    window.history.replaceState(
+      null,
+      "",
+      topic ? routes.committeesByTopic(topic) : routes.committees()
+    );
+  };
 
   const topicCounts = useMemo(() => countMeetingsByTopic(meetings), [meetings]);
   const sorted = useMemo(() => sortByDateDesc(meetings), [meetings]);
@@ -63,6 +100,10 @@ export function CommitteeExplorer({ meetings }: CommitteeExplorerProps) {
 
   return (
     <div className="flex flex-col gap-10">
+      <Suspense fallback={null}>
+        <TopicUrlSync onChange={setActiveTopic} />
+      </Suspense>
+
       {/* テーマで探す */}
       <section className="flex flex-col gap-3">
         <SectionHeading>気になるテーマから探す</SectionHeading>
@@ -77,7 +118,7 @@ export function CommitteeExplorer({ meetings }: CommitteeExplorerProps) {
                 key={topic.id}
                 size="sm"
                 variant={isActive ? "default" : "outline"}
-                onClick={() => setActiveTopic(isActive ? null : topic.id)}
+                onClick={() => selectTopic(isActive ? null : topic.id)}
                 aria-pressed={isActive}
                 className={
                   isActive
@@ -108,7 +149,7 @@ export function CommitteeExplorer({ meetings }: CommitteeExplorerProps) {
             </SectionHeading>
             <Button
               variant="outline"
-              onClick={() => setActiveTopic(null)}
+              onClick={() => selectTopic(null)}
               className="h-9 gap-1 text-xs font-bold"
             >
               <X aria-hidden className="size-3.5" />

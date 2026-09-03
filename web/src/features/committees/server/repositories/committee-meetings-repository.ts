@@ -2,6 +2,7 @@ import "server-only";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type {
   CommitteeMeeting,
+  CommitteeMeetingListItem,
   CommitteeMeetingSummary,
 } from "../../shared/types";
 import { toStringArray } from "../../shared/utils/committee-meeting-parser";
@@ -68,6 +69,39 @@ export async function findAllCommitteeMeetings(): Promise<
     );
     return summary;
   });
+}
+
+const LIST_COLUMNS =
+  "id, committee_name, meeting_date, headline, topics, source_type";
+
+/**
+ * 一覧の行・前後ナビ・出典リンク解決に必要な項目だけを開催日の降順で取得。
+ * 要約や要点を含めないので、全件でも数十KBに収まる
+ */
+export async function findAllCommitteeMeetingListItems(): Promise<
+  CommitteeMeetingListItem[]
+> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("committee_meetings")
+    .select(LIST_COLUMNS)
+    .order("meeting_date", { ascending: false });
+
+  if (error) {
+    throw new Error(
+      `Failed to fetch committee meeting list items: ${error.message}`
+    );
+  }
+
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    committee_name: row.committee_name,
+    meeting_date: row.meeting_date,
+    headline: row.headline,
+    topics: toStringArray(row.topics),
+    source_type: row.source_type === "youtube" ? "youtube" : "disclosure",
+  }));
 }
 
 /** IDで会議録を1件取得（本文あり） */

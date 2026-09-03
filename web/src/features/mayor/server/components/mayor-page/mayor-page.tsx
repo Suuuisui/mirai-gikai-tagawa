@@ -7,16 +7,16 @@ import { routes } from "@/lib/routes";
 import { MAYOR_PROFILE } from "../../../shared/data/mayor-profile";
 import { compactName } from "../../../shared/utils/mayor-activity";
 import type { MayorActivity } from "../../loaders/get-mayor-activity";
-import { ActivitySection } from "./activity-section";
-import { BillsSection } from "./bills-section";
+import { ActionsSection } from "./actions-section";
+import { BackgroundSection } from "./background-section";
 import { CareerSection } from "./career-section";
 import { ElectionSection } from "./election-section";
 import { HeroSection } from "./hero-section";
-import { TimelineSection } from "./timeline-section";
+import { UpcomingSection } from "./upcoming-section";
 
 interface MayorPageProps {
   activity: MayorActivity;
-  /** JST基準の現在時刻（就任日数・年齢の計算に使う） */
+  /** JST基準の現在時刻（就任日数・年齢・会期までの日数の計算に使う） */
   now: Date;
 }
 
@@ -41,12 +41,12 @@ export function MayorPage({ activity, now }: MayorPageProps) {
 
       <Container className="py-8">
         <div className="flex flex-col gap-12">
-          <ActivitySection meetings={activity.meetingsSinceInauguration} />
-          <BillsSection
+          <ActionsSection actions={activity.actions} />
+          <UpcomingSection
             bills={activity.billsSinceInauguration}
             upcoming={activity.upcoming}
           />
-          <TimelineSection timeline={activity.timeline} />
+          <BackgroundSection background={activity.background} />
           <ElectionSection />
           <CareerSection />
 

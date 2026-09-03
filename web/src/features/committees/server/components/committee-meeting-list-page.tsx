@@ -3,11 +3,10 @@ import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { routes } from "@/lib/routes";
 import { CommitteeExplorer } from "../../client/components/committee-explorer";
-import type { CommitteeMeetingSummary } from "../../shared/types";
-import { toListItems } from "../../shared/utils/committee-list";
+import type { CommitteeMeetingListItem } from "../../shared/types";
 
 interface CommitteeMeetingListPageProps {
-  meetings: CommitteeMeetingSummary[];
+  meetings: CommitteeMeetingListItem[];
 }
 
 export function CommitteeMeetingListPage({
@@ -33,12 +32,12 @@ export function CommitteeMeetingListPage({
               {meetings.length}回の会議
             </span>
             <span className="inline-flex items-center gap-1 rounded-md bg-white px-3 py-1.5 font-medium text-mirai-text-secondary">
-              <FileText aria-hidden className="size-3.5" />
-              開示文書 {disclosureCount}件
+              <Youtube aria-hidden className="size-3.5" />
+              公式YouTube中継から {youtubeCount}回
             </span>
             <span className="inline-flex items-center gap-1 rounded-md bg-white px-3 py-1.5 font-medium text-mirai-text-secondary">
-              <Youtube aria-hidden className="size-3.5" />
-              中継字幕 {youtubeCount}件
+              <FileText aria-hidden className="size-3.5" />
+              開示請求で入手した文書から {disclosureCount}回
             </span>
           </div>
         </Container>
@@ -51,7 +50,7 @@ export function CommitteeMeetingListPage({
           </p>
         ) : (
           <div className="flex flex-col gap-10">
-            <CommitteeExplorer meetings={toListItems(meetings)} />
+            <CommitteeExplorer meetings={meetings} />
 
             {/* 出典・注意書き */}
             <div className="flex gap-2 rounded-lg bg-mirai-surface px-4 py-3.5 text-xs leading-relaxed text-mirai-text-note">
