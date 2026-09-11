@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
   COUNCIL_BY_ELECTION,
+  FORMER_MAYOR_NAME,
   MAYOR_ACTIONS,
   MAYOR_PROFILE,
   MAYORAL_ELECTION,
   ROAD_TO_INAUGURATION,
+  ROAD_TO_INAUGURATION_SUMMARY,
   UPCOMING_SESSION,
 } from "./mayor-profile";
 
@@ -32,6 +34,24 @@ describe("ROAD_TO_INAUGURATION", () => {
     const dates = ROAD_TO_INAUGURATION.map((event) => event.date);
     expect(isSortedAscending(dates)).toBe(true);
     expect(dates.at(-1)).toBe(MAYOR_PROFILE.inaugurationDate);
+  });
+
+  it("見出しは一覧で折り返しすぎない長さに収める", () => {
+    for (const event of ROAD_TO_INAUGURATION) {
+      expect(event.title.length).toBeLessThanOrEqual(30);
+    }
+  });
+
+  // 浦野市長のページに載るため、「市長」とだけ書くと本人の話に読めてしまう
+  it("市長選より前の出来事は前市長の氏名を明記する", () => {
+    const beforeElection = ROAD_TO_INAUGURATION.filter(
+      (event) => event.date < MAYORAL_ELECTION.date
+    );
+    expect(beforeElection.length).toBeGreaterThan(0);
+    for (const event of beforeElection) {
+      expect(`${event.title}${event.description}`).toContain(FORMER_MAYOR_NAME);
+    }
+    expect(ROAD_TO_INAUGURATION_SUMMARY).toContain(FORMER_MAYOR_NAME);
   });
 });
 
