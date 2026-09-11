@@ -29,6 +29,18 @@ export interface MayorProfile {
   profileAsOf: string;
 }
 
+/**
+ * 前市長の氏名（文中で使うため分かち書きしない表示用の文字列）。
+ * このページは浦野市長のページなので、退職までの経緯や不信任決議など
+ * 前市長に関する記述では必ずこの氏名を明記し、「市長」とだけ書かない
+ * （mayor-profile.test.ts が機械的に確認する）。
+ * ROAD_TO_INAUGURATION は村上氏個人の経緯なので、次に市長が代わったときは
+ * この定数を差し替えるのではなく経緯そのものを書き直す。
+ * 議案名で引く billName（"議案第41号　村上卓哉田川市長に対する…"）は
+ * DBの議案名と一致させる必要があるため、この定数を使わず文字列のまま置く
+ */
+export const FORMER_MAYOR_NAME = "村上卓哉";
+
 export const MAYOR_PROFILE: MayorProfile = {
   name: "浦野 仁",
   reading: "うらの じん",
@@ -67,7 +79,7 @@ export interface ElectionResult {
 /** 令和8年7月12日執行 田川市長選挙 */
 export const MAYORAL_ELECTION: ElectionResult = {
   date: "2026-07-12",
-  reason: "前市長の退職に伴う選挙",
+  reason: `前市長・${FORMER_MAYOR_NAME}氏の退職に伴う選挙`,
   candidates: [
     { name: "浦野 仁", votes: 8345, status: "新", elected: true },
     { name: "ふたば 公人", votes: 4637, status: "元", elected: false },
@@ -121,8 +133,7 @@ export const MAYOR_ACTIONS: readonly TimelineEvent[] = [
   {
     date: "2026-07-13",
     title: "田川市長に就任",
-    description:
-      "前市長の退職に伴う7月12日の市長選で初当選し、翌13日に就任しました（1期目）。",
+    description: `前市長・${FORMER_MAYOR_NAME}氏の退職に伴う7月12日の市長選で初当選し、翌13日に就任しました（1期目）。`,
     source: {
       kind: "official",
       url: MAYOR_PROFILE.officialProfileUrl,
@@ -143,8 +154,7 @@ export const MAYOR_ACTIONS: readonly TimelineEvent[] = [
   {
     date: "2026-08-04",
     title: "ハラスメント防止条例をつくる方針を市が報告",
-    description:
-      "市長・副市長・教育長・議員・職員を対象にハラスメントを禁止し、外部の相談窓口を設ける条例です。早ければ9月議会に提案します。前市長の給料5割減額の条例は、退職に伴い廃止する方針も示されました。",
+    description: `市長・副市長・教育長・議員・職員を対象にハラスメントを禁止し、外部の相談窓口を設ける条例です。早ければ9月議会に提案します。前市長・${FORMER_MAYOR_NAME}氏の給料5割減額の条例は、退職に伴い廃止する方針も示されました。`,
     source: {
       kind: "meeting",
       committeeName: "総務文教委員会",
@@ -154,8 +164,7 @@ export const MAYOR_ACTIONS: readonly TimelineEvent[] = [
   {
     date: "2026-08-10",
     title: "8月臨時会に議案2件を提出",
-    description:
-      "前市長の給料5割減額の期間を退職日の5月31日までに短縮する条例改正と、新しい副市長の選任に議会の同意を求める議案です。本会議の冒頭では就任のあいさつを行いました。副市長選任の採決方法は、議会運営委員会で意見が分かれ、委員長裁定で無記名投票に決まりました。",
+    description: `前市長・${FORMER_MAYOR_NAME}氏の給料5割減額の期間を退職日の5月31日までに短縮する条例改正と、新しい副市長の選任に議会の同意を求める議案です。本会議の冒頭では就任のあいさつを行いました。副市長選任の採決方法は、議会運営委員会で意見が分かれ、委員長裁定で無記名投票に決まりました。`,
     source: {
       kind: "meeting",
       committeeName: "議会運営委員会",
@@ -187,8 +196,7 @@ export const MAYOR_ACTIONS: readonly TimelineEvent[] = [
 ];
 
 /** 市長交代の経緯セクションの導入文。タイムラインを読む前の3行まとめ */
-export const ROAD_TO_INAUGURATION_SUMMARY =
-  "前市長の公務出張中の不倫やハラスメント問題を受け、議会は給料の5割減額や第三者調査委員会の設置で対応し、不信任決議案は2度とも否決されました。第三者委員会の報告後、前市長は2026年5月31日に退職し、7月12日の市長選で浦野氏が当選しました。";
+export const ROAD_TO_INAUGURATION_SUMMARY = `前市長・${FORMER_MAYOR_NAME}氏が公務出張中の不倫を認め、ハラスメント問題も指摘されたことを受け、議会は給料の5割減額や第三者調査委員会の設置で対応し、村上氏への不信任決議案は2度とも否決されました。第三者委員会の報告後、村上氏は2026年5月31日に退職し、7月12日の市長選で浦野氏が当選しました。`;
 
 /**
  * 前市長の問題が表面化してから新市長就任までの経緯【古い順】。
@@ -197,9 +205,8 @@ export const ROAD_TO_INAUGURATION_SUMMARY =
 export const ROAD_TO_INAUGURATION: readonly TimelineEvent[] = [
   {
     date: "2025-02-19",
-    title: "前市長の公務出張問題が表面化",
-    description:
-      "全員協議会で市長が公務出張中の不倫を認め、辞職は否定したうえで報酬の30%削減を表明しました。",
+    title: `${FORMER_MAYOR_NAME}市長の公務出張問題が表面化`,
+    description: `全員協議会で${FORMER_MAYOR_NAME}市長が公務出張中の不倫を認め、辞職は否定したうえで報酬の30%削減を表明しました。`,
     source: {
       kind: "meeting",
       committeeName: "全員協議会",
@@ -208,9 +215,8 @@ export const ROAD_TO_INAUGURATION: readonly TimelineEvent[] = [
   },
   {
     date: "2025-03-19",
-    title: "市長の給料5割減額条例が可決",
-    description:
-      "総務文教委員会で減額条例を可決。「問題の幕引きは許さない」との討論もありました。同じ日に出された最初の市長不信任決議案（議案第38号）は否決されています。",
+    title: `${FORMER_MAYOR_NAME}市長の給料5割減額条例が可決`,
+    description: `総務文教委員会で減額条例を可決。「問題の幕引きは許さない」との討論もありました。同じ日に出された${FORMER_MAYOR_NAME}市長への最初の不信任決議案（議案第38号）は否決されています。`,
     source: {
       kind: "meeting",
       committeeName: "総務文教委員会",
@@ -219,17 +225,18 @@ export const ROAD_TO_INAUGURATION: readonly TimelineEvent[] = [
   },
   {
     date: "2025-04-30",
-    title: "2度目の市長不信任決議案も臨時会で否決",
+    title: `${FORMER_MAYOR_NAME}市長への2度目の不信任決議案も否決`,
     description:
-      "市民からは起立採決の要望が出ましたが、採決方法は無記名投票に決まり、決議案（議案第41号）は否決されました。",
+      "臨時会で採決。市民からは起立採決の要望が出ましたが、採決方法は無記名投票に決まり、決議案（議案第41号）は否決されました。",
     source: {
       kind: "bill",
+      // DBの議案名と一致させるため表記を変えない（FORMER_MAYOR_NAME は使わない）
       billName: "議案第41号　村上卓哉田川市長に対する不信任決議について",
     },
   },
   {
     date: "2025-07-24",
-    title: "ハラスメントを調べる第三者調査委員会を設置",
+    title: `${FORMER_MAYOR_NAME}市長のハラスメント問題を調べる第三者委員会を設置`,
     description: "設置経費988万円を含む議案を総務文教委員会で可決しました。",
     source: {
       kind: "meeting",
@@ -239,9 +246,8 @@ export const ROAD_TO_INAUGURATION: readonly TimelineEvent[] = [
   },
   {
     date: "2026-05-19",
-    title: "第三者委員会の調査結果に市長が陳謝",
-    description:
-      "総務文教委員会で調査結果が報告され、市長が陳謝。質疑への回答は留保されました。",
+    title: `第三者委員会の調査結果に${FORMER_MAYOR_NAME}市長が陳謝`,
+    description: `総務文教委員会で調査結果が報告され、${FORMER_MAYOR_NAME}市長が陳謝。質疑への回答は留保されました。`,
     source: {
       kind: "meeting",
       committeeName: "総務文教委員会",
@@ -250,7 +256,7 @@ export const ROAD_TO_INAUGURATION: readonly TimelineEvent[] = [
   },
   {
     date: "2026-05-25",
-    title: "市長が5月31日付の退職を申し出",
+    title: `${FORMER_MAYOR_NAME}市長が5月31日付の退職を申し出`,
     description:
       "議会運営委員会で退職の申し出が報告され、副市長が陳謝しました。",
     source: {
@@ -261,9 +267,8 @@ export const ROAD_TO_INAUGURATION: readonly TimelineEvent[] = [
   },
   {
     date: "2026-05-29",
-    title: "臨時会が退職に同意、5月31日に退職",
-    description:
-      "「市長の退職の期日に関する同意について」が可決され、村上卓哉市長は5月31日付で退職しました。",
+    title: `臨時会が${FORMER_MAYOR_NAME}市長の退職に同意、5月31日に退職`,
+    description: `「市長の退職の期日に関する同意について」が可決され、${FORMER_MAYOR_NAME}市長は5月31日付で退職しました。`,
     source: {
       kind: "bill",
       billName: "市長の退職の期日に関する同意について",

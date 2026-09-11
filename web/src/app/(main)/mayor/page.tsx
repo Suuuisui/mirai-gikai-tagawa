@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { MayorPage } from "@/features/mayor/server/components/mayor-page/mayor-page";
 import { getMayorActivity } from "@/features/mayor/server/loaders/get-mayor-activity";
-import { MAYOR_PROFILE } from "@/features/mayor/shared/data/mayor-profile";
+import {
+  FORMER_MAYOR_NAME,
+  MAYOR_PROFILE,
+} from "@/features/mayor/shared/data/mayor-profile";
 import { compactName } from "@/features/mayor/shared/utils/mayor-activity";
 import { routes } from "@/lib/routes";
 import { formatDate, getJapanTime } from "@/lib/utils/date";
@@ -12,7 +15,7 @@ export const revalidate = 600;
 
 const MAYOR_NAME = compactName(MAYOR_PROFILE.name);
 const TITLE = `${MAYOR_NAME} 田川市長の動き｜就任後の議会・提出議案・就任までの経緯`;
-const DESCRIPTION = `${formatDate(MAYOR_PROFILE.inaugurationDate)}に就任した${MAYOR_NAME} 田川市長の、就任後の議会での動き・市長提出議案・前市長の退職から市長選までの経緯を、委員会の記録と公式データからまとめています。`;
+const DESCRIPTION = `${formatDate(MAYOR_PROFILE.inaugurationDate)}に就任した${MAYOR_NAME} 田川市長の、就任後の議会での動き・市長提出議案・前市長（${FORMER_MAYOR_NAME}氏）の退職から市長選までの経緯を、委員会の記録と公式データからまとめています。`;
 
 export const metadata: Metadata = {
   title: { absolute: `${TITLE}｜みらい議会＠田川市` },
