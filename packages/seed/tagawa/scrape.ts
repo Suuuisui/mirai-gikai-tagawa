@@ -23,7 +23,14 @@
 
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import path from "node:path";
-import type { BillSource, Proposer, SessionSource } from "./source-data";
+import { carryOverMissingSessions } from "./session-data-utils";
+import {
+  SESSIONS_JSON_PATH,
+  loadTagawaSessions,
+  type BillSource,
+  type Proposer,
+  type SessionSource,
+} from "./source-data";
 import {
   CACHE_DIR,
   ENTITIES,
@@ -34,7 +41,7 @@ import {
 } from "./http-utils";
 
 const LIST_URL = "https://www.joho.tagawa.fukuoka.jp/list00711.html";
-const OUT_PATH = path.join(import.meta.dirname, "data/sessions.json");
+const OUT_PATH = SESSIONS_JSON_PATH;
 
 /**
  * タグを除去したテキストと、テキスト各文字の元HTMLオフセット対応表を作る。
@@ -636,7 +643,7 @@ async function main() {
   }
 
   console.log(`対象ページ: ${pageUrls.size}件`);
-  const allSessions: SessionSource[] = [];
+  let allSessions: SessionSource[] = [];
   for (const [kijiId, url] of pageUrls) {
     const html = await fetchWithCache(url, `${kijiId}.html`);
     const { sessions } = parsePage(html, url);
@@ -654,6 +661,20 @@ async function main() {
     for (const s of allSessions) {
       await supplementFromMinutes(s);
     }
+  }
+
+  // 公式サイトの一覧ページには直近の会期しか載らず、古い会期（令和元年12月定例会
+  // など）はページの掲載期間が過ぎると一覧から外れる。既に取り込み済みの会期が
+  // 今回の一覧に無い場合は、前回の出力（コミット済みの sessions.json）を残す
+  if (existsSync(OUT_PATH)) {
+    const { sessions, carried } = carryOverMissingSessions(
+      allSessions,
+      loadTagawaSessions()
+    );
+    for (const s of carried) {
+      console.log(`  ${s.name}: 今回の一覧に無いため前回の出力を引き継ぎ`);
+    }
+    allSessions = sessions;
   }
 
   allSessions.sort((a, b) => a.startDate.localeCompare(b.startDate));

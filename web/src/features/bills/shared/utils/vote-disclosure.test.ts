@@ -45,6 +45,30 @@ describe("resolveVoteDisclosure", () => {
     ).toBe("secret_ballot");
   });
 
+  it("中継映像から拾った結果（出典の語つき）は全会一致と断定しない", () => {
+    expect(
+      resolveVoteDisclosure(
+        input({
+          billName:
+            "議員提出議案第62号　田川市政治倫理条例検討特別委員会の設置について",
+          sessionSlug: "r8-6-teirei",
+          statusNote: "原案可決（本会議の中継映像より）",
+        })
+      )
+    ).toBe("unknown");
+  });
+
+  it("副市長選任（令和8年8月臨時会）は無記名投票のため非公表と判定する", () => {
+    expect(
+      resolveVoteDisclosure(
+        input({
+          billName: "議案第49号　田川市副市長の選任について（盛坪 達人 氏）",
+          sessionSlug: "r8-5-rinji",
+        })
+      )
+    ).toBe("secret_ballot");
+  });
+
   it("同名議案番号でも件名が異なれば無記名扱いにならない（r7-6の議案第44号衝突）", () => {
     expect(
       resolveVoteDisclosure(

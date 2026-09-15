@@ -120,7 +120,13 @@ export type BillDescriptionSource =
   /** 会議録検索システムの本会議録（提案理由説明・質疑・討論等）に基づく */
   | "minutes"
   /** 議案説明資料（PDF）等、会議録以外の公開資料に基づく（会議録未公開時のフォールバック） */
-  | "explanation-materials";
+  | "explanation-materials"
+  /**
+   * 議案説明資料（PDF）と、田川市議会公式YouTubeチャンネルの本会議中継映像
+   * （自動字幕）に基づく。会議録が未公開の直近の会期で、提案理由説明・質疑・
+   * 討論・採決の内容まで反映できる場合に使う
+   */
+  | "broadcast";
 
 export interface BillDescriptionOverride {
   /** 解説文の典拠。build-csv.ts側の「## 出典」欄の文言を出し分けるために使用 */

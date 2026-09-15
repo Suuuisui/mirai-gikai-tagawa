@@ -39,11 +39,20 @@ export interface BillSource {
   resultLabel: string | null;
   /**
    * 議決結果の出典。official: 市公式サイトの議決結果ページ,
-   * minutes: 会議録検索システムの本会議録からの自動抽出
+   * minutes: 会議録検索システムの本会議録からの自動抽出,
+   * broadcast: 公式YouTubeの本会議中継映像（議決結果ページ公開前の会期中の議案）
    */
-  resultSource?: "official" | "minutes";
-  /** 議決月日（YYYY-MM-DD）。議決日不明の場合は会期末日 */
+  resultSource?: "official" | "minutes" | "broadcast";
+  /**
+   * 議決月日（YYYY-MM-DD）。議決日不明の場合は会期末日。
+   * 審議中の議案（resultLabel が null で会期が終わっていないもの）は提出日
+   */
   resolvedDate: string;
+  /**
+   * 審議中の議案に付ける状態の説明（例: "審議中（10月8日閉会予定）"）。
+   * 指定があれば bills.status_note にそのまま入れる（resultLabel が null のときだけ有効）
+   */
+  statusNote?: string;
   /**
    * 提出時の議案説明資料PDF（田川市公式サイト「提出議案と議決結果」ページ掲載分）。
    * `scrape-explanation-materials.ts` が `session.sourceUrl` から抽出して埋める。
@@ -65,7 +74,31 @@ export interface SessionSource {
   bills: BillSource[];
 }
 
-export function loadTagawaSessions(): SessionSource[] {
-  const jsonPath = path.join(import.meta.dirname, "data/sessions.json");
+/** scrape.ts の出力先でもある（会期・議案の事実データ） */
+export const SESSIONS_JSON_PATH = path.join(
+  import.meta.dirname,
+  "data/sessions.json"
+);
+const ONGOING_SESSIONS_JSON_PATH = path.join(
+  import.meta.dirname,
+  "data/ongoing-sessions.json"
+);
+
+function loadSessionsFile(jsonPath: string): SessionSource[] {
   return JSON.parse(readFileSync(jsonPath, "utf-8")) as SessionSource[];
+}
+
+export function loadTagawaSessions(): SessionSource[] {
+  return loadSessionsFile(SESSIONS_JSON_PATH);
+}
+
+/**
+ * 会期中で議決結果ページがまだ無い会期（`data/ongoing-sessions.json`、手で管理）。
+ * 公式サイトの「提出議案」ページに基づき議案を審議中として載せる。
+ * 閉会して「提出議案と議決結果」ページが公開されたら scrape.ts が sessions.json に
+ * 取り込むので、その時点でこのファイルから該当会期を消す（key が重複すると
+ * build-csv.ts がエラーにする）
+ */
+export function loadOngoingSessions(): SessionSource[] {
+  return loadSessionsFile(ONGOING_SESSIONS_JSON_PATH);
 }

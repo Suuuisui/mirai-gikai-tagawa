@@ -35,7 +35,7 @@ export function SessionSummaryStats({ summary }: SessionSummaryStatsProps) {
       </div>
       {summary.other > 0 && (
         <p className="text-xs text-mirai-text-muted">
-          ※ 継続審議など、上記以外の結果の議案が{summary.other}件あります
+          ※ 審議中・継続審議など、上記以外の議案が{summary.other}件あります
         </p>
       )}
     </section>

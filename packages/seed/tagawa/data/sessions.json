@@ -8918,5 +8918,84 @@
         "resolvedDate": "2026-07-01"
       }
     ]
+  },
+  {
+    "key": "r8-5-rinji",
+    "name": "令和8年（第5回）8月臨時会",
+    "startDate": "2026-08-10",
+    "endDate": "2026-08-10",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311918/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第48号",
+        "title": "田川市市長の給料の減額に関する条例の一部改正について",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-08-10",
+        "explanationMaterialUrls": [
+          {
+            "label": "議案第48号説明資料",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311918/3_11918_55253_up_4pyditun.pdf"
+          }
+        ]
+      },
+      {
+        "billNumberLabel": "議案第49号",
+        "title": "田川市副市長の選任について（盛坪 達人 氏）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-08-10",
+        "explanationMaterialUrls": [
+          {
+            "label": "議案第49号",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311918/3_11918_55169_up_a1uh05me.pdf"
+          }
+        ]
+      },
+      {
+        "billNumberLabel": "議員提出議案第59号",
+        "title": "田川市議会委員会条例の一部改正について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-08-10",
+        "explanationMaterialUrls": [
+          {
+            "label": "議員提出議案第59号",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311918/3_11918_55170_up_x5kn14v1.pdf"
+          }
+        ]
+      },
+      {
+        "billNumberLabel": "議員提出議案第60号",
+        "title": "情報公開請求に係る個人情報漏えいに関する調査特別委員会の委員の定数に関する決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-08-10",
+        "explanationMaterialUrls": [
+          {
+            "label": "議員提出議案第60号",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311918/3_11918_55172_up_g48wa0mr.pdf"
+          }
+        ]
+      },
+      {
+        "billNumberLabel": "議員提出議案第61号",
+        "title": "指名競争入札による建設工事発注に関する調査特別委員会の委員の定数に関する決議について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-08-10",
+        "explanationMaterialUrls": [
+          {
+            "label": "議員提出議案第61号",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311918/3_11918_55173_up_4jxw7eul.pdf"
+          }
+        ]
+      }
+    ]
   }
 ]

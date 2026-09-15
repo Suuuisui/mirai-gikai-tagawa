@@ -2279,5 +2279,117 @@ export const BILL_SPONSORS: Record<string, BillSponsors> =
       }
     ],
     "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311782/3_11782_54283_up_btyr8sys.pdf"
-  }
+  },
+  // r8-5-rinji（令和8年8月臨時会）: 公式サイト掲載の議員提出議案PDF（かがみ文）から転記（2026-09-12）
+  "r8-5-rinji:議員提出議案第59号:member": {
+    "proposers": [
+      {
+        "name": "村吉 勇介"
+      }
+    ],
+    "supporters": [
+      {
+        "name": "榊原 大祐"
+      },
+      {
+        "name": "佐藤 俊一"
+      },
+      {
+        "name": "永松 広宣"
+      },
+      {
+        "name": "田守 健治"
+      },
+      {
+        "name": "原田 誠"
+      },
+      {
+        "name": "香月 隆一"
+      },
+      {
+        "name": "石松 和幸"
+      },
+      {
+        "name": "尾﨑 行人"
+      },
+      {
+        "name": "今村 寿人"
+      }
+    ],
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311918/3_11918_55170_up_x5kn14v1.pdf"
+  },
+  "r8-5-rinji:議員提出議案第60号:member": {
+    "proposers": [
+      {
+        "name": "村吉 勇介"
+      }
+    ],
+    "supporters": [
+      {
+        "name": "榊原 大祐"
+      },
+      {
+        "name": "佐藤 俊一"
+      },
+      {
+        "name": "永松 広宣"
+      },
+      {
+        "name": "田守 健治"
+      },
+      {
+        "name": "原田 誠"
+      },
+      {
+        "name": "香月 隆一"
+      },
+      {
+        "name": "石松 和幸"
+      },
+      {
+        "name": "尾﨑 行人"
+      },
+      {
+        "name": "今村 寿人"
+      }
+    ],
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311918/3_11918_55172_up_g48wa0mr.pdf"
+  },
+  "r8-5-rinji:議員提出議案第61号:member": {
+    "proposers": [
+      {
+        "name": "村吉 勇介"
+      }
+    ],
+    "supporters": [
+      {
+        "name": "榊原 大祐"
+      },
+      {
+        "name": "佐藤 俊一"
+      },
+      {
+        "name": "永松 広宣"
+      },
+      {
+        "name": "田守 健治"
+      },
+      {
+        "name": "原田 誠"
+      },
+      {
+        "name": "香月 隆一"
+      },
+      {
+        "name": "石松 和幸"
+      },
+      {
+        "name": "尾﨑 行人"
+      },
+      {
+        "name": "今村 寿人"
+      }
+    ],
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00311918/3_11918_55173_up_4jxw7eul.pdf"
+  },
 };
