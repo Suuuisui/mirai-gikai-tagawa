@@ -77,6 +77,21 @@ describe("summarizeSessionResults", () => {
     expect(result.other).toBe(1);
   });
 
+  it("審議中の議案（status_noteに審議中）はその他に数える", () => {
+    const bills = [
+      makeBill({
+        status: "introduced",
+        status_note: "審議中（9月29日の本会議で採決予定）",
+      }),
+    ];
+
+    const result = summarizeSessionResults(bills);
+
+    expect(result.passed).toBe(0);
+    expect(result.rejected).toBe(0);
+    expect(result.other).toBe(1);
+  });
+
   it("member_votesが非nullの件数をsplitCountとして数える", () => {
     const bills = [
       makeBill({ member_votes: { entries: [] } }),

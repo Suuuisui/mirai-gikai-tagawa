@@ -73,8 +73,8 @@ function UpcomingSessionCard({ upcoming }: { upcoming: UpcomingSessionView }) {
       </div>
       <p className="text-sm leading-relaxed text-mirai-text-secondary">
         {upcoming.note}。会期は{formatDateWithDots(upcoming.startDate)}〜
-        {formatDateWithDots(upcoming.endDate)}で、{upcoming.billCount}
-        件の議案が提出される予定です。
+        {formatDateWithDots(upcoming.endDate)}で、提出される議案は計
+        {upcoming.billCount}件の見込みです。
       </p>
       <ul className="flex flex-col gap-1.5 border-l-2 border-mirai-border-muted pl-3">
         {upcoming.highlights.map((highlight) => (

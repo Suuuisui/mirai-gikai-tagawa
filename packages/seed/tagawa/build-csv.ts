@@ -2,7 +2,8 @@
  * 田川市議会 実データ → seed:csv 用CSV変換スクリプト【田川市専用】
  *
  * `packages/seed/tagawa/data/sessions.json`（scrape.ts が田川市公式サイトから
- * 生成した会期・議案の事実データ）を、`pnpm seed:csv`
+ * 生成した会期・議案の事実データ）と `data/ongoing-sessions.json`（議決結果ページが
+ * まだ無い会期中の会期。手で管理）を、`pnpm seed:csv`
  * （`packages/seed/csv/import-csv.ts`）が読み込む形式のCSVへ変換し、
  * `packages/seed/csv/data/` 配下に書き出す。
  *
@@ -19,14 +20,24 @@
 import fs from "node:fs";
 import path from "node:path";
 import {
+  loadOngoingSessions,
   loadTagawaSessions,
   type BillSource,
   type Proposer,
 } from "./source-data";
 import { BILL_DESCRIPTIONS, billDescriptionKey } from "./bill-descriptions";
+import {
+  buildDefaultSummary,
+  buildSourceSection,
+  buildStatusNote,
+  mergeSessions,
+  pickActiveSessionKey,
+} from "./session-data-utils";
 import { BATCH_B_OVERRIDES } from "./bill-descriptions-batch-b";
 import { BATCH_C_OVERRIDES } from "./bill-descriptions-batch-c";
 import { BATCH_D_OVERRIDES } from "./bill-descriptions-batch-d";
+import { BATCH_E_OVERRIDES } from "./bill-descriptions-batch-e";
+import { BATCH_F_OVERRIDES } from "./bill-descriptions-batch-f";
 import { FEATURED_BILLS } from "./featured-bills-data";
 import { MEMBER_VOTES } from "./member-votes-data";
 import { BILL_SPONSORS } from "./bill-sponsors-data";
@@ -52,14 +63,12 @@ const ALL_BILL_DESCRIPTIONS = {
   ...BATCH_B_OVERRIDES,
   ...BATCH_C_OVERRIDES,
   ...BATCH_D_OVERRIDES,
+  // batch-e: 令和8年8月臨時会、batch-f: 令和8年9月定例会（会期中）
+  ...BATCH_E_OVERRIDES,
+  ...BATCH_F_OVERRIDES,
 };
 
 const CSV_DATA_DIR = path.join(import.meta.dirname, "../csv/data");
-
-// 直近の会期（最新）を「開催中」として扱う会期一覧トップの強調表示に利用する。
-// ※ 実際の会期日程は既に終了しているが、次回会期が開会するまでの間、
-//   サイト上で「直近の田川市議会」として案内するための運用上のフラグ。
-const ACTIVE_SESSION_KEY = "r8-4-teirei";
 
 // 議案の議決結果表記 → bills.status（DBスキーマの enum は
 // enacted/rejected 等の粗い区分のみのため、詳細な議決結果は status_note に別途保持する）
@@ -204,7 +213,10 @@ function writeCsv(filename: string, headers: string[], rows: Array<Record<string
 }
 
 function main() {
-  const TAGAWA_SESSIONS = loadTagawaSessions();
+  const ongoingSessions = loadOngoingSessions();
+  const ongoingKeys = new Set(ongoingSessions.map((s) => s.key));
+  const allSessions = mergeSessions(loadTagawaSessions(), ongoingSessions);
+  const activeSessionKey = pickActiveSessionKey(allSessions);
   const dietSessionRows: Array<Record<string, unknown>> = [];
   const billRows: Array<Record<string, unknown>> = [];
   const billContentRows: Array<Record<string, unknown>> = [];
@@ -215,10 +227,11 @@ function main() {
   // （データ投入時のタイポ検出用。マッチしなかったキーは実行後にwarnする）
   const matchedMemberVoteKeys = new Set<string>();
   const matchedSponsorKeys = new Set<string>();
+  const matchedDescriptionKeys = new Set<string>();
   // FEATURED_BILLS のタイポ検出用（全議案のキー集合）
   const allBillKeys = new Set<string>();
 
-  for (const session of TAGAWA_SESSIONS) {
+  for (const session of allSessions) {
     const dietSessionId = seedId(`session:${session.key}`);
     const now = `${session.startDate}T00:00:00.000Z`;
 
@@ -231,7 +244,7 @@ function main() {
       updated_at: now,
       slug: session.key,
       shugiin_url: session.sourceUrl,
-      is_active: session.key === ACTIVE_SESSION_KEY,
+      is_active: session.key === activeSessionKey,
     });
 
     for (const bill of session.bills) {
@@ -278,12 +291,7 @@ function main() {
         name,
         originating_house: "HR",
         status,
-        status_note:
-          bill.resultLabel === null
-            ? "議決結果不明（出典に記載なし）"
-            : bill.resultSource === "minutes"
-              ? `${bill.resultLabel}（本会議会議録より自動抽出）`
-              : bill.resultLabel,
+        status_note: buildStatusNote(bill),
         submitted_date: bill.resolvedDate,
         created_at: decidedAt,
         updated_at: decidedAt,
@@ -330,21 +338,22 @@ function main() {
         created_at: decidedAt,
       });
 
-      const descriptionOverride =
-        ALL_BILL_DESCRIPTIONS[
-          billDescriptionKey(
-            session.key,
-            bill.billNumberLabel,
-            bill.title,
-            bill.proposer
-          )
-        ];
+      const descriptionKey = billDescriptionKey(
+        session.key,
+        bill.billNumberLabel,
+        bill.title,
+        bill.proposer
+      );
+      const descriptionOverride = ALL_BILL_DESCRIPTIONS[descriptionKey];
+      if (descriptionOverride) {
+        matchedDescriptionKeys.add(descriptionKey);
+      }
 
+      // 議決結果。会期中で結果がまだ無い議案は statusNote（審議中〜）を結果の代わりに使う
+      const outcome = bill.resultLabel ?? bill.statusNote ?? null;
       const summary =
         descriptionOverride?.summary ??
-        (bill.resultLabel
-          ? `${session.name}に${proposerLabel}から提出され、${bill.resultLabel}となりました。（議決日: ${bill.resolvedDate}）`
-          : `${session.name}に${proposerLabel}から提出されました。議決結果は出典ページに記載されていません。`);
+        buildDefaultSummary(session.name, proposerLabel, bill);
       const content = [
         ...(descriptionOverride
           ? ["## 解説", "", descriptionOverride.body, ""]
@@ -355,39 +364,16 @@ function main() {
         `- **件名**: ${bill.title}`,
         `- **提出者**: ${proposerLabel}`,
         `- **会期**: ${session.name}（${session.startDate}〜${session.endDate}）`,
-        `- **議決結果**: ${bill.resultLabel ?? "出典に記載なし（不明）"}`,
+        `- **議決結果**: ${outcome ?? "出典に記載なし（不明）"}`,
         ...(bill.resultLabel ? [`- **議決日**: ${bill.resolvedDate}`] : []),
         "",
-        "## 出典",
-        "",
-        `- [田川市議会「${session.name}の提出議案と議決結果」](${session.sourceUrl})（福岡県田川市公式サイト）`,
-        ...(descriptionOverride?.source === "minutes"
-          ? [
-              "- [田川市議会 会議録検索システム](https://www.kensakusystem.jp/tagawa/index.html)の本会議録（提案理由説明・委員会審査結果報告・質疑・討論等）",
-            ]
-          : []),
-        ...(descriptionOverride?.source === "explanation-materials"
-          ? [
-              "- 田川市議会公式サイトに掲載の議案説明資料（PDF）等の公開情報",
-            ]
-          : []),
-        ...(bill.resultSource === "minutes"
-          ? [
-              "- 議決結果は[田川市議会 会議録検索システム](https://www.kensakusystem.jp/tagawa/index.html)の本会議録から自動抽出したものです",
-            ]
-          : []),
-        "",
-        ...(descriptionOverride?.source === "minutes"
-          ? [
-              "※ 上記の解説は、田川市議会 会議録検索システムで公開されている本会議録（提案理由説明・委員会審査結果報告・質疑・討論の内容）をもとに作成しています。",
-            ]
-          : descriptionOverride?.source === "explanation-materials"
-            ? [
-                "※ 上記の解説は、田川市議会公式サイトが公開する議案説明資料等の情報をもとに作成しています。本会議での質疑・討論の内容は、会議録が本稿執筆時点（2026年7月）で田川市議会 会議録検索システムに未公開のため反映していません。",
-              ]
-            : [
-                "※ この内容は田川市議会事務局が公開する情報を基に事実のみを転記したものです。分かりやすい解説文のAIによる生成は行っていません。",
-              ]),
+        ...buildSourceSection({
+          sessionName: session.name,
+          sourceUrl: session.sourceUrl,
+          isOngoing: ongoingKeys.has(session.key),
+          descriptionSource: descriptionOverride?.source ?? null,
+          resultSource: bill.resultSource,
+        }),
       ].join("\n");
 
       const difficultyLevel = "normal";
@@ -481,6 +467,17 @@ function main() {
     ],
     []
   );
+
+  // 解説文のキーがどの議案にもマッチしなかった場合はwarnする（会期キー・議案番号のタイポ検出）
+  const unmatchedDescriptionKeys = Object.keys(ALL_BILL_DESCRIPTIONS).filter(
+    (key) => !matchedDescriptionKeys.has(key)
+  );
+  if (unmatchedDescriptionKeys.length > 0) {
+    console.warn(
+      `\n⚠️ 解説文のキーがどの議案ともマッチしませんでした（${unmatchedDescriptionKeys.length}件）:`
+    );
+    for (const key of unmatchedDescriptionKeys) console.warn(`  - ${key}`);
+  }
 
   // MEMBER_VOTES のキーがどの議案にもマッチしなかった場合はwarnする
   // （会期key・議案番号ラベルのタイポ検出用）
