@@ -12,6 +12,9 @@
  * - bills: 新規の行は CSV のまま挿入。既存の行は admin で管理する列
  *   （注目・公開状態・ナレッジ等）を除いて更新する
  * - tags: 会期をまたいで共有され admin で説明文を編集するため、無い行だけ挿入する
+ * - diet_sessions.is_active（admin の会期一覧で「アクティブ」表示する会期。web は参照しない）
+ *   は1件だけが true になるよう、投入する会期に true があれば admin と同じ
+ *   DB関数 set_active_diet_session で他の会期の true を落とす
  *
  * 使い方:
  *   pnpm --filter @mirai-gikai/seed tagawa:build-csv
@@ -141,6 +144,17 @@ const updatedBills = bills
   .map((b) => omit(b, ADMIN_MANAGED_BILL_COLUMNS));
 
 await upsert("diet_sessions", sessions, { onConflict: "id" });
+const activeSession = sessions.find((s) => s.is_active);
+if (activeSession) {
+  const { error } = await supabase.rpc("set_active_diet_session", {
+    target_session_id: activeSession.id,
+  });
+  if (error) {
+    console.error(`diet_sessions の is_active 更新に失敗: ${error.message}`);
+    process.exit(1);
+  }
+  console.log(`diet_sessions: ${activeSession.slug} 以外の is_active を解除`);
+}
 await upsert("tags", tags, { onConflict: "id", ignoreDuplicates: true });
 await upsert("bills", newBills, { onConflict: "id" });
 await upsert("bills", updatedBills, { onConflict: "id" });
