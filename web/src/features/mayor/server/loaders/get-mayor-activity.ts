@@ -5,6 +5,7 @@ import { getCommitteeMeetingListItems } from "@/features/committees/server/loade
 import { getBillsByProposer } from "@/features/members/server/loaders/get-member-vote-data";
 import {
   MAYOR_ACTIONS,
+  MAYOR_POLICY_SPEECH,
   MAYOR_PROFILE,
   ROAD_TO_INAUGURATION,
   type TimelineEvent,
@@ -31,6 +32,8 @@ export type UpcomingSessionView = UpcomingSession & {
 };
 
 export interface MayorActivity {
+  /** 所信表明の出典（本会議の記録）へのリンク。一覧から引けなければ null */
+  speechLink: ResolvedLink | null;
   /** 就任後にしたこと（新しい順、出典リンク解決済み） */
   actions: TimelineItem[];
   /** 就任日以降に提出された市長提出議案 */
@@ -61,6 +64,7 @@ export async function getMayorActivity(now: Date): Promise<MayorActivity> {
   const timingLabel = sessionTimingLabel(UPCOMING_SESSION, now);
 
   return {
+    speechLink: resolve(MAYOR_POLICY_SPEECH.source),
     actions: newestFirst(MAYOR_ACTIONS).map(withLink),
     billsSinceInauguration: filterBillsSince(
       mayorBills,

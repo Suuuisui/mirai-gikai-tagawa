@@ -43,8 +43,8 @@ export function HeroSection({ now }: HeroSectionProps) {
         </p>
         <p className="mt-3 text-sm leading-relaxed text-mirai-text-secondary">
           {MAYORAL_ELECTION.reason}
-          で初当選しました。就任後に何をしたか、これから何があるか、
-          なぜ市長が交代したのかを、議会の記録からたどれます。
+          で初当選しました。所信表明で何を約束したか、就任後に何をしたか、
+          これから何があるか、なぜ市長が交代したのかを、議会の記録からたどれます。
         </p>
         <div className="mt-4 flex flex-wrap gap-2 text-xs">
           {days > 0 && (
