@@ -1,3 +1,5 @@
+import type { DietSessionFilterSource } from "@/features/diet-sessions/shared/types";
+
 /**
  * トップページ編集画面（/homepage）で扱う型定義。
  * 公開サイトのトップページに「何をどの順で出すか」を運営がキュレーション
@@ -17,6 +19,8 @@ export type CurationBill = {
   isControversial: boolean;
   /** 提出日（YYYY-MM-DD、未設定はnull） */
   submittedDate: string | null;
+  /** 会期ID（候補を会期で絞り込むためのキー。未設定はnull） */
+  sessionId: string | null;
   /** 会期名（例: 令和7年第2回定例会） */
   sessionName: string | null;
   tags: Array<{ id: string; label: string }>;
@@ -59,6 +63,11 @@ export type HomepageData = {
   featuredTagSections: FeaturedTagSection[];
   /** トップページに出していないタグ */
   hiddenTags: HiddenTag[];
+  /**
+   * 候補を会期で絞り込むための会期一覧（開会日の新しい順、公開議案がある会期のみ）。
+   * 最新の会期の議案は興味度スコアが低く候補の下に埋もれるため、ここから選んで探す
+   */
+  dietSessions: DietSessionFilterSource[];
   /** 公開サイトのURL（確認リンク用。未設定ならnull） */
   webUrl: string | null;
 };

@@ -20,7 +20,7 @@ export async function findPublishedBillsForCuration() {
       is_featured,
       featured_priority,
       explanation_material_urls,
-      diet_sessions ( name ),
+      diet_sessions ( id, name ),
       bill_contents ( title, summary, content, difficulty_level ),
       bills_tags ( pinned_priority, tags ( id, label ) )
     `

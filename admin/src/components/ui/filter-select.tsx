@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 
 interface FilterSelectProps {
   label: string;
+  /** 同じラベルのセレクトが画面に複数あるとき、支援技術向けに区別できる名前を渡す（既定は label） */
+  ariaLabel?: string;
   value: string;
   options: readonly { value: string; label: string }[];
   onChange: (value: string) => void;
@@ -18,9 +20,10 @@ interface FilterSelectProps {
   triggerClassName?: string;
 }
 
-/** ラベル付きのセレクト。一覧の絞り込み（URLのクエリと同期させる用途）で使う */
+/** ラベル付きのセレクト。一覧や候補の絞り込み（URLのクエリや画面内の state と同期させる用途）で使う */
 export function FilterSelect({
   label,
+  ariaLabel = label,
   value,
   options,
   onChange,
@@ -33,7 +36,7 @@ export function FilterSelect({
       </span>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger
-          aria-label={label}
+          aria-label={ariaLabel}
           className={cn("h-9", triggerClassName)}
         >
           <SelectValue />
