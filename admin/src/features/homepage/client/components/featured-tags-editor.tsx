@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import type { DietSessionFilterSource } from "@/features/diet-sessions/shared/types";
 import { saveFeaturedTags } from "../../server/actions/save-featured-tags";
 import type { FeaturedTagSection, HiddenTag } from "../../shared/types";
 import { useSortableList } from "../hooks/use-sortable-list";
@@ -21,7 +22,13 @@ import { TagPinEditor } from "./tag-pin-editor";
  * タグ枠に表示される議案の編集エリア。
  * まだ保存していないタグは表示議案を計算できないため案内文を出す。
  */
-function TagSectionBills({ section }: { section: FeaturedTagSection | null }) {
+function TagSectionBills({
+  section,
+  dietSessions,
+}: {
+  section: FeaturedTagSection | null;
+  dietSessions: DietSessionFilterSource[];
+}) {
   if (!section) {
     return (
       <p className="text-xs text-gray-500">
@@ -30,7 +37,7 @@ function TagSectionBills({ section }: { section: FeaturedTagSection | null }) {
     );
   }
 
-  return <TagPinEditor section={section} />;
+  return <TagPinEditor section={section} dietSessions={dietSessions} />;
 }
 
 /**
@@ -42,9 +49,11 @@ function TagSectionBills({ section }: { section: FeaturedTagSection | null }) {
 export function FeaturedTagsEditor({
   sections,
   hiddenTags,
+  dietSessions,
 }: {
   sections: FeaturedTagSection[];
   hiddenTags: HiddenTag[];
+  dietSessions: DietSessionFilterSource[];
 }) {
   const router = useRouter();
   // 編集対象の実体は「表示するタグIDの並び」だけ。表示情報は都度propsから引く
@@ -136,7 +145,10 @@ export function FeaturedTagsEditor({
                           <X className="size-4" />
                         </Button>
                       </div>
-                      <TagSectionBills section={section} />
+                      <TagSectionBills
+                        section={section}
+                        dietSessions={dietSessions}
+                      />
                     </div>
                   </SortableRow>
                 );

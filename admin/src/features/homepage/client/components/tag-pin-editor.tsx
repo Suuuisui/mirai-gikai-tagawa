@@ -13,8 +13,11 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { DietSessionFilterSelect } from "@/features/diet-sessions/client/components/diet-session-filter-select";
+import type { DietSessionFilterSource } from "@/features/diet-sessions/shared/types";
 import { saveTagPinnedBills } from "../../server/actions/save-tag-pinned-bills";
 import type { FeaturedTagSection } from "../../shared/types";
+import { filterCandidateBills } from "../../shared/utils/filter-candidate-bills";
 import { BillCurationCard } from "./bill-curation-card";
 
 /**
@@ -23,13 +26,26 @@ import { BillCurationCard } from "./bill-curation-card";
  * 残りの枠は興味度スコア順で自動的に埋まる。操作は即座に保存され、
  * 公開サイトにもすぐ反映される。
  */
-export function TagPinEditor({ section }: { section: FeaturedTagSection }) {
+export function TagPinEditor({
+  section,
+  dietSessions,
+}: {
+  section: FeaturedTagSection;
+  dietSessions: DietSessionFilterSource[];
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [showCandidates, setShowCandidates] = useState(false);
+  // 固定候補も興味度スコア順なので、最新の会期の議案は会期で絞り込んで探せるようにする。
+  // 初期値は「すべての会期」（注目の議案の候補と違い、ボタンの件数表示と一覧を一致させ、
+  // 今の会期に該当が無いタグで空の一覧から始まらないようにするため）
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const pinnedIds = section.pinnedBillIds;
   const canPinMore = pinnedIds.length < BILLS_PER_TAG;
+  const visibleCandidates = filterCandidateBills(section.pinCandidates, {
+    sessionId,
+  });
 
   const save = (nextPinnedIds: string[], successMessage: string) => {
     startTransition(async () => {
@@ -179,32 +195,47 @@ export function TagPinEditor({ section }: { section: FeaturedTagSection }) {
             他の議案を固定する（{section.pinCandidates.length}件）
           </Button>
           {showCandidates && (
-            <div className="mt-1.5 max-h-64 space-y-1.5 overflow-y-auto rounded-md bg-gray-50 p-2">
+            <div className="mt-1.5 space-y-1.5 rounded-md bg-gray-50 p-2">
+              <DietSessionFilterSelect
+                dietSessions={dietSessions}
+                sessionId={sessionId}
+                onChange={setSessionId}
+                ariaLabel={`「${section.label}」枠の固定候補の会期`}
+                triggerClassName="h-8 w-full text-xs sm:w-[280px]"
+              />
               {!canPinMore && (
                 <p className="text-xs text-amber-700">
                   固定は{BILLS_PER_TAG}
                   件が上限です。追加するには、先にいずれかの固定を解除してください
                 </p>
               )}
-              {section.pinCandidates.map((bill) => (
-                <BillCurationCard
-                  key={bill.id}
-                  bill={bill}
-                  compact
-                  actions={
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={isPending || !canPinMore}
-                      onClick={() => pin(bill.id)}
-                    >
-                      <Pin className="size-4" />
-                      固定する
-                    </Button>
-                  }
-                />
-              ))}
+              {visibleCandidates.length === 0 ? (
+                <p className="py-2 text-center text-xs text-gray-500">
+                  この会期には固定できる議案がありません。会期を「すべての会期」に切り替えると過去の議案から選べます
+                </p>
+              ) : (
+                <div className="max-h-64 space-y-1.5 overflow-y-auto">
+                  {visibleCandidates.map((bill) => (
+                    <BillCurationCard
+                      key={bill.id}
+                      bill={bill}
+                      compact
+                      actions={
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          disabled={isPending || !canPinMore}
+                          onClick={() => pin(bill.id)}
+                        >
+                          <Pin className="size-4" />
+                          固定する
+                        </Button>
+                      }
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>

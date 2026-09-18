@@ -2,17 +2,12 @@
 
 import type { Route } from "next";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { FilterSelect } from "@/components/ui/filter-select";
-import type { DietSession } from "@/features/diet-sessions/shared/types";
-import {
-  ALL_DIET_SESSIONS,
-  BILL_DIET_SESSION_PARAM,
-} from "../../../shared/constants/bill-list-params";
-
-export type DietSessionOption = Pick<DietSession, "id" | "name" | "is_active">;
+import { DietSessionFilterSelect } from "@/features/diet-sessions/client/components/diet-session-filter-select";
+import type { DietSessionFilterSource } from "@/features/diet-sessions/shared/types";
+import { BILL_DIET_SESSION_PARAM } from "../../../shared/constants/bill-list-params";
 
 interface BillSessionFilterProps {
-  dietSessions: DietSessionOption[];
+  dietSessions: DietSessionFilterSource[];
   /** 選択中の会期ID（全会期なら null） */
   selectedSessionId: string | null;
 }
@@ -29,31 +24,21 @@ export function BillSessionFilter({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const options = [
-    { value: ALL_DIET_SESSIONS, label: "すべての会期" },
-    ...dietSessions.map((session) => ({
-      value: session.id,
-      label: session.is_active ? `${session.name}（アクティブ）` : session.name,
-    })),
-  ];
-
-  const handleChange = (value: string) => {
+  const handleChange = (sessionId: string | null) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (value === ALL_DIET_SESSIONS) {
+    if (sessionId === null) {
       params.delete(BILL_DIET_SESSION_PARAM);
     } else {
-      params.set(BILL_DIET_SESSION_PARAM, value);
+      params.set(BILL_DIET_SESSION_PARAM, sessionId);
     }
     router.replace(`${pathname}?${params.toString()}` as Route);
   };
 
   return (
-    <FilterSelect
-      label="会期"
-      value={selectedSessionId ?? ALL_DIET_SESSIONS}
-      options={options}
+    <DietSessionFilterSelect
+      dietSessions={dietSessions}
+      sessionId={selectedSessionId}
       onChange={handleChange}
-      triggerClassName="w-full sm:w-[360px]"
     />
   );
 }

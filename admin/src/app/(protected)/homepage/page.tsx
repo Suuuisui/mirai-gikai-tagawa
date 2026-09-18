@@ -31,13 +31,14 @@ export default async function HomepageEditPage() {
         <div className="mb-4 space-y-2">
           <h2 className="text-lg font-semibold">🔥 注目の議案</h2>
           <p className="text-sm text-gray-600">
-            トップページの一番上に大きく表示されるセクションです。ここに入れた議案が、設定した順番でそのまま並びます（1が最上位）。
+            トップページの一番上に大きく表示されるセクションです。ここに入れた議案が、設定した順番でそのまま並びます（1が最上位）。最新の会期の議案を出したいときは、下の候補を会期で絞り込んで追加してください。
           </p>
         </div>
         <FeaturedBillsEditor
           key={data.featuredBills.map((bill) => bill.id).join(",")}
           featuredBills={data.featuredBills}
           candidateBills={data.candidateBills}
+          dietSessions={data.dietSessions}
         />
       </section>
 
@@ -71,6 +72,7 @@ export default async function HomepageEditPage() {
           key={data.featuredTagSections.map((section) => section.id).join(",")}
           sections={data.featuredTagSections}
           hiddenTags={data.hiddenTags}
+          dietSessions={data.dietSessions}
         />
       </section>
     </div>

@@ -9,6 +9,7 @@ import {
   sortByInterestKey,
 } from "@mirai-gikai/shared/top-page/interest-score";
 import { selectTagSectionBills } from "@mirai-gikai/shared/top-page/select-tag-section-bills";
+import { loadDietSessions } from "@/features/diet-sessions/server/loaders/load-diet-sessions";
 import { findAllTagsWithBillCount } from "@/features/tags/server/repositories/tag-repository";
 import { env } from "@/lib/env";
 import type {
@@ -36,9 +37,10 @@ type ScoredBill = {
  * 計算するため、保存後に公開サイトへ出る内容と一致する。
  */
 export async function loadHomepageData(): Promise<HomepageData> {
-  const [billRows, tagRows] = await Promise.all([
+  const [billRows, tagRows, sessionRows] = await Promise.all([
     findPublishedBillsForCuration(),
     findAllTagsWithBillCount(),
+    loadDietSessions(),
   ]);
 
   // スコア計算中に時刻がブレないよう一度だけ取得する
@@ -68,6 +70,7 @@ export async function loadHomepageData(): Promise<HomepageData> {
         statusNote: row.status_note,
         isControversial: isControversialStatus(row.status_note),
         submittedDate: row.submitted_date?.slice(0, 10) ?? null,
+        sessionId: row.diet_sessions?.id ?? null,
         sessionName: row.diet_sessions?.name ?? null,
         tags,
         interestScore,
@@ -164,11 +167,21 @@ export async function loadHomepageData(): Promise<HomepageData> {
       billCount: tag.bills_tags[0]?.count ?? 0,
     }));
 
+  // 会期の絞り込み候補: 公開議案が1件も無い会期を選んでも空になるだけなので除く
+  // （loadDietSessions は開会日の新しい順なので、最新の会期が先頭に来る）
+  const sessionIdsWithBills = new Set(
+    scoredBills.map((bill) => bill.curation.sessionId)
+  );
+  const dietSessions = sessionRows
+    .filter((session) => sessionIdsWithBills.has(session.id))
+    .map(({ id, name, is_active }) => ({ id, name, is_active }));
+
   return {
     featuredBills,
     candidateBills,
     featuredTagSections,
     hiddenTags,
+    dietSessions,
     webUrl: env.webUrl || null,
   };
 }
