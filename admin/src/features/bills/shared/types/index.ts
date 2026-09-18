@@ -35,6 +35,12 @@ export const BILL_SORT_FIELDS: readonly BillSortField[] = [
 
 export type BillSortConfig = SortConfig<BillSortField>;
 
+/** 議案一覧の絞り込み条件 */
+export interface BillListFilter {
+  /** 会期で絞り込む（null なら全会期） */
+  dietSessionId: string | null;
+}
+
 export const DEFAULT_BILL_SORT: BillSortConfig = {
   field: "created_at",
   order: "desc",

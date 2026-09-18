@@ -2,10 +2,10 @@
 
 import type { Route } from "next";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { FilterSelect } from "@/components/ui/filter-select";
 import { ROLE_FILTER_OPTIONS, stanceLabels } from "../../shared/constants";
 import type { SessionFilterConfig } from "../../shared/types";
 import { DEFAULT_SESSION_FILTER } from "../../shared/types";
-import { FilterSelect } from "./filter-select";
 
 interface SessionFilterBarProps {
   currentFilters: SessionFilterConfig;

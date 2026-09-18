@@ -5,6 +5,7 @@ import type { Route } from "next";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { FilterSelect } from "@/components/ui/filter-select";
 import { Input } from "@/components/ui/input";
 import {
   MESSAGE_SEARCH_STANCE_FILTER_OPTIONS,
@@ -16,7 +17,6 @@ import type {
   RoleFilter,
 } from "../../shared/types";
 import { appendMessageSearchFilterParams } from "../../shared/utils/parse-message-search-filter-params";
-import { FilterSelect } from "./filter-select";
 
 interface MessageSearchFormProps {
   initialQuery: string;

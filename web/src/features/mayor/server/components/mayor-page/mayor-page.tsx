@@ -12,6 +12,7 @@ import { BackgroundSection } from "./background-section";
 import { CareerSection } from "./career-section";
 import { ElectionSection } from "./election-section";
 import { HeroSection } from "./hero-section";
+import { PolicySpeechSection } from "./policy-speech-section";
 import { UpcomingSection } from "./upcoming-section";
 
 interface MayorPageProps {
@@ -41,6 +42,7 @@ export function MayorPage({ activity, now }: MayorPageProps) {
 
       <Container className="py-8">
         <div className="flex flex-col gap-12">
+          <PolicySpeechSection link={activity.speechLink} />
           <ActionsSection actions={activity.actions} />
           <UpcomingSection
             bills={activity.billsSinceInauguration}

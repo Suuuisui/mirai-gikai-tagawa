@@ -121,6 +121,13 @@ export interface TimelineEvent {
   source: TimelineSource;
 }
 
+/** 令和8年9月定例会の初日（9月7日）の本会議。所信表明・議案の提案があった */
+const SEPTEMBER_SESSION_OPENING = {
+  kind: "meeting",
+  committeeName: "本会議",
+  meetingDate: "2026-09-07",
+} as const satisfies TimelineSource;
+
 /**
  * 就任後に市長と市役所（執行部）が議会でしたこと【古い順・手で追記する】
  *
@@ -197,12 +204,8 @@ export const MAYOR_ACTIONS: readonly TimelineEvent[] = [
     date: "2026-09-07",
     title: "9月定例会で所信表明、教育・子育てを最優先に4つの改革",
     description:
-      "就任後はじめての定例会の冒頭で所信を表明しました。教育・子育て・経済・福祉の4つの改革を柱とし、教育・子育てを「1丁目1番地」の政策として、学習環境の見直しやキャリア教育、出産お祝い金の拡充、奨学金返済支援制度の創設を掲げました。経済ではSNSを活用したふるさと納税の増収、東高校跡地や田川後藤寺駅周辺の再開発・企業誘致、福祉ではコミュニティバスの増便や医療・介護の連携強化を挙げています。同じ日に補正予算5件・条例3件などの議案11件を提出しました。",
-    source: {
-      kind: "meeting",
-      committeeName: "本会議",
-      meetingDate: "2026-09-07",
-    },
+      "就任後はじめての定例会の冒頭で所信を表明し、教育・子育て・経済・福祉の4つの改革を柱に掲げました（要点は上の所信表明のポイントに）。同じ日に補正予算5件・条例3件などの議案11件を提出しました。",
+    source: SEPTEMBER_SESSION_OPENING,
   },
   {
     date: "2026-09-09",
@@ -238,6 +241,90 @@ export const MAYOR_ACTIONS: readonly TimelineEvent[] = [
     },
   },
 ];
+
+export interface PolicyPillar {
+  /** 改革の名前（例: 教育改革） */
+  title: string;
+  /** その改革で目指す姿の一言（所信表明の言葉の範囲で） */
+  goal: string;
+  /** 掲げた具体策（所信表明で述べた順） */
+  items: readonly string[];
+}
+
+export interface PolicySpeech {
+  /** 所信表明の全体を貫く姿勢（本人の言葉の要旨） */
+  stance: readonly string[];
+  /** 最優先と位置づけた分野の説明 */
+  priority: string;
+  pillars: readonly PolicyPillar[];
+  /** 4つの改革のほかに触れた取り組み */
+  others: readonly string[];
+  /** 本会議の最後に本人が訂正した内容（あれば） */
+  correction?: string;
+  /** 所信表明を行った本会議（日付はここから取る） */
+  source: Extract<TimelineSource, { kind: "meeting" }>;
+  videoUrl: string;
+}
+
+/**
+ * 令和8年9月7日の本会議で浦野市長が行った所信表明の要点【田川市専用】。
+ * 出典は公式YouTubeの本会議中継（自動字幕）で、言い回しは本人の言葉の範囲に
+ * 留める（政策の中身を推測して補わない）。会議録が公開されたら照合する
+ */
+export const MAYOR_POLICY_SPEECH: PolicySpeech = {
+  stance: [
+    "利権やしがらみと断固として決別し、市民最優先の政治を貫く",
+    "「田川市は良くなったね」「田川市がうらやましいね」と言われる市を目指す",
+    "田川市の発展を地方創生の成功モデル「田川市モデル」として全国に広げたい",
+  ],
+  priority:
+    "教育・子育て政策を田川市の未来を左右する「1丁目1番地」の政策と位置づけ、限られた財源の中でも重点的に取り組む。子どもたちへの投資は田川市の未来そのものへの投資、と説明した",
+  pillars: [
+    {
+      title: "教育改革",
+      goal: "学力のV字回復",
+      items: [
+        "学習環境を根本から見直し、すべての子どもが安心して学習に取り組める環境をつくる",
+        "キャリア教育を拡充する",
+        "先端技術を活用した新たな「田川市モデル」の教育を構築する",
+      ],
+    },
+    {
+      title: "子育て改革",
+      goal: "「子育てをするなら田川市」と言われる子育て環境",
+      items: [
+        "出産お祝い金制度を拡充する",
+        "奨学金返済支援制度を新たに創設する",
+      ],
+    },
+    {
+      title: "経済改革",
+      goal: "田川市の活気を取り戻す",
+      items: [
+        "SNSを活用して田川市の発信力を高め、ふるさと納税のさらなる増収を目指す",
+        "東高校跡地や田川後藤寺駅周辺の再開発を進める",
+        "企業誘致を進める",
+      ],
+    },
+    {
+      title: "福祉改革",
+      goal: "安心して暮らせるまち",
+      items: [
+        "コミュニティバスの増便などで移動手段を拡充する",
+        "医療・介護・福祉の連携を強化する",
+      ],
+    },
+  ],
+  others: [
+    "ブロードリスニングなどを活用し、市民の細やかな声を政策に反映する仕組みをつくる",
+    "まちの景観整備でまちの魅力をつくる",
+    "文化・スポーツの振興で市民の活気をつくる",
+  ],
+  correction:
+    "本会議の最後に、子育て改革で「新たな奨学金支援制度の創設」と述べた部分を「奨学金返済支援制度」に訂正した",
+  source: SEPTEMBER_SESSION_OPENING,
+  videoUrl: "https://www.youtube.com/watch?v=kaXdoYDT3d0",
+};
 
 /** 市長交代の経緯セクションの導入文。タイムラインを読む前の3行まとめ */
 export const ROAD_TO_INAUGURATION_SUMMARY = `前市長・${FORMER_MAYOR_NAME}氏が公務出張中の不倫を認め、ハラスメント問題も指摘されたことを受け、議会は給料の5割減額や第三者調査委員会の設置で対応し、村上氏への不信任決議案は2度とも否決されました。第三者委員会の報告後、村上氏は2026年5月31日に退職し、7月12日の市長選で浦野氏が当選しました。`;
@@ -372,9 +459,5 @@ export const UPCOMING_SESSION: UpcomingSession = {
     "9月9〜11日に議員14人が一般質問。市長の4つの改革やふるさと納税、防災、平成筑豊鉄道などを質問",
     "9月29日に令和7年度決算の認定議案を上程し、各委員会の審査を経て10月8日に採決予定",
   ],
-  source: {
-    kind: "meeting",
-    committeeName: "本会議",
-    meetingDate: "2026-09-07",
-  },
+  source: SEPTEMBER_SESSION_OPENING,
 };

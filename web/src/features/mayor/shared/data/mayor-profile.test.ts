@@ -3,6 +3,7 @@ import {
   COUNCIL_BY_ELECTION,
   FORMER_MAYOR_NAME,
   MAYOR_ACTIONS,
+  MAYOR_POLICY_SPEECH,
   MAYOR_PROFILE,
   MAYORAL_ELECTION,
   ROAD_TO_INAUGURATION,
@@ -52,6 +53,18 @@ describe("ROAD_TO_INAUGURATION", () => {
       expect(`${event.title}${event.description}`).toContain(FORMER_MAYOR_NAME);
     }
     expect(ROAD_TO_INAUGURATION_SUMMARY).toContain(FORMER_MAYOR_NAME);
+  });
+});
+
+describe("MAYOR_POLICY_SPEECH", () => {
+  it("4つの改革がそれぞれ具体策を持ち、就任後の出来事として記録されている", () => {
+    expect(MAYOR_POLICY_SPEECH.pillars).toHaveLength(4);
+    for (const pillar of MAYOR_POLICY_SPEECH.pillars) {
+      expect(pillar.items.length).toBeGreaterThan(0);
+    }
+    const speechDate = MAYOR_POLICY_SPEECH.source.meetingDate;
+    expect(speechDate >= MAYOR_PROFILE.inaugurationDate).toBe(true);
+    expect(MAYOR_ACTIONS.some((e) => e.date === speechDate)).toBe(true);
   });
 });
 

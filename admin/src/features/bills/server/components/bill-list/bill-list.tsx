@@ -12,13 +12,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { loadDietSessions } from "@/features/diet-sessions/server/loaders/load-diet-sessions";
 import { routes } from "@/lib/routes";
 import { BillActionsMenu } from "../../../client/components/bill-actions-menu/bill-actions-menu";
+import { BillSessionFilter } from "../../../client/components/bill-list/bill-session-filter";
 import { PreviewButton } from "../../../client/components/bill-list/preview-button";
 import { PublishStatusBadge } from "../../../client/components/bill-list/publish-status-badge";
 import { ViewButton } from "../../../client/components/bill-list/view-button";
 import { BILL_STATUS_CONFIG } from "../../../shared/constants/bill-config";
 import type {
+  BillListFilter,
   BillSortConfig,
   BillStatus,
   BillWithDietSession,
@@ -44,13 +47,27 @@ function StatusBadge({
   );
 }
 
-export async function BillList({ sortConfig }: { sortConfig: BillSortConfig }) {
-  const bills = await getBills(sortConfig);
+interface BillListProps {
+  sortConfig: BillSortConfig;
+  filter: BillListFilter;
+}
+
+export async function BillList({ sortConfig, filter }: BillListProps) {
+  const [bills, dietSessions] = await Promise.all([
+    getBills(sortConfig, filter),
+    loadDietSessions(),
+  ]);
 
   return (
     <div>
       <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="text-sm text-gray-600">{bills.length}件の議案</div>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <BillSessionFilter
+            dietSessions={dietSessions}
+            selectedSessionId={filter.dietSessionId}
+          />
+          <div className="text-sm text-gray-600">{bills.length}件の議案</div>
+        </div>
         <Link href={routes.billNew()}>
           <Button>
             <Plus className="h-4 w-4 mr-1" />

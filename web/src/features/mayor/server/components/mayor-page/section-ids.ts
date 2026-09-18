@@ -3,6 +3,7 @@
  * セクションを増減するときはここを直せば、ヒーローのナビも追従する
  */
 export const MAYOR_SECTIONS = {
+  speech: { id: "speech", navLabel: "所信表明のポイント" },
   actions: { id: "actions", navLabel: "就任後にしたこと" },
   upcoming: { id: "upcoming", navLabel: "これからの予定" },
   background: { id: "background", navLabel: "市長交代の経緯" },
