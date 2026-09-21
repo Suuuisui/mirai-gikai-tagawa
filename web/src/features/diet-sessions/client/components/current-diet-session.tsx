@@ -11,15 +11,19 @@ type CurrentDietSessionProps = {
 export function CurrentDietSession({ session }: CurrentDietSessionProps) {
   return (
     <div className="w-full bg-mirai-surface px-6 py-6 md:mt-2 md:rounded-lg">
-      {/* 会期中の長い会期名でも375px幅ではみ出さないよう折返しを許容する */}
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-        <div className="flex items-center gap-4 flex-1">
-          <h2 className="text-xl font-bold text-mirai-text leading-[0.9]">
+      {/*
+        スマホ幅では「本日は＋バッジ」と会期名を縦に積む。
+        横並びのまま折返しに任せると「本日は」が1文字ずつ改行し、
+        会期名がバッジに重なって表示されていた
+      */}
+      <div className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-center md:gap-x-5">
+        <div className="flex items-center gap-4">
+          <h2 className="shrink-0 whitespace-nowrap text-xl font-bold text-mirai-text">
             本日は
           </h2>
           <div
             className={`
-            inline-flex items-center justify-center px-5 py-1.5 rounded-md shrink-0
+            inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-md px-5 py-1.5
             ${session == null ? "bg-mirai-surface-muted" : "bg-mirai-surface-key"}
             `}
           >
