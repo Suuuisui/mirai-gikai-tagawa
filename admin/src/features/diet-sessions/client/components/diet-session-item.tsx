@@ -153,7 +153,8 @@ export function DietSessionItem({ session }: DietSessionItemProps) {
 
   return (
     <div className="flex flex-col gap-2 rounded-lg border p-4">
-      <div className="flex items-center justify-between gap-4">
+      {/* スマホ幅では操作ボタンを下の行に折り返し、横にはみ出さないようにする */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
         {isEditing ? (
           <div className="flex-1 space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -230,7 +231,7 @@ export function DietSessionItem({ session }: DietSessionItemProps) {
           </div>
         )}
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {isEditing ? (
             <>
               <Button

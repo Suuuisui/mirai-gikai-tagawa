@@ -21,8 +21,10 @@ export function NavigationLinks() {
   const pathname = usePathname();
 
   return (
-    <nav>
-      <div className="flex space-x-8">
+    // スマホ幅ではリンクを折り返さず横スクロールにする（折り返すと各リンクが
+    // 1文字ずつ縦に並んでヘッダーが崩れる）。左右のpaddingを打ち消して端まで使う
+    <nav className="-mx-4 overflow-x-auto px-4 scrollbar-hide sm:mx-0 sm:px-0">
+      <div className="flex gap-5 sm:gap-8">
         {navigationLinks.map((link) => {
           const isActive = pathname.startsWith(link.href);
 
@@ -31,7 +33,7 @@ export function NavigationLinks() {
               key={link.href}
               href={link.href as Route}
               className={cn(
-                "inline-flex items-center gap-2 px-1 py-4 text-sm border-b-2 transition-colors",
+                "inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-1 py-3 text-sm border-b-2 transition-colors sm:py-4",
                 isActive
                   ? "border-blue-600 text-blue-600 font-semibold"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium"

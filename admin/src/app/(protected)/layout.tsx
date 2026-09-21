@@ -21,8 +21,10 @@ export default async function MainLayout({
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                   <Home className="h-5 w-5 text-white" />
                 </div>
-                <h1 className="text-xl font-semibold text-gray-900">
-                  みらい議会＠田川市 管理画面
+                {/* スマホ幅ではサイト名を省き、タイトルが2行に折れてヘッダーを圧迫しないようにする */}
+                <h1 className="text-lg font-semibold text-gray-900 sm:text-xl">
+                  <span className="hidden sm:inline">みらい議会＠田川市 </span>
+                  管理画面
                 </h1>
               </div>
             </div>

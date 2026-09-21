@@ -137,3 +137,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* 横スクロールするナビでスクロールバーを隠す（webと同じ定義） */
+@utility scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+}
