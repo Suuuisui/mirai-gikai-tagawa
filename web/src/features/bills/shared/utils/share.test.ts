@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { BillWithContent } from "../../shared/types";
+import type { BillWithContent } from "../types";
 import { createBillShareUrl, createShareMessage } from "./share";
 
 describe("createBillShareUrl", () => {
