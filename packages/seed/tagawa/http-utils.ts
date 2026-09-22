@@ -1,10 +1,10 @@
 /**
  * 田川市公式サイト向けの共通フェッチ・キャッシュ・HTMLユーティリティ【田川市専用】
  *
- * `scrape.ts`（提出議案と議決結果ページのスクレイパー）と
- * `scrape-explanation-materials.ts`（議員提出資料PDFリンクのスクレイパー）の
- * 両方から利用する。1.5秒間隔ルールとキャッシュ機構をここに集約し、
- * 公共サイトへの負荷配慮ロジックが重複・乖離しないようにする。
+ * `scrape.ts`（提出議案と議決結果）・`scrape-explanation-materials.ts`（議案説明資料PDF）・
+ * `scrape-petitions.ts`（請願・陳情）・`scrape-questions.ts`（一般質問）から利用する。
+ * 1.5秒間隔ルールとキャッシュ機構をここに集約し、公共サイトへの負荷配慮ロジックが
+ * 重複・乖離しないようにする。
  */
 
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
@@ -32,23 +32,36 @@ export async function waitForRateLimit(): Promise<void> {
   lastFetchAt = Date.now();
 }
 
-/** 1.5秒間隔ルールを守りつつHTTP GETし、結果をキャッシュする */
-export async function fetchWithCache(
-  url: string,
-  cacheName: string
-): Promise<string> {
+/** 1.5秒間隔ルールを守りつつHTTP GETし、生のバイト列をキャッシュする */
+async function fetchCached(url: string, cacheName: string): Promise<Buffer> {
   const cachePath = path.join(CACHE_DIR, cacheName);
   if (existsSync(cachePath)) {
-    return readFileSync(cachePath, "utf-8");
+    return readFileSync(cachePath);
   }
   await waitForRateLimit();
   console.log(`fetching ${url}`);
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
-  const body = await res.text();
+  const body = Buffer.from(await res.arrayBuffer());
   mkdirSync(CACHE_DIR, { recursive: true });
-  writeFileSync(cachePath, body, "utf-8");
+  writeFileSync(cachePath, body);
   return body;
+}
+
+/** HTML等のテキストを取得する（UTF-8） */
+export async function fetchWithCache(
+  url: string,
+  cacheName: string
+): Promise<string> {
+  return (await fetchCached(url, cacheName)).toString("utf-8");
+}
+
+/** PDF等のバイナリを取得する */
+export async function fetchBinaryWithCache(
+  url: string,
+  cacheName: string
+): Promise<Buffer> {
+  return fetchCached(url, cacheName);
 }
 
 export const ENTITIES: Record<string, string> = {

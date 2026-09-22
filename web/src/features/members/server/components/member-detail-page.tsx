@@ -11,6 +11,7 @@ import {
   VOTE_CHIP_CLASS,
   VOTE_LABEL,
 } from "@/features/bills/shared/utils/member-vote-display";
+import { MemberQuestionsSection } from "@/features/general-questions/server/components/member-questions-section";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
@@ -199,6 +200,12 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
             </ShowMoreList>
           </section>
         )}
+
+        {/* 一般質問で取り上げたこと（公式サイトの一般質問一覧より。無ければ非表示） */}
+        <MemberQuestionsSection
+          familyName={name}
+          fullName={profile?.fullName ?? null}
+        />
 
         {/* 議案ごとの投票記録 */}
         <section className="flex flex-col gap-3">

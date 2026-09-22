@@ -3,6 +3,7 @@ import { getBillsLite } from "@/features/bills/server/loaders/get-bills";
 import { getLatestUpdatedAt } from "@/features/bills/shared/utils/latest-updated-at";
 import { getCommitteeMeetings } from "@/features/committees/server/loaders/get-committee-meetings";
 import { getAllDietSessions } from "@/features/diet-sessions/server/loaders/get-all-diet-sessions";
+import { getQuestionSessionGroups } from "@/features/general-questions/server/loaders/get-general-questions";
 import { getBillsWithMemberVotes } from "@/features/members/server/loaders/get-member-vote-data";
 import { aggregateMemberSummaries } from "@/features/members/shared/utils/aggregate-members";
 import { PROPOSER_TYPES } from "@/features/members/shared/utils/proposer";
@@ -89,6 +90,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
+  // 一般質問は静的データ（公式サイトから生成）なので、会期ページは
+  // 議案データの更新日時に連動させる
+  const questionSessionUrls = getQuestionSessionGroups().map((group) => ({
+    url: `${baseUrl}${routes.questionSession(group.sessionKey)}`,
+    lastModified: latestBillUpdatedAt,
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
   return [
     {
       url: baseUrl,
@@ -135,6 +145,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}${routes.questions()}`,
+      lastModified: latestBillUpdatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}${routes.petitions()}`,
+      lastModified: latestBillUpdatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    },
     // 利用規約・プライバシーポリシーはbillデータと無関係な固定ページのため、
     // 他エントリと違いlastModifiedにlatestBillUpdatedAtを流用しない（省略可能）
     {
@@ -154,5 +176,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...memberUrls,
     ...proposerUrls,
     ...committeeMeetingUrls,
+    ...questionSessionUrls,
   ];
 }

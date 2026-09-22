@@ -17,6 +17,7 @@ import type { BillWithContent } from "@/features/bills/shared/types";
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
 import { CurrentDietSession } from "@/features/diet-sessions/client/components/current-diet-session";
 import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/get-current-diet-session";
+import { countQuestionsForSession } from "@/features/general-questions/server/loaders/get-general-questions";
 import { getJapanTime } from "@/lib/utils/date";
 
 // ISR: データ更新時は /api/revalidate（revalidateTag）で即時反映され、
@@ -47,6 +48,14 @@ export default async function Home() {
     getDifficultyLevel(),
   ]);
 
+  // 開催中の会期に一般質問の通告があれば、会期バナーから直接たどれるようにする
+  const currentQuestions = currentSession?.slug
+    ? {
+        count: countQuestionsForSession(currentSession.slug),
+        sessionKey: currentSession.slug,
+      }
+    : null;
+
   const toBillChatContext = (bill: BillWithContent) => {
     return {
       id: bill.id,
@@ -62,7 +71,10 @@ export default async function Home() {
       <Hero />
 
       {/* 本日の田川市議会セクション */}
-      <CurrentDietSession session={currentSession} />
+      <CurrentDietSession
+        session={currentSession}
+        questions={currentQuestions}
+      />
 
       {/* 新市長の特設ページへの導線（市長交代直後で関心が高い） */}
       <MayorBanner now={now} />

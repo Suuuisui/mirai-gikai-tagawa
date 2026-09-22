@@ -39,6 +39,14 @@ export const primaryLinks: FooterLink[] = [
     href: routes.committees(),
   },
   {
+    label: "一般質問",
+    href: routes.questions(),
+  },
+  {
+    label: "請願・陳情",
+    href: routes.petitions(),
+  },
+  {
     label: "新市長の動き",
     href: routes.mayor(),
   },

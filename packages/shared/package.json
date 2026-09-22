@@ -111,6 +111,14 @@
     "./interview-report/sync-opinions": {
       "types": "./src/interview-report/sync-opinions.ts",
       "default": "./src/interview-report/sync-opinions.ts"
+    },
+    "./council/types": {
+      "types": "./src/council/types.ts",
+      "default": "./src/council/types.ts"
+    },
+    "./council/family-names": {
+      "types": "./src/council/family-names.ts",
+      "default": "./src/council/family-names.ts"
     }
   },
   "dependencies": {

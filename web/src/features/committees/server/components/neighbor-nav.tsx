@@ -5,7 +5,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { CommitteeMeetingListItem } from "../../shared/types";
-import { committeeSectionId } from "../../shared/utils/committee-groups";
+import { committeeSectionHref } from "../../shared/utils/committee-groups";
 import type { AdjacentMeetings } from "../../shared/utils/committee-list";
 
 interface NeighborNavProps {
@@ -30,9 +30,7 @@ export function NeighborNav({
         <NeighborLink meeting={neighbors.newer} direction="newer" />
       </div>
       <TextLink
-        href={
-          `${routes.committees()}#${committeeSectionId(committeeName)}` as Route
-        }
+        href={committeeSectionHref(committeeName) as Route}
         className="text-sm"
       >
         {committeeLabel}の記録一覧へ
