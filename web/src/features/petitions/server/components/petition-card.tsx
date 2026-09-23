@@ -57,6 +57,13 @@ export function PetitionCard({
   compact = false,
 }: PetitionCardProps) {
   const showNote = !compact && note && (note.gist || note.reasons?.length);
+  // 理由が会議録にあるときは常に出す。無いときは「なぜ不採択か」を知りたい不採択・一部採択だけ、
+  // 記載が無いことを示す（採択には出さない）
+  const showDecision =
+    note?.decision !== undefined &&
+    (note.decision.report !== null ||
+      record.status === "rejected" ||
+      record.status === "partial");
   return (
     <article
       id={record.id}
@@ -152,6 +159,30 @@ export function PetitionCard({
                 ))}
               </ul>
             </div>
+          )}
+        </div>
+      )}
+
+      {!compact && note?.decision && showDecision && (
+        <div className="flex flex-col gap-1.5 text-xs leading-[1.7] text-mirai-text">
+          <p className="font-bold text-mirai-text-muted">
+            審査の結果と理由（本会議の会議録から）
+          </p>
+          {note.decision.report ? (
+            <p>
+              {note.decision.report}
+              {note.decision.voteNote && (
+                <span className="ml-1 font-bold">
+                  → {note.decision.voteNote}
+                </span>
+              )}
+            </p>
+          ) : (
+            <p className="text-mirai-text-secondary">
+              {formatDateWithDots(note.decision.minutesDate)}
+              の本会議では委員長の報告が省略され、結果だけが決まりました（閉会中の委員会で結論が出たため）。
+              理由は本会議の会議録には載っていません。
+            </p>
           )}
         </div>
       )}
