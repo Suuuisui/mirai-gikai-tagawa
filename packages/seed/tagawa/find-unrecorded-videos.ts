@@ -8,6 +8,8 @@
  *
  * - 入力は update-question-videos.ts が書いた <out>/channel-videos.json
  * - 結果は <out>/unrecorded-videos.json（detect-council-changes.ts がレポートに載せる）
+ * - 取り込めない動画（自動字幕が無いなど）は data/unrecorded-video-exceptions.json に理由付きで置き、
+ *   Issue に毎日載らないようにする。字幕が付くなど事情が変わったら除外を外す
  * - DB の接続情報が無いときは検出を行わず、警告だけ残す
  */
 
@@ -22,6 +24,19 @@ import {
 } from "./council-update-utils";
 
 const PAGE_SIZE = 1000;
+const EXCEPTIONS_PATH = path.join(import.meta.dirname, "data/unrecorded-video-exceptions.json");
+
+interface VideoException {
+  id: string;
+  title: string;
+  reason: string;
+}
+
+function loadExceptionIds(): Set<string> {
+  if (!existsSync(EXCEPTIONS_PATH)) return new Set();
+  const exceptions = JSON.parse(readFileSync(EXCEPTIONS_PATH, "utf-8")) as VideoException[];
+  return new Set(exceptions.map((e) => e.id));
+}
 
 async function loadMeetingReferences(): Promise<MeetingVideoReference[]> {
   const url = process.env.SUPABASE_URL;
@@ -61,9 +76,11 @@ async function main() {
   let unrecorded: ChannelVideo[] = [];
   try {
     const references = await loadMeetingReferences();
-    unrecorded = findUnrecordedVideos(videos, references);
+    const exceptionIds = loadExceptionIds();
+    const found = findUnrecordedVideos(videos, references);
+    unrecorded = found.filter((video) => !exceptionIds.has(video.id));
     console.log(
-      `チャンネルの動画${videos.length}本のうち、委員会記録に無いもの${unrecorded.length}本（記録${references.length}件と照合）`
+      `チャンネルの動画${videos.length}本のうち、委員会記録に無いもの${unrecorded.length}本（記録${references.length}件と照合、取り込めない動画${found.length - unrecorded.length}本を除外）`
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
