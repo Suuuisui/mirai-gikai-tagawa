@@ -27,6 +27,7 @@ import {
 } from "./source-data";
 import { BILL_DESCRIPTIONS, billDescriptionKey } from "./bill-descriptions";
 import {
+  buildBillName,
   buildDefaultSummary,
   buildSourceSection,
   buildStatusNote,
@@ -258,9 +259,7 @@ function main() {
       );
       const status = resultToStatus(bill.resultLabel);
       const proposerLabel = PROPOSER_LABEL[bill.proposer];
-      const name = bill.billNumberLabel
-        ? `${bill.billNumberLabel}　${bill.title}`
-        : bill.title;
+      const name = buildBillName(bill.billNumberLabel, bill.title);
       const decidedAt = `${bill.resolvedDate}T00:00:00.000Z`;
       const category = categorize(bill);
 

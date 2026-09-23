@@ -23,9 +23,12 @@
 
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import path from "node:path";
+import { pruneOngoingSessions } from "./council-update-utils";
 import { carryOverMissingSessions } from "./session-data-utils";
 import {
+  ONGOING_SESSIONS_JSON_PATH,
   SESSIONS_JSON_PATH,
+  loadOngoingSessions,
   loadTagawaSessions,
   type BillSource,
   type Proposer,
@@ -686,6 +689,18 @@ async function main() {
 
   mkdirSync(path.dirname(OUT_PATH), { recursive: true });
   writeFileSync(OUT_PATH, `${JSON.stringify(allSessions, null, 2)}\n`, "utf-8");
+
+  // 会期中として手で置いていた会期の議決結果ページが公開され今回取り込めたら、
+  // ongoing-sessions.json から外す（残すと build-csv.ts がキー重複で止まる）
+  if (existsSync(ONGOING_SESSIONS_JSON_PATH)) {
+    const { kept, pruned } = pruneOngoingSessions(loadOngoingSessions(), allSessions);
+    if (pruned.length > 0) {
+      writeFileSync(ONGOING_SESSIONS_JSON_PATH, `${JSON.stringify(kept, null, 2)}\n`, "utf-8");
+      for (const s of pruned) {
+        console.log(`  ${s.name}: 議決結果ページを取り込んだため会期中の一覧（ongoing-sessions.json）から外しました`);
+      }
+    }
+  }
   const totalBills = allSessions.reduce((n, s) => n + s.bills.length, 0);
   console.log(
     `\n🎉 完了: 会期${allSessions.length}件 / 議案${totalBills}件 → ${OUT_PATH}`

@@ -103,7 +103,16 @@ async function main() {
 
   for (const [sourceUrl, group] of sessionsByUrl) {
     const kijiId = kijiIdFromUrl(sourceUrl);
-    const html = await fetchWithCache(sourceUrl, `${kijiId}.html`);
+    let html: string;
+    try {
+      html = await fetchWithCache(sourceUrl, `${kijiId}.html`);
+    } catch (error) {
+      // 掲載期間が過ぎて消えたページ等。前回紐付けた資料リンクをそのまま残す
+      console.warn(
+        `  ⚠ ${group.map((s) => s.name).join("・")}: ページを取得できないため前回の資料リンクを残します (${String(error)})`
+      );
+      continue;
+    }
     const rawLinks = extractPdfLinks(html);
     const parsedLinks = rawLinks.map((link) => ({
       ...link,

@@ -5,6 +5,10 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  # 定期自動更新（council_auto_update.yml）が main へ push した後に起動する
+  # （GITHUB_TOKEN による push は push トリガーを起こさないため。Code Check の
+  #   lint / typecheck / test は自動更新のジョブ内で先に通している）
+  workflow_dispatch:
 
 jobs:
   integration-test:
