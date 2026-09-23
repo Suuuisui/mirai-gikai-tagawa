@@ -1,13 +1,14 @@
-import { BookOpen, ExternalLink, FileText, Info, Youtube } from "lucide-react";
+import { ExternalLink, FileText, Info, Youtube } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layouts/container";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { GlossarySection } from "@/features/glossary/server/components/glossary-section";
+import { pickGlossaryTerms } from "@/features/glossary/shared/data/glossary";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
-import { pickGlossaryTerms } from "../../shared/data/committee-glossary";
 import { getCommitteeProfile } from "../../shared/data/committee-profiles";
 import { resolveTopics } from "../../shared/data/committee-topics";
 import type { CommitteeMeeting } from "../../shared/types";
@@ -154,26 +155,7 @@ export function CommitteeMeetingDetailPage({
           )}
 
           {/* 議会用語の解説（この会議の内容に出てくるものだけ） */}
-          {glossary.length > 0 && (
-            <section className="flex flex-col gap-3 rounded-lg border border-mirai-border-muted bg-mirai-surface px-5 py-4">
-              <h2 className="flex items-center gap-1.5 text-sm font-bold text-mirai-text">
-                <BookOpen aria-hidden className="size-4 text-primary-accent" />
-                このページに出てくる議会のことば
-              </h2>
-              <dl className="flex flex-col gap-3">
-                {glossary.map((entry) => (
-                  <div key={entry.term} className="flex flex-col gap-0.5">
-                    <dt className="text-sm font-bold text-mirai-text">
-                      {entry.term}
-                    </dt>
-                    <dd className="text-xs leading-relaxed text-mirai-text-secondary">
-                      {entry.description}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
-          )}
+          <GlossarySection entries={glossary} />
 
           {/* 中継動画・全文（原典への導線） */}
           <section className="flex flex-col gap-4">
