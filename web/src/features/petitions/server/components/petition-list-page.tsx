@@ -24,6 +24,7 @@ interface PetitionListPageProps {
 
 const CLOSED_INITIAL_COUNT = 10;
 const OFFICIAL_INDEX_URL = "https://www.joho.tagawa.fukuoka.jp/list00713.html";
+const MINUTES_SEARCH_URL = "https://www.kensakusystem.jp/tagawa/index.html";
 
 /**
  * 請願・陳情の一覧ページ（/petitions）。
@@ -111,6 +112,11 @@ export function PetitionListPage({
             <SourceNote>
               田川市公式サイト「請願・陳情」の審査状況と審査結果のページを機械的に整理したものです。
               「要望の内容」と「提出者が挙げる理由」は公開されている原文（PDF）を運営者が平易に書き直したもの、
+              「審査の結果と理由」は本会議の会議録（
+              <TextLink external href={MINUTES_SEARCH_URL} className="mx-1">
+                田川市議会 会議録検索システム
+              </TextLink>
+              ）の委員長報告・討論・採決を運営者がまとめたもの、
               「審査の経緯」は当サイトの委員会の記録（中継の自動字幕や開示文書の要約）と照合したものです。
               原文（PDF）と最新の審査状況は
               <TextLink external href={OFFICIAL_INDEX_URL} className="mx-1">

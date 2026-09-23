@@ -1,10 +1,23 @@
 /**
- * 請願・陳情の「要望の内容」と「提出者が挙げる理由」【田川市専用】
+ * 請願・陳情の「要望の内容」「提出者が挙げる理由」「審査の結果と理由」【田川市専用】
  *
- * 公式サイトに原文（PDF）が載っている請願・陳情について、原文を読んで平易に書き直したもの。
+ * - 要望の内容と理由: 公式サイトに原文（PDF）が載っている請願・陳情について、原文を読んで平易に書き直したもの
+ * - 審査の結果と理由: 本会議の会議録（田川市議会 会議録検索システム）の委員長報告・討論・採決から書いたもの。
+ *   閉会中の委員会審査で結論が出た請願・陳情は、本会議で委員長報告が省略されるため理由が会議録に無い
+ *   （その場合は report を null にして、記載が無いことを示す）
  * id は petitions-data.ts（自動生成）の id と対応させる。原文に無いことは書かない。
- * 主張は提出者の主張として書き、評価は加えない
+ * 主張は提出者や発言者の主張として書き、評価は加えない
  */
+
+/** 本会議の会議録から書いた審査の結果と理由 */
+export interface PetitionDecision {
+  /** 本会議で結果が決まった日（会議録の日付、YYYY-MM-DD） */
+  minutesDate: string;
+  /** 委員会でどんな審査があり、なぜその結論になったか。会議録に理由の記載が無いときは null */
+  report: string | null;
+  /** 採決の結果（例: 起立少数で不採択）。読み取れないときは null */
+  voteNote: string | null;
+}
 
 export interface PetitionNote {
   /** petitions-data.ts の id */
@@ -15,6 +28,8 @@ export interface PetitionNote {
   reasons?: readonly string[];
   /** 採択にあたり議会が付した意見（公式サイトの附帯意見） */
   councilOpinion?: string;
+  /** 本会議の会議録から書いた審査の結果と理由 */
+  decision?: PetitionDecision;
 }
 
 export const PETITION_NOTES: readonly PetitionNote[] = [
@@ -57,6 +72,11 @@ export const PETITION_NOTES: readonly PetitionNote[] = [
       "多くの地区公民館が老朽化で建て替えが必要だが、会計規模の縮小で資金調達が厳しいとしている。",
       "補助金の交付要綱は長年見直されておらず、現状に即した内容になっていないとしている。",
     ],
+    decision: {
+      minutesDate: "2026-03-04",
+      report: null,
+      voteNote: null,
+    },
   },
   {
     id: "chinjo-kiji0038564-2",
@@ -67,6 +87,11 @@ export const PETITION_NOTES: readonly PetitionNote[] = [
       "現行の田川市奨学金は大学1年生などに応募資格が限られ、2年以降の家計急変では受けられないとしている。",
       "支援が受けられないことで、同じ境遇の学生の間に不均衡が生じているとしている。",
     ],
+    decision: {
+      minutesDate: "2025-12-01",
+      report: null,
+      voteNote: null,
+    },
   },
   {
     id: "seigan-kiji0038564-1",
@@ -77,6 +102,11 @@ export const PETITION_NOTES: readonly PetitionNote[] = [
       "コロナ禍では密を避けるため、働く時間を削ったり登録を諦めたりする保護者が相次いだとしている。",
       "金川小学校には空き教室がなく、教室が不足している状況だとしている。",
     ],
+    decision: {
+      minutesDate: "2023-12-01",
+      report: null,
+      voteNote: null,
+    },
   },
   {
     id: "chinjo-kiji0038564-1",
@@ -87,16 +117,278 @@ export const PETITION_NOTES: readonly PetitionNote[] = [
       "2022年の最低賃金は最高の東京都1,072円と最低の853円で、219円の差があるとしている。",
       "労働者の約7割が中小零細企業に雇われ、国税庁の調査では約250万社が赤字経営だとしている。",
     ],
+    decision: {
+      minutesDate: "2023-07-05",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0037317-5",
+    decision: {
+      minutesDate: "2022-03-24",
+      report:
+        "建設経済委員長の陸田孝則議員は、陳情が、燃料の切替えによる悪臭や、住宅・医療福祉・教育の施設が集まる地域であることへの心配から、市議会として建設反対の決議を求めるものだと報告した。執行部は、国が認定した燃料は林地残材で、他の燃料には許可の取り直しが必要だと説明。委員会は、国の認可を得た民間事業で市は関与できない、市と南国殖産株式会社の協定書に公害防止や苦情解決の定めがある、企業誘致で税収と雇用が期待できるなどを理由に不採択と決め、協定が守られるか注視することを総意とした。佐藤俊一議員は賛成討論で、住民説明会のないまま着工されたと述べた。起立少数で不採択。",
+      voteNote: "起立少数で不採択",
+    },
+  },
+  {
+    id: "chinjo-kiji0037317-4",
+    decision: {
+      minutesDate: "2022-03-24",
+      report:
+        "厚生委員長の佐藤俊一議員は、この陳情が、公立・公的病院の再編や、感染症病床・集中治療室、医師・看護師、保健所の不足といったコロナ禍で明らかになった課題を挙げ、医療・介護・福祉の提供体制の確保、保健所の増設と保健師等の大幅増員、社会保障への国庫負担の増額と75歳以上の窓口負担2倍化の中止を国に求める意見書の提出を願うものだと報告した。委員会では、実現には財源が必要で採択できないとの反対討論と、3項目は早急に実施すべきだとの賛成討論があり、採決は可否同数となったため委員長裁決で採択すべきものと決定した。本会議では質疑・討論はなく、起立多数で採択された。",
+      voteNote: "起立多数で採択（委員会では可否同数となり委員長裁決で採択）",
+    },
+  },
+  {
+    id: "chinjo-kiji0037317-3",
+    decision: {
+      minutesDate: "2020-11-30",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0037317-2",
+    decision: {
+      minutesDate: "2021-03-18",
+      report:
+        "厚生委員長の佐藤俊一議員は、陳情が、養護老人ホームの契約入所枠を定員の20%から40%程度に広げることと、施設の赤字補填の制度化を求めるものだと報告した。委員会は約1年かけ陳情者から意見を聴き、市の入所判定の状況や民間移譲の経過を確認。柔軟な対処を求める国の通知はなく、県内に赤字補填を行う自治体もないとした。委員からは、措置控えは行われておらず枠の拡充や補填の必要はないとの反対討論、身寄りのない高齢者の受け皿として必要との賛成討論があり、賛成少数で不採択と決定。委員会は別に、措置費の支弁基準の改定を求める意見書を全会一致でまとめている。起立少数で不採択。",
+      voteNote: "起立少数で不採択",
+    },
+  },
+  {
+    id: "chinjo-kiji0037317-1",
+    decision: {
+      minutesDate: "2019-07-11",
+      report:
+        "総務文教委員長の村上卓哉議員は、陳情が挙げた8項目の課題について執行部に見解を求めたと報告。執行部は、アンケートは賛成が最も多く、反対理由の多くが通学距離と通学路の安全だったとして、スクールバスや歩道の確保などで対応し住民合意は図られた、東西案への変更は市議会や住民の意見を受けた再検討の結果だと説明。委員からは、拙速で住民合意が足りず再度説明すべきとの意見がある一方、平成17年度から検討を重ねており1日でも早く教育環境を整えるべきだとの意見もあり、賛成少数で不採択と決定した。本会議では柿田孝子議員と小林義憲議員が採択を求める討論を行い、起立少数で不採択。",
+      voteNote: "起立少数で不採択",
+    },
+  },
+  {
+    id: "chinjo-kiji0031461-7",
+    decision: {
+      minutesDate: "2018-03-15",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031461-6",
+    decision: {
+      minutesDate: "2017-03-16",
+      report:
+        "総務文教委員長の尾﨑行人議員は、4か月・計4回の審査を行ったと報告。委員から先行する猪位金学園の成果を検証してから議論すべきとの意見が出たが、執行部は卒業生の進路も含めた検証が必要で現段階では整理できないと説明し、中学校再編の基本計画案づくりで陳情の内容も十分検討したいと述べた。委員会は陳情者からも意見を聴き、2,300人が署名したことを確認。教育の機会均等から採択すべきとの意見と、他の校区も同じ思いで今後の再編の議論の妨げになるとの意見が分かれ、賛成少数で不採択と決定した。本会議では藤沢悟議員と柿田孝子議員が採択を求める討論を行い、起立少数で不採択。",
+      voteNote: "起立少数で不採択",
+    },
+  },
+  {
+    id: "chinjo-kiji0031461-5",
+    decision: {
+      minutesDate: "2017-09-01",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031461-4",
+    decision: {
+      minutesDate: "2016-03-17",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031461-3",
+    decision: {
+      minutesDate: "2016-02-22",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031461-2",
+    decision: {
+      minutesDate: "2015-12-18",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-18",
+    decision: {
+      minutesDate: "2014-10-08",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-17",
+    decision: {
+      minutesDate: "2014-07-02",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-16",
+    decision: {
+      minutesDate: "2014-03-20",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-15",
+    decision: {
+      minutesDate: "2015-03-19",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-14",
+    decision: {
+      minutesDate: "2014-03-20",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "seigan-kiji0031077-4",
+    decision: {
+      minutesDate: "2014-03-20",
+      report:
+        "議会運営委員会が採択とすべきものと決め、本会議では「同委員会で十分審査がなされている」として委員長報告を省略し、討論に入りました。柿田孝子議員は日本共産党市議団として反対討論を行い、議場は多様な価値観を持つ市民の代表が自由に議論を尽くす言論の府であり国旗掲揚を押しつけるべきではないこと、日の丸が過去の侵略戦争のシンボルであったこと、国旗国歌法は掲揚を義務づけておらず法制当時の小渕恵三首相も義務づけは考えていないと答弁していたことを理由に挙げました。ほかに討論はなく、起立採決の結果、起立多数で採択と決まりました。",
+      voteNote: "起立多数で採択",
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-13",
+    decision: {
+      minutesDate: "2013-09-06",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-12",
+    decision: {
+      minutesDate: "2013-07-01",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-11",
+    decision: {
+      minutesDate: "2013-06-13",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-10",
+    decision: {
+      minutesDate: "2013-02-26",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-8",
+    decision: {
+      minutesDate: "2013-09-06",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-7",
+    decision: {
+      minutesDate: "2013-02-26",
+      report: null,
+      voteNote: null,
+    },
   },
   {
     id: "chinjo-kiji0031077-6",
     councilOpinion:
       "議会は採択にあたり、通常保育・一時預かり保育・障害のある子どもの保育は内容を充実させ、病気の子どもを預かる病児保育と、回復期の子どもを預かる病後児保育は早急に実施するよう意見を付けた。",
+    decision: {
+      minutesDate: "2012-12-03",
+      report:
+        "陳情項目2（新幼稚園は保育時間4時間を守り、延長する場合は有料に）について総務文教委員会の二場公人委員長が報告した。委員会は約1万1,900名の署名を重く受け止めて4回審査し、正副委員長が陳情者の民間保育所代表と面談。執行部は、3歳児保育と保育時間の延長は幼稚園に通う保護者から長年要望が多く、将来16時・17時まで無料で延ばす考えはないと説明した。委員からは有料制は慎重に考えるべきとの意見や、市の説明不足で陳情・署名が出たのは残念との意見が出て、委員会は賛成少数で不採択と決定。本会議も起立多数で不採択とした。項目1は厚生委員会で意見を付して採択済み。",
+      voteNote: "起立多数で不採択（陳情項目2）",
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-5",
+    decision: {
+      minutesDate: "2012-07-03",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-4",
+    decision: {
+      minutesDate: "2012-07-03",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-3",
+    decision: {
+      minutesDate: "2011-12-22",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-2",
+    decision: {
+      minutesDate: "2011-12-22",
+      report: null,
+      voteNote: null,
+    },
   },
   {
     id: "seigan-kiji0031077-3",
     councilOpinion:
       "議会は採択にあたり、まず後藤寺本町公衆トイレを水洗トイレにし、後藤寺本町一丁目（旧丸共前）の公衆トイレは市の財政状況などの条件が整えば水洗化するよう意見を付けた。",
+    decision: {
+      minutesDate: "2011-12-22",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "seigan-kiji0031077-2",
+    decision: {
+      minutesDate: "2011-09-02",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "seigan-kiji0031077-1",
+    decision: {
+      minutesDate: "2011-06-24",
+      report: null,
+      voteNote: null,
+    },
+  },
+  {
+    id: "chinjo-kiji0031077-1",
+    decision: {
+      minutesDate: "2011-07-13",
+      report: null,
+      voteNote: null,
+    },
   },
 ];
 
