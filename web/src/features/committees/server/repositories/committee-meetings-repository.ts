@@ -3,6 +3,7 @@ import { createAdminClient } from "@mirai-gikai/supabase";
 import type {
   CommitteeMeeting,
   CommitteeMeetingListItem,
+  CommitteeMeetingPetitionRef,
   CommitteeMeetingSummary,
 } from "../../shared/types";
 import { toStringArray } from "../../shared/utils/committee-meeting-parser";
@@ -101,6 +102,39 @@ export async function findAllCommitteeMeetingListItems(): Promise<
     headline: row.headline,
     topics: toStringArray(row.topics),
     source_type: row.source_type === "youtube" ? "youtube" : "disclosure",
+  }));
+}
+
+const PETITION_REF_COLUMNS =
+  "id, committee_name, meeting_date, headline, agenda_items, key_points";
+
+/**
+ * 請願・陳情の審査の経緯（どの会議で審査され、何が決まったか）を引くための
+ * 議題と要点だけを開催日の昇順で取得
+ */
+export async function findAllCommitteeMeetingPetitionRefs(): Promise<
+  CommitteeMeetingPetitionRef[]
+> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("committee_meetings")
+    .select(PETITION_REF_COLUMNS)
+    .order("meeting_date", { ascending: true });
+
+  if (error) {
+    throw new Error(
+      `Failed to fetch committee meeting petition refs: ${error.message}`
+    );
+  }
+
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    committee_name: row.committee_name,
+    meeting_date: row.meeting_date,
+    headline: row.headline,
+    agenda_items: toStringArray(row.agenda_items),
+    key_points: toStringArray(row.key_points),
   }));
 }
 

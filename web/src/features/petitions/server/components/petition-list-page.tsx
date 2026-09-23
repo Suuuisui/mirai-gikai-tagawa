@@ -6,16 +6,20 @@ import { ShowMoreList } from "@/components/ui/show-more-list";
 import { SourceNote } from "@/components/ui/source-note";
 import { TextLink } from "@/components/ui/text-link";
 import { routes } from "@/lib/routes";
+import { findPetitionNote } from "../../shared/data/petition-notes";
 import {
   splitPetitionsByOpen,
   summarizePetitions,
 } from "../../shared/utils/petition-display";
+import type { PetitionMeetingMatch } from "../../shared/utils/petition-meetings";
 import type { PetitionLinkContext } from "../loaders/get-petitions";
 import { PetitionCard } from "./petition-card";
 
 interface PetitionListPageProps {
   records: readonly PetitionRecord[];
   context: PetitionLinkContext;
+  /** 請願・陳情の id → 審査した会議 */
+  meetingMatches: ReadonlyMap<string, readonly PetitionMeetingMatch[]>;
 }
 
 const CLOSED_INITIAL_COUNT = 10;
@@ -25,9 +29,22 @@ const OFFICIAL_INDEX_URL = "https://www.joho.tagawa.fukuoka.jp/list00713.html";
  * 請願・陳情の一覧ページ（/petitions）。
  * 審査中のものを先頭に、これまでの結果を上程日の新しい順に並べる
  */
-export function PetitionListPage({ records, context }: PetitionListPageProps) {
+export function PetitionListPage({
+  records,
+  context,
+  meetingMatches,
+}: PetitionListPageProps) {
   const summary = summarizePetitions(records);
   const { open, closed } = splitPetitionsByOpen(records);
+  const renderCard = (record: PetitionRecord) => (
+    <PetitionCard
+      key={record.id}
+      record={record}
+      context={context}
+      note={findPetitionNote(record.id)}
+      meetings={meetingMatches.get(record.id) ?? []}
+    />
+  );
 
   return (
     <div data-wide-column>
@@ -71,13 +88,7 @@ export function PetitionListPage({ records, context }: PetitionListPageProps) {
                   </p>
                 </div>
                 <div className="flex flex-col gap-3">
-                  {open.map((record) => (
-                    <PetitionCard
-                      key={record.id}
-                      record={record}
-                      context={context}
-                    />
-                  ))}
+                  {open.map(renderCard)}
                 </div>
               </section>
             )}
@@ -93,18 +104,14 @@ export function PetitionListPage({ records, context }: PetitionListPageProps) {
                 initialCount={CLOSED_INITIAL_COUNT}
                 className="flex flex-col gap-3"
               >
-                {closed.map((record) => (
-                  <PetitionCard
-                    key={record.id}
-                    record={record}
-                    context={context}
-                  />
-                ))}
+                {closed.map(renderCard)}
               </ShowMoreList>
             </section>
 
             <SourceNote>
               田川市公式サイト「請願・陳情」の審査状況と審査結果のページを機械的に整理したものです。
+              「要望の内容」と「提出者が挙げる理由」は公開されている原文（PDF）を運営者が平易に書き直したもの、
+              「審査の経緯」は当サイトの委員会の記録（中継の自動字幕や開示文書の要約）と照合したものです。
               原文（PDF）と最新の審査状況は
               <TextLink external href={OFFICIAL_INDEX_URL} className="mx-1">
                 公式サイト

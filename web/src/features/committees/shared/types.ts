@@ -38,3 +38,16 @@ export interface CommitteeMeetingListItem {
   topics: string[];
   source_type: CommitteeMeetingSourceType;
 }
+
+/**
+ * 請願・陳情の審査の経緯を引くための項目（議題と要点だけ）。
+ * 全件を読むが本文・要約は含めないので数百KBに収まる
+ */
+export interface CommitteeMeetingPetitionRef {
+  id: string;
+  committee_name: string;
+  meeting_date: string;
+  headline: string | null;
+  agenda_items: string[];
+  key_points: string[];
+}
