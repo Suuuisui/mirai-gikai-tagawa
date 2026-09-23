@@ -8,8 +8,16 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import { LongPressSection } from "@/features/bills/client/components/bill-detail/long-press-section";
+import { BudgetChart } from "@/features/bills/server/components/bill-detail/budget-chart";
+import { GlossaryTerm } from "@/features/glossary/client/components/glossary-term";
+import { GLOSSARY } from "@/features/glossary/shared/data/glossary";
+import { BUDGET_CHART_TAG, rehypeBudgetChart } from "./rehype-budget-chart";
 import { rehypeEmbedYouTube } from "./rehype-embed-youtube";
 import { rehypeExternalLinks } from "./rehype-external-links";
+import {
+  GLOSSARY_TERM_TAG,
+  rehypeGlossaryTerms,
+} from "./rehype-glossary-terms";
 import { rehypeHeadingIds } from "./rehype-heading-ids";
 import { rehypeInjectElement } from "./rehype-inject-element";
 import { rehypeWrapSections } from "./rehype-wrap-sections";
@@ -61,6 +69,11 @@ export async function parseMarkdown(markdown: string): Promise<ReactElement> {
     .use(rehypeHeadingIds)
     .use(rehypeExternalLinks)
     .use(rehypeEmbedYouTube)
+    // 予算の図解（```budget-chart）と、むずかしいことばの印。
+    // どちらもカスタム要素に置き換えるので sanitize の後段に置く。
+    // 印は図の中に付けないよう、図の置き換えより後に実行する
+    .use(rehypeBudgetChart)
+    .use(rehypeGlossaryTerms, { entries: GLOSSARY })
     .run(mdast);
 
   // hast → React Element（部分水和）
@@ -69,7 +82,9 @@ export async function parseMarkdown(markdown: string): Promise<ReactElement> {
     jsx,
     jsxs,
     components: {
-      LongPressSection, // Client Componentとして水和
+      LongPressSection, // 「わからない言葉は長押しでAIに質問」の案内
+      [BUDGET_CHART_TAG]: BudgetChart, // ```budget-chart の図（Server Component）
+      [GLOSSARY_TERM_TAG]: GlossaryTerm, // ことばの印（Client Component。タップで説明を出す）
     },
   });
 }

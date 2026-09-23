@@ -2,6 +2,8 @@ import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { getDietSessionById } from "@/features/diet-sessions/server/loaders/get-diet-session-by-id";
+import { GlossarySection } from "@/features/glossary/server/components/glossary-section";
+import { pickGlossaryTerms } from "@/features/glossary/shared/data/glossary";
 import { InterviewLandingSection } from "@/features/interview-config/client/components/interview-landing-section";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { getPublicReportsByBillId } from "@/features/interview-report/server/loaders/get-public-reports-by-bill-id";
@@ -36,6 +38,12 @@ export async function BillDetailLayout({
   currentDifficulty,
 }: BillDetailLayoutProps) {
   const showMiraiStance = bill.status === "preparing" || bill.mirai_stance;
+  // 本文に出てくるむずかしいことば。本文中の印（初出だけ）より広く、
+  // 熟語の一部として出てくる語も一覧に載せる
+  const glossaryEntries = pickGlossaryTerms([
+    bill.bill_content?.summary ?? "",
+    bill.bill_content?.content ?? "",
+  ]);
   const [
     interviewConfig,
     publicReportsResult,
@@ -133,6 +141,15 @@ export async function BillDetailLayout({
           </div>
 
           <BillContent bill={bill} />
+
+          {glossaryEntries.length > 0 && (
+            <div className="mt-8">
+              <GlossarySection
+                entries={glossaryEntries}
+                title="この議案に出てくることば"
+              />
+            </div>
+          )}
         </Container>
       </BillDetailClient>
 
