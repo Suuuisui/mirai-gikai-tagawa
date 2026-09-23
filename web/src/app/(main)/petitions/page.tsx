@@ -3,6 +3,7 @@ import { PetitionListPage } from "@/features/petitions/server/components/petitio
 import {
   getAllPetitions,
   getPetitionLinkContext,
+  getPetitionMeetingMatches,
 } from "@/features/petitions/server/loaders/get-petitions";
 import { routes } from "@/lib/routes";
 
@@ -12,13 +13,22 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "田川市議会 請願・陳情（市民からの要望）の審査結果",
   description:
-    "田川市議会に出された請願・陳情の一覧です。付託された委員会、採択・不採択などの審査結果、紹介議員、原文PDFへのリンクを平成23年5月以降の分からまとめています。",
+    "田川市議会に出された請願・陳情の一覧です。要望の内容と提出者が挙げる理由、付託された委員会での審査の経緯、採択・不採択などの結果、紹介議員、原文PDFへのリンクを平成23年5月以降の分からまとめています。",
   alternates: {
     canonical: routes.petitions(),
   },
 };
 
 export default async function PetitionsPage() {
-  const context = await getPetitionLinkContext();
-  return <PetitionListPage records={getAllPetitions()} context={context} />;
+  const [context, meetingMatches] = await Promise.all([
+    getPetitionLinkContext(),
+    getPetitionMeetingMatches(),
+  ]);
+  return (
+    <PetitionListPage
+      records={getAllPetitions()}
+      context={context}
+      meetingMatches={meetingMatches}
+    />
+  );
 }

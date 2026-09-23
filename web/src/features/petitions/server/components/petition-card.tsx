@@ -9,13 +9,16 @@ import { TextLink } from "@/components/ui/text-link";
 import { committeeSectionHref } from "@/features/committees/shared/utils/committee-groups";
 import { resolveMemberPageKey } from "@/features/general-questions/shared/utils/question-links";
 import { MemberLink } from "@/features/members/server/components/member-link";
+import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import { formatDateWithDots } from "@/lib/utils/date";
+import type { PetitionNote } from "../../shared/data/petition-notes";
 import {
   formatPetitionOutcome,
   PETITION_KIND_LABEL,
   PETITION_STATUS_LABEL,
 } from "../../shared/utils/petition-display";
+import type { PetitionMeetingMatch } from "../../shared/utils/petition-meetings";
 import type { PetitionLinkContext } from "../loaders/get-petitions";
 
 /** 結果の種類ごとのバッジ色（採択は強調、否決・終了は控えめ、審査中は薄い青） */
@@ -32,21 +35,31 @@ const STATUS_CHIP_CLASS: Record<PetitionStatus, string> = {
 interface PetitionCardProps {
   record: PetitionRecord;
   context: PetitionLinkContext;
-  /** 会期まとめページ向けの小さめ表示 */
+  /** 原文から書き起こした要望の内容と理由（原文が公開されているものだけ） */
+  note?: PetitionNote;
+  /** 審査した会議（委員会の記録との照合結果、古い順） */
+  meetings?: readonly PetitionMeetingMatch[];
+  /** 会期まとめページ向けの小さめ表示（内容・理由・経緯は載せない） */
   compact?: boolean;
 }
 
 /**
  * 請願・陳情1件のカード。
- * 種別と結果をバッジで示し、上程日・付託先・結果・紹介議員・原文PDFを並べる
+ * 種別と結果をバッジで示し、上程日・付託先・結果・紹介議員・原文PDFを並べる。
+ * 原文があるものは「要望の内容」と「提出者が挙げる理由」を、委員会の記録があるものは
+ * 「審査の経緯」（会議へのリンクと、その会議の要点のうち関係する行）を添える
  */
 export function PetitionCard({
   record,
   context,
+  note,
+  meetings = [],
   compact = false,
 }: PetitionCardProps) {
+  const showNote = !compact && note && (note.gist || note.reasons?.length);
   return (
     <article
+      id={record.id}
       className={cn(
         "flex flex-col gap-2.5 rounded-lg border border-mirai-border bg-white",
         compact ? "p-3.5" : "p-4 md:p-5"
@@ -119,6 +132,72 @@ export function PetitionCard({
           </>
         )}
       </dl>
+
+      {showNote && (
+        <div className="flex flex-col gap-2.5 rounded-md bg-mirai-surface-key-subtle px-3.5 py-3 text-xs leading-[1.7] text-mirai-text">
+          {note.gist && (
+            <div className="flex flex-col gap-0.5">
+              <p className="font-bold text-mirai-text-muted">要望の内容</p>
+              <p>{note.gist}</p>
+            </div>
+          )}
+          {note.reasons && note.reasons.length > 0 && (
+            <div className="flex flex-col gap-0.5">
+              <p className="font-bold text-mirai-text-muted">
+                提出者が挙げる理由
+              </p>
+              <ul className="list-disc pl-4">
+                {note.reasons.map((reason) => (
+                  <li key={reason}>{reason}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
+      {!compact && note?.councilOpinion && (
+        <p className="text-xs leading-[1.7] text-mirai-text-secondary">
+          <span className="font-bold text-mirai-text-muted">
+            採択にあたり議会が付した意見:{" "}
+          </span>
+          {note.councilOpinion}
+        </p>
+      )}
+
+      {!compact && meetings.length > 0 && (
+        <div className="flex flex-col gap-1.5">
+          <p className="text-xs font-bold text-mirai-text-muted">
+            審査の経緯（委員会の記録から）
+          </p>
+          <ol className="flex flex-col gap-1.5 text-xs leading-[1.7] text-mirai-text-secondary">
+            {meetings.map((meeting) => (
+              <li key={meeting.meetingId} className="flex flex-col gap-0.5">
+                <span className="flex flex-wrap gap-x-2">
+                  <TextLink
+                    href={routes.committeeMeeting(meeting.meetingId) as Route}
+                  >
+                    {formatDateWithDots(meeting.meetingDate)}{" "}
+                    {meeting.committeeName}
+                  </TextLink>
+                  {meeting.headline && (
+                    <span className="text-mirai-text-muted">
+                      {meeting.headline}
+                    </span>
+                  )}
+                </span>
+                {meeting.notes.length > 0 && (
+                  <ul className="list-disc pl-4">
+                    {meeting.notes.map((line) => (
+                      <li key={line}>{line}</li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
 
       {record.documentUrl && !compact && (
         <TextLink external href={record.documentUrl} className="text-xs">

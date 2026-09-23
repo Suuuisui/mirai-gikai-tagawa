@@ -3,10 +3,15 @@ import "server-only";
 import type { PetitionRecord } from "@mirai-gikai/shared/council/types";
 import { cache } from "react";
 import { getCommitteeMeetingListItems } from "@/features/committees/server/loaders/get-committee-meeting-list-items";
+import { getCommitteeMeetingPetitionRefs } from "@/features/committees/server/loaders/get-committee-meeting-petition-refs";
 import { PROFILE_FULL_NAME_BY_FAMILY } from "@/features/general-questions/server/loaders/get-general-questions";
 import type { MemberLinkContext } from "@/features/general-questions/shared/utils/question-links";
 import { getMemberNameSet } from "@/features/members/server/loaders/get-member-vote-data";
 import { PETITIONS } from "../../shared/data/petitions-data";
+import {
+  matchPetitionMeetings,
+  type PetitionMeetingMatch,
+} from "../../shared/utils/petition-meetings";
 
 /** 請願・陳情カードから議員ページ・委員会の記録へリンクするための解決表 */
 export interface PetitionLinkContext extends MemberLinkContext {
@@ -33,5 +38,21 @@ export const getPetitionLinkContext = cache(
         meetings.map((meeting) => meeting.committee_name)
       ),
     };
+  }
+);
+
+/**
+ * 請願・陳情ごとの「審査の経緯」（どの会議で審査され、何が決まったか）。
+ * 委員会の記録の議題・要点と照合する。キャッシュ済みの記録を使うのでリクエストごとの DB 読みは無い
+ */
+export const getPetitionMeetingMatches = cache(
+  async (): Promise<ReadonlyMap<string, PetitionMeetingMatch[]>> => {
+    const refs = await getCommitteeMeetingPetitionRefs();
+    return new Map(
+      PETITIONS.map((record) => [
+        record.id,
+        matchPetitionMeetings(record, refs),
+      ])
+    );
   }
 );
