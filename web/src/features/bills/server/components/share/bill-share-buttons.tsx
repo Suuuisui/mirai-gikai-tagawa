@@ -1,4 +1,4 @@
-import { getBillShareData } from "@/features/bills/client/utils/share";
+import { getBillShareData } from "@/features/bills/server/utils/share";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { BillShareButtonsClient } from "../../../client/components/share/bill-share-buttons-client";
 
