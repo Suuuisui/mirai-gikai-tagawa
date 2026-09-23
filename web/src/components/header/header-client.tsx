@@ -3,8 +3,9 @@
 import type { LucideIcon } from "lucide-react";
 import {
   ClipboardList,
-  Info,
   Landmark,
+  MessageSquareText,
+  ScrollText,
   Search,
   UserCheck,
   Users,
@@ -27,6 +28,7 @@ type NavLinkItem = {
 };
 
 // lg以上（デスクトップ）: ロゴ右側に主要ページへのテキストリンクを並べる
+// （「みらい議会とは」はハンバーガーメニューとフッターに残し、幅を空けている）
 const DESKTOP_NAV_LINKS: NavLinkItem[] = [
   { label: "議案を検索", href: routes.search(), icon: Search },
   {
@@ -34,19 +36,21 @@ const DESKTOP_NAV_LINKS: NavLinkItem[] = [
     href: routes.sessionArchive(),
     icon: Landmark,
   },
+  { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
   {
     label: "議員・提出者から見る",
     href: routes.memberArchive(),
     icon: Users,
   },
   { label: "委員会の記録", href: routes.committees(), icon: ClipboardList },
+  { label: "請願・陳情", href: routes.petitions(), icon: ScrollText },
   { label: "新市長の動き", href: routes.mayor(), icon: UserCheck },
-  { label: "みらい議会とは", href: `${routes.home()}#about`, icon: Info },
 ];
 
 // lg未満（モバイル）: ヘッダー2段目の横スクロールクイックナビ
 const MOBILE_QUICK_LINKS: NavLinkItem[] = [
   { label: "議会まとめ", href: routes.sessionArchive(), icon: Landmark },
+  { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
   { label: "新市長の動き", href: routes.mayor(), icon: UserCheck },
   { label: "議案を検索", href: routes.search(), icon: Search },
   {
@@ -55,6 +59,7 @@ const MOBILE_QUICK_LINKS: NavLinkItem[] = [
     icon: Users,
   },
   { label: "委員会の記録", href: routes.committees(), icon: ClipboardList },
+  { label: "請願・陳情", href: routes.petitions(), icon: ScrollText },
 ];
 
 // 難易度切り替え（説明をもっと詳しく）は、田川市版では hard 難易度の
@@ -103,13 +108,14 @@ export function HeaderClient() {
               className="hidden items-center gap-1 lg:flex"
               aria-label="主要ナビゲーション"
             >
+              {/* lg（1024px）では7項目が収まらないため、アイコンは xl 以上でだけ出し、余白も詰める */}
               {DESKTOP_NAV_LINKS.map(({ label, href, icon: Icon }) => (
                 <Link
                   key={label}
                   href={href as Route}
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium text-mirai-text transition-colors hover:bg-muted/50"
+                  className="flex items-center gap-1.5 whitespace-nowrap rounded-md px-2 py-2 text-[13px] font-medium text-mirai-text transition-colors hover:bg-muted/50 xl:px-3 xl:text-sm"
                 >
-                  <Icon className="h-4 w-4 shrink-0 text-primary-accent" />
+                  <Icon className="hidden h-4 w-4 shrink-0 text-primary-accent xl:block" />
                   {label}
                 </Link>
               ))}

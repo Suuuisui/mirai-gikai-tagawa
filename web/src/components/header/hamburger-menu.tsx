@@ -8,6 +8,8 @@ import {
   Landmark,
   type LucideIcon,
   Menu,
+  MessageSquareText,
+  ScrollText,
   Search,
   UserCheck,
   Users,
@@ -53,6 +55,8 @@ const NAV_LINKS: NavLinkItem[] = [
     href: routes.committees(),
     icon: ClipboardList,
   },
+  { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
+  { label: "請願・陳情", href: routes.petitions(), icon: ScrollText },
   { label: "新市長の動き", href: routes.mayor(), icon: UserCheck },
   // トップページのAboutセクション（id="about"）へのアンカーリンク
   { label: "みらい議会とは", href: `${routes.home()}#about`, icon: Info },

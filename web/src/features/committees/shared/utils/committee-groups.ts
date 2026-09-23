@@ -1,3 +1,4 @@
+import { routes } from "@/lib/routes";
 import {
   type CommitteeKind,
   getCommitteeProfile,
@@ -75,6 +76,11 @@ export function buildCommitteeGroups(
 /** 一覧ページで委員会カードに付けるアンカーid（詳細ページの「一覧へ」リンクと共有） */
 export function committeeSectionId(committeeName: string): string {
   return `committee-${encodeURIComponent(committeeName)}`;
+}
+
+/** 委員会記録一覧の、その委員会のカードへ飛ぶリンク */
+export function committeeSectionHref(committeeName: string): string {
+  return `${routes.committees()}#${committeeSectionId(committeeName)}`;
 }
 
 /** 「2021年〜2026年」のような開催期間の表示文字列を作る */

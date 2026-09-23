@@ -58,6 +58,12 @@ export const routes = {
   // ── 市長 ──────────────────────────────────────────
   mayor: () => "/mayor" as const,
 
+  // ── 一般質問・請願陳情 ────────────────────────────
+  questions: () => "/questions" as const,
+  /** 定例会1回分の一般質問（sessionKey は diet_sessions.slug と同じ形式） */
+  questionSession: (sessionKey: string) => `/questions/${sessionKey}` as const,
+  petitions: () => "/petitions" as const,
+
   // ── 委員会 ────────────────────────────────────────
   committees: () => "/committees" as const,
   /** テーマで絞り込み済みの委員会記録一覧（CommitteeExplorer がクエリを読む） */

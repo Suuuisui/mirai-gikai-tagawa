@@ -11,9 +11,12 @@
     "tagawa:build-csv": "tsx tagawa/build-csv.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "tagawa:scrape-petitions": "tsx tagawa/scrape-petitions.ts",
+    "tagawa:scrape-questions": "tsx tagawa/scrape-questions.ts"
   },
   "dependencies": {
+    "@mirai-gikai/shared": "workspace:*",
     "@mirai-gikai/supabase": "workspace:*",
     "@supabase/supabase-js": "^2.57.0",
     "csv-parse": "^6.1.0"
