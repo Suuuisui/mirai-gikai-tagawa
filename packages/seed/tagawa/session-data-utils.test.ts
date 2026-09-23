@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildBillName,
   buildDefaultSummary,
   buildSourceSection,
   buildStatusNote,
@@ -20,6 +21,13 @@ function session(key: string, startDate: string): SessionSource {
     bills: [],
   };
 }
+
+describe("buildBillName", () => {
+  it("議案番号と件名を全角空白でつなぎ、番号が無ければ件名だけにする", () => {
+    expect(buildBillName("議案第50号", "補正予算")).toBe("議案第50号　補正予算");
+    expect(buildBillName(null, "番号のない案件")).toBe("番号のない案件");
+  });
+});
 
 describe("mergeSessions", () => {
   it("取り込み済みの会期の後ろに会期中の会期を並べる", () => {

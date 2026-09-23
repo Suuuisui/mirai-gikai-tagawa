@@ -79,7 +79,8 @@ export const SESSIONS_JSON_PATH = path.join(
   import.meta.dirname,
   "data/sessions.json"
 );
-const ONGOING_SESSIONS_JSON_PATH = path.join(
+/** 会期中の会期（手で管理）。scrape.ts が取り込み済みの会期をここから外す */
+export const ONGOING_SESSIONS_JSON_PATH = path.join(
   import.meta.dirname,
   "data/ongoing-sessions.json"
 );

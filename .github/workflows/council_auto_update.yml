@@ -1,0 +1,221 @@
+name: Council Auto Update
+
+# 田川市公式サイトと公式YouTubeチャンネルを定期的に見に行き、新しい市議会のデータを
+# 取り込んで公開する（人の手を介さない部分）。
+#
+# 自動で行うこと:
+# - 議案と議決結果（「提出議案と議決結果」ページ）→ sessions.json / CSV を更新し、
+#   変わった会期（解説文が更新された会期を含む）だけ本番DBへ差分投入して
+#   再検証（/api/revalidate）する
+# - 請願・陳情、一般質問（通告）、一般質問の録画リンク → web の静的データを更新する
+# - 変更があれば検証（lint / typecheck / test）のうえ main にコミットし、
+#   デプロイと Integration Tests（visual-smoke を含む）を起動する
+# - 人の作業が必要なこと（解説文が無い新しい議案、委員会記録に無い中継動画）を Issue に書く
+#
+# 必要な Secrets: SUPABASE_URL / SUPABASE_SECRET_KEY（本番DB。service_role の JWT）、
+#   REVALIDATE_SECRET（web の /api/revalidate）。無ければDB投入と再検証を飛ばす
+# 手順の詳細: docs/20260923_0000_市議会データの定期自動更新.md
+on:
+  schedule:
+    # 毎日 06:00 JST（21:00 UTC）。公式サイトの更新は平日の日中なので、翌朝に拾う
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: council-auto-update
+  cancel-in-progress: false
+
+env:
+  WEB_URL: https://tagawa-gikai.jp
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      # 作業ファイルはリポジトリの外（runner の一時領域）に置く。
+      # runner コンテキストはワークフロー直下の env では使えないため、ここで決める
+      - name: 作業ディレクトリを決める
+        run: |
+          echo "OUT_DIR=$RUNNER_TEMP/council-update" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/council-update"
+
+      - name: Checkout main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      # pdftotext（poppler）は一般質問の通告書PDF、yt-dlp は公式YouTubeの動画一覧に使う
+      - name: Install poppler and yt-dlp
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+          pipx install yt-dlp
+          yt-dlp --version
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 議案と議決結果（公式サイト）
+        run: |
+          pnpm --filter @mirai-gikai/seed tagawa:scrape
+          pnpm --filter @mirai-gikai/seed tagawa:scrape-explanation-materials
+          pnpm --filter @mirai-gikai/seed tagawa:build-csv
+
+      - name: 請願・陳情（公式サイト）
+        run: pnpm --filter @mirai-gikai/seed tagawa:scrape-petitions
+
+      # YouTube 側の都合で一覧が取れない日は警告だけ残して先へ進む（スクリプト内で吸収）
+      - name: 一般質問の録画一覧（公式YouTube）
+        run: pnpm --filter @mirai-gikai/seed tagawa:update-question-videos -- --out "$OUT_DIR"
+
+      - name: 一般質問の通告（公式サイト）
+        run: pnpm --filter @mirai-gikai/seed tagawa:scrape-questions
+
+      - name: 委員会記録にまだ無い中継動画を探す
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: pnpm --filter @mirai-gikai/seed tagawa:find-unrecorded-videos -- --out "$OUT_DIR"
+
+      - name: 変更を検出
+        id: detect
+        run: |
+          pnpm --filter @mirai-gikai/seed tagawa:detect-changes -- --out "$OUT_DIR"
+          cat "$OUT_DIR/outputs.env" >> "$GITHUB_OUTPUT"
+          cat "$OUT_DIR/report.md" >> "$GITHUB_STEP_SUMMARY"
+
+      # GITHUB_TOKEN での push は Code Check（push トリガー）を起こさないため、
+      # 同じ検証をここで先に通してからコミットする
+      - name: 検証（lint / typecheck / test）
+        if: steps.detect.outputs.has_changes == 'true'
+        run: |
+          pnpm run lint
+          pnpm run typecheck
+          pnpm --filter @mirai-gikai/seed test
+          pnpm --filter web test
+
+      - name: main にコミット
+        id: commit
+        if: steps.detect.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/seed/tagawa/data packages/seed/csv/data \
+            web/src/features/petitions/shared/data web/src/features/general-questions/shared/data
+          { cat "$OUT_DIR/commit-subject.txt"; echo; cat "$OUT_DIR/report.md"; } | git commit -q -F -
+          git fetch -q origin main
+          git rebase -q origin/main
+          git push origin HEAD:main
+          git log --oneline -1
+
+      # 静的データ（請願・陳情、一般質問）はデプロイで反映される。
+      # Integration Tests（visual-smoke を含む）も記録のために起動する。
+      # Code Check は起動しない（起動すると workflow_run 経由でデプロイが二重に走る）。
+      # 本番DBの投入が失敗しても、コミットした分は必ずデプロイする
+      - name: デプロイと Integration Tests を起動
+        if: ${{ !cancelled() && steps.commit.outcome == 'success' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run deploy.yml --ref main
+          gh workflow run integration_test.yml --ref main
+
+      - name: 本番DBへ投入して再検証
+        id: upsert
+        if: steps.commit.outcome == 'success' && steps.detect.outputs.changed_sessions != ''
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+          CHANGED_SESSIONS: ${{ steps.detect.outputs.changed_sessions }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SECRET_KEY" ]; then
+            echo "SUPABASE_URL / SUPABASE_SECRET_KEY が無いため本番DBへの投入を飛ばします"
+            exit 0
+          fi
+          # shellcheck disable=SC2086
+          node scripts/upsert-sessions.mjs $CHANGED_SESSIONS
+          if [ -n "$REVALIDATE_SECRET" ]; then
+            curl -fsS -X POST "$WEB_URL/api/revalidate" \
+              -H "Authorization: Bearer $REVALIDATE_SECRET" \
+              -H "Content-Type: application/json" \
+              -d '{"tags":["bills","diet-sessions"]}'
+            echo
+          fi
+
+      - name: 本番DBの投入に失敗したときの手当てを書き残す
+        if: ${{ !cancelled() && steps.upsert.outcome == 'failure' }}
+        env:
+          CHANGED_SESSIONS: ${{ steps.detect.outputs.changed_sessions }}
+        run: |
+          {
+            echo "## ⚠️ 本番DBへの投入に失敗しました"
+            echo "コミットとデプロイは済んでいます。手元で次を実行して投入し直してください:"
+            echo '```bash'
+            echo "npx dotenv-cli -e <本番env> -- node scripts/upsert-sessions.mjs $CHANGED_SESSIONS"
+            echo "curl -X POST $WEB_URL/api/revalidate -H 'Authorization: Bearer <REVALIDATE_SECRET>' -H 'Content-Type: application/json' -d '{\"tags\":[\"bills\",\"diet-sessions\"]}'"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # 解説文の執筆・委員会記録の追加など人の作業は Issue にまとめる。
+      # Issue は1つを使い回し、本文を最新のレポートに置き換える（毎日同じ内容で通知しない）。
+      # 作業が無くなったら閉じる。ジョブが途中で失敗した日は閉じない（確認したとは言えないため）
+      - name: 人の作業が必要なことを Issue に残す
+        if: ${{ !cancelled() && steps.detect.outcome == 'success' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NEEDS_FOLLOW_UP: ${{ steps.detect.outputs.needs_follow_up }}
+          COMMITTED: ${{ steps.commit.outcome == 'success' }}
+          JOB_STATUS: ${{ job.status }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          LABEL=council-update
+          TODAY=$(TZ=Asia/Tokyo date +%F)
+          EXISTING=$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number // empty')
+          if [ "$NEEDS_FOLLOW_UP" != "true" ]; then
+            if [ -n "$EXISTING" ] && [ "$JOB_STATUS" = "success" ]; then
+              gh issue close "$EXISTING" --comment "$TODAY の自動更新で、人の作業が残っていないことを確認したので閉じます"
+            fi
+            exit 0
+          fi
+          BODY="$OUT_DIR/issue-body.md"
+          if [ "$JOB_STATUS" != "success" ]; then
+            printf '> ⚠️ この日の自動更新は途中で失敗しました（%s）。下の内容は検出できた範囲です。\n\n' "$RUN_URL" > "$BODY"
+            cat "$OUT_DIR/report.md" >> "$BODY"
+          else
+            cp "$OUT_DIR/report.md" "$BODY"
+          fi
+          if [ -n "$EXISTING" ]; then
+            gh issue edit "$EXISTING" --body-file "$BODY"
+            if [ "$COMMITTED" = "true" ]; then
+              gh issue comment "$EXISTING" --body "$TODAY の自動更新でデータが変わりました。本文を最新の内容に置き換えています（$RUN_URL）"
+            fi
+          else
+            gh label create "$LABEL" --description "市議会データの自動更新で人の作業が必要になったもの" --color 0E8A16 --force
+            gh issue create --title "市議会データの更新で人の作業が必要なもの" --label "$LABEL" --body-file "$BODY"
+          fi
+
+      - name: 作業ファイルを保存
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: council-update-${{ github.run_id }}
+          path: ${{ env.OUT_DIR }}
+          retention-days: 14
+          if-no-files-found: ignore

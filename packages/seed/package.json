@@ -13,7 +13,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "tagawa:scrape-petitions": "tsx tagawa/scrape-petitions.ts",
-    "tagawa:scrape-questions": "tsx tagawa/scrape-questions.ts"
+    "tagawa:scrape-questions": "tsx tagawa/scrape-questions.ts",
+    "tagawa:update-question-videos": "tsx tagawa/update-question-videos.ts",
+    "tagawa:find-unrecorded-videos": "tsx tagawa/find-unrecorded-videos.ts",
+    "tagawa:detect-changes": "tsx tagawa/detect-council-changes.ts"
   },
   "dependencies": {
     "@mirai-gikai/shared": "workspace:*",

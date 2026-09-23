@@ -79,6 +79,11 @@ const RESULT_SOURCE_BULLET: Partial<Record<ResultSource, string>> = {
 
 export const NO_RESULT_NOTE = "議決結果不明（出典に記載なし）";
 
+/** bills.name（「議案第50号　件名」。番号が無い案件は件名だけ） */
+export function buildBillName(billNumberLabel: string | null, title: string): string {
+  return billNumberLabel ? `${billNumberLabel}　${title}` : title;
+}
+
 /** bills.status_note。結果が無い議案は statusNote（審議中〜）を使う */
 export function buildStatusNote(
   bill: Pick<BillSource, "resultLabel" | "resultSource" | "statusNote">
