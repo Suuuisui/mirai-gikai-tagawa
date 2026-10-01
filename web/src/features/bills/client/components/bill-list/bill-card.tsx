@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
 import { isDefaultThumbnail } from "../../../shared/utils/bill-cover";
+import { getBillDateLabel } from "../../../shared/utils/bill-status";
 import {
   countVotes,
   formatVoteCounts,
@@ -70,7 +71,7 @@ export function BillCard({ bill }: BillCardProps) {
                   </>
                 )}
               </CardTitle>
-              <div className="flex flex-row gap-4">
+              <div className="flex flex-row flex-wrap items-center gap-x-4 gap-y-2">
                 <BillStatusBadge status={bill.status} className="w-fit" />
                 {voteLabel && (
                   <Badge variant="light" className="w-fit">
@@ -79,7 +80,10 @@ export function BillCard({ bill }: BillCardProps) {
                 )}
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   {bill.submitted_date && (
-                    <time>{formatDateWithDots(bill.submitted_date)} 提出</time>
+                    <time className="whitespace-nowrap">
+                      {formatDateWithDots(bill.submitted_date)}{" "}
+                      {getBillDateLabel(bill.status)}
+                    </time>
                   )}
                 </div>
               </div>

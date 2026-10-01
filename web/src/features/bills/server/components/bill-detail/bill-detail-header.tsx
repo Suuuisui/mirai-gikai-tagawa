@@ -21,6 +21,7 @@ import { BillTag } from "../../../client/components/bill-list/bill-tag";
 import type { BillWithContent } from "../../../shared/types";
 import { isDefaultThumbnail } from "../../../shared/utils/bill-cover";
 import { buildBillPageTitle } from "../../../shared/utils/bill-seo";
+import { getBillDateLabel } from "../../../shared/utils/bill-status";
 import { getBillShareData } from "../../utils/share";
 
 interface BillDetailHeaderProps {
@@ -94,7 +95,10 @@ export async function BillDetailHeader({
           <BillStatusBadge status={bill.status} className="w-fit" />
           <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
             {bill.submitted_date && (
-              <time>{formatDateWithDots(bill.submitted_date)} 提出</time>
+              <time className="whitespace-nowrap">
+                {formatDateWithDots(bill.submitted_date)}{" "}
+                {getBillDateLabel(bill.status)}
+              </time>
             )}
           </div>
           {/* 提出者区分バッジ（提出者別の議案一覧への導線） */}
