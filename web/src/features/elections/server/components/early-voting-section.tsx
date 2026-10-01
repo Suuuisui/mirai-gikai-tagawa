@@ -9,6 +9,7 @@ import {
   formatClockTime,
   formatPeople,
   formatPercent,
+  formatTimeRange,
   sharePercent,
   type TurnoutBreakdown,
 } from "../../shared/utils/turnout";
@@ -26,6 +27,11 @@ const DAY_SERIES: readonly ChartSeries[] = [
   { label: "当日に投票した人の累計", kind: "focus" },
 ];
 
+const { electionDay, earlyVoting } = POLLING_HOURS_POLICY;
+
+/** 令和8年7月の選挙で当日投票所を閉じた時刻の行の名前（「20時（終了）」） */
+const CLOSING_ROW_LABEL = `${formatClockTime(electionDay.closesBefore)}（終了）`;
+
 /** 当日に投票所で投票した人の累計（令和8年7月12日の速報と結了の値） */
 function DayProgressChart({ finalDayVoters }: { finalDayVoters: number }) {
   const rows = [
@@ -33,14 +39,15 @@ function DayProgressChart({ finalDayVoters }: { finalDayVoters: number }) {
       label: formatClockTime(point.time),
       voters: point.voters,
     })),
-    { label: "20時（終了）", voters: finalDayVoters },
+    { label: CLOSING_ROW_LABEL, voters: finalDayVoters },
   ];
   return (
     <ChartFigure
       title="当日に投票した人の累計（市長選挙）"
       note={
         <>
-          20時（終了）の人数は選挙管理委員会の集計用紙の当日投票者数、それ以外は市の
+          {CLOSING_ROW_LABEL}
+          の人数は選挙管理委員会の集計用紙の当日投票者数、それ以外は市の
           <TextLink external href={MAYORAL_ELECTION.sourceUrl} className="mx-1">
             投・開票速報
           </TextLink>
@@ -64,7 +71,10 @@ function DayProgressChart({ finalDayVoters }: { finalDayVoters: number }) {
 
 /** 選挙管理委員会が決めた、当日投票所の開設時間を短くする方針 */
 function PollingHoursNotice() {
-  const text = `市の選挙管理委員会は${POLLING_HOURS_POLICY.decidedAt}、選挙当日の投票所の開設時間を「${POLLING_HOURS_POLICY.electionDayBefore}」から「${POLLING_HOURS_POLICY.electionDayAfter}」に短くする方針を決めました。投票立会人の負担を減らすためとしています。期日前投票所は${POLLING_HOURS_POLICY.earlyVoting}です。`;
+  const before = formatTimeRange(electionDay.opens, electionDay.closesBefore);
+  const after = formatTimeRange(electionDay.opens, electionDay.closesAfter);
+  const early = formatTimeRange(earlyVoting.opens, earlyVoting.closes);
+  const text = `市の選挙管理委員会は${POLLING_HOURS_POLICY.decidedAt}、選挙当日の投票所の開設時間を「${before}」から「${after}」に短くする方針を決めました。投票立会人の負担を減らすためとしています。期日前投票所は${early}（変更なし）です。`;
   return (
     <div className="flex flex-col gap-1.5 rounded-lg bg-mirai-surface-key-subtle px-4 py-3.5 text-sm leading-relaxed text-mirai-text">
       <p className="font-bold">当日の投票時間を短くする方針</p>
@@ -98,9 +108,10 @@ export function EarlyVotingSection({
   previousLabel,
 }: EarlyVotingSectionProps) {
   const finalDayVoters = current.electionDay.total;
-  const after18 = electionDayVotersAfter(
+  // 方針の閉鎖時刻（18時）より後に、当日の投票所で投票した人
+  const lateVoters = electionDayVotersAfter(
     MAYOR_ELECTION_2026_DAY_PROGRESS,
-    "18:00",
+    electionDay.closesAfter,
     finalDayVoters
   );
   const earlyItems: MeterItem[] = [
@@ -112,7 +123,7 @@ export function EarlyVotingSection({
     percent: breakdown.earlyShare,
     note: `期日前投票 ${formatPeople(breakdown.early.total)} ／ 投票した人 ${formatPeople(breakdown.voters.total)}`,
   }));
-  const after18Text = `当日に投票所で投票した人の累計です（期日前投票と不在者投票は含みません）。18時より後に投票した人は${formatPeople(after18)}で、投票した人全体の${formatPercent(sharePercent(after18, current.voters.total))}、当日に投票した人の${formatPercent(sharePercent(after18, finalDayVoters))}でした。`;
+  const lateVotersText = `当日に投票所で投票した人の累計です（期日前投票と不在者投票は含みません）。${formatClockTime(electionDay.closesAfter)}より後に投票した人は${formatPeople(lateVoters)}で、投票した人全体の${formatPercent(sharePercent(lateVoters, current.voters.total))}、当日に投票した人の${formatPercent(sharePercent(lateVoters, finalDayVoters))}でした。`;
 
   return (
     <TurnoutSection
@@ -125,7 +136,9 @@ export function EarlyVotingSection({
       <h3 className="mt-2 text-base font-bold text-mirai-text">
         当日（7月12日）の投票の進み方
       </h3>
-      <p className="text-sm leading-relaxed text-mirai-text">{after18Text}</p>
+      <p className="text-sm leading-relaxed text-mirai-text">
+        {lateVotersText}
+      </p>
       <DayProgressChart finalDayVoters={finalDayVoters} />
       <PollingHoursNotice />
     </TurnoutSection>

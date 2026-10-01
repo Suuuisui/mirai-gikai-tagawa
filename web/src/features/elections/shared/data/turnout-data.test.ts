@@ -15,6 +15,7 @@ import {
   type ElectionTurnoutSource,
   MAYOR_ELECTION_2026,
   MAYOR_ELECTION_2026_DAY_PROGRESS,
+  POLLING_HOURS_POLICY,
   POLLING_PLACES_2026,
 } from "./turnout-data";
 
@@ -256,10 +257,18 @@ describe("COUNCIL_ELECTION_HISTORY", () => {
 });
 
 describe("MAYOR_ELECTION_2026_DAY_PROGRESS", () => {
-  it("時刻は古い順で、18時の値がある（18時以降の人数の計算に使う）", () => {
+  it("時刻は古い順で、方針の閉鎖時刻（18時）の値がある（それより後に投票した人数の計算に使う）", () => {
     const times = MAYOR_ELECTION_2026_DAY_PROGRESS.map((p) => p.time);
     expect([...times].sort()).toEqual(times);
-    expect(times).toContain("18:00");
+    expect(times).toContain(POLLING_HOURS_POLICY.electionDay.closesAfter);
+  });
+
+  it("速報の時刻はすべて、これまでの閉鎖時刻（20時）より前", () => {
+    for (const point of MAYOR_ELECTION_2026_DAY_PROGRESS) {
+      expect(point.time < POLLING_HOURS_POLICY.electionDay.closesBefore).toBe(
+        true
+      );
+    }
   });
 
   it("累計なので時刻とともに増え、結了時の当日投票者数を超えない", () => {

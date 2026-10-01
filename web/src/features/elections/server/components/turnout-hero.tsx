@@ -1,7 +1,6 @@
 import { Container } from "@/components/layouts/container";
 import { JumpNav } from "@/components/ui/jump-nav";
 import {
-  formatCount,
   formatPeople,
   formatPercent,
   type TurnoutBreakdown,
@@ -61,10 +60,7 @@ export function TurnoutHero({ mayor, byElectionRate }: TurnoutHeroProps) {
             {formatPercent(mayor.rate.total, 2)}
           </p>
           <p className="text-sm leading-relaxed text-mirai-text">
-            有権者{formatCount(mayor.electorate.total)}人のうち
-            {formatCount(mayor.voters.total)}
-            人が投票しました。同じ日の市議会議員補欠選挙は
-            {formatPercent(byElectionRate, 2)}でした。
+            {`有権者${formatPeople(mayor.electorate.total)}のうち${formatPeople(mayor.voters.total)}が投票しました。同じ日の市議会議員補欠選挙は${formatPercent(byElectionRate, 2)}でした。`}
           </p>
           <dl className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             <Stat label="投票した人" value={formatPeople(mayor.voters.total)} />

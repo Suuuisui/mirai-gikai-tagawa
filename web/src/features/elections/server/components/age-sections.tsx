@@ -7,6 +7,7 @@ import {
   countAgesWomenAhead,
   extremesBy,
   formatCount,
+  formatPeople,
   formatPercent,
   formatPointDiff,
   type TurnoutFigures,
@@ -29,8 +30,7 @@ function TurnoutCell({
     <td className={className}>
       <span className="font-bold">{formatPercent(figures.rate.total, 2)}</span>
       <span className="ml-2 text-mirai-text-muted">
-        {formatCount(figures.voters.total)} /{" "}
-        {formatCount(figures.electorate.total)}人
+        {`${formatCount(figures.voters.total)} / ${formatPeople(figures.electorate.total)}`}
       </span>
     </td>
   );
