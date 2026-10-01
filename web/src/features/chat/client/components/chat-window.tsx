@@ -252,11 +252,11 @@ export function ChatWindow({
       >
         <button
           type="button"
-          className="pc:hidden self-end p-2 m-2 hover:bg-gray-100 rounded-full"
+          className="pc:hidden self-end m-1 flex size-11 items-center justify-center rounded-full hover:bg-gray-100"
           onClick={onClose}
           aria-label="モーダルを閉じる"
         >
-          <X className="h-5 w-5" />
+          <X className="h-6 w-6" />
         </button>
         {/* メッセージエリア（スクロール可能） */}
         <Conversation className="flex-1 min-h-0">

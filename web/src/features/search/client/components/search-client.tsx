@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { BillStatusBadge } from "@/features/bills/client/components/bill-list/bill-status-badge";
+import { getBillDateLabel } from "@/features/bills/shared/utils/bill-status";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { SearchItem } from "../../shared/types";
@@ -101,11 +102,12 @@ export function SearchClient({ items }: SearchClientProps) {
                   <h2 className="line-clamp-2 text-[15px] font-bold leading-[1.6] text-mirai-text">
                     {item.title}
                   </h2>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                     <BillStatusBadge status={item.status} className="w-fit" />
                     {item.submittedDate && (
-                      <time className="text-xs text-mirai-text-muted">
-                        {formatDateWithDots(item.submittedDate)} 議決
+                      <time className="whitespace-nowrap text-xs text-mirai-text-muted">
+                        {formatDateWithDots(item.submittedDate)}{" "}
+                        {getBillDateLabel(item.status)}
                       </time>
                     )}
                   </div>
