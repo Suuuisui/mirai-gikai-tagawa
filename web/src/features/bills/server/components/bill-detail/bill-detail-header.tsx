@@ -18,10 +18,10 @@ import {
 import { BillCover } from "../../../client/components/bill-list/bill-cover";
 import { BillStatusBadge } from "../../../client/components/bill-list/bill-status-badge";
 import { BillTag } from "../../../client/components/bill-list/bill-tag";
-import { getBillShareData } from "../../../client/utils/share";
 import type { BillWithContent } from "../../../shared/types";
 import { isDefaultThumbnail } from "../../../shared/utils/bill-cover";
 import { buildBillPageTitle } from "../../../shared/utils/bill-seo";
+import { getBillShareData } from "../../utils/share";
 
 interface BillDetailHeaderProps {
   bill: BillWithContent;
