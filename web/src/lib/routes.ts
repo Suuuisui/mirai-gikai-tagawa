@@ -55,8 +55,9 @@ export const routes = {
   sessionArchive: () => "/sessions" as const,
   sessionSummary: (id: string) => `/sessions/${id}` as const,
 
-  // ── 市長 ──────────────────────────────────────────
+  // ── 市長・選挙 ────────────────────────────────────
   mayor: () => "/mayor" as const,
+  elections: () => "/elections" as const,
 
   // ── 一般質問・請願陳情 ────────────────────────────
   questions: () => "/questions" as const,

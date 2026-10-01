@@ -9,6 +9,7 @@ import {
   Search,
   UserCheck,
   Users,
+  Vote,
 } from "lucide-react";
 import type { Route } from "next";
 import Image from "next/image";
@@ -28,7 +29,7 @@ type NavLinkItem = {
 };
 
 // lg以上（デスクトップ）: ロゴ右側に主要ページへのテキストリンクを並べる
-// （「みらい議会とは」はハンバーガーメニューとフッターに残し、幅を空けている）
+// （「みらい議会とは」「選挙の投票率」はハンバーガーメニューとフッターに残し、幅を空けている）
 const DESKTOP_NAV_LINKS: NavLinkItem[] = [
   { label: "議案を検索", href: routes.search(), icon: Search },
   {
@@ -60,6 +61,7 @@ const MOBILE_QUICK_LINKS: NavLinkItem[] = [
   },
   { label: "委員会の記録", href: routes.committees(), icon: ClipboardList },
   { label: "請願・陳情", href: routes.petitions(), icon: ScrollText },
+  { label: "選挙の投票率", href: routes.elections(), icon: Vote },
 ];
 
 // 難易度切り替え（説明をもっと詳しく）は、田川市版では hard 難易度の

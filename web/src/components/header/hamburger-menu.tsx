@@ -13,6 +13,7 @@ import {
   Search,
   UserCheck,
   Users,
+  Vote,
 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
@@ -58,6 +59,7 @@ const NAV_LINKS: NavLinkItem[] = [
   { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
   { label: "請願・陳情", href: routes.petitions(), icon: ScrollText },
   { label: "新市長の動き", href: routes.mayor(), icon: UserCheck },
+  { label: "選挙の投票率", href: routes.elections(), icon: Vote },
   // トップページのAboutセクション（id="about"）へのアンカーリンク
   { label: "みらい議会とは", href: `${routes.home()}#about`, icon: Info },
 ];

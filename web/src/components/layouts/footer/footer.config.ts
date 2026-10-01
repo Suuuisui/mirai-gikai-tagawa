@@ -51,6 +51,10 @@ export const primaryLinks: FooterLink[] = [
     href: routes.mayor(),
   },
   {
+    label: "選挙の投票率",
+    href: routes.elections(),
+  },
+  {
     label: "みらい議会とは",
     href: EXTERNAL_LINKS.ABOUT_NOTE,
     external: true,

@@ -107,6 +107,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily" as const,
       priority: 1,
     },
+    // 投票率ページは議案データと関係しない静的なページなので、利用規約などと同じく lastModified を付けない
+    {
+      url: `${baseUrl}${routes.elections()}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    },
     {
       url: `${baseUrl}${routes.search()}`,
       lastModified: latestBillUpdatedAt,

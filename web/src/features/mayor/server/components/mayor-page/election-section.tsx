@@ -1,6 +1,8 @@
 import { Vote } from "lucide-react";
 import { jumpTargetClassName } from "@/components/ui/jump-nav";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { TextLink } from "@/components/ui/text-link";
+import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import { formatDateWithDots } from "@/lib/utils/date";
 import {
@@ -46,6 +48,9 @@ export function ElectionSection() {
         }}
         className="w-fit text-xs"
       />
+      <TextLink href={routes.elections()} className="text-sm">
+        年代別・投票区別の投票率を見る
+      </TextLink>
     </section>
   );
 }
