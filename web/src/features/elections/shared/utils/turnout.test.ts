@@ -12,6 +12,7 @@ import {
   formatPeople,
   formatPercent,
   formatPointDiff,
+  formatTimeRange,
   pointDiff,
   roundTo,
   sharePercent,
@@ -199,6 +200,14 @@ describe("formatClockTime", () => {
   it("ちょうどの時刻は分を省く", () => {
     expect(formatClockTime("10:00")).toBe("10時");
     expect(formatClockTime("19:30")).toBe("19時30分");
+    expect(formatClockTime("07:00")).toBe("7時");
+  });
+});
+
+describe("formatTimeRange", () => {
+  it("「○時から○時まで」の形にする", () => {
+    expect(formatTimeRange("07:00", "20:00")).toBe("7時から20時まで");
+    expect(formatTimeRange("08:30", "20:00")).toBe("8時30分から20時まで");
   });
 });
 

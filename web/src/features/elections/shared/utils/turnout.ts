@@ -18,7 +18,7 @@ const ZERO = maleFemale(0, 0);
 /** 割合（%）を小数第 digits 位で四捨五入する（資料の投票率と同じ計算） */
 function ratioPercent(part: number, whole: number, digits: number): number {
   if (whole <= 0) return 0;
-  return Math.round((part / whole) * 10 ** (digits + 2)) / 10 ** digits;
+  return roundTo((part / whole) * 100, digits);
 }
 
 /**
@@ -303,6 +303,11 @@ export function electionDayVotersAfter(
 export function formatClockTime(time: string): string {
   const [hour, minute] = time.split(":").map(Number);
   return minute === 0 ? `${hour}時` : `${hour}時${minute}分`;
+}
+
+/** 「07:00」「20:00」→「7時から20時まで」 */
+export function formatTimeRange(from: string, to: string): string {
+  return `${formatClockTime(from)}から${formatClockTime(to)}まで`;
 }
 
 const integerFormat = new Intl.NumberFormat("ja-JP");

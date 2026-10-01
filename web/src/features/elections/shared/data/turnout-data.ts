@@ -444,11 +444,14 @@ export const MAYOR_ELECTION_2026_DAY_PROGRESS: readonly ElectionDayProgressPoint
     { time: "19:30", voters: 10036 },
   ];
 
-/** 市選挙管理委員会が令和8年8月に決めた、当日投票所の閉鎖時刻の方針 */
+/**
+ * 市選挙管理委員会が令和8年8月に決めた、当日投票所の閉鎖時刻の方針（時刻は "HH:MM"）。
+ * 当日投票所を閉じる時刻を closesBefore（令和8年7月の選挙まで）から closesAfter に早める
+ */
 export const POLLING_HOURS_POLICY = {
   decidedAt: "令和8年8月",
-  electionDayBefore: "7時から20時まで",
-  electionDayAfter: "7時から18時まで",
-  earlyVoting: "8時30分から20時まで（変更なし）",
+  electionDay: { opens: "07:00", closesBefore: "20:00", closesAfter: "18:00" },
+  /** 期日前投票所（変わらない） */
+  earlyVoting: { opens: "08:30", closes: "20:00" },
   sourceUrl: "https://www.joho.tagawa.fukuoka.jp/kiji00311919/index.html",
 } as const;
