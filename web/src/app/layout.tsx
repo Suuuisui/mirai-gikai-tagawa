@@ -7,6 +7,12 @@ import type { ReactNode } from "react";
 import { JsonLd } from "@/components/seo/json-ld";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
+import {
+  DEFAULT_OG_IMAGE,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TITLE,
+} from "@/lib/seo/share-metadata";
 
 const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
@@ -23,25 +29,15 @@ const notoSerifJP = Noto_Serif_JP({
 
 const isDev = process.env.NODE_ENV === "development";
 const isStaging = process.env.VERCEL_TARGET_ENV === "staging";
-const siteTitle = "みらい議会＠田川市｜議案をやさしく解説";
-const siteDescription =
-  "田川市議会に提出された議案・予算・条例・決議・意見書を、AIを活用してやさしい言葉で解説する市民向けプラットフォームです。";
-const siteName = "みらい議会＠田川市";
-const ogImage = {
-  url: "/ogp.jpg",
-  width: 1200,
-  height: 630,
-  alt: "みらい議会＠田川市のOGPイメージ",
-};
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.webUrl),
   title: {
-    default: siteTitle,
-    template: `%s | ${siteName}`,
+    default: SITE_TITLE,
+    template: `%s | ${SITE_NAME}`,
   },
-  description: siteDescription,
-  keywords: [siteName, "議案", "政治", "田川市議会", "政策", "解説"],
+  description: SITE_DESCRIPTION,
+  keywords: [SITE_NAME, "議案", "政治", "田川市議会", "政策", "解説"],
   icons: {
     icon: isDev
       ? "/icons/pwa/icon_dev_192_v3.png"
@@ -54,16 +50,16 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   openGraph: {
-    title: siteTitle,
-    description: siteDescription,
-    images: [ogImage],
-    siteName,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE],
+    siteName: SITE_NAME,
   },
   twitter: {
     card: "summary_large_image",
-    title: siteTitle,
-    description: siteDescription,
-    images: [ogImage.url],
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE.url],
   },
   robots: {
     index: true,
@@ -87,10 +83,10 @@ export const viewport: Viewport = {
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: siteName,
+  name: SITE_NAME,
   alternateName: "田川市議会見える化プラットフォーム",
   url: env.webUrl,
-  description: siteDescription,
+  description: SITE_DESCRIPTION,
   publisher: {
     "@type": "Organization",
     name: "田川市政ラボ",

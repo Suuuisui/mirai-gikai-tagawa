@@ -7,6 +7,7 @@ import {
 } from "@/features/mayor/shared/data/mayor-profile";
 import { compactName } from "@/features/mayor/shared/utils/mayor-activity";
 import { routes } from "@/lib/routes";
+import { buildPageShareMetadata, SITE_NAME } from "@/lib/seo/share-metadata";
 import { formatDate, getJapanTime } from "@/lib/utils/date";
 
 // ISR: データ更新時は /api/revalidate（revalidateTag）で即時反映され、
@@ -18,17 +19,16 @@ const TITLE = `${MAYOR_NAME} 田川市長の動き｜就任後の議会・提出
 const DESCRIPTION = `${formatDate(MAYOR_PROFILE.inaugurationDate)}に就任した${MAYOR_NAME} 田川市長の、就任後の議会での動き・市長提出議案・前市長（${FORMER_MAYOR_NAME}氏）の退職から市長選までの経緯を、委員会の記録と公式データからまとめています。`;
 
 export const metadata: Metadata = {
-  title: { absolute: `${TITLE}｜みらい議会＠田川市` },
+  title: { absolute: `${TITLE}｜${SITE_NAME}` },
   description: DESCRIPTION,
   alternates: {
     canonical: routes.mayor(),
   },
-  openGraph: {
+  ...buildPageShareMetadata({
     title: TITLE,
     description: DESCRIPTION,
-    siteName: "みらい議会＠田川市",
-    url: routes.mayor(),
-  },
+    path: routes.mayor(),
+  }),
 };
 
 export default async function MayorRoutePage() {
