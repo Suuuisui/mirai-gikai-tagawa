@@ -6,11 +6,13 @@ import { formatPercent } from "../../shared/utils/turnout";
 /**
  * 投票率ページのグラフ部品。
  * 値は必ず文字でも並べ、棒は装飾（aria-hidden）にする。色は2つだけ:
- * 注目する系列はキーカラー（bg-primary）、比べるための系列は灰色（bg-mirai-text-placeholder）
+ * 注目する系列はキーカラー（bg-primary）、比べるための系列は灰色（bg-mirai-text-placeholder）。
+ * 積み上げ棒で注目する部分の残り（投票しなかった人など）だけは、キーカラーの明るい段で塗る
  */
 const SERIES_CLASS = {
   focus: "bg-primary",
   context: "bg-mirai-text-placeholder",
+  remainder: "bg-mirai-chart-remainder",
 } as const;
 
 export interface ChartSeries {
@@ -65,6 +67,39 @@ export function ChartFigure({
   );
 }
 
+interface ChartRowProps {
+  label: string;
+  /** ラベルの下に小さく添える説明 */
+  sublabel?: string;
+  /** 読み上げ用の文（系列名と値）。ツールチップには区分名を付けて出す */
+  valuesText: string;
+  children: ReactNode;
+}
+
+/**
+ * グラフの1行の枠: 左に区分名、右に棒。
+ * 区分名は見えるラベルで読み上げられるので、読み上げ用の文は系列名と値だけにする
+ */
+function ChartRow({ label, sublabel, valuesText, children }: ChartRowProps) {
+  return (
+    <div
+      title={`${label}: ${valuesText}`}
+      className="grid grid-cols-[5.5rem_minmax(0,1fr)] items-center gap-x-3 sm:grid-cols-[7rem_minmax(0,1fr)]"
+    >
+      <span className="flex flex-col text-sm leading-snug text-mirai-text">
+        {label}
+        {sublabel && (
+          <span className="text-xs text-mirai-text-muted">{sublabel}</span>
+        )}
+      </span>
+      <div className="flex flex-col gap-0.5">
+        <span className="sr-only">{valuesText}</span>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 interface BarGroupRowProps {
   label: string;
   /** ラベルの下に小さく添える説明 */
@@ -90,46 +125,96 @@ export function BarGroupRow({
 }: BarGroupRowProps) {
   // map に format をそのまま渡すと、2番目の引数（添字）が桁数として渡ってしまう
   const texts = values.map((value) => format(value));
-  // 区分名は見えるラベルで読み上げられるので、読み上げ用の文は系列名と値だけにする
   const valuesText = series
     .map((item, i) => `${item.label} ${texts[i]}`)
     .join("、");
   return (
-    <div
-      title={`${label}: ${valuesText}`}
-      className="grid grid-cols-[5.5rem_minmax(0,1fr)] items-center gap-x-3 sm:grid-cols-[7rem_minmax(0,1fr)]"
-    >
-      <span className="flex flex-col text-sm leading-snug text-mirai-text">
-        {label}
-        {sublabel && (
-          <span className="text-xs text-mirai-text-muted">{sublabel}</span>
-        )}
-      </span>
-      <div className="flex flex-col gap-0.5">
-        <span className="sr-only">{valuesText}</span>
-        {series.map((item, i) => (
-          <div key={item.label} className="flex items-center gap-2">
-            <div aria-hidden className="h-3 min-w-0 flex-1">
-              <div
-                className={cn("h-full rounded-r", SERIES_CLASS[item.kind])}
-                style={{ width: `${barWidthPercent(values[i], max)}%` }}
-              />
-            </div>
-            <span
-              aria-hidden
-              className={cn(
-                "w-14 shrink-0 text-right text-xs tabular-nums",
-                item.kind === "focus"
-                  ? "font-bold text-mirai-text"
-                  : "text-mirai-text-muted"
-              )}
-            >
-              {texts[i]}
-            </span>
+    <ChartRow label={label} sublabel={sublabel} valuesText={valuesText}>
+      {series.map((item, i) => (
+        <div key={item.label} className="flex items-center gap-2">
+          <div aria-hidden className="h-3 min-w-0 flex-1">
+            <div
+              className={cn("h-full rounded-r", SERIES_CLASS[item.kind])}
+              style={{ width: `${barWidthPercent(values[i], max)}%` }}
+            />
           </div>
-        ))}
+          <BarValue emphasized={item.kind === "focus"}>{texts[i]}</BarValue>
+        </div>
+      ))}
+    </ChartRow>
+  );
+}
+
+/** 棒の右に置く値（読み上げは行の sr-only の文に任せる） */
+function BarValue({
+  emphasized,
+  children,
+}: {
+  emphasized: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        "w-14 shrink-0 text-right text-xs tabular-nums",
+        emphasized ? "font-bold text-mirai-text" : "text-mirai-text-muted"
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+export interface StackedSegment {
+  series: ChartSeries;
+  value: number;
+  /** 値の表示（読み上げ・ツールチップにも使う） */
+  text: string;
+}
+
+interface StackedBarRowProps {
+  label: string;
+  /** ラベルの下に小さく添える説明 */
+  sublabel?: string;
+  /** 左から積む区分。棒の右には先頭の区分の値を出す */
+  segments: readonly StackedSegment[];
+  max: number;
+}
+
+/**
+ * 1本の棒を区分ごとに塗り分けて積む行（例: 有権者を「投票した人」と「投票しなかった人」に分ける）。
+ * 棒全体の長さが合計になる。区分の間は2pxのすき間で区切り、基線（左）は角を立て、右端だけ丸める
+ */
+export function StackedBarRow({
+  label,
+  sublabel,
+  segments,
+  max,
+}: StackedBarRowProps) {
+  const valuesText = segments
+    .map((segment) => `${segment.series.label} ${segment.text}`)
+    .join("、");
+  const drawn = segments.filter((segment) => segment.value > 0);
+  return (
+    <ChartRow label={label} sublabel={sublabel} valuesText={valuesText}>
+      <div className="flex items-center gap-2">
+        <div aria-hidden className="flex h-3 min-w-0 flex-1 gap-0.5">
+          {drawn.map((segment, i) => (
+            <div
+              key={segment.series.label}
+              className={cn(
+                "h-full",
+                SERIES_CLASS[segment.series.kind],
+                i === drawn.length - 1 && "rounded-r"
+              )}
+              style={{ width: `${barWidthPercent(segment.value, max)}%` }}
+            />
+          ))}
+        </div>
+        <BarValue emphasized>{segments[0]?.text}</BarValue>
       </div>
-    </div>
+    </ChartRow>
   );
 }
 

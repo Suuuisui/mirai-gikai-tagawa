@@ -13,14 +13,21 @@ import {
   formatPercent,
   formatPointDiff,
   formatTimeRange,
+  formatTimes,
+  formatVotes,
   pointDiff,
   roundTo,
   sharePercent,
+  singleAgeVoteGap,
+  singleYearAges,
   summarizeAges,
   summarizeElection,
   summarizePrecinct,
+  sumTotal,
+  timesOf,
   turnoutByAgeBand,
   turnoutRate,
+  votesByAgeBand,
 } from "./turnout";
 
 describe("turnoutRate", () => {
@@ -103,6 +110,91 @@ describe("年代別の集計", () => {
 
   it("女性の投票率が男性を上回った年齢を数える", () => {
     expect(countAgesWomenAhead(ages)).toBe(3);
+  });
+
+  it("帯ごとの票の数・投票しなかった人・投票した人全体に占める割合を出す", () => {
+    const rows = votesByAgeBand(ages, [
+      { label: "18・19歳", from: 18, to: 19 },
+      { label: "20〜24歳", from: 20, to: 24 },
+      { label: "80歳以上", from: 80, to: null },
+    ]);
+    expect(rows.map((row) => row.band.label)).toEqual([
+      "18・19歳",
+      "20〜24歳",
+      "80歳以上",
+    ]);
+    expect(rows[0]).toMatchObject({
+      electorate: 40,
+      voters: 14,
+      abstained: 26,
+      votersShare: 26.9,
+    });
+    expect(rows[1]).toMatchObject({
+      voters: 8,
+      abstained: 32,
+      votersShare: 15.4,
+    });
+    expect(rows[2]).toMatchObject({
+      voters: 30,
+      abstained: 50,
+      votersShare: 57.7,
+    });
+  });
+
+  it("票の数の帯は既定で資料と同じ5歳刻みの14区分になる", () => {
+    expect(votesByAgeBand(ages)).toHaveLength(14);
+  });
+
+  it("1歳ぶんの行だけを残し、「80歳以上」のまとめた行を除く", () => {
+    expect(singleYearAges(ages).map((row) => row.age)).toEqual([18, 19, 20]);
+  });
+
+  it("全年齢の有権者・投票した人の男女計を合計する", () => {
+    expect(sumTotal(ages, "electorate")).toBe(160);
+    expect(sumTotal(ages, "voters")).toBe(52);
+  });
+});
+
+describe("singleAgeVoteGap", () => {
+  it("1歳ごとの票の最少・最多を選び、開きを有権者の数と投票率の倍率に分ける", () => {
+    const gap = singleAgeVoteGap(
+      summarizeAges([
+        [24, 171, 158, 45, 52],
+        [50, 306, 302, 197, 206],
+        [77, 357, 498, 247, 356],
+        [80, 1609, 3512, 919, 1644],
+      ])
+    );
+    expect(gap.fewest.age).toBe(24);
+    expect(gap.most.age).toBe(77);
+    expect(gap.votesTimes).toBe(6.2);
+    expect(gap.electorateTimes).toBe(2.6);
+    expect(gap.rateTimes).toBe(2.4);
+  });
+
+  it("投票率の倍率は画面に出す小数第1位の値どうしで計算する", () => {
+    // 投票率 10.04% と 30.46% は、画面では 10.0% と 30.5%。
+    // 丸め前の比 3.03 なら「3.0倍」だが、画面の値どうしの比 3.05 に合わせて「3.1倍」にする
+    const gap = singleAgeVoteGap(
+      summarizeAges([
+        [30, 1250, 1250, 125, 126],
+        [60, 2500, 2500, 761, 762],
+      ])
+    );
+    expect(gap.fewest.rate.total).toBe(10.04);
+    expect(gap.most.rate.total).toBe(30.46);
+    expect(gap.rateTimes).toBe(3.1);
+  });
+
+  it("80歳以上のまとめた行は票が多くても比べる対象にしない", () => {
+    const gap = singleAgeVoteGap(
+      summarizeAges([
+        [20, 100, 100, 10, 10],
+        [79, 100, 100, 50, 50],
+        [80, 900, 900, 400, 400],
+      ])
+    );
+    expect(gap.most.age).toBe(79);
   });
 });
 
@@ -196,6 +288,18 @@ describe("axisMax", () => {
   });
 });
 
+describe("timesOf", () => {
+  it("a が b の何倍かを小数第1位で四捨五入する", () => {
+    expect(timesOf(603, 97)).toBe(6.2);
+    expect(timesOf(855, 329)).toBe(2.6);
+    expect(timesOf(70.5, 29.5)).toBe(2.4);
+  });
+
+  it("b が0以下なら0を返す", () => {
+    expect(timesOf(10, 0)).toBe(0);
+  });
+});
+
 describe("formatClockTime", () => {
   it("ちょうどの時刻は分を省く", () => {
     expect(formatClockTime("10:00")).toBe("10時");
@@ -229,6 +333,15 @@ describe("表示用の整形", () => {
 
   it("formatPeople は人数に「人」を付ける", () => {
     expect(formatPeople(20817)).toBe("20,817人");
+  });
+
+  it("formatVotes は票の数に「票」を付ける", () => {
+    expect(formatVotes(2588)).toBe("2,588票");
+  });
+
+  it("formatTimes は倍率を小数第1位まで表示する", () => {
+    expect(formatTimes(6.216)).toBe("6.2倍");
+    expect(formatTimes(2)).toBe("2.0倍");
   });
 
   it("formatPointDiff は符号付きで表示する", () => {

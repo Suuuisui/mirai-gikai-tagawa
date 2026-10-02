@@ -12,6 +12,7 @@ import {
 } from "../../shared/data/turnout-data";
 import { summarizeAges, summarizeElection } from "../../shared/utils/turnout";
 import { AgeBandSection, AgeCompositionSection } from "./age-sections";
+import { AgeVotesSection } from "./age-votes-section";
 import { EarlyVotingSection } from "./early-voting-section";
 import { HistorySection } from "./history-section";
 import { PrecinctSection } from "./precinct-section";
@@ -80,6 +81,8 @@ export function ElectionTurnoutPage() {
             currentLabel={currentLabel}
             previousLabel={previousLabel}
           />
+
+          <AgeVotesSection ages={mayorAges} electionLabel={currentLabel} />
 
           <AgeCompositionSection
             ages={mayorAges}
