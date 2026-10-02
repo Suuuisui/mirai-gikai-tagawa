@@ -4,6 +4,7 @@ import { getBillsWithSponsors } from "@/features/members/server/loaders/get-memb
 import { resolveMemberDisplayName } from "@/features/members/shared/utils/resolve-member-display";
 import { collectSponsorNames } from "@/features/members/shared/utils/sponsors";
 import { routes } from "@/lib/routes";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 type Props = {
   params: Promise<{ name: string }>;
@@ -41,13 +42,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: {
       canonical: routes.memberDetail(decodedName),
     },
-    // SNSシェア時にサイト共通OGではなく議員固有のタイトルを出す
-    openGraph: {
+    // SNSで共有したときの題名・説明は議員ごと、画像はサイト共通
+    ...buildPageShareMetadata({
       title,
       description,
-      siteName: "みらい議会＠田川市",
-      url: routes.memberDetail(decodedName),
-    },
+      path: routes.memberDetail(decodedName),
+    }),
   };
 }
 

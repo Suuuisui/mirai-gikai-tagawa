@@ -6,6 +6,7 @@ import {
   getQuestionSessionGroups,
 } from "@/features/general-questions/server/loaders/get-general-questions";
 import { routes } from "@/lib/routes";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 interface QuestionSessionPageProps {
   params: Promise<{ sessionKey: string }>;
@@ -44,12 +45,11 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical: routes.questionSession(sessionKey) },
-    openGraph: {
+    ...buildPageShareMetadata({
       title,
       description,
-      siteName: "みらい議会＠田川市",
-      url: routes.questionSession(sessionKey),
-    },
+      path: routes.questionSession(sessionKey),
+    }),
   };
 }
 

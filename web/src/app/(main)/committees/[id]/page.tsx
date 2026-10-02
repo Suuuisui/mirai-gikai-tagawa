@@ -5,6 +5,7 @@ import { CommitteeMeetingDetailPage } from "@/features/committees/server/compone
 import { getCommitteeMeetingById } from "@/features/committees/server/loaders/get-committee-meeting-by-id";
 import { getCommitteeMeetingWithNeighbors } from "@/features/committees/server/loaders/get-committee-meeting-with-neighbors";
 import { routes } from "@/lib/routes";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 interface CommitteeMeetingPageProps {
   params: Promise<{
@@ -47,12 +48,11 @@ export async function generateMetadata({
     alternates: {
       canonical: routes.committeeMeeting(meeting.id),
     },
-    openGraph: {
+    ...buildPageShareMetadata({
       title,
       description,
-      siteName: "みらい議会＠田川市",
-      url: routes.committeeMeeting(meeting.id),
-    },
+      path: routes.committeeMeeting(meeting.id),
+    }),
   };
 }
 

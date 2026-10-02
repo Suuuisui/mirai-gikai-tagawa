@@ -5,6 +5,7 @@ import { buildBillPageTitle } from "@/features/bills/shared/utils/bill-seo";
 import { SessionSummaryLayout } from "@/features/diet-sessions/server/components/session-summary/session-summary-layout";
 import { getSessionSummary } from "@/features/diet-sessions/server/loaders/get-session-summary";
 import { routes } from "@/lib/routes";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 interface SessionSummaryPageProps {
   params: Promise<{
@@ -44,13 +45,12 @@ export async function generateMetadata({
     alternates: {
       canonical: routes.sessionSummary(session.id),
     },
-    // SNSシェア時にサイト共通OGではなく会期固有のタイトルを出す
-    openGraph: {
+    // SNSで共有したときの題名・説明は会期ごと、画像はサイト共通
+    ...buildPageShareMetadata({
       title,
       description,
-      siteName: "みらい議会＠田川市",
-      url: routes.sessionSummary(session.id),
-    },
+      path: routes.sessionSummary(session.id),
+    }),
   };
 }
 
