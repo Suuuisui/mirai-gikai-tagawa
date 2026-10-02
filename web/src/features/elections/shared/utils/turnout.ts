@@ -162,9 +162,19 @@ export function summarizeAges(ages: readonly AgeRow[]): AgeTurnout[] {
   );
 }
 
+/** 資料で「80以上」とまとめられている行の年齢（この年齢から上は1歳ごとの人数が無い） */
+const OPEN_ENDED_AGE = 80;
+
 /** 年齢の表示（80 は「80歳以上」） */
 export function ageLabel(age: number): string {
-  return age >= 80 ? "80歳以上" : `${age}歳`;
+  return age >= OPEN_ENDED_AGE ? "80歳以上" : `${age}歳`;
+}
+
+/** 1歳ぶんの行だけを残す（「80歳以上」のまとめた行を除く。人数を年齢どうしで比べるとき用） */
+export function singleYearAges(
+  ages: readonly AgeTurnout[]
+): readonly AgeTurnout[] {
+  return ages.filter((row) => row.age < OPEN_ENDED_AGE);
 }
 
 export interface AgeBand {
@@ -219,6 +229,14 @@ export function turnoutByAgeBand(
   });
 }
 
+/** 全年齢の男女計を合計する */
+function sumTotal(
+  ages: readonly AgeTurnout[],
+  key: "electorate" | "voters"
+): number {
+  return ages.reduce((n, row) => n + row[key].total, 0);
+}
+
 /** 年代ごとに「有権者に占める割合」と「投票した人に占める割合」（%、小数第1位）を並べる */
 export function ageComposition(
   ages: readonly AgeTurnout[],
@@ -229,13 +247,40 @@ export function ageComposition(
   votersShare: number;
   rate: number;
 }[] {
-  const electorateTotal = ages.reduce((n, row) => n + row.electorate.total, 0);
-  const votersTotal = ages.reduce((n, row) => n + row.voters.total, 0);
+  const electorateTotal = sumTotal(ages, "electorate");
+  const votersTotal = sumTotal(ages, "voters");
   return turnoutByAgeBand(ages, bands).map((row) => ({
     band: row.band,
     electorateShare: sharePercent(row.electorate.total, electorateTotal),
     votersShare: sharePercent(row.voters.total, votersTotal),
     rate: row.rate.total,
+  }));
+}
+
+/** 年代1つ分の票の数（人数は男女計） */
+export interface AgeBandVotes {
+  band: AgeBand;
+  electorate: number;
+  /** 投票した人の数（1人1票なので、そのまま票の数） */
+  voters: number;
+  /** 投票しなかった人の数 */
+  abstained: number;
+  /** 投票した人全体に占める割合（%、小数第1位） */
+  votersShare: number;
+}
+
+/** 5歳ごとの票の数（投票した人の数）と、投票した人全体に占める割合 */
+export function votesByAgeBand(
+  ages: readonly AgeTurnout[],
+  bands: readonly AgeBand[] = AGE_BANDS
+): AgeBandVotes[] {
+  const votersTotal = sumTotal(ages, "voters");
+  return turnoutByAgeBand(ages, bands).map((row) => ({
+    band: row.band,
+    electorate: row.electorate.total,
+    voters: row.voters.total,
+    abstained: row.electorate.total - row.voters.total,
+    votersShare: sharePercent(row.voters.total, votersTotal),
   }));
 }
 
@@ -321,6 +366,11 @@ export function formatPeople(value: number): string {
   return `${formatCount(value)}人`;
 }
 
+/** 票の数を「2,588票」のように表示する（投票した人の数。1人1票） */
+export function formatVotes(value: number): string {
+  return `${formatCount(value)}票`;
+}
+
 /**
  * 小数第 digits 位で四捨五入する。掛け算の2進数の誤差（1.005 × 100 = 100.49999…）で
  * 切り捨てにならないよう、いったん小数第8位までに丸めてから四捨五入する
@@ -346,6 +396,20 @@ export function formatPercent(value: number, digits = 1): string {
  */
 export function pointDiff(a: number, b: number): number {
   return roundTo(roundTo(a) - roundTo(b));
+}
+
+/**
+ * a が b の何倍か（小数第1位で四捨五入）。b が0以下なら0。
+ * 割合どうしを比べるときは、画面に出す丸めた値を渡して表示と食い違わないようにする
+ */
+export function timesOf(a: number, b: number): number {
+  if (b <= 0) return 0;
+  return roundTo(a / b);
+}
+
+/** 倍率を「6.2倍」の形で表示する */
+export function formatTimes(value: number): string {
+  return `${roundTo(value).toFixed(1)}倍`;
 }
 
 /** ポイント差を「+1.2ポイント」「−3.4ポイント」の形で表示する */

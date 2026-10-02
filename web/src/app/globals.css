@@ -116,6 +116,10 @@
   --color-mirai-progress-track: #e6e6e6;
   --color-mirai-progress-fill: #9bd4b5;
 
+  /* グラフの積み上げ棒で、注目する部分（bg-primary）の残りを塗る明るい段（DADS blue-400）。
+     白地に対して約2.8:1。値は必ず文字でも並べる */
+  --color-mirai-chart-remainder: #7096f8;
+
   /* BillCover背景（議案カード用の動的カバー）: カテゴリ系統 × 濃淡3段階。
      DADS プリミティブの 50/100/200 の薄い色面（フラット） */
   --color-cover-terracotta-1: #ffeee2;

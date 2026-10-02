@@ -9,6 +9,8 @@ import {
   type ChartSeries,
   Meter,
   MeterList,
+  StackedBarRow,
+  type StackedSegment,
 } from "./turnout-bars";
 
 const SERIES: readonly ChartSeries[] = [
@@ -52,6 +54,59 @@ describe("BarGroupRow", () => {
       "title",
       "20〜24歳: 今回 33.3%、前回 40.8%"
     );
+  });
+});
+
+describe("StackedBarRow", () => {
+  const VOTED: ChartSeries = { label: "投票した人", kind: "focus" };
+  const ABSTAINED: ChartSeries = {
+    label: "投票しなかった人",
+    kind: "remainder",
+  };
+  const segments = (voted: number, abstained: number): StackedSegment[] => [
+    { series: VOTED, value: voted, text: `${voted}票` },
+    { series: ABSTAINED, value: abstained, text: `${abstained}人` },
+  ];
+
+  it("棒の右には先頭の区分の値を出し、読み上げ用の文とツールチップには全区分を入れる", () => {
+    const { container } = render(
+      <StackedBarRow
+        label="20〜24歳"
+        sublabel="有権者1,876人"
+        segments={segments(625, 1251)}
+        max={6000}
+      />
+    );
+    expect(screen.getByText("625票")).toBeInTheDocument();
+    expect(screen.queryByText("1251人")).not.toBeInTheDocument();
+    expect(
+      screen.getByText("投票した人 625票、投票しなかった人 1251人")
+    ).toBeInTheDocument();
+    expect(screen.getByText("有権者1,876人")).toBeInTheDocument();
+    expect(container.firstElementChild).toHaveAttribute(
+      "title",
+      "20〜24歳: 投票した人 625票、投票しなかった人 1251人"
+    );
+  });
+
+  it("区分を左から積み、0の区分は描かず、最後に描いた区分の右端だけ丸める", () => {
+    const { container, rerender } = render(
+      <StackedBarRow label="区分" segments={segments(1000, 2000)} max={6000} />
+    );
+    const drawnSegments = () =>
+      Array.from(
+        container.querySelectorAll<HTMLElement>("[aria-hidden] > div")
+      );
+    expect(drawnSegments().map((el) => el.style.width)).toEqual(["17%", "33%"]);
+    expect(
+      drawnSegments().map((el) => el.classList.contains("rounded-r"))
+    ).toEqual([false, true]);
+
+    rerender(
+      <StackedBarRow label="区分" segments={segments(3000, 0)} max={6000} />
+    );
+    expect(drawnSegments()).toHaveLength(1);
+    expect(drawnSegments()[0]).toHaveClass("rounded-r");
   });
 });
 

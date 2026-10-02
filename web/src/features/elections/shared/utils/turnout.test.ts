@@ -13,14 +13,19 @@ import {
   formatPercent,
   formatPointDiff,
   formatTimeRange,
+  formatTimes,
+  formatVotes,
   pointDiff,
   roundTo,
   sharePercent,
+  singleYearAges,
   summarizeAges,
   summarizeElection,
   summarizePrecinct,
+  timesOf,
   turnoutByAgeBand,
   turnoutRate,
+  votesByAgeBand,
 } from "./turnout";
 
 describe("turnoutRate", () => {
@@ -103,6 +108,43 @@ describe("年代別の集計", () => {
 
   it("女性の投票率が男性を上回った年齢を数える", () => {
     expect(countAgesWomenAhead(ages)).toBe(3);
+  });
+
+  it("帯ごとの票の数・投票しなかった人・投票した人全体に占める割合を出す", () => {
+    const rows = votesByAgeBand(ages, [
+      { label: "18・19歳", from: 18, to: 19 },
+      { label: "20〜24歳", from: 20, to: 24 },
+      { label: "80歳以上", from: 80, to: null },
+    ]);
+    expect(rows.map((row) => row.band.label)).toEqual([
+      "18・19歳",
+      "20〜24歳",
+      "80歳以上",
+    ]);
+    expect(rows[0]).toMatchObject({
+      electorate: 40,
+      voters: 14,
+      abstained: 26,
+      votersShare: 26.9,
+    });
+    expect(rows[1]).toMatchObject({
+      voters: 8,
+      abstained: 32,
+      votersShare: 15.4,
+    });
+    expect(rows[2]).toMatchObject({
+      voters: 30,
+      abstained: 50,
+      votersShare: 57.7,
+    });
+  });
+
+  it("票の数の帯は既定で資料と同じ5歳刻みの14区分になる", () => {
+    expect(votesByAgeBand(ages)).toHaveLength(14);
+  });
+
+  it("1歳ぶんの行だけを残し、「80歳以上」のまとめた行を除く", () => {
+    expect(singleYearAges(ages).map((row) => row.age)).toEqual([18, 19, 20]);
   });
 });
 
@@ -196,6 +238,18 @@ describe("axisMax", () => {
   });
 });
 
+describe("timesOf", () => {
+  it("a が b の何倍かを小数第1位で四捨五入する", () => {
+    expect(timesOf(603, 97)).toBe(6.2);
+    expect(timesOf(855, 329)).toBe(2.6);
+    expect(timesOf(70.5, 29.5)).toBe(2.4);
+  });
+
+  it("b が0以下なら0を返す", () => {
+    expect(timesOf(10, 0)).toBe(0);
+  });
+});
+
 describe("formatClockTime", () => {
   it("ちょうどの時刻は分を省く", () => {
     expect(formatClockTime("10:00")).toBe("10時");
@@ -229,6 +283,15 @@ describe("表示用の整形", () => {
 
   it("formatPeople は人数に「人」を付ける", () => {
     expect(formatPeople(20817)).toBe("20,817人");
+  });
+
+  it("formatVotes は票の数に「票」を付ける", () => {
+    expect(formatVotes(2588)).toBe("2,588票");
+  });
+
+  it("formatTimes は倍率を小数第1位まで表示する", () => {
+    expect(formatTimes(6.216)).toBe("6.2倍");
+    expect(formatTimes(2)).toBe("2.0倍");
   });
 
   it("formatPointDiff は符号付きで表示する", () => {
