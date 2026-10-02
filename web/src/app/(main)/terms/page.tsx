@@ -26,7 +26,7 @@ export default function TermsPage() {
     >
       <Container className="space-y-10">
         <LegalParagraph className="text-right">
-          最終更新日：2026年3月24日
+          最終更新日：2026年10月2日
         </LegalParagraph>
 
         <LegalParagraph>
@@ -170,7 +170,7 @@ export default function TermsPage() {
         <section className="space-y-4">
           <LegalSectionTitle>第8条（準拠法・管轄）</LegalSectionTitle>
           <LegalParagraph>
-            本規約は日本法に準拠し、本サービスに関連して生じる一切の紛争については、東京地方裁判所を第一審の専属的合意管轄裁判所とします。
+            本規約は日本法に準拠し、本サービスに関連して生じる一切の紛争については、福岡地方裁判所を第一審の専属的合意管轄裁判所とします。
           </LegalParagraph>
         </section>
       </Container>
