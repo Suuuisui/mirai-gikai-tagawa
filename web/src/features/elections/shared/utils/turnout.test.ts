@@ -18,10 +18,12 @@ import {
   pointDiff,
   roundTo,
   sharePercent,
+  singleAgeVoteGap,
   singleYearAges,
   summarizeAges,
   summarizeElection,
   summarizePrecinct,
+  sumTotal,
   timesOf,
   turnoutByAgeBand,
   turnoutRate,
@@ -145,6 +147,54 @@ describe("年代別の集計", () => {
 
   it("1歳ぶんの行だけを残し、「80歳以上」のまとめた行を除く", () => {
     expect(singleYearAges(ages).map((row) => row.age)).toEqual([18, 19, 20]);
+  });
+
+  it("全年齢の有権者・投票した人の男女計を合計する", () => {
+    expect(sumTotal(ages, "electorate")).toBe(160);
+    expect(sumTotal(ages, "voters")).toBe(52);
+  });
+});
+
+describe("singleAgeVoteGap", () => {
+  it("1歳ごとの票の最少・最多を選び、開きを有権者の数と投票率の倍率に分ける", () => {
+    const gap = singleAgeVoteGap(
+      summarizeAges([
+        [24, 171, 158, 45, 52],
+        [50, 306, 302, 197, 206],
+        [77, 357, 498, 247, 356],
+        [80, 1609, 3512, 919, 1644],
+      ])
+    );
+    expect(gap.fewest.age).toBe(24);
+    expect(gap.most.age).toBe(77);
+    expect(gap.votesTimes).toBe(6.2);
+    expect(gap.electorateTimes).toBe(2.6);
+    expect(gap.rateTimes).toBe(2.4);
+  });
+
+  it("投票率の倍率は画面に出す小数第1位の値どうしで計算する", () => {
+    // 投票率 10.04% と 30.46% は、画面では 10.0% と 30.5%。
+    // 丸め前の比 3.03 なら「3.0倍」だが、画面の値どうしの比 3.05 に合わせて「3.1倍」にする
+    const gap = singleAgeVoteGap(
+      summarizeAges([
+        [30, 1250, 1250, 125, 126],
+        [60, 2500, 2500, 761, 762],
+      ])
+    );
+    expect(gap.fewest.rate.total).toBe(10.04);
+    expect(gap.most.rate.total).toBe(30.46);
+    expect(gap.rateTimes).toBe(3.1);
+  });
+
+  it("80歳以上のまとめた行は票が多くても比べる対象にしない", () => {
+    const gap = singleAgeVoteGap(
+      summarizeAges([
+        [20, 100, 100, 10, 10],
+        [79, 100, 100, 50, 50],
+        [80, 900, 900, 400, 400],
+      ])
+    );
+    expect(gap.most.age).toBe(79);
   });
 });
 

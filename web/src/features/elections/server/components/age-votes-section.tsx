@@ -3,14 +3,12 @@ import {
   type AgeTurnout,
   ageLabel,
   axisMax,
-  extremesBy,
   formatPeople,
   formatPercent,
   formatTimes,
   formatVotes,
-  roundTo,
-  singleYearAges,
-  timesOf,
+  singleAgeVoteGap,
+  sumTotal,
   votesByAgeBand,
 } from "../../shared/utils/turnout";
 import { TURNOUT_SECTIONS } from "./section-ids";
@@ -27,26 +25,11 @@ const SCALE_STEP = 1000;
 const MECHANISM =
   "選挙の結果は票の数で決まります。票の数は「その年代の有権者の数 × 投票率」なので、投票率が同じなら有権者の多い年代ほど票が多くなり、投票する人が増えればその年代の票も増えます。";
 
-/**
- * 1歳ごとに見て票が最も少ない年齢と最も多い年齢を、有権者の数と投票率の違いに分けて説明する。
- * 「80歳以上」は何歳分もまとめた行なので比べる対象から外す
- */
-function describeSingleAgeExtremes(ages: readonly AgeTurnout[]): string {
-  const { min: fewest, max: most } = extremesBy(
-    singleYearAges(ages),
-    (row) => row.voters.total
-  );
-  const votesTimes = timesOf(most.voters.total, fewest.voters.total);
-  const electorateTimes = timesOf(
-    most.electorate.total,
-    fewest.electorate.total
-  );
-  // 投票率は画面に出す丸めた値どうしで比べる
-  const rateTimes = timesOf(
-    roundTo(most.rate.total),
-    roundTo(fewest.rate.total)
-  );
-  return `1歳ごとに見ると、票が最も少なかったのは${ageLabel(fewest.age)}の${formatVotes(fewest.voters.total)}、最も多かったのは${ageLabel(most.age)}の${formatVotes(most.voters.total)}で、約${formatTimes(votesTimes)}の開きがあります。有権者の数（${formatPeople(fewest.electorate.total)}と${formatPeople(most.electorate.total)}）で約${formatTimes(electorateTimes)}、投票率（${formatPercent(fewest.rate.total)}と${formatPercent(most.rate.total)}）で約${formatTimes(rateTimes)}の違いがあり、その2つが重なった開きです。`;
+/** 1歳ごとの票の最少と最多を、有権者の数と投票率の違いに分けて説明する */
+function describeSingleAgeGap(ages: readonly AgeTurnout[]): string {
+  const { fewest, most, votesTimes, electorateTimes, rateTimes } =
+    singleAgeVoteGap(ages);
+  return `1歳ごとに見ると（1歳ごとの数が無い80歳以上は除きます）、票が最も少なかったのは${ageLabel(fewest.age)}の${formatVotes(fewest.voters.total)}、最も多かったのは${ageLabel(most.age)}の${formatVotes(most.voters.total)}で、約${formatTimes(votesTimes)}の開きがあります。有権者の数（${formatPeople(fewest.electorate.total)}と${formatPeople(most.electorate.total)}）で約${formatTimes(electorateTimes)}、投票率（${formatPercent(fewest.rate.total)}と${formatPercent(most.rate.total)}）で約${formatTimes(rateTimes)}の違いがあり、その2つが重なった開きです。`;
 }
 
 /** 5歳ごとの票の数を表で見せる（グラフの値を数字で確かめられるように） */
@@ -62,7 +45,7 @@ function AgeVotesTable({
   return (
     <details className="rounded-lg border border-mirai-border-muted bg-white">
       <summary className="cursor-pointer px-4 py-3 text-sm font-bold text-mirai-text">
-        表で見る（票の数と全体に占める割合）
+        表で見る（票の数と、票全体に占める割合）
       </summary>
       <div className="overflow-x-auto px-4 pb-4">
         <table className="w-full min-w-[30rem] text-xs tabular-nums">
@@ -75,7 +58,7 @@ function AgeVotesTable({
                 票の数
               </th>
               <th scope="col" className="py-2 pr-3 text-right font-medium">
-                全体に占める割合
+                票全体に占める割合
               </th>
               <th scope="col" className="py-2 pr-3 text-right font-medium">
                 投票しなかった人
@@ -148,8 +131,8 @@ export function AgeVotesSection({ ages, electionLabel }: AgeVotesSectionProps) {
     rows.map((row) => row.electorate),
     SCALE_STEP
   );
-  const votersTotal = rows.reduce((n, row) => n + row.voters, 0);
-  const electorateTotal = rows.reduce((n, row) => n + row.electorate, 0);
+  const votersTotal = sumTotal(ages, "voters");
+  const electorateTotal = sumTotal(ages, "electorate");
 
   return (
     <TurnoutSection
@@ -159,7 +142,7 @@ export function AgeVotesSection({ ages, electionLabel }: AgeVotesSectionProps) {
     >
       <ul className="flex list-disc flex-col gap-1 pl-5 text-sm leading-relaxed text-mirai-text">
         <li>{MECHANISM}</li>
-        <li>{describeSingleAgeExtremes(ages)}</li>
+        <li>{describeSingleAgeGap(ages)}</li>
       </ul>
 
       <ChartFigure

@@ -199,7 +199,7 @@ const AGE_BANDS: readonly AgeBand[] = [
   { label: "65〜69歳", from: 65, to: 69 },
   { label: "70〜74歳", from: 70, to: 74 },
   { label: "75〜79歳", from: 75, to: 79 },
-  { label: "80歳以上", from: 80, to: null },
+  { label: "80歳以上", from: OPEN_ENDED_AGE, to: null },
 ];
 
 /** 有権者の構成と投票した人の構成を比べるための大きな区切り（若い順） */
@@ -230,7 +230,7 @@ export function turnoutByAgeBand(
 }
 
 /** 全年齢の男女計を合計する */
-function sumTotal(
+export function sumTotal(
   ages: readonly AgeTurnout[],
   key: "electorate" | "voters"
 ): number {
@@ -282,6 +282,39 @@ export function votesByAgeBand(
     abstained: row.electorate.total - row.voters.total,
     votersShare: sharePercent(row.voters.total, votersTotal),
   }));
+}
+
+/** 1歳ごとに見た票の最少・最多と、その開きを有権者の数と投票率に分けた倍率 */
+export interface SingleAgeVoteGap {
+  fewest: AgeTurnout;
+  most: AgeTurnout;
+  /** 票の数（投票した人の数）の倍率 */
+  votesTimes: number;
+  /** 有権者の数の倍率 */
+  electorateTimes: number;
+  /** 投票率の倍率（画面に出す小数第1位の値どうし） */
+  rateTimes: number;
+}
+
+/**
+ * 1歳ごとに見て票が最も少ない年齢と最も多い年齢を選び、票の数の開きを
+ * 有権者の数の違いと投票率の違いに分ける（票の数 ＝ 有権者の数 × 投票率）。
+ * 「80歳以上」は何歳分もまとめた行なので比べる対象から外す
+ */
+export function singleAgeVoteGap(
+  ages: readonly AgeTurnout[]
+): SingleAgeVoteGap {
+  const { min: fewest, max: most } = extremesBy(
+    singleYearAges(ages),
+    (row) => row.voters.total
+  );
+  return {
+    fewest,
+    most,
+    votesTimes: timesOf(most.voters.total, fewest.voters.total),
+    electorateTimes: timesOf(most.electorate.total, fewest.electorate.total),
+    rateTimes: timesOf(roundTo(most.rate.total), roundTo(fewest.rate.total)),
+  };
 }
 
 /**
