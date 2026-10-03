@@ -5,6 +5,7 @@ import { BATCH_C_OVERRIDES } from "./bill-descriptions-batch-c";
 import { BATCH_D_OVERRIDES } from "./bill-descriptions-batch-d";
 import { BATCH_E_OVERRIDES } from "./bill-descriptions-batch-e";
 import { BATCH_F_OVERRIDES } from "./bill-descriptions-batch-f";
+import { BATCH_G_OVERRIDES } from "./bill-descriptions-batch-g";
 
 interface ChartTotal {
   before: number;
@@ -32,6 +33,7 @@ const allDescriptions = {
   ...BATCH_D_OVERRIDES,
   ...BATCH_E_OVERRIDES,
   ...BATCH_F_OVERRIDES,
+  ...BATCH_G_OVERRIDES,
 };
 
 const charts = Object.entries(allDescriptions).flatMap(([key, description]) =>

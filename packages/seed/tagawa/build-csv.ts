@@ -39,6 +39,7 @@ import { BATCH_C_OVERRIDES } from "./bill-descriptions-batch-c";
 import { BATCH_D_OVERRIDES } from "./bill-descriptions-batch-d";
 import { BATCH_E_OVERRIDES } from "./bill-descriptions-batch-e";
 import { BATCH_F_OVERRIDES } from "./bill-descriptions-batch-f";
+import { BATCH_G_OVERRIDES } from "./bill-descriptions-batch-g";
 import { FEATURED_BILLS } from "./featured-bills-data";
 import { MEMBER_VOTES } from "./member-votes-data";
 import { BILL_SPONSORS } from "./bill-sponsors-data";
@@ -64,9 +65,11 @@ const ALL_BILL_DESCRIPTIONS = {
   ...BATCH_B_OVERRIDES,
   ...BATCH_C_OVERRIDES,
   ...BATCH_D_OVERRIDES,
-  // batch-e: 令和8年8月臨時会、batch-f: 令和8年9月定例会（会期中）
+  // batch-e: 令和8年8月臨時会、batch-f: 令和8年9月定例会（会期中）、
+  // batch-g: 同定例会で9月29日に上程された令和7年度決算（認定第1〜6号）
   ...BATCH_E_OVERRIDES,
   ...BATCH_F_OVERRIDES,
+  ...BATCH_G_OVERRIDES,
 };
 
 const CSV_DATA_DIR = path.join(import.meta.dirname, "../csv/data");
