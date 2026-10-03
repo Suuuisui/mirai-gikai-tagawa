@@ -382,7 +382,7 @@ export const MAYOR_POLICY_SPEECH: PolicySpeech = {
 };
 
 /** 市長交代の経緯セクションの導入文。タイムラインを読む前の3行まとめ */
-export const ROAD_TO_INAUGURATION_SUMMARY = `前市長・${FORMER_MAYOR_NAME}氏が公務出張中の不倫を認め、ハラスメント問題も指摘されたことを受け、議会は給料の5割減額や第三者調査委員会の設置で対応し、村上氏への不信任決議案は2度とも否決されました。第三者委員会の報告後、村上氏は2026年5月31日に退職し、7月12日の市長選で浦野氏が当選しました。`;
+export const ROAD_TO_INAUGURATION_SUMMARY = `前市長・${FORMER_MAYOR_NAME}氏が公務出張中の不適切な関係を認め、ハラスメント問題も指摘されたことを受け、議会は給料の5割減額や第三者調査委員会の設置で対応し、村上氏への不信任決議案は2度とも否決されました。第三者委員会の報告後、村上氏は2026年5月31日に退職し、7月12日の市長選で浦野氏が当選しました。`;
 
 /**
  * 前市長の問題が表面化してから新市長就任までの経緯【古い順】。
@@ -392,7 +392,7 @@ export const ROAD_TO_INAUGURATION: readonly TimelineEvent[] = [
   {
     date: "2025-02-19",
     title: `${FORMER_MAYOR_NAME}市長の公務出張問題が表面化`,
-    description: `全員協議会で${FORMER_MAYOR_NAME}市長が公務出張中の不倫を認め、辞職は否定したうえで報酬の30%削減を表明しました。`,
+    description: `全員協議会で${FORMER_MAYOR_NAME}市長が公務出張中の不適切な関係を認め、辞職は否定したうえで報酬の30%削減を表明しました。`,
     source: {
       kind: "meeting",
       committeeName: "全員協議会",

@@ -137,7 +137,9 @@ export function CommitteeMeetingDetailPage({
               {meeting.attendees.length > 0 && (
                 <div className="flex flex-1 flex-col gap-3">
                   <h2 className="text-sm font-bold text-mirai-text-secondary">
-                    出席した議員
+                    {meeting.source_type === "youtube"
+                      ? "発言などが確認できた議員（中継の字幕から）"
+                      : "出席した議員"}
                   </h2>
                   <div className="flex flex-wrap gap-2">
                     {meeting.attendees.map((name) => (
@@ -175,8 +177,15 @@ export function CommitteeMeetingDetailPage({
             {meeting.minutes_text && (
               <details className="rounded-lg border border-mirai-border bg-white">
                 <summary className="cursor-pointer px-4 py-3 text-sm font-bold text-primary">
-                  記録の全文を開く（長文）
+                  {meeting.source_type === "youtube"
+                    ? "記録の全文を開く（中継の自動字幕・長文）"
+                    : "記録の全文を開く（長文）"}
                 </summary>
+                {meeting.source_type === "youtube" && (
+                  <p className="border-t border-mirai-border-muted px-4 pt-4 text-xs leading-relaxed text-mirai-text-note">
+                    ※中継映像の自動字幕をそのまま載せているため、人名・地名・数字などに誤変換が含まれます。正確な発言は中継映像でご確認ください。
+                  </p>
+                )}
                 <div className="whitespace-pre-wrap border-t border-mirai-border-muted px-4 py-4 text-sm leading-relaxed text-mirai-text-secondary">
                   {meeting.minutes_text}
                 </div>

@@ -5,12 +5,13 @@ import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
 import { routes } from "@/lib/routes";
-import { ROSTER_AS_OF } from "../../shared/data/member-profiles";
 import {
-  aggregateMemberSummaries,
-  type MemberSummary,
-} from "../../shared/utils/aggregate-members";
+  MEMBER_PROFILES,
+  ROSTER_AS_OF,
+} from "../../shared/data/member-profiles";
+import { aggregateMemberSummaries } from "../../shared/utils/aggregate-members";
 import { formatYearMonth } from "../../shared/utils/format-year-month";
+import { groupMembersForList } from "../../shared/utils/group-members";
 import {
   PROPOSER_DESCRIPTIONS,
   PROPOSER_LABELS,
@@ -40,25 +41,6 @@ const PROPOSER_ICONS: Record<
   committee: UsersRound,
 };
 
-/** 直近の所属会派ごとに議員をグループ化する（人数の多い会派順） */
-function groupByLatestFaction(
-  members: MemberSummary[]
-): Array<{ faction: string; members: MemberSummary[] }> {
-  const map = new Map<string, MemberSummary[]>();
-  for (const member of members) {
-    const group = map.get(member.latestFaction) ?? [];
-    group.push(member);
-    map.set(member.latestFaction, group);
-  }
-  return [...map.entries()]
-    .map(([faction, groupMembers]) => ({ faction, members: groupMembers }))
-    .sort(
-      (a, b) =>
-        b.members.length - a.members.length ||
-        a.faction.localeCompare(b.faction, "ja")
-    );
-}
-
 /**
  * 議員・提出者から見るページ
  *
@@ -73,7 +55,7 @@ export async function MemberListPage() {
     getBillsWithSponsors(),
   ]);
   const members = aggregateMemberSummaries(items);
-  const factionGroups = groupByLatestFaction(members);
+  const factionGroups = groupMembersForList(members, MEMBER_PROFILES);
 
   // sponsorsデータ中のフルネーム一覧（MEMBER_PROFILESに無い姓のフォールバック用）
   const allSponsorNames = collectSponsorNames(
@@ -157,9 +139,10 @@ export async function MemberListPage() {
           </div>
 
           {factionGroups.map((group) => (
-            <div key={group.faction} className="flex flex-col gap-2 pt-2">
+            <div key={group.label} className="flex flex-col gap-2 pt-2">
               <h3 className="text-sm font-bold text-mirai-text-secondary">
-                {group.faction}（{group.members.length}人）
+                {group.label}（
+                {group.members.length + group.membersWithoutVotes.length}人）
               </h3>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {group.members.map((member) => {
@@ -205,6 +188,27 @@ export async function MemberListPage() {
                     </Link>
                   );
                 })}
+                {group.membersWithoutVotes.map((name) => {
+                  const profile = resolveMemberProfile(name);
+                  return (
+                    <Card
+                      key={name}
+                      className="flex h-full flex-col gap-2 border-mirai-border p-4"
+                    >
+                      <span className="flex flex-col font-bold text-mirai-text">
+                        {profile?.fullName ?? name}
+                        {profile?.role && (
+                          <span className="text-xs font-normal text-mirai-text-muted">
+                            {profile.role}
+                          </span>
+                        )}
+                      </span>
+                      <p className="text-xs leading-relaxed text-mirai-text-muted">
+                        賛否が分かれた案件の記録はまだありません
+                      </p>
+                    </Card>
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -221,7 +225,7 @@ export async function MemberListPage() {
           </p>
           <p>
             ※氏名・会派・役職は田川市議会公式サイトの議員名簿（{ROSTER_AS_OF}
-            時点）より。
+            時点）より。会派の見出しは名簿時点の所属で、採決当時の会派は各議員のページで確認できます。
           </p>
         </div>
       </Container>
