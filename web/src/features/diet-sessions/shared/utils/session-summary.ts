@@ -35,6 +35,10 @@ type ResultClassification = "passed" | "rejected" | "other";
  * フォールバックする。
  */
 function classifyBillResult(bill: BillForSummary): ResultClassification {
+  // 本会議でまだ議決されていない議案（会期中）は、status_note に委員会の結論
+  // （「委員会で認定と決定」「不認定と決定」など）が書かれていても数えない
+  if (bill.status === "introduced") return "other";
+
   const note = bill.status_note;
 
   // status_noteがない場合のみ status（enum）にフォールバックする。

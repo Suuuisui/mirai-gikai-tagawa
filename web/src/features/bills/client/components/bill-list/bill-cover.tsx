@@ -20,6 +20,7 @@ import {
   formatSubmittedYearMonth,
   pickCoverVariant,
 } from "../../../shared/utils/bill-cover";
+import { getBillDateLabel } from "../../../shared/utils/bill-status";
 
 interface BillCoverProps {
   // 本文（content）は使わないため軽量版で受ける（フル版もそのまま渡せる）
@@ -144,7 +145,8 @@ export function BillCover({ bill, compact = false }: BillCoverProps) {
         )}
         {submittedLabel && (
           <p className="text-xs text-mirai-text-subtle">
-            {submittedLabel} 提出
+            {/* submitted_date は議決済みなら議決日なので、状態に合わせた語を添える */}
+            {submittedLabel} {getBillDateLabel(bill.status)}
           </p>
         )}
       </div>

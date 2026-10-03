@@ -92,6 +92,27 @@ describe("summarizeSessionResults", () => {
     expect(result.other).toBe(1);
   });
 
+  it("本会議で議決前の議案は、委員会の結論が status_note にあっても可決・否決に数えない", () => {
+    const bills = [
+      makeBill({
+        status: "introduced",
+        status_note:
+          "10月1日の厚生委員会で異議なく認定と決定（10月8日の本会議で採決予定）",
+      }),
+      makeBill({
+        status: "introduced",
+        status_note:
+          "常任委員会で審査中（9月30日の総務文教委員会は所管分を賛成少数で不認定と決定）",
+      }),
+    ];
+
+    const result = summarizeSessionResults(bills);
+
+    expect(result.passed).toBe(0);
+    expect(result.rejected).toBe(0);
+    expect(result.other).toBe(2);
+  });
+
   it("member_votesが非nullの件数をsplitCountとして数える", () => {
     const bills = [
       makeBill({ member_votes: { entries: [] } }),
