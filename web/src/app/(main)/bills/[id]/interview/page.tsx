@@ -6,6 +6,8 @@ import { getInterviewConfig } from "@/features/interview-config/server/loaders/g
 import { getUserReportsByInterviewConfig } from "@/features/interview-report/server/loaders/get-user-reports-by-interview-config";
 import { getLatestInterviewSession } from "@/features/interview-session/server/loaders/get-latest-interview-session";
 import { env } from "@/lib/env";
+import { routes } from "@/lib/routes";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 export const dynamic = "force-dynamic";
 
@@ -33,29 +35,20 @@ export async function generateMetadata({
   const shareImageUrl =
     bill.share_thumbnail_url || bill.thumbnail_url || defaultOgpUrl;
 
+  const title = `AIインタビュー - ${billName}`;
+
   return {
-    title: `AIインタビュー - ${billName}`,
-    description: description,
+    title,
+    description,
     alternates: {
-      canonical: `/bills/${bill.id}/interview`,
+      canonical: routes.interviewLP(bill.id),
     },
-    openGraph: {
-      title: `AIインタビュー - ${billName}`,
-      description: description,
-      type: "website",
-      images: [
-        {
-          url: shareImageUrl,
-          alt: `${billName} のAIインタビューページ`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `AIインタビュー - ${billName}`,
-      description: description,
-      images: [shareImageUrl],
-    },
+    ...buildPageShareMetadata({
+      title,
+      description,
+      path: routes.interviewLP(bill.id),
+      image: { url: shareImageUrl, alt: `${billName} のAIインタビューページ` },
+    }),
   };
 }
 

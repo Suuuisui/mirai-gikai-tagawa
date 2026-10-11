@@ -11,6 +11,7 @@ import {
   isPageSpeedInsights,
   validateBasicAuth,
 } from "./lib/basic-auth";
+import { getRobotsTagForRequest } from "./lib/seo/robots-header";
 import { updateSupabaseSession } from "./lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
@@ -34,6 +35,15 @@ export async function middleware(request: NextRequest) {
 
   // URLパラメータからdifficulty Cookieをセット
   _applyDifficultyCookie(request, response);
+
+  // 検索結果（/search?q=…）は検索エンジンにインデックスさせない
+  const robotsTag = getRobotsTagForRequest(
+    request.nextUrl.pathname,
+    request.nextUrl.searchParams
+  );
+  if (robotsTag) {
+    response.headers.set("X-Robots-Tag", robotsTag);
+  }
 
   const authConfig = getBasicAuthConfig();
 

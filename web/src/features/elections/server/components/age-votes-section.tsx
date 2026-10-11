@@ -149,7 +149,7 @@ export function AgeVotesSection({ ages, electionLabel }: AgeVotesSectionProps) {
       <ChartFigure
         title={`5歳ごとの票の数（${electionLabel}）`}
         series={VOTE_SERIES}
-        note={`棒全体の長さが有権者の数で、濃い青が投票した人（票の数）、明るい青が投票しなかった人です。棒の長さは0〜${formatPeople(scaleMax)}で表しています。18・19歳は2歳分、80歳以上は80歳から上をまとめた人数で、ほかは5歳分です。`}
+        note={`棒全体の長さが有権者の数で、濃い色が投票した人（票の数）、明るい色が投票しなかった人です。棒の長さは0〜${formatPeople(scaleMax)}で表しています。18・19歳は2歳分、80歳以上は80歳から上をまとめた人数で、ほかは5歳分です。`}
       >
         {rows.map((row) => (
           <StackedBarRow

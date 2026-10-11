@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
+import { resolveBillShareImageUrl } from "@/features/bills/shared/utils/bill-share-image";
 import { BillOpinionsPage } from "@/features/user-topic-analysis/server/components/bill-opinions-page";
+import { getPublicBillRespondents } from "@/features/user-topic-analysis/server/loaders/get-public-bill-respondents";
+import { env } from "@/lib/env";
+import { routes } from "@/lib/routes";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 interface OpinionsPageProps {
   params: Promise<{
@@ -24,12 +29,30 @@ export async function generateMetadata({
   params,
 }: OpinionsPageProps): Promise<Metadata> {
   const { id } = await params;
-  const bill = await getBillById(id);
-  const title = bill?.bill_content?.title || bill?.name || "議案";
+  // 回答の取得はページ本体と React cache() で共有され、クエリは重複しない
+  const [bill, respondents] = await Promise.all([
+    getBillById(id),
+    getPublicBillRespondents(id),
+  ]);
+  const billName = bill?.bill_content?.title || bill?.name || "議案";
+  const title = `AIインタビューの回答一覧 - ${billName}`;
+  const description = `${billName}に寄せられたAIインタビューの回答一覧`;
+  const shareImageUrl = resolveBillShareImageUrl(bill, env.webUrl);
 
   return {
-    title: `AIインタビューの回答一覧 - ${title}`,
-    description: `${title}に寄せられたAIインタビューの回答一覧`,
+    title,
+    description,
+    alternates: {
+      canonical: routes.billOpinions(id),
+    },
+    // 公開されている回答がまだ無い議案は、検索結果に出さない
+    ...(respondents.length === 0 && { robots: { index: false, follow: true } }),
+    ...buildPageShareMetadata({
+      title,
+      description,
+      path: routes.billOpinions(id),
+      image: { url: shareImageUrl, alt: `${billName} のOGPイメージ` },
+    }),
   };
 }
 

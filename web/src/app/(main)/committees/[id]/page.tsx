@@ -1,11 +1,20 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { truncateForSnippet } from "@/features/bills/shared/utils/bill-seo";
+import { JsonLd } from "@/components/seo/json-ld";
 import { CommitteeMeetingDetailPage } from "@/features/committees/server/components/committee-meeting-detail-page";
 import { getCommitteeMeetingById } from "@/features/committees/server/loaders/get-committee-meeting-by-id";
 import { getCommitteeMeetingWithNeighbors } from "@/features/committees/server/loaders/get-committee-meeting-with-neighbors";
+import {
+  buildCommitteeMeetingDescription,
+  buildCommitteeMeetingJsonLd,
+  buildCommitteeMeetingTitle,
+} from "@/features/committees/shared/utils/committee-seo";
+import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
-import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
+import {
+  buildPageShareMetadata,
+  DEFAULT_OG_IMAGE,
+} from "@/lib/seo/share-metadata";
 
 interface CommitteeMeetingPageProps {
   params: Promise<{
@@ -34,13 +43,10 @@ export async function generateMetadata({
     };
   }
 
-  // 見出しがあれば検索結果でも中身が伝わるため優先する
-  const title = meeting.headline
-    ? `${meeting.headline}｜田川市議会 ${meeting.committee_name}`
-    : `田川市議会 ${meeting.title}`;
-  const description = meeting.summary
-    ? truncateForSnippet(meeting.summary)
-    : `田川市議会 ${meeting.committee_name}（${meeting.meeting_date}開催）の審議内容の記録です。`;
+  // 検索結果でも中身が伝わるよう、見出し＋会議名＋開催日の題名にし、
+  // 説明は要約の先頭（文の切れ目で120字以内）にする
+  const title = buildCommitteeMeetingTitle(meeting);
+  const description = buildCommitteeMeetingDescription(meeting);
 
   return {
     title,
@@ -52,6 +58,9 @@ export async function generateMetadata({
       title,
       description,
       path: routes.committeeMeeting(meeting.id),
+      type: "article",
+      publishedTime: meeting.meeting_date,
+      modifiedTime: meeting.updated_at,
     }),
   };
 }
@@ -66,10 +75,25 @@ export default async function CommitteeMeetingPage({
     notFound();
   }
 
+  const url = new URL(
+    routes.committeeMeeting(result.meeting.id),
+    env.webUrl
+  ).toString();
+  const imageUrl = new URL(DEFAULT_OG_IMAGE.url, env.webUrl).toString();
+
   return (
-    <CommitteeMeetingDetailPage
-      meeting={result.meeting}
-      neighbors={result.neighbors}
-    />
+    <>
+      <JsonLd
+        data={buildCommitteeMeetingJsonLd({
+          meeting: result.meeting,
+          url,
+          imageUrl,
+        })}
+      />
+      <CommitteeMeetingDetailPage
+        meeting={result.meeting}
+        neighbors={result.neighbors}
+      />
+    </>
   );
 }

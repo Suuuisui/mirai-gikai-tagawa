@@ -30,7 +30,7 @@ export function CommitteeMeetingListPage({
 
   return (
     <div data-wide-column>
-      {/* ページタイトル（薄青の色面） */}
+      {/* ページタイトル（キーカラーの薄い色面） */}
       <div className="bg-mirai-surface-key md:rounded-lg">
         <Container className="py-8">
           <h1 className="text-2xl font-bold text-mirai-text">委員会の記録</h1>

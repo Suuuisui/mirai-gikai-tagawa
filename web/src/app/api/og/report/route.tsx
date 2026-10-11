@@ -120,7 +120,7 @@ export async function GET(request: Request) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#e8f1fe",
+        backgroundColor: "#fbeee7",
       }}
     >
       {/* グラデーションborder用ラッパー */}
@@ -130,7 +130,7 @@ export async function GET(request: Request) {
           width: 1140,
           height: 560,
           borderRadius: 30,
-          backgroundColor: "#0017c1",
+          backgroundColor: "#b5432a",
           padding: 6,
           position: "relative",
         }}
@@ -152,7 +152,7 @@ export async function GET(request: Request) {
               display: "flex",
               fontSize: 38,
               fontWeight: 800,
-              color: "#1a1a1a",
+              color: "#231f1c",
               lineHeight: 1.8,
               flex: 1,
               width: 740,
@@ -170,7 +170,7 @@ export async function GET(request: Request) {
               maxHeight: OG_BILL_NAME_MAX_HEIGHT,
               fontSize: 32,
               fontWeight: 800,
-              color: "#00118f",
+              color: "#8f2f1c",
               lineHeight: 1.5,
               overflow: "hidden",
               wordBreak: "break-all",
@@ -195,7 +195,7 @@ export async function GET(request: Request) {
             paddingBottom: 10,
             borderBottomLeftRadius: 30,
             borderTopRightRadius: 30,
-            backgroundColor: "#0017c1",
+            backgroundColor: "#b5432a",
           }}
         >
           <span

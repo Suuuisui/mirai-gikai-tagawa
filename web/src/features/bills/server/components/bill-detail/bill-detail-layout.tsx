@@ -11,12 +11,12 @@ import { getMemberNameSet } from "@/features/members/server/loaders/get-member-v
 import { SourceList } from "@/features/sources/shared/components/source-list";
 import { BillTopicsPreviewSection } from "@/features/user-topic-analysis/server/components/bill-topics-preview-section";
 import { getPublicTopicAnalysis } from "@/features/user-topic-analysis/server/loaders/get-public-topic-analysis";
-import { routes } from "@/lib/routes";
 import { BillDetailClient } from "../../../client/components/bill-detail/bill-detail-client";
 import { BillDisclaimer } from "../../../client/components/bill-detail/bill-disclaimer";
 import { BillStatusProgress } from "../../../client/components/bill-detail/bill-status-progress";
 import { MiraiStanceCard } from "../../../client/components/bill-detail/mirai-stance-card";
 import type { BillWithContent } from "../../../shared/types";
+import { buildBillBreadcrumbItems } from "../../../shared/utils/bill-breadcrumb";
 import { buildBillSourceRefs } from "../../../shared/utils/bill-sources";
 import { isMemberVotesSectionVisible } from "../../../shared/utils/member-votes-visibility";
 import { getAdjacentSessionBills } from "../../loaders/get-adjacent-session-bills";
@@ -91,10 +91,10 @@ export async function BillDetailLayout({
         <Container>
           <div className="mt-6">
             <Breadcrumb
-              items={[
-                { label: "TOP", href: routes.home() },
-                { label: bill.bill_content?.title || bill.name },
-              ]}
+              items={buildBillBreadcrumbItems({
+                billTitle: bill.bill_content?.title || bill.name,
+                session: dietSession,
+              })}
             />
           </div>
 

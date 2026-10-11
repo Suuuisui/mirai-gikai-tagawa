@@ -7,10 +7,10 @@ import { SessionQuestionsSection } from "@/features/general-questions/server/com
 import { officialMinutesIndex } from "@/features/official-minutes/shared/data/official-minutes-index";
 import { SessionPetitionsSection } from "@/features/petitions/server/components/session-petitions-section";
 import { SourceBadge } from "@/features/sources/shared/components/source-badge";
-import { routes } from "@/lib/routes";
 import { formatDate, formatDateWithDots } from "@/lib/utils/date";
 import { BillListWithStatusFilter } from "../../../client/components/bill-list-with-status-filter";
 import type { DietSession } from "../../../shared/types";
+import { buildSessionSummaryBreadcrumbItems } from "../../../shared/utils/session-breadcrumb";
 import {
   pickSessionHighlights,
   summarizeSessionResults,
@@ -52,10 +52,7 @@ export async function SessionSummaryLayout({
       <Container className="py-8">
         <div className="flex flex-col gap-10">
           <Breadcrumb
-            items={[
-              { label: "TOP", href: routes.home() },
-              { label: `${session.name}のまとめ` },
-            ]}
+            items={buildSessionSummaryBreadcrumbItems(session.name)}
           />
 
           <header className="flex flex-col gap-2">

@@ -4,6 +4,8 @@ import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
 import { InterviewDisclosurePage } from "@/features/interview-config/server/components/interview-disclosure-page";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { loadDisclosureData } from "@/features/interview-config/server/loaders/load-disclosure-data";
+import { routes } from "@/lib/routes";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 interface DisclosurePageProps {
   params: Promise<{
@@ -24,10 +26,20 @@ export async function generateMetadata({
   }
 
   const billName = bill.bill_content?.title ?? bill.name;
+  const title = `AIインタビューに関する情報開示 - ${billName}`;
+  const description = `${billName}のAIインタビューにおける透明性および技術仕様に関する開示事項`;
 
   return {
-    title: `AIインタビューに関する情報開示 - ${billName}`,
-    description: `${billName}のAIインタビューにおける透明性および技術仕様に関する開示事項`,
+    title,
+    description,
+    alternates: {
+      canonical: routes.interviewDisclosure(bill.id),
+    },
+    ...buildPageShareMetadata({
+      title,
+      description,
+      path: routes.interviewDisclosure(bill.id),
+    }),
   };
 }
 

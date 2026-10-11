@@ -32,9 +32,11 @@ export function BillCard({ bill }: BillCardProps) {
   return (
     <Card className="border border-mirai-border hover:bg-muted/50 transition-colors relative overflow-hidden max-w-[634px]">
       <div className="flex flex-col">
-        {/* 注目バッジエリア（サムネイル領域は動的カバー含め常に表示されるため常に絶対配置） */}
+        {/* 注目バッジエリア（サムネイル領域は動的カバー含め常に表示されるため常に絶対配置）。
+            カバーが低い（h-24）ので、左上に置くと番号の接頭辞（議案・認定）に重なる。
+            カバーの文字は左寄せなので、空いている右上に置く */}
         {bill.is_featured && (
-          <div className="absolute top-3 left-3 z-1">
+          <div className="absolute top-3 right-3 z-1">
             <span className="inline-flex items-center justify-center px-3 py-0.5 text-xs font-bold text-white bg-primary rounded-md">
               注目
             </span>
@@ -42,7 +44,7 @@ export function BillCard({ bill }: BillCardProps) {
         )}
 
         {/* サムネイル領域: 個別差し替え画像があればそれを表示、無ければ動的カバー(BillCover)を表示 */}
-        <div className="relative w-full h-36 md:h-44">
+        <div className="relative w-full h-24 md:h-28">
           {isDefaultThumbnail(bill.thumbnail_url) ? (
             <BillCover bill={bill} />
           ) : (
@@ -62,7 +64,7 @@ export function BillCard({ bill }: BillCardProps) {
         <div className="flex-1">
           <CardHeader>
             <div className="flex flex-col gap-3">
-              <CardTitle className="text-2xl/8 tracking-normal">
+              <CardTitle className="text-xl/7 md:text-2xl/8 tracking-normal">
                 {displayTitle}
                 {bill.is_review_completed && (
                   <>

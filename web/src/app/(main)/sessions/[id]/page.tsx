@@ -5,6 +5,7 @@ import { buildBillPageTitle } from "@/features/bills/shared/utils/bill-seo";
 import { SessionSummaryLayout } from "@/features/diet-sessions/server/components/session-summary/session-summary-layout";
 import { getSessionSummary } from "@/features/diet-sessions/server/loaders/get-session-summary";
 import { routes } from "@/lib/routes";
+import { describeSessionSummary } from "@/lib/seo/page-copy";
 import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 interface SessionSummaryPageProps {
@@ -35,9 +36,14 @@ export async function generateMetadata({
     };
   }
 
-  const { session } = data;
+  const { session, bills } = data;
   const title = `田川市議会 ${session.name}のまとめ`;
-  const description = `田川市議会 ${session.name}で審議された議案の集計・議決結果・ハイライトをまとめて紹介します。`;
+  const description = describeSessionSummary({
+    name: session.name,
+    startDate: session.start_date,
+    endDate: session.end_date,
+    billCount: bills.length,
+  });
 
   return {
     title,

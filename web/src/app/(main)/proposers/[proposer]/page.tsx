@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProposerBillsPage } from "@/features/members/server/components/proposer-bills-page";
+import { countBillsByProposer } from "@/features/members/server/loaders/get-member-vote-data";
 import {
   isProposerType,
+  PROPOSER_DESCRIPTIONS,
   PROPOSER_LABELS,
 } from "@/features/members/shared/utils/proposer";
 import { routes } from "@/lib/routes";
+import { describeProposerBills } from "@/lib/seo/page-copy";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 type Props = {
   params: Promise<{ proposer: string }>;
@@ -27,12 +31,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "提出者が見つかりません" };
   }
   const label = PROPOSER_LABELS[proposer];
+  const counts = await countBillsByProposer();
+  const title = `${label}の議案一覧（田川市議会）`;
+  const description = describeProposerBills({
+    label,
+    description: PROPOSER_DESCRIPTIONS[proposer],
+    billCount: counts[proposer],
+  });
+
   return {
-    title: `${label}の議案一覧（田川市議会）`,
-    description: `田川市議会の${label}議案の一覧です。議決結果とあわせて確認できます。`,
+    title,
+    description,
     alternates: {
       canonical: routes.proposerBills(proposer),
     },
+    ...buildPageShareMetadata({
+      title,
+      description,
+      path: routes.proposerBills(proposer),
+    }),
   };
 }
 

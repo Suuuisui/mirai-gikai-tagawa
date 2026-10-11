@@ -8,13 +8,19 @@ import {
   LegalSubSectionTitle,
 } from "@/components/layouts/legal-page-layout";
 import { routes } from "@/lib/routes";
+import { PAGE_COPY } from "@/lib/seo/page-copy";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 export const metadata: Metadata = {
-  title: "利用規約",
-  description: "みらい議会＠田川市の利用規約",
+  title: PAGE_COPY.terms.title,
+  description: PAGE_COPY.terms.description,
   alternates: {
     canonical: routes.terms(),
   },
+  ...buildPageShareMetadata({
+    ...PAGE_COPY.terms,
+    path: routes.terms(),
+  }),
 };
 
 export default function TermsPage() {
@@ -103,7 +109,7 @@ export default function TermsPage() {
                 id: "publish-consent",
                 content: (
                   <>
-                    <span className="font-semibold text-slate-800">
+                    <span className="font-semibold text-mirai-text">
                       公開と同意：
                     </span>
                     AIインタビューを通じて取得した回答ログおよびサマリーは、ユーザー本人が公開に同意した場合、当組織の運営するサービス上で公開されることがあります。
@@ -114,7 +120,7 @@ export default function TermsPage() {
                 id: "internal-analysis",
                 content: (
                   <>
-                    <span className="font-semibold text-slate-800">
+                    <span className="font-semibold text-mirai-text">
                       内部分析利用：
                     </span>
                     本人が公開に同意しなかったデータについても、当組織内においてサービス向上や政策検討の目的で共有・活用されるものとし、ユーザーはこれに同意するものとします。
@@ -125,7 +131,7 @@ export default function TermsPage() {
                 id: "rights-attribution",
                 content: (
                   <>
-                    <span className="font-semibold text-slate-800">
+                    <span className="font-semibold text-mirai-text">
                       権利の帰属：
                     </span>
                     本サービスを通じて生成された応答や対話ログに関する権利（著作権法第27条および第28条の権利を含みます。）は、当組織に帰属するか、または無償で利用（複製、加工、公表等）することを許諾したものとみなします。なお、公表については、当組織は、第1項のとおりユーザー本人が公表に同意した場合のみ実施するものとします。

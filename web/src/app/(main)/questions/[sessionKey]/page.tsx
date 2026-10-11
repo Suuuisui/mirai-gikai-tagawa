@@ -6,6 +6,7 @@ import {
   getQuestionSessionGroups,
 } from "@/features/general-questions/server/loaders/get-general-questions";
 import { routes } from "@/lib/routes";
+import { describeQuestionSession } from "@/lib/seo/page-copy";
 import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 interface QuestionSessionPageProps {
@@ -38,9 +39,11 @@ export async function generateMetadata({
   const { sessionKey } = await params;
   const found = findGroups(sessionKey);
   if (!found) return { title: "一般質問が見つかりません" };
-  const members = found.group.records.map((r) => r.memberName).join("・");
   const title = `田川市議会 ${found.group.sessionName}の一般質問`;
-  const description = `${found.group.sessionName}で${found.group.records.length}人の議員が通告した一般質問の質問事項と要旨。質問者: ${members}`;
+  const description = describeQuestionSession({
+    sessionName: found.group.sessionName,
+    memberNames: found.group.records.map((r) => r.memberName),
+  });
   return {
     title,
     description,

@@ -15,7 +15,7 @@ import {
 import type { MemberLinkContext } from "../../shared/utils/question-links";
 
 /** 本会議の一般質問を日ごとに1件で記録している委員会記録の委員会名 */
-const QUESTION_DAY_RECORD_NAME = "本会議（一般質問）";
+export const QUESTION_DAY_RECORD_NAME = "本会議（一般質問）";
 
 /**
  * 質問カードから他ページへリンクするための解決表。

@@ -60,7 +60,7 @@ export function CommitteeMeetingDetailPage({
 
   return (
     <div>
-      {/* ページタイトル（薄青の色面） */}
+      {/* ページタイトル（キーカラーの薄い色面） */}
       <div className="bg-mirai-surface-key md:rounded-lg">
         <Container className="py-8">
           <p className="text-sm font-bold text-primary-accent">

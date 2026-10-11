@@ -1,5 +1,10 @@
-import { describe, expect, it } from "vitest";
-import { isHtmlAcceptHeader, isValidDifficultyLevel } from "./middleware";
+import { NextRequest } from "next/server";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  isHtmlAcceptHeader,
+  isValidDifficultyLevel,
+  middleware,
+} from "./middleware";
 
 describe("isValidDifficultyLevel", () => {
   it("should return true for 'normal'", () => {
@@ -46,5 +51,39 @@ describe("isHtmlAcceptHeader", () => {
 
   it("should return false for empty string", () => {
     expect(isHtmlAcceptHeader("")).toBe(false);
+  });
+});
+
+// robots-header.ts の判定が、ミドルウェアの応答ヘッダーとしてつながっていること
+describe("middleware の X-Robots-Tag", () => {
+  beforeEach(() => {
+    // Basic 認証の設定が環境に残っていても、応答にヘッダーが付くかどうかだけを見る
+    vi.stubEnv("BASIC_AUTH_USER", "");
+    vi.stubEnv("BASIC_AUTH_PASSWORD", "");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  async function robotsTagFor(url: string): Promise<string | null> {
+    const response = await middleware(new NextRequest(url));
+    return response.headers.get("X-Robots-Tag");
+  }
+
+  it("検索結果（/search?q=予算）には noindex, follow を付ける", async () => {
+    expect(await robotsTagFor("https://tagawa-gikai.jp/search?q=予算")).toBe(
+      "noindex, follow"
+    );
+  });
+
+  it("クエリなしの /search には付けない", async () => {
+    expect(await robotsTagFor("https://tagawa-gikai.jp/search")).toBeNull();
+  });
+
+  it("/search 以外のページは、q を付けても付けない", async () => {
+    expect(
+      await robotsTagFor("https://tagawa-gikai.jp/committees?q=x")
+    ).toBeNull();
   });
 });

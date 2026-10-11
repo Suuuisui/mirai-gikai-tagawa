@@ -23,7 +23,7 @@ import {
 import type { PetitionMeetingMatch } from "../../shared/utils/petition-meetings";
 import type { PetitionLinkContext } from "../loaders/get-petitions";
 
-/** 結果の種類ごとのバッジ色（採択は強調、否決・終了は控えめ、審査中は薄い青） */
+/** 結果の種類ごとのバッジ色（採択は強調、否決・終了は控えめ、審査中はキーカラーの薄い面） */
 const STATUS_CHIP_CLASS: Record<PetitionStatus, string> = {
   adopted: "bg-mirai-surface-key text-primary-accent",
   partial: "bg-mirai-surface-key text-primary-accent",

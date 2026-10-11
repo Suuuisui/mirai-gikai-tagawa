@@ -5,6 +5,7 @@ import { TopicDetailPage } from "@/features/user-topic-analysis/server/component
 import { getPublicTopicDetail } from "@/features/user-topic-analysis/server/loaders/get-public-topic-detail";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 interface TopicDetailRouteProps {
   params: Promise<{ id: string; topicId: string }>;
@@ -49,23 +50,15 @@ export async function generateMetadata({
     alternates: {
       canonical: routes.billTopicDetail(id, topicId),
     },
-    openGraph: {
+    // 公開されているトピックが無い（存在しないトピックを開いた）ときは検索結果に出さない
+    ...(!topic && { robots: { index: false, follow: true } }),
+    ...buildPageShareMetadata({
       title,
       description,
+      path: routes.billTopicDetail(id, topicId),
       type: "article",
-      images: [
-        {
-          url: shareImageUrl,
-          alt: `${title} のOGPイメージ`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [shareImageUrl],
-    },
+      image: { url: shareImageUrl, alt: `${title} のOGPイメージ` },
+    }),
   };
 }
 

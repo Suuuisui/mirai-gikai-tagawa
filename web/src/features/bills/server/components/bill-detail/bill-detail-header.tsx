@@ -61,8 +61,8 @@ export async function BillDetailHeader({
           カテゴリ共通のデフォルト画像しか無い議案は動的カバー（BillCover）、
           個別に差し替えた画像がある議案はその画像を表示する */}
       {isDefaultThumbnail(bill.thumbnail_url) ? (
-        <div className="relative w-full h-72 md:h-80">
-          <BillCover bill={bill} />
+        <div className="relative w-full h-64">
+          <BillCover bill={bill} hero />
         </div>
       ) : bill.thumbnail_url ? (
         <div className="relative w-full h-72 md:h-80">

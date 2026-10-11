@@ -4,13 +4,18 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
 import { BillDetailLayout } from "@/features/bills/server/components/bill-detail/bill-detail-layout";
 import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
+import { getBillsLite } from "@/features/bills/server/loaders/get-bills";
 import { resolveBillOgImageUrl } from "@/features/bills/shared/utils/bill-og-image";
 import {
   buildBillMetaDescription,
   buildBillPageTitle,
+  buildBillSearchTitle,
+  findDuplicateBillTitles,
 } from "@/features/bills/shared/utils/bill-seo";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
+import { OPERATOR_NAME } from "@/lib/seo/organization-json-ld";
+import { buildPageShareMetadata, SITE_NAME } from "@/lib/seo/share-metadata";
 
 interface BillDetailPageProps {
   params: Promise<{
@@ -32,7 +37,8 @@ export async function generateMetadata({
   params,
 }: BillDetailPageProps): Promise<Metadata> {
   const { id } = await params;
-  const bill = await getBillById(id);
+  // 全議案の軽量一覧（キャッシュ済み）は、題名が重なる議案を見つけるのに使う
+  const [bill, allBills] = await Promise.all([getBillById(id), getBillsLite()]);
 
   if (!bill) {
     return {
@@ -40,10 +46,12 @@ export async function generateMetadata({
     };
   }
 
-  // title/h1/OGタイトル/Article headlineで解決順を統一する
-  // （やさしい見出し優先・未整備は正式議案名）。descriptionは正式議案名を
-  // 先頭に置いて要約をスニペット長に切り詰める
-  const title = buildBillPageTitle(bill);
+  // title/h1/OGタイトル/Article headlineは、やさしい見出し優先・未整備は正式議案名で
+  // 解決順を統一する。ただし<title>とOGタイトルは、同じ題名の議案が他にもあるとき
+  // （別の会期の「令和3年度田川市一般会計補正予算」など）だけ、議案番号と日付を添えて
+  // 検索結果で区別できるようにする。descriptionは正式議案名を先頭に置いて
+  // 要約をスニペット長に切り詰める
+  const title = buildBillSearchTitle(bill, findDuplicateBillTitles(allBills));
   const description = buildBillMetaDescription(bill);
 
   // シェア用OGP画像。share_thumbnail_url/thumbnail_urlが未設定（＝カテゴリ共通の
@@ -57,28 +65,16 @@ export async function generateMetadata({
     alternates: {
       canonical: routes.billDetail(bill.id),
     },
-    openGraph: {
+    ...buildPageShareMetadata({
       title,
       description,
-      siteName: "みらい議会＠田川市",
-      url: routes.billDetail(bill.id),
+      path: routes.billDetail(bill.id),
       type: "article",
       publishedTime: bill.submitted_date ?? undefined,
       modifiedTime: bill.updated_at,
-      images: [
-        {
-          // 個別サムネイル画像は寸法が一定でないため width/height は指定しない
-          url: shareImageUrl,
-          alt: `${title} のOGPイメージ`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [shareImageUrl],
-    },
+      // 個別サムネイル画像は寸法が一定でないため width/height は指定しない
+      image: { url: shareImageUrl, alt: `${title} のOGPイメージ` },
+    }),
   };
 }
 
@@ -110,11 +106,11 @@ export default async function BillDetailPage({ params }: BillDetailPageProps) {
     mainEntityOfPage: billUrl,
     author: {
       "@type": "Organization",
-      name: "田川市政ラボ",
+      name: OPERATOR_NAME,
     },
     publisher: {
       "@type": "Organization",
-      name: "みらい議会＠田川市",
+      name: SITE_NAME,
     },
   };
   // パンくずのBreadcrumbListは、BillDetailLayout内の表示用Breadcrumbが

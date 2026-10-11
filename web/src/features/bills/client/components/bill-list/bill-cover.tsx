@@ -27,6 +27,8 @@ interface BillCoverProps {
   bill: BillWithContentLite;
   /** CompactBillCard の小サムネイル枠用。タイポグラフィを省きアイコンのみ表示する */
   compact?: boolean;
+  /** 議案詳細の見出し用。カバーが高いので、番号とアイコンを大きくして左下に寄せる */
+  hero?: boolean;
 }
 
 // カテゴリ系統（globals.css の `--color-cover-{family}-{1|2|3}` トークンに対応）
@@ -79,6 +81,26 @@ const COVER_CLASSES: Record<CoverFamily, readonly [string, string, string]> = {
 
 const VARIANT_COUNT = 3;
 
+// カード用と、議案詳細の見出し（hero）用の大きさ
+const SIZE_CLASSES = {
+  card: {
+    icon: "-right-4 -bottom-4 h-20 w-20 md:h-24 md:w-24",
+    body: "justify-center gap-1 px-5",
+    prefix: "text-sm",
+    number: "text-2xl md:text-3xl",
+    fallback: "text-xl md:text-2xl",
+    date: "text-xs",
+  },
+  hero: {
+    icon: "-right-6 -bottom-6 h-36 w-36 md:h-44 md:w-44",
+    body: "justify-end gap-1.5 px-5 pb-6 md:px-8 md:pb-8",
+    prefix: "text-base md:text-lg",
+    number: "text-4xl md:text-5xl",
+    fallback: "text-3xl md:text-4xl",
+    date: "text-sm",
+  },
+} as const;
+
 /**
  * 「議案第59号」のような番号ラベルを接頭辞（議案）と番号部分（第59号）に分割する
  * 分割できない場合は番号部分のみにラベル全体を入れる
@@ -94,7 +116,11 @@ function splitNumberLabel(label: string): { prefix: string; number: string } {
  * カテゴリ共通の静的サムネイル画像の代わりに、議案ごとに見た目が決定的に
  * 変化する背景・アイコン・タイポグラフィのみで構成されたカバーを描画する
  */
-export function BillCover({ bill, compact = false }: BillCoverProps) {
+export function BillCover({
+  bill,
+  compact = false,
+  hero = false,
+}: BillCoverProps) {
   const categoryLabel = bill.tags[0]?.label;
   const categoryStyle =
     (categoryLabel && CATEGORY_STYLE[categoryLabel]) || DEFAULT_CATEGORY_STYLE;
@@ -112,6 +138,7 @@ export function BillCover({ bill, compact = false }: BillCoverProps) {
     );
   }
 
+  const size = hero ? SIZE_CLASSES.hero : SIZE_CLASSES.card;
   const numberLabel = extractBillNumberLabel(bill.name);
   const parsedNumberLabel = numberLabel ? splitNumberLabel(numberLabel) : null;
   const submittedLabel = bill.submitted_date
@@ -124,27 +151,29 @@ export function BillCover({ bill, compact = false }: BillCoverProps) {
     >
       <Icon
         aria-hidden
-        className="absolute -right-4 -bottom-4 h-24 w-24 text-mirai-text/15 md:h-28 md:w-28"
+        className={`absolute text-mirai-text/15 ${size.icon}`}
       />
-      <div className="relative flex h-full flex-col justify-center gap-1 px-5">
+      <div className={`relative flex h-full flex-col ${size.body}`}>
         {parsedNumberLabel ? (
           <p className="font-mirai-serif text-mirai-text">
             {parsedNumberLabel.prefix && (
-              <span className="block text-sm font-medium">
+              <span className={`block font-medium ${size.prefix}`}>
                 {parsedNumberLabel.prefix}
               </span>
             )}
-            <span className="block text-3xl font-bold md:text-4xl">
+            <span className={`block font-bold ${size.number}`}>
               {parsedNumberLabel.number}
             </span>
           </p>
         ) : (
-          <p className="font-mirai-serif text-2xl font-bold text-mirai-text md:text-3xl">
+          <p
+            className={`font-mirai-serif font-bold text-mirai-text ${size.fallback}`}
+          >
             {categoryLabel ?? "議案"}
           </p>
         )}
         {submittedLabel && (
-          <p className="text-xs text-mirai-text-subtle">
+          <p className={`text-mirai-text-note ${size.date}`}>
             {/* submitted_date は議決済みなら議決日なので、状態に合わせた語を添える */}
             {submittedLabel} {getBillDateLabel(bill.status)}
           </p>
