@@ -68,6 +68,23 @@ describe("parseSourceNote", () => {
     ).toEqual({ text: null, videos: [], usesSpeechRecognition: false });
   });
 
+  it("決まり文句の後ろに足された補足の文は残す", () => {
+    expect(
+      parseSourceNote(
+        "田川市議会公式YouTubeチャンネルの中継映像の音声を文字起こし（自動字幕が無いため音声認識 Whisper を使用。誤変換を含む）したものです。冒頭の10分は音声がありません。"
+      )
+    ).toEqual({
+      text: "冒頭の10分は音声がありません。",
+      videos: [],
+      usesSpeechRecognition: true,
+    });
+    expect(
+      parseSourceNote(
+        "田川市への情報開示請求により入手した文書をもとにしています。原本の3ページ目は判読できません。"
+      ).text
+    ).toBe("原本の3ページ目は判読できません。");
+  });
+
   it("決まり文句でない補足は、改行を詰めてそのまま出す", () => {
     expect(parseSourceNote("原本の3ページ目は\n判読できません。").text).toBe(
       "原本の3ページ目は 判読できません。"

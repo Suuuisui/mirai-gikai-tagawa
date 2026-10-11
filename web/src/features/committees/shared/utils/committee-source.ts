@@ -1,11 +1,11 @@
-import type { SourceKind } from "@/features/sources/shared/data/source-kinds";
+import type {
+  SourceKind,
+  SourceTag,
+} from "@/features/sources/shared/data/source-kinds";
 import type { CommitteeMeetingSourceType } from "../types";
 
-export interface CommitteeSourceInfo {
-  /** サイト共通の出典の区分 */
-  kind: SourceKind;
-  /** バッジに添える、何の資料か */
-  detail: string;
+/** 記録のもと1種類分: バッジ（区分と資料名）と、注意書きに使う言い方 */
+export interface CommitteeSourceInfo extends SourceTag {
   /** 「このページは、〜をもとに」の「〜」 */
   basis: string;
 }
@@ -78,12 +78,37 @@ export interface ParsedSourceNote {
 
 const VIDEO_LIST_MARKER = "動画: ";
 
-/** 取り込みスクリプトが入れる決まり文句の書き出し（これで始まる補足は画面に重ねて出さない） */
+/**
+ * 取り込みスクリプトが入れる決まり文句の書き出し。これで始まる文は、バッジと注意書き・
+ * 動画のリンクで伝わるので画面に重ねて出さない（後ろに足された補足の文は残す）
+ */
 const BOILERPLATE_PREFIXES = [
   "田川市議会公式YouTubeチャンネルの中継映像",
-  "田川市への情報開示請求により入手した文書をもとにしています。",
-  "田川市議会 会議録検索システムで公開されている本会議の会議録をもとにしています。",
+  "田川市への情報開示請求により入手した文書をもとにしています",
+  "田川市議会 会議録検索システムで公開されている本会議の会議録をもとにしています",
+  "同日の会議は田川市議会公式YouTubeチャンネルの中継映像でも公開されています",
 ];
+
+/**
+ * 文章を「。」で文に分ける。括弧の中の「。」では切らない
+ * （「…（自動字幕が無いため音声認識を使用。誤変換を含む）したものです。」を1文として扱う）
+ */
+function splitSentences(text: string): string[] {
+  const sentences: string[] = [];
+  let depth = 0;
+  let current = "";
+  for (const char of text) {
+    current += char;
+    if (char === "（" || char === "(") depth += 1;
+    if (char === "）" || char === ")") depth = Math.max(0, depth - 1);
+    if (char === "。" && depth === 0) {
+      sentences.push(current.trim());
+      current = "";
+    }
+  }
+  if (current.trim() !== "") sentences.push(current.trim());
+  return sentences;
+}
 
 /**
  * 出典の補足を、文章と中継動画のリンク一覧に分ける。
@@ -112,12 +137,19 @@ export function parseSourceNote(note: string | null): ParsedSourceNote {
           });
   // 動画を1本も読み取れなかったら、元の文章をそのまま見せる（情報を落とさない）
   const body = videos.length > 0 ? trimmed.slice(0, markerIndex) : trimmed;
-  const text = body.replace(/\s+/g, " ").trim();
-  const isBoilerplate = BOILERPLATE_PREFIXES.some((prefix) =>
-    text.startsWith(prefix)
-  );
+  // URL はリンクとして別に出すので文章からは外す（「…公開されています: https://…」）
+  const withoutUrls = body
+    .replace(/[:：]?\s*https?:\/\/\S+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const text = splitSentences(withoutUrls)
+    .filter(
+      (sentence) =>
+        !BOILERPLATE_PREFIXES.some((prefix) => sentence.startsWith(prefix))
+    )
+    .join(" ");
   return {
-    text: text === "" || isBoilerplate ? null : text,
+    text: text === "" ? null : text,
     videos,
     usesSpeechRecognition,
   };

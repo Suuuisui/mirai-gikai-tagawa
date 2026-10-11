@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { TextLink } from "@/components/ui/text-link";
 import type { CommitteeMeetingListItem } from "@/features/committees/shared/types";
 import { countMeetingsBySourceKind } from "@/features/committees/shared/utils/committee-source";
-import { officialMinutesIndex } from "@/features/official-minutes/shared/utils/official-minutes-index";
+import { officialMinutesIndex } from "@/features/official-minutes/shared/data/official-minutes-index";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import { formatDateWithDots } from "@/lib/utils/date";
@@ -28,17 +28,13 @@ interface SourcesPageProps {
   meetings: readonly CommitteeMeetingListItem[];
 }
 
-const SECTION_IDS: Record<SourceKind, string> = {
-  official: "official",
-  transcript: "transcript",
-  disclosure: "disclosure",
-};
 const PRIORITY_SECTION_ID = "priority";
 
 const JUMP_ENTRIES = [
   ...SOURCE_KIND_ORDER.map((kind) => ({
     label: SOURCE_KINDS[kind].label,
-    href: `#${SECTION_IDS[kind]}`,
+    // 区分の id（official など）をそのままセクションのアンカーにする
+    href: `#${kind}`,
   })),
   { label: "複数あるときの優先順", href: `#${PRIORITY_SECTION_ID}` },
 ];
@@ -55,7 +51,7 @@ function SourceKindSection({
   const origins = SOURCE_ORIGINS[kind];
   return (
     <section
-      id={SECTION_IDS[kind]}
+      id={kind}
       className={cn(jumpTargetClassName, "flex flex-col gap-4")}
     >
       <SectionHeading>{info.label}</SectionHeading>

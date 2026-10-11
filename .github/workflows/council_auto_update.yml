@@ -92,6 +92,8 @@ jobs:
 
       # 今年と前年の分だけ取り直す（約15リクエスト）。サイト側の不調で取れなかった年は前回のまま残す
       - name: 本会議の会議録の一覧（会議録検索システム）
+        env:
+          COUNCIL_UPDATE_OUT_DIR: ${{ env.OUT_DIR }}
         run: pnpm --filter @mirai-gikai/seed tagawa:scrape-minutes-index
 
       - name: 委員会記録の不足を探す（未収録の中継動画・会議録が出た本会議）

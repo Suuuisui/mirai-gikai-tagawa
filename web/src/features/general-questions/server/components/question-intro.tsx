@@ -1,4 +1,3 @@
-import type { Route } from "next";
 import { SourceNote } from "@/components/ui/source-note";
 import { TextLink } from "@/components/ui/text-link";
 import { SourceBadge } from "@/features/sources/shared/components/source-badge";
@@ -28,7 +27,7 @@ export function QuestionSourceNote() {
     <SourceNote>
       質問事項は田川市公式サイトの「一般質問一覧」、要旨は各会期の通告書PDF、録画は田川市議会の公式YouTubeチャンネルをもとに機械的に整理したものです。
       実際の質問・答弁の内容は、録画や公式の会議録（会議録検索システム。公開されている日は各日の見出しから開けます）をご確認ください。
-      <TextLink href={routes.sources() as Route} className="ml-1">
+      <TextLink href={routes.sources()} className="ml-1">
         出典の種類と読み方について
       </TextLink>
     </SourceNote>

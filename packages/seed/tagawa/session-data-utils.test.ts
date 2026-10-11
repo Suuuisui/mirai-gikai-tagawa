@@ -161,6 +161,26 @@ describe("pruneOngoingSessions", () => {
     expect(pruneOngoingSessions([ongoing], [officialR86]).pruned).toEqual([ongoing]);
   });
 
+  it("番号が無く括弧書きの中身だけが違う議案は、別の議案として残す", () => {
+    const official = {
+      ...officialR86,
+      bills: [bill(null, "監査委員の選任について（甲 氏）", "mayor", "同意")],
+    };
+    const ongoing = {
+      ...ongoingR86,
+      bills: [
+        bill(null, "監査委員の選任について（甲氏）", "mayor", null),
+        bill(null, "監査委員の選任について（乙氏）", "mayor", null),
+      ],
+    };
+
+    const { kept } = pruneOngoingSessions([ongoing], [official]);
+
+    expect(kept[0].bills.map((b) => b.title)).toEqual([
+      "監査委員の選任について（乙氏）",
+    ]);
+  });
+
   it("すべての議案が載った会期は会期ごと外す", () => {
     const allListed = { ...ongoingR86, bills: ongoingR86.bills.slice(0, 4) };
     const { kept, pruned, partial } = pruneOngoingSessions(

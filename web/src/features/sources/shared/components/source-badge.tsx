@@ -43,7 +43,10 @@ export function SourceBadge({ kind, detail, className }: SourceBadgeProps) {
       {detail ? (
         <span>
           {info.shortLabel}
-          <span className="font-medium">｜{detail}</span>
+          {/* 区切りの縦線は見た目だけ。読み上げでは読点にする */}
+          <span aria-hidden>｜</span>
+          <span className="sr-only">、</span>
+          <span className="font-medium">{detail}</span>
         </span>
       ) : (
         info.label

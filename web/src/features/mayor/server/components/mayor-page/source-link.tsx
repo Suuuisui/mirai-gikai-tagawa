@@ -16,20 +16,19 @@ export function SourceLink({
   className,
   showSource = false,
 }: SourceLinkProps) {
+  const source = showSource ? link.source : undefined;
+  // バッジを添えるときは、外側の枠に className を当てる
+  const linkClassName = source ? undefined : className;
   const anchor = link.external ? (
-    <TextLink
-      external
-      href={link.href}
-      className={showSource ? undefined : className}
-    >
+    <TextLink external href={link.href} className={linkClassName}>
       {link.label}
     </TextLink>
   ) : (
-    <TextLink href={link.href} className={showSource ? undefined : className}>
+    <TextLink href={link.href} className={linkClassName}>
       {link.label}
     </TextLink>
   );
-  if (!showSource || !link.source) return anchor;
+  if (!source) return anchor;
   return (
     <span
       className={cn(
@@ -38,8 +37,8 @@ export function SourceLink({
       )}
     >
       <SourceBadge
-        kind={link.source.kind}
-        detail={link.source.detail}
+        kind={source.kind}
+        detail={source.detail}
         className="px-1.5 py-0 text-[11px]"
       />
       {anchor}

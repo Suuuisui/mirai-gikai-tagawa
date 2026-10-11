@@ -8,7 +8,7 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { TextLink } from "@/components/ui/text-link";
 import { GlossarySection } from "@/features/glossary/server/components/glossary-section";
 import { pickGlossaryTerms } from "@/features/glossary/shared/data/glossary";
-import { officialMinutesIndex } from "@/features/official-minutes/shared/utils/official-minutes-index";
+import { officialMinutesIndex } from "@/features/official-minutes/shared/data/official-minutes-index";
 import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import { SOURCE_KINDS } from "@/features/sources/shared/data/source-kinds";
 import { routes } from "@/lib/routes";
@@ -43,6 +43,12 @@ export function CommitteeMeetingDetailPage({
   const officialMinutes = meeting.committee_name.startsWith("本会議")
     ? officialMinutesIndex.findByDate(meeting.meeting_date)
     : null;
+  // 会議録・中継動画・全文のどれかがあるときだけ「もとの記録を確認する」を出す
+  const hasOriginalRecords =
+    officialMinutes !== null ||
+    sourceNote.videos.length > 0 ||
+    meeting.youtube_url !== null ||
+    Boolean(meeting.minutes_text);
   const sourceDetail = isTranscript
     ? `YouTube中継の${sourceNote.usesSpeechRecognition ? "音声認識" : "自動字幕"}`
     : source.detail;
@@ -180,75 +186,77 @@ export function CommitteeMeetingDetailPage({
           <GlossarySection entries={glossary} />
 
           {/* 会議録・中継動画・全文（原典への導線） */}
-          <section className="flex flex-col gap-4">
-            <SectionHeading>もとの記録を確認する</SectionHeading>
-            {officialMinutes && (
-              <div className="flex flex-col gap-1.5">
-                <a
-                  href={officialMinutes.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex w-fit items-center gap-2 text-sm font-bold text-primary underline underline-offset-4 hover:opacity-80"
-                >
-                  <Landmark aria-hidden className="size-4 shrink-0" />
-                  公式の会議録を読む（会議録検索システム）
-                  <ExternalLink aria-hidden className="size-3.5 shrink-0" />
-                </a>
-                {isTranscript && (
-                  <p className="text-xs leading-relaxed text-mirai-text-note">
-                    この日の本会議は公式の会議録が公開されています。このページの要約は中継の文字起こしをもとにしているので、正確な発言は会議録で確かめてください。
-                  </p>
-                )}
-              </div>
-            )}
-            {sourceNote.videos.length > 0 ? (
-              <div className="flex flex-col gap-2">
-                <p className="flex items-center gap-2 text-sm font-bold text-mirai-text">
-                  <Youtube aria-hidden className="size-4 shrink-0" />
-                  公式YouTubeの中継（録画）
-                </p>
-                <ul className="flex flex-col gap-1.5 pl-6">
-                  {sourceNote.videos.map((video) => (
-                    <li key={video.url}>
-                      <TextLink external href={video.url} className="text-sm">
-                        {video.label}
-                      </TextLink>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : (
-              meeting.youtube_url && (
-                <a
-                  href={meeting.youtube_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex w-fit items-center gap-2 text-sm font-bold text-primary underline underline-offset-4 hover:opacity-80"
-                >
-                  <Youtube aria-hidden className="size-4 shrink-0" />
-                  公式YouTubeで中継を見る
-                  <ExternalLink aria-hidden className="size-3.5 shrink-0" />
-                </a>
-              )
-            )}
-            {meeting.minutes_text && (
-              <details className="rounded-lg border border-mirai-border bg-white">
-                <summary className="cursor-pointer px-4 py-3 text-sm font-bold text-primary">
-                  {isTranscript
-                    ? "文字起こしの全文を開く（長文）"
-                    : "記録の全文を開く（長文）"}
-                </summary>
-                {isTranscript && (
-                  <p className="border-t border-mirai-border-muted px-4 pt-4 text-xs leading-relaxed text-mirai-text-note">
-                    ※中継の音声を機械で文字にしたものをそのまま載せているため、人名・地名・数字などに誤りが含まれます。正確な発言は中継映像でご確認ください。
-                  </p>
-                )}
-                <div className="whitespace-pre-wrap border-t border-mirai-border-muted px-4 py-4 text-sm leading-relaxed text-mirai-text-secondary">
-                  {meeting.minutes_text}
+          {hasOriginalRecords && (
+            <section className="flex flex-col gap-4">
+              <SectionHeading>もとの記録を確認する</SectionHeading>
+              {officialMinutes && (
+                <div className="flex flex-col gap-1.5">
+                  <a
+                    href={officialMinutes.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-fit items-center gap-2 text-sm font-bold text-primary underline underline-offset-4 hover:opacity-80"
+                  >
+                    <Landmark aria-hidden className="size-4 shrink-0" />
+                    公式の会議録を読む（会議録検索システム）
+                    <ExternalLink aria-hidden className="size-3.5 shrink-0" />
+                  </a>
+                  {isTranscript && (
+                    <p className="text-xs leading-relaxed text-mirai-text-note">
+                      この日の本会議は公式の会議録が公開されています。このページの要約は中継の文字起こしをもとにしているので、正確な発言は会議録で確かめてください。
+                    </p>
+                  )}
                 </div>
-              </details>
-            )}
-          </section>
+              )}
+              {sourceNote.videos.length > 0 ? (
+                <div className="flex flex-col gap-2">
+                  <p className="flex items-center gap-2 text-sm font-bold text-mirai-text">
+                    <Youtube aria-hidden className="size-4 shrink-0" />
+                    公式YouTubeの中継（録画）
+                  </p>
+                  <ul className="flex flex-col gap-1.5 pl-6">
+                    {sourceNote.videos.map((video) => (
+                      <li key={video.url}>
+                        <TextLink external href={video.url} className="text-sm">
+                          {video.label}
+                        </TextLink>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                meeting.youtube_url && (
+                  <a
+                    href={meeting.youtube_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-fit items-center gap-2 text-sm font-bold text-primary underline underline-offset-4 hover:opacity-80"
+                  >
+                    <Youtube aria-hidden className="size-4 shrink-0" />
+                    公式YouTubeで中継を見る
+                    <ExternalLink aria-hidden className="size-3.5 shrink-0" />
+                  </a>
+                )
+              )}
+              {meeting.minutes_text && (
+                <details className="rounded-lg border border-mirai-border bg-white">
+                  <summary className="cursor-pointer px-4 py-3 text-sm font-bold text-primary">
+                    {isTranscript
+                      ? "文字起こしの全文を開く（長文）"
+                      : "記録の全文を開く（長文）"}
+                  </summary>
+                  {isTranscript && (
+                    <p className="border-t border-mirai-border-muted px-4 pt-4 text-xs leading-relaxed text-mirai-text-note">
+                      ※中継の音声を機械で文字にしたものをそのまま載せているため、人名・地名・数字などに誤りが含まれます。正確な発言は中継映像でご確認ください。
+                    </p>
+                  )}
+                  <div className="whitespace-pre-wrap border-t border-mirai-border-muted px-4 py-4 text-sm leading-relaxed text-mirai-text-secondary">
+                    {meeting.minutes_text}
+                  </div>
+                </details>
+              )}
+            </section>
+          )}
 
           {/* 同じ委員会の前後の会議（読み終えた人が続きをたどれるように） */}
           <NeighborNav
@@ -269,7 +277,7 @@ export function CommitteeMeetingDetailPage({
                 {!isTranscript && "正確な内容は原本をご確認ください。"}
                 誤りに気づかれた場合はお問い合わせからご連絡ください。
               </p>
-              <TextLink href={routes.sources() as Route} className="text-xs">
+              <TextLink href={routes.sources()} className="text-xs">
                 出典の種類と読み方について
               </TextLink>
             </div>

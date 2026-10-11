@@ -7,7 +7,6 @@
 export type SourceKind = "official" | "transcript" | "disclosure";
 
 export interface SourceKindInfo {
-  id: SourceKind;
   /** バッジに単独で出す名前 */
   label: string;
   /** 「公式｜会議録検索システム」のように、何の資料かと並べるときの短い名前 */
@@ -20,7 +19,6 @@ export interface SourceKindInfo {
 
 export const SOURCE_KINDS: Record<SourceKind, SourceKindInfo> = {
   official: {
-    id: "official",
     label: "公式サイト・会議録",
     shortLabel: "公式",
     description:
@@ -29,7 +27,6 @@ export const SOURCE_KINDS: Record<SourceKind, SourceKindInfo> = {
       "番号・件名・結果・日付などの事実は、公開されている内容をそのまま写しています。解説や要約は運営者がAIを使って書いたもので、市や市議会の見解ではありません。",
   },
   transcript: {
-    id: "transcript",
     label: "YouTube中継の文字起こし",
     shortLabel: "文字起こし",
     description:
@@ -38,7 +35,6 @@ export const SOURCE_KINDS: Record<SourceKind, SourceKindInfo> = {
       "人名・地名・数字に聞き取りの誤りが入ることがあります。会議録が公開されていない委員会などの会議と、会議録が出る前の直近の本会議に使っています。正確な発言は中継の録画で確かめてください。",
   },
   disclosure: {
-    id: "disclosure",
     label: "情報開示請求の文書",
     shortLabel: "開示請求",
     description:
@@ -54,6 +50,12 @@ export const SOURCE_KIND_ORDER: readonly SourceKind[] = [
   "transcript",
   "disclosure",
 ];
+
+/** バッジ1つ分: 区分と、何の資料か（例: 会議録、YouTube中継、投票結果の集計用紙） */
+export interface SourceTag {
+  kind: SourceKind;
+  detail: string;
+}
 
 /** ページの中で「この部分は何がもとか」を1行で示すための項目 */
 export interface SourceRef {

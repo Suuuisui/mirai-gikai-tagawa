@@ -79,7 +79,7 @@ export const SESSIONS_JSON_PATH = path.join(
   import.meta.dirname,
   "data/sessions.json"
 );
-/** 会期中の会期（手で管理）。scrape.ts が取り込み済みの会期をここから外す */
+/** 会期中の議案（手で管理）。scrape.ts が、公式の議決結果ページに載った議案をここから外す */
 export const ONGOING_SESSIONS_JSON_PATH = path.join(
   import.meta.dirname,
   "data/ongoing-sessions.json"
@@ -104,11 +104,12 @@ export function loadTagawaSessions(): SessionSource[] {
 }
 
 /**
- * 会期中で議決結果ページがまだ無い会期（`data/ongoing-sessions.json`、手で管理）。
- * 公式サイトの「提出議案」ページに基づき議案を審議中として載せる。
- * 閉会して「提出議案と議決結果」ページが公開されたら scrape.ts が sessions.json に
- * 取り込むので、その時点でこのファイルから該当会期を消す（key が重複すると
- * build-csv.ts がエラーにする）
+ * 公式の議決結果ページにまだ載っていない議案（`data/ongoing-sessions.json`、手で管理）。
+ * 公式サイトの「提出議案」ページと本会議の中継をもとに、会期中の議案を載せる。
+ * 公式の「提出議案と議決結果」ページに載った議案は scrape.ts が自動でここから外す。
+ * 公式ページは最終日より前に公開されることがあるので、外すのは議案単位
+ * （最終日に議決される決算や追加議案は、公式ページに載るまでここに残る）。
+ * 議員提出議案の番号は「議員提出議案第N号」と書く（同じ会期に市長提出の「議案第N号」がありうる）
  */
 export function loadOngoingSessions(): SessionSource[] {
   return loadSessionsFile(ONGOING_SESSIONS_JSON_PATH);

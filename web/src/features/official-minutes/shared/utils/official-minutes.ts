@@ -20,8 +20,6 @@ export interface OfficialMinutesIndex {
   findInRange: (startDate: string, endDate: string) => OfficialMinutesLink[];
   /** 会議録が公開されているいちばん新しい日。1件も無ければ null */
   latestDate: string | null;
-  /** 会議録が公開されているいちばん古い日。1件も無ければ null */
-  earliestDate: string | null;
   count: number;
 }
 
@@ -55,7 +53,6 @@ export function buildOfficialMinutesIndex(
     findInRange: (startDate, endDate) =>
       links.filter((link) => link.date >= startDate && link.date <= endDate),
     latestDate: links.at(-1)?.date ?? null,
-    earliestDate: links[0]?.date ?? null,
     count: links.length,
   };
 }

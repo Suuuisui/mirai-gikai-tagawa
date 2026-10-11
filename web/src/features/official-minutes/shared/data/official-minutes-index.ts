@@ -1,8 +1,8 @@
+import { buildOfficialMinutesIndex } from "../utils/official-minutes";
 import {
   OFFICIAL_MINUTES,
   OFFICIAL_MINUTES_CODE,
-} from "../data/official-minutes-data";
-import { buildOfficialMinutesIndex } from "./official-minutes";
+} from "./official-minutes-data";
 
 /**
  * 会議録検索システムに公開されている本会議の会議録の索引（生成データから作る）。

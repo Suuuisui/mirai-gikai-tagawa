@@ -26,12 +26,25 @@ export function billNumberCore(label: string): string {
   return label.replace(/^(議員提出|委員会提出)/, "");
 }
 
-/** 件名の比較用（空白と括弧書きの有無の違いを吸収する） */
-function normalizeTitle(title: string): string {
-  return title
-    .normalize("NFKC")
-    .replace(/\s+/g, "")
-    .replace(/[（(][^（()）]*[）)]$/, "");
+const TRAILING_PARENTHETICAL = /[（(][^（()）]*[）)]$/;
+
+/**
+ * 番号の無い議案どうしの件名が同じか。空白の違いと、片方にだけ付いた末尾の括弧書き
+ * （「〜について（案）」）は無視する。両方に括弧書きがあるときは中身まで比べる
+ * （「〜の選任について（甲氏）」と「〜の選任について（乙氏）」は別の議案）
+ */
+function titlesMatch(a: string, b: string): boolean {
+  const normalize = (title: string) =>
+    title.normalize("NFKC").replace(/\s+/g, "");
+  const [left, right] = [normalize(a), normalize(b)];
+  if (left === right) return true;
+  const leftHasNote = TRAILING_PARENTHETICAL.test(left);
+  const rightHasNote = TRAILING_PARENTHETICAL.test(right);
+  if (leftHasNote === rightHasNote) return false;
+  return (
+    left.replace(TRAILING_PARENTHETICAL, "") ===
+    right.replace(TRAILING_PARENTHETICAL, "")
+  );
 }
 
 /** 会期中に手で置いた議案と、公式ページから読み取った議案が同じ議案か */
@@ -45,7 +58,7 @@ function isSameBill(ongoing: BillSource, scraped: BillSource): boolean {
   }
   return (
     ongoing.billNumberLabel === scraped.billNumberLabel &&
-    normalizeTitle(ongoing.title) === normalizeTitle(scraped.title)
+    titlesMatch(ongoing.title, scraped.title)
   );
 }
 

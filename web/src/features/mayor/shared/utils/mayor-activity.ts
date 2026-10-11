@@ -2,7 +2,7 @@ import type { Route } from "next";
 import { getCommitteeProfile } from "@/features/committees/shared/data/committee-profiles";
 import type { CommitteeMeetingSourceType } from "@/features/committees/shared/types";
 import { COMMITTEE_SOURCES } from "@/features/committees/shared/utils/committee-source";
-import type { SourceKind } from "@/features/sources/shared/data/source-kinds";
+import type { SourceTag } from "@/features/sources/shared/data/source-kinds";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots, toDateString } from "@/lib/utils/date";
 import type { TimelineSource, UpcomingSession } from "../data/mayor-profile";
@@ -107,23 +107,17 @@ export function calculateVoteShares<T extends { votes: number }>(
   }));
 }
 
-/** リンク先の内容が何をもとにしているか（サイト共通の出典バッジで示す） */
-export interface LinkSourceTag {
-  kind: SourceKind;
-  detail: string;
-}
-
 /** 出典へのリンク。外部は新しいタブで開き、内部は typedRoutes の Route を保つ */
 export type ResolvedLink = (
   | { external: true; href: string; label: string }
   | { external: false; href: Route; label: string }
 ) & {
   /** リンク先のもとの資料の区分。分からないときは付けない */
-  source?: LinkSourceTag;
+  source?: SourceTag;
 };
 
 /** 市の公式サイトのページを指すリンクに付けるバッジ */
-export const OFFICIAL_SITE_SOURCE: LinkSourceTag = {
+export const OFFICIAL_SITE_SOURCE: SourceTag = {
   kind: "official",
   detail: "市公式サイト",
 };

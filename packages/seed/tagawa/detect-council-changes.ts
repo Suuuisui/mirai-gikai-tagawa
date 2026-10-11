@@ -15,14 +15,12 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import {
-  type BillDescriptionSource,
-  parseBillSources,
-} from "@mirai-gikai/shared/council/bill-source-section";
+import { parseBillSources } from "@mirai-gikai/shared/council/bill-source-section";
 import type { OfficialMinutesRecord } from "@mirai-gikai/shared/council/types";
 import { parse } from "csv-parse/sync";
 import {
   type BillContentRow,
+  type BillDescriptionState,
   type BillRef,
   buildCommitSubject,
   buildUpdateReport,
@@ -32,10 +30,15 @@ import {
   findChangedBillContents,
   findLostDescriptions,
   findOngoingKeyMismatches,
+  findSessionIdsWithChangedBillRows,
   findSessionsAwaitingMinutes,
+  findStaleOngoingBills,
   hasDataChanges,
   hasDescription,
   listNewBills,
+  listNewLabelAliases,
+  listNewlyOfficialSessionKeys,
+  listPendingOfficialBills,
   listRemovedBills,
   needsHumanFollowUp,
   parseOutDir,
@@ -120,21 +123,27 @@ interface CsvIndex {
   slugBySessionId: Map<string, string>;
   billIdByName: Map<string, string>;
   billById: Map<string, { name: string; sessionId: string }>;
+  /** bills_rows.csv の行そのまま（行の増減・変化の検出用） */
+  billRows: Record<string, string>[];
   contents: BillContentRow[];
+  contentById: Map<string, string>;
 }
 
 function buildCsvIndex(source: "committed" | "working"): CsvIndex {
   const sessions = readCsvRows("diet_sessions_rows.csv", source);
   const bills = readCsvRows("bills_rows.csv", source);
+  const contents = readCsvRows("bill_contents_rows.csv", source).map((r) => ({
+    bill_id: r.bill_id,
+    content: r.content,
+  }));
   return {
     sessionIdBySlug: new Map(sessions.map((r) => [r.slug, r.id])),
     slugBySessionId: new Map(sessions.map((r) => [r.id, r.slug])),
     billIdByName: new Map(bills.map((r) => [`${r.diet_session_id}|${r.name}`, r.id])),
     billById: new Map(bills.map((r) => [r.id, { name: r.name, sessionId: r.diet_session_id }])),
-    contents: readCsvRows("bill_contents_rows.csv", source).map((r) => ({
-      bill_id: r.bill_id,
-      content: r.content,
-    })),
+    billRows: bills,
+    contents,
+    contentById: new Map(contents.map((row) => [row.bill_id, row.content])),
   };
 }
 
@@ -163,31 +172,11 @@ function main() {
   const nextAll = mergeSessions(nextSessions, nextOngoing);
 
   const sessions = diffSessions(prevAll, nextAll);
-  // 会期中として手で置いていた会期のうち、今回はじめて公式の議決結果ページを取り込めたもの
-  const prevSessionKeys = new Set(prevSessions.map((s) => s.key));
-  const nextSessionKeys = new Set(nextSessions.map((s) => s.key));
-  const prunedOngoingKeys = prevOngoing
-    .filter((s) => !prevSessionKeys.has(s.key) && nextSessionKeys.has(s.key))
-    .map((s) => s.key);
-  // 公式ページはあるが、まだ載っていない議案（会期中のデータのまま掲載しているもの）
-  const pendingOfficialBills: BillRef[] = nextOngoing
-    .filter((s) => nextSessionKeys.has(s.key))
-    .flatMap((s) =>
-      s.bills.map((bill) => ({
-        sessionKey: s.key,
-        sessionName: s.name,
-        billNumberLabel: bill.billNumberLabel,
-        title: bill.title,
-      }))
-    );
-  const knownAliasKeys = new Set(
-    parseLabelAliases(readCommitted(LABEL_ALIASES_PATH)).map(
-      (a) => `${a.sessionKey}|${a.proposer}|${a.officialLabel}`
-    )
+  const prunedOngoingKeys = listNewlyOfficialSessionKeys(prevSessions, prevOngoing, nextSessions);
+  const newLabelAliases = listNewLabelAliases(
+    parseLabelAliases(readCommitted(LABEL_ALIASES_PATH)),
+    parseLabelAliases(readWorking(LABEL_ALIASES_PATH))
   );
-  const newLabelAliases = parseLabelAliases(readWorking(LABEL_ALIASES_PATH))
-    .filter((a) => !knownAliasKeys.has(`${a.sessionKey}|${a.proposer}|${a.officialLabel}`))
-    .map((a) => `${a.sessionKey}: ${a.officialLabel} → ${a.label}`);
 
   const prevCsv = buildCsvIndex("committed");
   const nextCsv = buildCsvIndex("working");
@@ -208,12 +197,22 @@ function main() {
       return slug ? [slug] : [];
     })
   );
+  // 議案の行（bills_rows.csv）が増えた・変わった会期。会期データを PR で先にコミットしたときは
+  // 上の会期データの比較に差が出ないので、CSV の行からも拾う
+  const sessionsWithChangedBillRows = findSessionIdsWithChangedBillRows(
+    prevCsv.billRows,
+    nextCsv.billRows
+  ).flatMap((sessionId) => {
+    const slug = nextCsv.slugBySessionId.get(sessionId);
+    return slug ? [slug] : [];
+  });
   const changedSessions = [
     ...new Set([
       ...sessions.added,
       ...sessions.changed,
       ...prunedOngoingKeys,
       ...sessionsWithChangedContents,
+      ...sessionsWithChangedBillRows,
     ]),
   ].sort();
 
@@ -229,13 +228,29 @@ function main() {
     nextMinutes
   );
   const minutesDates = new Set(nextMinutes.map((record) => record.date));
-  const descriptionSources = new Map<string, (BillDescriptionSource | null)[]>();
-  for (const row of nextCsv.contents) {
-    const sessionId = nextCsv.billById.get(row.bill_id)?.sessionId;
-    const slug = sessionId ? nextCsv.slugBySessionId.get(sessionId) : undefined;
-    if (!slug) continue;
-    const source = parseBillSources(row.content)?.descriptionSource ?? null;
-    descriptionSources.set(slug, [...(descriptionSources.get(slug) ?? []), source]);
+  // 議案ごとの解説の典拠（本文の「## 出典」から読む）と議決日
+  const descriptionStates = new Map<string, BillDescriptionState[]>();
+  for (const session of nextAll) {
+    descriptionStates.set(
+      session.key,
+      session.bills.flatMap((bill) => {
+        const billId = findBillId(nextCsv, {
+          sessionKey: session.key,
+          sessionName: session.name,
+          billNumberLabel: bill.billNumberLabel,
+          title: bill.title,
+        });
+        const content = billId ? nextCsv.contentById.get(billId) : undefined;
+        return content === undefined
+          ? []
+          : [
+              {
+                source: parseBillSources(content)?.descriptionSource ?? null,
+                resolvedDate: bill.resolvedDate,
+              },
+            ];
+      })
+    );
   }
   const awaitingMinutesPath = path.join(outDir, "records-awaiting-minutes.json");
 
@@ -256,7 +271,8 @@ function main() {
       (id) => nextCsv.billById.get(id)?.name ?? id
     ),
     prunedOngoingKeys,
-    pendingOfficialBills,
+    pendingOfficialBills: listPendingOfficialBills(nextOngoing, nextSessions),
+    staleOngoingBills: findStaleOngoingBills(nextOngoing, todayInJst()),
     newLabelAliases,
     petitions: { added: petitions.added.length, changed: petitions.changed.length },
     questions: { added: questions.added.length, changed: questions.changed.length },
@@ -265,10 +281,12 @@ function main() {
       ? (JSON.parse(readFileSync(unrecordedPath, "utf-8")) as ChannelVideo[])
       : [],
     newOfficialMinutes,
+    officialMinutesIndexChanged:
+      readCommitted(OFFICIAL_MINUTES_PATH) !== readWorking(OFFICIAL_MINUTES_PATH),
     recordsAwaitingMinutes: existsSync(awaitingMinutesPath)
       ? (JSON.parse(readFileSync(awaitingMinutesPath, "utf-8")) as RecordAwaitingMinutes[])
       : [],
-    sessionsAwaitingMinutes: findSessionsAwaitingMinutes(nextAll, descriptionSources, minutesDates),
+    sessionsAwaitingMinutes: findSessionsAwaitingMinutes(nextAll, descriptionStates, minutesDates),
     warnings: [
       ...(existsSync(warningsPath)
         ? readFileSync(warningsPath, "utf-8").split("\n").filter((line) => line.trim() !== "")

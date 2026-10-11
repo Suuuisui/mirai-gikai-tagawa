@@ -21,9 +21,17 @@
  *     サイト側の不調とみなして前回のまま残して警告する
  *   - 全体で1件も取れなかったら、何も書き換えずに警告だけ出して終了コード 0 で終わる
  *   - 保存した一覧（JSON）の形が崩れているときだけは、上書きで他の年を失わないよう異常終了する
+ * - 環境変数 COUNCIL_UPDATE_OUT_DIR があれば、警告をその中の warnings.txt にも書き足す
+ *   （毎朝の自動更新のレポートに載せるため）
  */
 
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import path from "node:path";
 import {
   OFFICIAL_MINUTES_BASE_URL,
@@ -231,10 +239,24 @@ function printRecordList(
   }
 }
 
+/**
+ * 警告をまとめて再掲する。毎朝の自動更新では COUNCIL_UPDATE_OUT_DIR（作業ディレクトリ）の
+ * warnings.txt にも足し、Issue のレポートに載るようにする（サイトの不調で一覧の更新が
+ * 止まったことに気づけるように）
+ */
 function printWarningSummary(): void {
   if (warnings.length === 0) return;
   console.warn(`警告 ${warnings.length}件:`);
   for (const message of warnings) console.warn(`  - ${message}`);
+  const outDir = process.env.COUNCIL_UPDATE_OUT_DIR;
+  if (outDir) {
+    mkdirSync(outDir, { recursive: true });
+    appendFileSync(
+      path.join(outDir, "warnings.txt"),
+      warnings.map((message) => `会議録の一覧: ${message}\n`).join(""),
+      "utf-8"
+    );
+  }
 }
 
 async function main() {

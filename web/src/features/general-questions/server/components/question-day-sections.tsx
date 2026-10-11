@@ -1,5 +1,5 @@
 import { TextLink } from "@/components/ui/text-link";
-import { officialMinutesIndex } from "@/features/official-minutes/shared/utils/official-minutes-index";
+import { officialMinutesIndex } from "@/features/official-minutes/shared/data/official-minutes-index";
 import {
   formatQuestionDayLabel,
   type QuestionDayGroup,
@@ -42,6 +42,9 @@ export function QuestionDaySections({
               </DayHeading>
               {minutes && (
                 <TextLink external href={minutes.url} className="text-xs">
+                  <span className="sr-only">
+                    {formatQuestionDayLabel(day)}の
+                  </span>
                   公式の会議録（質問と答弁の全文）
                 </TextLink>
               )}

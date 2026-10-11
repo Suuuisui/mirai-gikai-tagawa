@@ -52,16 +52,14 @@ describe("buildOfficialMinutesIndex", () => {
     expect(index.findInRange("2026-08-01", "2026-08-31")).toEqual([]);
   });
 
-  it("公開されている範囲と件数を返す", () => {
-    expect(index.earliestDate).toBe("2026-05-29");
+  it("公開されているいちばん新しい日と件数を返す", () => {
     expect(index.latestDate).toBe("2026-07-01");
     expect(index.count).toBe(3);
   });
 
-  it("1件も無いときは範囲が null", () => {
+  it("1件も無いときは、いちばん新しい日が null", () => {
     const empty = buildOfficialMinutesIndex([], "abc123");
     expect(empty.latestDate).toBeNull();
-    expect(empty.earliestDate).toBeNull();
     expect(empty.count).toBe(0);
     expect(empty.findByDate("2026-06-12")).toBeNull();
   });

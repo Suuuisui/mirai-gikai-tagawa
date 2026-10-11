@@ -100,6 +100,18 @@ for (const record of records) {
   const already = existing.find((e) => e.source_type === record.source_type);
   if (!target || already) {
     // 元の行が無い、または新しい出典の行がすでにある（再実行）→ 通常の upsert
+    const label = `${record.meeting_date} ${record.committee_name}`;
+    if (already && target) {
+      // 両方あるのは、置き換えずに新しい行を足してしまった状態。古い行が残ると二重に公開される
+      console.warn(
+        `⚠️ ${label}: ${record.source_type} の行と ${replaces} の行の両方があります。${replaces} の行（id ${target.id}）を確認して消してください`
+      );
+    } else if (!already) {
+      // 置き換える元の行が見つからない。委員会名・日付の書き間違いだと新しい行が増える
+      console.warn(
+        `⚠️ ${label}: 置き換える ${replaces} の行が見つかりません。新しい行として追加します（委員会名・日付を確認してください）`
+      );
+    }
     upsertRows.push(row);
     continue;
   }

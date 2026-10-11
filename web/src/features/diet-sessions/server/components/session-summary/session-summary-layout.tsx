@@ -4,7 +4,7 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { TextLink } from "@/components/ui/text-link";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { SessionQuestionsSection } from "@/features/general-questions/server/components/session-questions-section";
-import { officialMinutesIndex } from "@/features/official-minutes/shared/utils/official-minutes-index";
+import { officialMinutesIndex } from "@/features/official-minutes/shared/data/official-minutes-index";
 import { SessionPetitionsSection } from "@/features/petitions/server/components/session-petitions-section";
 import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import { routes } from "@/lib/routes";
@@ -69,7 +69,7 @@ export async function SessionSummaryLayout({
             <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
               <SourceBadge
                 kind="official"
-                detail="提出議案と議決結果のページ"
+                detail="市議会の議案のページ"
                 className="bg-white"
               />
               {session.shugiin_url && (

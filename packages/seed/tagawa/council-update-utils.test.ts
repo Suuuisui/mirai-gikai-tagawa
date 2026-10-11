@@ -11,12 +11,17 @@ import {
   findLostDescriptions,
   findOngoingKeyMismatches,
   findRecordsAwaitingMinutes,
+  findSessionIdsWithChangedBillRows,
   findSessionsAwaitingMinutes,
+  findStaleOngoingBills,
   findUnrecordedVideos,
   formatBillRef,
   formatMinutesRecord,
   hasDataChanges,
   listNewBills,
+  listNewLabelAliases,
+  listNewlyOfficialSessionKeys,
+  listPendingOfficialBills,
   listRemovedBills,
   mergeQuestionVideos,
   needsHumanFollowUp,
@@ -264,12 +269,14 @@ describe("buildUpdateReport / hasDataChanges / needsHumanFollowUp / buildCommitS
     lostDescriptions: [],
     prunedOngoingKeys: [],
     pendingOfficialBills: [],
+    staleOngoingBills: [],
     newLabelAliases: [],
     petitions: { added: 0, changed: 0 },
     questions: { added: 0, changed: 0 },
     addedQuestionVideos: [],
     unrecordedVideos: [],
     newOfficialMinutes: [],
+    officialMinutesIndexChanged: false,
     recordsAwaitingMinutes: [],
     sessionsAwaitingMinutes: [],
     warnings: [],
@@ -412,6 +419,19 @@ describe("buildUpdateReport / hasDataChanges / needsHumanFollowUp / buildCommitS
     expect(report).not.toContain("第5日（2026-01-05）");
   });
 
+  it("閉会から日がたっても会期中データに残る議案は、人が確かめる作業として載せる", () => {
+    const input: UpdateReportInput = { ...base, staleOngoingBills: [ref] };
+    const report = buildUpdateReport(input);
+
+    expect(report).toContain("閉会から14日たっても公式ページに載らない議案（1件）");
+    expect(report).toContain("- 9月定例会（r8-6-teirei）: 認定第1号　決算");
+    expect(needsHumanFollowUp(input)).toBe(true);
+  });
+
+  it("会議録の一覧が書き換わっただけ（リンク用コードの変更など）でもコミットは必要", () => {
+    expect(hasDataChanges({ ...base, officialMinutesIndexChanged: true })).toBe(true);
+  });
+
   it("ongoing から外れただけ、解説文の更新だけでもコミットは必要", () => {
     expect(hasDataChanges({ ...base, prunedOngoingKeys: ["r8-6-teirei"] })).toBe(true);
     expect(hasDataChanges({ ...base, changedSessions: ["r8-6-teirei"], updatedBillContents: 3 })).toBe(true);
@@ -477,30 +497,58 @@ describe("findRecordsAwaitingMinutes", () => {
 
 describe("findSessionsAwaitingMinutes / formatMinutesRecord", () => {
   const sessions = [
-    { key: "r8-4-teirei", name: "6月定例会", startDate: "2026-06-12", endDate: "2026-07-01" },
-    { key: "r8-5-rinji", name: "8月臨時会", startDate: "2026-08-10", endDate: "2026-08-10" },
-    { key: "r8-2-teirei", name: "3月定例会", startDate: "2026-02-19", endDate: "2026-03-18" },
+    { key: "r8-4-teirei", name: "6月定例会" },
+    { key: "r8-5-rinji", name: "8月臨時会" },
+    { key: "r8-2-teirei", name: "3月定例会" },
   ];
   const minutesDates = new Set(["2026-03-18", "2026-06-12", "2026-07-01"]);
 
-  it("会議録が公開された会期で、解説が会議録をもとにしていない議案の数を返す", () => {
-    const sources = new Map([
-      ["r8-4-teirei", ["explanation-materials", "broadcast", "minutes", null] as const],
+  it("議決日の会議録が公開されたのに、解説が会議録をもとにしていない議案を会期ごとに数える", () => {
+    const bills = new Map([
+      [
+        "r8-4-teirei",
+        [
+          { source: "explanation-materials", resolvedDate: "2026-06-12" },
+          { source: "broadcast", resolvedDate: "2026-07-01" },
+          { source: "minutes", resolvedDate: "2026-07-01" },
+          { source: null, resolvedDate: "2026-07-01" },
+        ] as const,
+      ],
       // 会議録がまだ無い会期は、中継がもとのままでも対象にしない
-      ["r8-5-rinji", ["broadcast"] as const],
+      ["r8-5-rinji", [{ source: "broadcast", resolvedDate: "2026-08-10" }] as const],
       // すべて会議録がもとの会期
-      ["r8-2-teirei", ["minutes", "minutes"] as const],
+      ["r8-2-teirei", [{ source: "minutes", resolvedDate: "2026-03-18" }] as const],
     ]);
 
-    expect(findSessionsAwaitingMinutes(sessions, sources, minutesDates)).toEqual([
+    expect(findSessionsAwaitingMinutes(sessions, bills, minutesDates)).toEqual([
       { sessionKey: "r8-4-teirei", sessionName: "6月定例会", billCount: 2 },
     ]);
   });
 
-  it("解説の情報が無い会期や、会議録が1日も無いときは空", () => {
+  it("会期の途中の日の会議録だけが公開されても、まだ会議録が無い日に議決された議案は数えない", () => {
+    const bills = new Map([
+      [
+        "r8-4-teirei",
+        [
+          { source: "broadcast", resolvedDate: "2026-06-12" },
+          { source: "broadcast", resolvedDate: "2026-07-01" },
+        ] as const,
+      ],
+    ]);
+
+    expect(findSessionsAwaitingMinutes(sessions, bills, new Set(["2026-06-12"]))).toEqual([
+      { sessionKey: "r8-4-teirei", sessionName: "6月定例会", billCount: 1 },
+    ]);
+  });
+
+  it("議案の情報が無い会期や、会議録が1日も無いときは空", () => {
     expect(findSessionsAwaitingMinutes(sessions, new Map(), minutesDates)).toEqual([]);
     expect(
-      findSessionsAwaitingMinutes(sessions, new Map([["r8-4-teirei", ["broadcast"] as const]]), new Set())
+      findSessionsAwaitingMinutes(
+        sessions,
+        new Map([["r8-4-teirei", [{ source: "broadcast", resolvedDate: "2026-07-01" }] as const]]),
+        new Set()
+      )
     ).toEqual([]);
   });
 
@@ -513,5 +561,98 @@ describe("findSessionsAwaitingMinutes / formatMinutesRecord", () => {
         dayLabel: "第1日",
       })
     ).toBe("令和8年 第4回定例会 第1日（2026-06-12）");
+  });
+});
+
+describe("listNewlyOfficialSessionKeys / listPendingOfficialBills / findStaleOngoingBills", () => {
+  const leftover = session("r8-6-teirei", [bill("認定第1号", null)]);
+
+  it("会期中だった会期の公式ページを初めて取り込めたときだけ、その会期を返す", () => {
+    expect(listNewlyOfficialSessionKeys([r85], [r86pending], [r85, r86decided])).toEqual(["r8-6-teirei"]);
+    // 前回すでに公式ページがあった会期（未掲載の議案だけが残っている）は含めない
+    expect(listNewlyOfficialSessionKeys([r85, r86decided], [leftover], [r85, r86decided])).toEqual([]);
+    // 公式ページがまだ無い会期も含めない
+    expect(listNewlyOfficialSessionKeys([r85], [r86pending], [r85])).toEqual([]);
+  });
+
+  it("公式ページがある会期の、まだ載っていない議案だけを返す", () => {
+    const notYetOfficial = session("r8-7-teirei", [bill("議案第70号", null)]);
+
+    expect(listPendingOfficialBills([leftover, notYetOfficial], [r85, r86decided])).toEqual([
+      {
+        sessionKey: "r8-6-teirei",
+        sessionName: "会期r8-6-teirei",
+        billNumberLabel: "認定第1号",
+        title: "認定第1号の件名",
+      },
+    ]);
+    expect(listPendingOfficialBills([], [r85])).toEqual([]);
+  });
+
+  it("閉会から14日を過ぎても会期中データに残る議案を返す（ちょうど14日目までは待つ）", () => {
+    // session() の会期は 10月8日まで
+    expect(findStaleOngoingBills([leftover], "2026-10-22")).toEqual([]);
+    expect(findStaleOngoingBills([leftover], "2026-10-23").map((b) => b.billNumberLabel)).toEqual([
+      "認定第1号",
+    ]);
+    expect(findStaleOngoingBills([], "2026-12-01")).toEqual([]);
+  });
+});
+
+describe("listNewLabelAliases", () => {
+  const alias = {
+    sessionKey: "r8-6-teirei",
+    proposer: "member" as const,
+    officialLabel: "議案第62号",
+    label: "議員提出議案第62号",
+  };
+
+  it("前回に無かった読み替えだけを「会期: 公式の表記 → 使い続ける表記」で返す", () => {
+    const added = { ...alias, officialLabel: "議案第65号", label: "議員提出議案第65号" };
+
+    expect(listNewLabelAliases([alias], [alias, added])).toEqual([
+      "r8-6-teirei: 議案第65号 → 議員提出議案第65号",
+    ]);
+    expect(listNewLabelAliases([alias], [alias])).toEqual([]);
+  });
+
+  it("同じ番号でも提出者や会期が違えば別の読み替えとして数える", () => {
+    expect(listNewLabelAliases([alias], [{ ...alias, proposer: "committee" }])).toHaveLength(1);
+    expect(listNewLabelAliases([alias], [{ ...alias, sessionKey: "r8-7-teirei" }])).toHaveLength(1);
+  });
+});
+
+describe("findSessionIdsWithChangedBillRows", () => {
+  const row = (id: string, sessionId: string, statusNote = "原案可決") => ({
+    id,
+    diet_session_id: sessionId,
+    name: `議案${id}`,
+    status_note: statusNote,
+  });
+
+  it("行が増えた会期と、行の中身が変わった会期を返す", () => {
+    const previous = [row("a", "s1"), row("b", "s2"), row("c", "s3")];
+    const next = [
+      row("a", "s1"),
+      row("b", "s2", "否決"),
+      row("c", "s3"),
+      row("d", "s4"),
+    ];
+
+    expect(findSessionIdsWithChangedBillRows(previous, next).sort()).toEqual(["s2", "s4"]);
+  });
+
+  it("同じ会期で複数の行が変わっても会期は1回だけ返す", () => {
+    const previous = [row("a", "s1"), row("b", "s1")];
+    const next = [row("a", "s1", "同意"), row("b", "s1", "同意"), row("c", "s1")];
+
+    expect(findSessionIdsWithChangedBillRows(previous, next)).toEqual(["s1"]);
+  });
+
+  it("変化が無ければ空。行が減っただけの会期は返さない（本番の行は自動では消えない）", () => {
+    const rows = [row("a", "s1"), row("b", "s2")];
+
+    expect(findSessionIdsWithChangedBillRows(rows, rows.map((r) => ({ ...r })))).toEqual([]);
+    expect(findSessionIdsWithChangedBillRows(rows, [row("a", "s1")])).toEqual([]);
   });
 });

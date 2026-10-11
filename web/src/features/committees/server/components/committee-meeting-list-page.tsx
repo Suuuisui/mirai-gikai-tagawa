@@ -1,5 +1,4 @@
 import { Info } from "lucide-react";
-import type { Route } from "next";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { TextLink } from "@/components/ui/text-link";
@@ -78,7 +77,7 @@ export function CommitteeMeetingListPage({
                   運営者がAIを活用して整理したものです。中継の文字起こしには聞き取りの
                   誤りが含まれることがあります。正確な内容は原本・中継映像をご確認ください。
                 </p>
-                <TextLink href={routes.sources() as Route} className="text-xs">
+                <TextLink href={routes.sources()} className="text-xs">
                   出典の種類と読み方について
                 </TextLink>
               </div>
