@@ -25,25 +25,26 @@ import {
   formatSubmittedYearMonth,
   pickCoverVariant,
 } from "@/features/bills/shared/utils/bill-cover";
+import { getBillDateLabel } from "@/features/bills/shared/utils/bill-status";
+import {
+  COVER_COLORS,
+  type CoverFamily,
+  DOT_COLOR,
+  ICON_COLOR,
+  MIRAI_TEXT,
+  MIRAI_TEXT_NOTE,
+} from "./cover-colors";
 
 // ============================================================
 // デザイン定義（BillCoverの複製）
 //
-// 下記の配色・カテゴリ対応表・分割ロジックは
-// web/src/features/bills/client/components/bill-list/bill-cover.tsx と
-// web/src/app/globals.css の `--color-cover-*` / `--color-mirai-text*` トークンを
-// 複製したもの。ImageResponse（Satori）はTailwindクラスやCSSカスタムプロパティ
-// （globals.cssの@theme変数）を解決できないため、実値をここに直接転記している。
+// 下記のカテゴリ対応表・分割ロジックは
+// web/src/features/bills/client/components/bill-list/bill-cover.tsx を複製したもの。
+// ImageResponse（Satori）はTailwindクラスやCSSカスタムプロパティを解決できないため、
+// 配色は globals.css の実値を cover-colors.ts に転記してあり、
+// cover-colors.test.ts が globals.css との一致を検査する。
 // 元ファイルのデザインを変更した場合は、このファイルも同期して更新すること。
 // ============================================================
-
-type CoverFamily =
-  | "terracotta"
-  | "slate"
-  | "sage"
-  | "ochre"
-  | "brown"
-  | "beige";
 
 // カテゴリ（bill.tags[0].label）→ 背景系統・アイコンの対応表
 // bill-cover.tsx の CATEGORY_STYLE と同一（アイコンはlucide-staticのSVG文字列。
@@ -65,23 +66,6 @@ const CATEGORY_STYLE: Record<string, { family: CoverFamily; icon: string }> = {
 };
 
 const DEFAULT_CATEGORY_STYLE = { family: "beige" as const, icon: FileText };
-
-// globals.css `--color-cover-{family}-{1|2|3}` の実値
-const COVER_COLORS: Record<CoverFamily, readonly [string, string, string]> = {
-  terracotta: ["#ffeee2", "#ffdfca", "#ffc199"],
-  slate: ["#e8f1fe", "#d9e6ff", "#c5d7fb"],
-  sage: ["#e6f5ec", "#c2e5d1", "#9bd4b5"],
-  ochre: ["#fbf5e0", "#fff0b3", "#ffe380"],
-  brown: ["#f2f2f2", "#e6e6e6", "#cccccc"],
-  beige: ["#f1eafa", "#ecddff", "#ddc2ff"],
-};
-
-// globals.css `--color-mirai-text` / `--color-mirai-text-subtle` の実値
-const MIRAI_TEXT = "#1a1a1a";
-const MIRAI_TEXT_SUBTLE = "#666666";
-// bg-cover-dots のドット色（--color-mirai-text の8%不透明度）とアイコンの15%不透明度
-const DOT_COLOR = "rgba(26, 26, 26, 0.08)";
-const ICON_COLOR = "rgba(26, 26, 26, 0.15)";
 
 const VARIANT_COUNT = 3;
 
@@ -279,10 +263,11 @@ export async function GET(
             style={{
               display: "flex",
               fontSize: 30,
-              color: MIRAI_TEXT_SUBTLE,
+              color: MIRAI_TEXT_NOTE,
             }}
           >
-            {submittedLabel} 提出
+            {/* 画面のカバーと同じく、議決済みなら「議決」、会期中なら「提出」 */}
+            {submittedLabel} {getBillDateLabel(bill.status)}
           </div>
         )}
       </div>

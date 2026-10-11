@@ -7,6 +7,8 @@ import { buildBillPageTitle } from "@/features/bills/shared/utils/bill-seo";
 import { DietSessionBillList } from "@/features/diet-sessions/client/components/diet-session-bill-list";
 import { getDietSessionBySlug } from "@/features/diet-sessions/server/loaders/get-diet-session-by-slug";
 import { routes } from "@/lib/routes";
+import { describeSessionBills } from "@/lib/seo/page-copy";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -30,12 +32,27 @@ export async function generateMetadata({ params }: Props) {
     return { title: "田川市議会会期が見つかりません" };
   }
 
+  // 議案の取得はページ本体と同じキャッシュ済みのローダー
+  const bills = await getBillsByDietSession(session.id);
+  const title = `田川市議会 ${session.name}の議案一覧`;
+  const description = describeSessionBills({
+    name: session.name,
+    startDate: session.start_date,
+    endDate: session.end_date,
+    billCount: bills.length,
+  });
+
   return {
-    title: `田川市議会 ${session.name}の議案一覧`,
-    description: `${session.name}（${session.start_date}〜${session.end_date}）に提出された議案の一覧です。`,
+    title,
+    description,
     alternates: {
       canonical: routes.archiveSessionBills(slug),
     },
+    ...buildPageShareMetadata({
+      title,
+      description,
+      path: routes.archiveSessionBills(slug),
+    }),
   };
 }
 

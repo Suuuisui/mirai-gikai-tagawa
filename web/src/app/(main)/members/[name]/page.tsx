@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import { MemberDetailPage } from "@/features/members/server/components/member-detail-page";
-import { getBillsWithSponsors } from "@/features/members/server/loaders/get-member-vote-data";
+import {
+  getBillsWithMemberVotes,
+  getBillsWithSponsors,
+} from "@/features/members/server/loaders/get-member-vote-data";
+import { aggregateMemberSummaries } from "@/features/members/shared/utils/aggregate-members";
 import { resolveMemberDisplayName } from "@/features/members/shared/utils/resolve-member-display";
 import { collectSponsorNames } from "@/features/members/shared/utils/sponsors";
 import { routes } from "@/lib/routes";
+import { describeMember } from "@/lib/seo/page-copy";
 import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 type Props = {
@@ -27,14 +32,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // 表示名はMEMBER_PROFILES（公式名簿）を優先し、無ければsponsorsデータ中で
   // フルネームが1つだけ見つかればそれを使う（member-detail-page.tsxのヘッダー
   // 表示と同じロジック）
-  const sponsoredBills = await getBillsWithSponsors();
+  const [sponsoredBills, billsWithMemberVotes] = await Promise.all([
+    getBillsWithSponsors(),
+    getBillsWithMemberVotes(),
+  ]);
   const allSponsorNames = collectSponsorNames(
     sponsoredBills.map(({ sponsors }) => sponsors)
   );
   const displayName = resolveMemberDisplayName(decodedName, allSponsorNames);
+  const voteCount =
+    aggregateMemberSummaries(billsWithMemberVotes).find(
+      (member) => member.name === decodedName
+    )?.billCount ?? 0;
 
   const title = `${displayName} 議員（田川市議会）の賛否・提出議案`;
-  const description = `田川市議会 ${decodedName} 議員が賛成・反対・欠席した議案の一覧です。賛否が分かれた案件での投票記録を公開データから確認できます。`;
+  const description = describeMember({ displayName, voteCount });
 
   return {
     title,

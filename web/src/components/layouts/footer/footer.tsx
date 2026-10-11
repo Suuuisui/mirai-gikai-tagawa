@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { EXTERNAL_LINKS } from "@/config/external-links";
 import { isInterviewPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
+import { OPERATOR_NAME } from "@/lib/seo/organization-json-ld";
 import { SOCIAL_LINKS } from "@/lib/social-links";
 import { policyLinks, primaryLinks } from "./footer.config";
 
@@ -137,7 +138,7 @@ function FooterDisclaimer() {
         </a>
         ）を有志団体「田川市政ラボ」が改変・運営する非公式版です。これは政党チームみらいが運営しているものではありません。
       </p>
-      <p className="mt-1">運営: 田川市政ラボ</p>
+      <p className="mt-1">{`運営: ${OPERATOR_NAME}`}</p>
       <p className="mt-1">
         本サイトのソースコードは AGPL-3.0 に基づき
         <a

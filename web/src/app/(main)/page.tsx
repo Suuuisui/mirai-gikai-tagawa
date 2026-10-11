@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/layouts/container";
+import { JsonLd } from "@/components/seo/json-ld";
 import { About } from "@/components/top/about";
 import { Hero } from "@/components/top/hero";
 import { MayorBanner } from "@/components/top/mayor-banner";
@@ -18,6 +19,15 @@ import { HomeChatClient } from "@/features/chat/client/components/home-chat-clie
 import { CurrentDietSession } from "@/features/diet-sessions/client/components/current-diet-session";
 import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/get-current-diet-session";
 import { countQuestionsForSession } from "@/features/general-questions/server/loaders/get-general-questions";
+import { env } from "@/lib/env";
+import { routes } from "@/lib/routes";
+import { buildOrganizationJsonLd } from "@/lib/seo/organization-json-ld";
+import { PAGE_COPY } from "@/lib/seo/page-copy";
+import {
+  buildPageShareMetadata,
+  SITE_NAME,
+  SITE_TITLE,
+} from "@/lib/seo/share-metadata";
 import { getJapanTime } from "@/lib/utils/date";
 
 // ISR: データ更新時は /api/revalidate（revalidateTag）で即時反映され、
@@ -28,13 +38,18 @@ export const metadata: Metadata = {
   // 検索意図「田川市議会」に合わせ、トップだけはサイト名先行の
   // defaultタイトルを使わず絶対指定にする
   title: {
-    absolute: "田川市議会の議案・議決結果をやさしく解説｜みらい議会＠田川市",
+    absolute: `${PAGE_COPY.home.title}｜${SITE_NAME}`,
   },
-  description:
-    "田川市議会に提出された議案・予算・条例・意見書をAIがやさしい言葉で解説。議決結果、議員ごとの賛否、会期（定例会・臨時会）ごとのまとめを無料で確認できます。",
+  description: PAGE_COPY.home.description,
   alternates: {
-    canonical: "/",
+    canonical: routes.home(),
   },
+  // 共有（SNS）の題名は、ブランド名を先頭にしたサイト共通のものを使う
+  ...buildPageShareMetadata({
+    title: SITE_TITLE,
+    description: PAGE_COPY.home.description,
+    path: routes.home(),
+  }),
 };
 
 export default async function Home() {
@@ -68,6 +83,8 @@ export default async function Home() {
 
   return (
     <>
+      {/* 運営者の構造化データ（WebSite は全ページ共通のレイアウトから出している） */}
+      <JsonLd data={buildOrganizationJsonLd(env.webUrl)} />
       <Hero />
 
       {/* 本日の田川市議会セクション */}

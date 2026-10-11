@@ -1,5 +1,6 @@
 import type { BreadcrumbItem } from "@/components/ui/breadcrumb";
 import { env } from "@/lib/env";
+import { buildBreadcrumbListJsonLd } from "@/lib/seo/breadcrumb-json-ld";
 import { JsonLd } from "./json-ld";
 
 interface BreadcrumbJsonLdProps {
@@ -13,19 +14,5 @@ interface BreadcrumbJsonLdProps {
  * 内部で出力するため、ページ側で直接使うことはない
  */
 export function BreadcrumbJsonLd({ items }: BreadcrumbJsonLdProps) {
-  const data = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: item.label,
-      // 末尾（現在ページ）はhrefを持たない。schema.org仕様上itemは省略可
-      ...(item.href && {
-        item: new URL(item.href, env.webUrl).toString(),
-      }),
-    })),
-  };
-
-  return <JsonLd data={data} />;
+  return <JsonLd data={buildBreadcrumbListJsonLd(items, env.webUrl)} />;
 }

@@ -9,6 +9,8 @@ import { BillCard } from "@/features/bills/client/components/bill-list/bill-card
 import { getBillsByTag } from "@/features/bills/server/loaders/get-bills-by-tag";
 import { buildBillPageTitle } from "@/features/bills/shared/utils/bill-seo";
 import { routes } from "@/lib/routes";
+import { describeTagBills } from "@/lib/seo/page-copy";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 type Props = {
   params: Promise<{ tagId: string }>;
@@ -32,14 +34,24 @@ export async function generateMetadata({ params }: Props) {
     return { title: "タグが見つかりません" };
   }
 
+  const title = `${billsByTag.tag.label}の議案一覧（田川市議会）`;
+  const description = describeTagBills({
+    label: billsByTag.tag.label,
+    description: billsByTag.tag.description,
+    billCount: billsByTag.bills.length,
+  });
+
   return {
-    title: `${billsByTag.tag.label}の議案一覧（田川市議会）`,
-    description:
-      billsByTag.tag.description ??
-      `「${billsByTag.tag.label}」タグが付与された議案の一覧です。`,
+    title,
+    description,
     alternates: {
       canonical: routes.tagBills(tagId),
     },
+    ...buildPageShareMetadata({
+      title,
+      description,
+      path: routes.tagBills(tagId),
+    }),
   };
 }
 

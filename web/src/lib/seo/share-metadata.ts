@@ -8,6 +8,9 @@ export const SITE_TITLE = `${SITE_NAME}｜議案をやさしく解説`;
 export const SITE_DESCRIPTION =
   "田川市議会に提出された議案・予算・条例・決議・意見書を、AIを活用してやさしい言葉で解説する市民向けプラットフォームです。";
 
+/** 共有時の言語・地域（og:locale） */
+export const SITE_LOCALE = "ja_JP";
+
 /** サイト共通の共有画像（web/public/ogp.jpg） */
 export const DEFAULT_OG_IMAGE = {
   url: "/ogp.jpg",
@@ -16,11 +19,28 @@ export const DEFAULT_OG_IMAGE = {
   alt: `${SITE_NAME}のOGPイメージ`,
 };
 
+interface ShareImage {
+  url: string;
+  alt: string;
+  width?: number;
+  height?: number;
+}
+
 interface PageShareMetadataInput {
   title: string;
   description: string;
   /** ページのパス（routes の戻り値。metadataBase からの相対） */
   path: string;
+  /** 共有画像。省略時はサイト共通の /ogp.jpg */
+  image?: ShareImage;
+  /**
+   * og:type。既定は website。議案や会議の記録のように、1 件が 1 本の記事に
+   * あたるページは article にする
+   */
+  type?: "website" | "article";
+  /** type が article のときの公開日・更新日（ISO 8601） */
+  publishedTime?: string;
+  modifiedTime?: string;
 }
 
 /**
@@ -30,25 +50,38 @@ interface PageShareMetadataInput {
  * - twitter: ルートに題名・説明があり、上書きしないとサイト共通のままになる
  * ルートレイアウト（app/layout.tsx）にも同じ構成があるが、url はルートに置かない
  * （置くと、継承する全ページの og:url がトップページになる）
+ *
+ * 公開するページ（page.tsx）は、noindex にするページを除いて必ずこれを使う
+ * （share-metadata-usage.test.ts が検査する）
  */
 export function buildPageShareMetadata({
   title,
   description,
   path,
+  image = DEFAULT_OG_IMAGE,
+  type = "website",
+  publishedTime,
+  modifiedTime,
 }: PageShareMetadataInput): Pick<Metadata, "openGraph" | "twitter"> {
+  const common = {
+    title,
+    description,
+    url: path,
+    siteName: SITE_NAME,
+    locale: SITE_LOCALE,
+    images: [image],
+  };
+
   return {
-    openGraph: {
-      title,
-      description,
-      url: path,
-      siteName: SITE_NAME,
-      images: [DEFAULT_OG_IMAGE],
-    },
+    openGraph:
+      type === "article"
+        ? { ...common, type: "article", publishedTime, modifiedTime }
+        : { ...common, type: "website" },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [DEFAULT_OG_IMAGE.url],
+      images: [image.url],
     },
   };
 }

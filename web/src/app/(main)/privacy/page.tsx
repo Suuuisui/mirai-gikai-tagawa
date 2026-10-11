@@ -7,13 +7,19 @@ import {
   LegalSectionTitle,
 } from "@/components/layouts/legal-page-layout";
 import { routes } from "@/lib/routes";
+import { PAGE_COPY } from "@/lib/seo/page-copy";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 export const metadata: Metadata = {
-  title: "プライバシーポリシー",
-  description: "みらい議会＠田川市のプライバシーポリシー",
+  title: PAGE_COPY.privacy.title,
+  description: PAGE_COPY.privacy.description,
   alternates: {
     canonical: routes.privacy(),
   },
+  ...buildPageShareMetadata({
+    ...PAGE_COPY.privacy,
+    path: routes.privacy(),
+  }),
 };
 
 export default function PrivacyPage() {

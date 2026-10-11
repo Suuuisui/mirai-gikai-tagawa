@@ -18,18 +18,18 @@ export function LegalPageLayout({
   return (
     <section className={cn("py-12", className)}>
       <Container className="space-y-10">
-        <header className="space-y-3 border-b border-slate-200/70 pb-6">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        <header className="space-y-3 border-b border-mirai-border-muted pb-6">
+          <h1 className="text-2xl font-bold tracking-tight text-mirai-text sm:text-3xl">
             {title}
           </h1>
           {description ? (
-            <p className="text-base leading-relaxed text-slate-600">
+            <p className="text-base leading-relaxed text-mirai-text-note">
               {description}
             </p>
           ) : null}
         </header>
 
-        <div className="space-y-8 text-slate-600">{children}</div>
+        <div className="space-y-8 text-mirai-text-note">{children}</div>
       </Container>
     </section>
   );
@@ -47,7 +47,7 @@ export function LegalSectionTitle({
   return (
     <h2
       className={cn(
-        "text-lg font-semibold tracking-tight text-slate-900 sm:text-xl",
+        "text-lg font-semibold tracking-tight text-mirai-text sm:text-xl",
         className
       )}
     >
@@ -68,7 +68,7 @@ export function LegalSubSectionTitle({
   return (
     <h3
       className={cn(
-        "text-base font-semibold tracking-tight text-slate-800",
+        "text-base font-semibold tracking-tight text-mirai-text",
         className
       )}
     >
@@ -86,7 +86,7 @@ export function LegalParagraph({ children, className }: LegalParagraphProps) {
   return (
     <p
       className={cn(
-        "text-sm leading-relaxed text-slate-600 sm:text-base",
+        "text-sm leading-relaxed text-mirai-text-note sm:text-base",
         className
       )}
     >
@@ -109,7 +109,7 @@ export function LegalList({ items, ordered, className }: LegalListProps) {
   return (
     <ListTag
       className={cn(
-        "space-y-1 text-sm leading-relaxed text-slate-600 sm:text-base",
+        "space-y-1 text-sm leading-relaxed text-mirai-text-note sm:text-base",
         ordered ? "list-decimal pl-5" : "list-disc pl-5",
         className
       )}

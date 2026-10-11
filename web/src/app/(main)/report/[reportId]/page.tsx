@@ -3,6 +3,7 @@ import { PublicReportPage } from "@/features/interview-report/server/components/
 import { getPublicReportById } from "@/features/interview-report/server/loaders/get-public-report-by-id";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
+import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 interface PublicReportRouteProps {
   params: Promise<{
@@ -47,23 +48,13 @@ export async function generateMetadata({
     alternates: {
       canonical: routes.publicReport(reportId),
     },
-    openGraph: {
+    ...buildPageShareMetadata({
       title: ogTitle,
       description: ogDescription,
+      path: routes.publicReport(reportId),
       type: "article",
-      images: [
-        {
-          url: shareImageUrl,
-          alt: `${billName} のOGPイメージ`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: ogTitle,
-      description: ogDescription,
-      images: [shareImageUrl],
-    },
+      image: { url: shareImageUrl, alt: `${billName} のOGPイメージ` },
+    }),
   };
 }
 

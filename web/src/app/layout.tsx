@@ -7,9 +7,11 @@ import type { ReactNode } from "react";
 import { JsonLd } from "@/components/seo/json-ld";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
+import { OPERATOR_NAME } from "@/lib/seo/organization-json-ld";
 import {
   DEFAULT_OG_IMAGE,
   SITE_DESCRIPTION,
+  SITE_LOCALE,
   SITE_NAME,
   SITE_TITLE,
 } from "@/lib/seo/share-metadata";
@@ -50,10 +52,12 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   openGraph: {
+    type: "website",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     images: [DEFAULT_OG_IMAGE],
     siteName: SITE_NAME,
+    locale: SITE_LOCALE,
   },
   twitter: {
     card: "summary_large_image",
@@ -77,7 +81,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0017c1",
+  themeColor: "#b5432a",
 };
 
 const websiteJsonLd = {
@@ -89,7 +93,7 @@ const websiteJsonLd = {
   description: SITE_DESCRIPTION,
   publisher: {
     "@type": "Organization",
-    name: "田川市政ラボ",
+    name: OPERATOR_NAME,
     url: env.webUrl,
   },
   potentialAction: {
@@ -112,7 +116,7 @@ export default function RootLayout({
       <body
         className={`${notoSansJP.variable} ${notoSerifJP.variable} font-sans antialiased bg-background`}
       >
-        <NextTopLoader showSpinner={false} color="#0017c1" />
+        <NextTopLoader showSpinner={false} color="#b5432a" />
         <JsonLd data={websiteJsonLd} />
         {children}
         <Analytics />
