@@ -42,6 +42,16 @@ export function toCommitteeSourceType(
   return value === "minutes" || value === "disclosure" ? value : "youtube";
 }
 
+/**
+ * 出典の区分ごとの、会議数に添える言い方
+ * （委員会の記録の一覧と、委員会ごとのページの見出しの帯で同じ言葉を使う）
+ */
+export const SOURCE_COUNT_LABELS: Record<SourceKind, string> = {
+  official: "会議録をもとにした記録",
+  transcript: "YouTube中継をもとにした記録",
+  disclosure: "開示文書をもとにした記録",
+};
+
 /** 出典の区分ごとの会議数 */
 export function countMeetingsBySourceKind(
   meetings: readonly { source_type: CommitteeMeetingSourceType }[]

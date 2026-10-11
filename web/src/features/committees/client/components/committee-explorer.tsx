@@ -16,7 +16,10 @@ import {
   parseCommitteeTopicParam,
 } from "../../shared/data/committee-topics";
 import type { CommitteeMeetingListItem } from "../../shared/types";
-import { buildCommitteeGroups } from "../../shared/utils/committee-groups";
+import {
+  buildCommitteeGroups,
+  COMMITTEE_KIND_ORDER,
+} from "../../shared/utils/committee-groups";
 import {
   filterByTopic,
   sortByDateDesc,
@@ -27,9 +30,6 @@ import { CommitteeMeetingRow } from "./committee-meeting-row";
 interface CommitteeExplorerProps {
   meetings: CommitteeMeetingListItem[];
 }
-
-/** 表示する種別の順番 */
-const KIND_SECTIONS: CommitteeKind[] = ["standing", "special", "other"];
 
 const KIND_DESCRIPTIONS: Record<CommitteeKind, string> = {
   standing:
@@ -183,7 +183,7 @@ export function CommitteeExplorer({ meetings }: CommitteeExplorerProps) {
           </section>
 
           {/* 委員会別 */}
-          {KIND_SECTIONS.map((kind) => {
+          {COMMITTEE_KIND_ORDER.map((kind) => {
             const kindGroups = groups.filter((group) => group.kind === kind);
             if (kindGroups.length === 0) return null;
             return (

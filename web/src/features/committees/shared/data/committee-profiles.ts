@@ -11,6 +11,11 @@ export type CommitteeKind = "standing" | "special" | "other";
 
 export interface CommitteeProfile {
   kind: CommitteeKind;
+  /**
+   * 委員会ごとの記録ページ（/committees/group/[slug]）のURLに使う名前。
+   * 半角小文字・数字・ハイフンだけ。登録後に変えるとURLが変わるので変更しない
+   */
+  slug: string;
   /** 一覧・詳細で使う短い呼び名（正式名称が長い特別委員会用） */
   shortName: string;
   /** 何を審議する場かの説明（1〜2文） */
@@ -26,30 +31,35 @@ export const COMMITTEE_KIND_LABELS: Record<CommitteeKind, string> = {
 export const COMMITTEE_PROFILES: Record<string, CommitteeProfile> = {
   総務文教委員会: {
     kind: "standing",
+    slug: "somu-bunkyo",
     shortName: "総務文教委員会",
     description:
       "市の予算・税金・防災・学校教育などを担当する常任委員会です。本会議に先立ち、関係する議案を詳しく審査します。",
   },
   厚生委員会: {
     kind: "standing",
+    slug: "kosei",
     shortName: "厚生委員会",
     description:
       "福祉・健康・国民健康保険・市立病院・ごみ処理などの暮らしに関わる分野を担当する常任委員会です。",
   },
   建設経済委員会: {
     kind: "standing",
+    slug: "kensetsu-keizai",
     shortName: "建設経済委員会",
     description:
       "道路・住宅・都市計画・農林業・商工観光など、まちづくりと産業の分野を担当する常任委員会です。",
   },
   議会運営委員会: {
     kind: "standing",
+    slug: "gikai-unei",
     shortName: "議会運営委員会",
     description:
       "本会議の日程や議事の進め方、議会のルールを決める委員会です。各会派の代表が集まって協議します。",
   },
   指名競争入札による建設工事発注に関する調査特別委員会: {
     kind: "special",
+    slug: "nyusatsu-chosa",
     shortName: "入札調査特別委員会（百条委員会）",
     description:
       "市の建設工事の入札で不適切な発注がなかったかを調べるために設置された特別委員会です。地方自治法100条に基づき、関係者の出頭や記録の提出を求める強い調査権を持ちます（百条委員会）。",
@@ -57,48 +67,56 @@ export const COMMITTEE_PROFILES: Record<string, CommitteeProfile> = {
   陸田孝則議員の公職選挙法及び田川市政治倫理条例違反疑惑に関する検証等特別委員会:
     {
       kind: "special",
+      slug: "seiji-rinri-kensho",
       shortName: "議員の選挙法・政治倫理疑惑 検証特別委員会",
       description:
         "市議会議員をめぐる公職選挙法違反や政治倫理条例違反の疑いを検証するために設置された特別委員会です。政治倫理条例の見直しもあわせて議論しています。",
     },
   情報公開請求に係る個人情報漏えいに関する調査特別委員会: {
     kind: "special",
+    slug: "kojin-joho-chosa",
     shortName: "個人情報漏えい 調査特別委員会",
     description:
       "情報公開請求をした人の個人情報が外部に漏れた疑いを調べるために設置された特別委員会です。",
   },
   一般廃棄物処理業務に関する調査特別委員会: {
     kind: "special",
+    slug: "haikibutsu-chosa",
     shortName: "ごみ処理業務 調査特別委員会",
     description:
       "家庭ごみ・事業系ごみの収集運搬の許可や委託契約が適正だったかを調べる特別委員会です。",
   },
   政治倫理条例検討特別委員会: {
     kind: "special",
+    slug: "seiji-rinri-jorei",
     shortName: "政治倫理条例 検討特別委員会",
     description:
       "約30年前に制定された田川市政治倫理条例を、資産公開の基準や審査会の公開など時代に合わせて見直すために令和8年9月に設置された特別委員会です。議員18名全員が委員を務めます。",
   },
   本会議: {
     kind: "other",
+    slug: "honkaigi",
     shortName: "本会議",
     description:
       "議員全員が出席し、市長の提案理由説明や議案の採決、市長の所信表明などを行う田川市議会の正式な会議です。議案の詳しい審査は各委員会で行われます。",
   },
   "本会議（一般質問）": {
     kind: "other",
+    slug: "ippan-shitsumon",
     shortName: "本会議（一般質問）",
     description:
       "定例会の本会議で、議員が市政の課題について市長や執行部に質問し、答弁を求める場です。1人あたり答弁を含めて約1時間で、議員が事前に通告した項目に沿って行われます。",
   },
   全員協議会: {
     kind: "other",
+    slug: "zenin-kyogikai",
     shortName: "全員協議会",
     description:
       "議員全員が集まり、市から重要な報告を受けたり意見交換したりする会議です。議決は行いません。",
   },
   議会報告会: {
     kind: "other",
+    slug: "gikai-hokokukai",
     shortName: "議会報告会",
     description:
       "議会での審議内容を市民に報告し、意見を聞くために開かれる会です。",
@@ -107,13 +125,21 @@ export const COMMITTEE_PROFILES: Record<string, CommitteeProfile> = {
 
 export const DEFAULT_COMMITTEE_PROFILE: CommitteeProfile = {
   kind: "other",
+  slug: "",
   shortName: "",
   description: "田川市議会で開かれた会議の記録です。",
 };
 
-/** 委員会名から説明を引く（未登録の委員会はデフォルトに正式名称を入れて返す） */
+/**
+ * 委員会名から説明を引く（未登録の委員会はデフォルトに正式名称を入れて返す）。
+ * 未登録の委員会の slug は委員会名そのもの（URLにするときに encodeURIComponent される）
+ */
 export function getCommitteeProfile(committeeName: string): CommitteeProfile {
   const profile = COMMITTEE_PROFILES[committeeName];
   if (profile) return profile;
-  return { ...DEFAULT_COMMITTEE_PROFILE, shortName: committeeName };
+  return {
+    ...DEFAULT_COMMITTEE_PROFILE,
+    slug: committeeName,
+    shortName: committeeName,
+  };
 }

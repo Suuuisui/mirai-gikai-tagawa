@@ -1,13 +1,13 @@
-"use client";
-
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { ChevronRight } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { jumpTargetClassName } from "@/components/ui/jump-nav";
 import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import { cn } from "@/lib/utils";
 import {
   type CommitteeGroup,
+  committeeGroupHref,
   committeeSectionId,
   formatPeriodLabel,
 } from "../../shared/utils/committee-groups";
@@ -17,19 +17,17 @@ interface CommitteeGroupSectionProps {
   group: CommitteeGroup;
 }
 
-/** 最初に見せる会議数。多い委員会は残りを折りたたむ */
+/** カードに見せる会議数。これより多い委員会は、残りを委員会ごとのページへ送る */
 const INITIAL_COUNT = 3;
 
 /**
  * 委員会1つ分のカード。何を審議する場かの説明と開催期間を見せ、
- * 会議は新しい順に数件だけ展開して残りは畳む（一覧が縦に伸びすぎるのを防ぐ）
+ * 会議は新しい順に数件だけ載せる（一覧が縦に伸びすぎるのを防ぐ）。
+ * 全件は委員会ごとのページ（サーバー側で描画）にあり、委員会名とボタンからたどれる
  */
 export function CommitteeGroupSection({ group }: CommitteeGroupSectionProps) {
-  const [expanded, setExpanded] = useState(false);
-  const visibleMeetings = expanded
-    ? group.meetings
-    : group.meetings.slice(0, INITIAL_COUNT);
-  const hiddenCount = group.meetings.length - visibleMeetings.length;
+  const groupHref = committeeGroupHref(group.committeeName) as Route;
+  const visibleMeetings = group.meetings.slice(0, INITIAL_COUNT);
 
   return (
     <section
@@ -39,7 +37,14 @@ export function CommitteeGroupSection({ group }: CommitteeGroupSectionProps) {
         "rounded-lg border border-mirai-border bg-white p-5"
       )}
     >
-      <h2 className="text-lg font-bold text-mirai-text">{group.shortName}</h2>
+      <h2 className="text-lg font-bold text-mirai-text">
+        <Link
+          href={groupHref}
+          className="underline decoration-mirai-text-placeholder underline-offset-4 transition-colors hover:decoration-primary"
+        >
+          {group.shortName}
+        </Link>
+      </h2>
       <p className="mt-1.5 text-sm leading-relaxed text-mirai-text-secondary">
         {group.description}
       </p>
@@ -68,15 +73,25 @@ export function CommitteeGroupSection({ group }: CommitteeGroupSectionProps) {
         ))}
       </ul>
 
-      {hiddenCount > 0 && (
+      {group.meetings.length > INITIAL_COUNT && (
         <div className="mt-3 flex justify-center">
+          {/* 委員会名が長くても折り返して全文を見せる（ボタン既定の折り返し禁止を外す）。
+              「（N回）」は途中で切れないよう、まとまりのまま次の行へ送る */}
           <Button
             variant="outline"
-            onClick={() => setExpanded(true)}
-            className="h-10 gap-1.5 text-sm font-bold"
+            size="lg"
+            asChild
+            className="h-auto min-h-10 w-full whitespace-normal py-2 text-center text-sm font-bold sm:w-auto"
           >
-            残り{hiddenCount}回の記録を見る
-            <ChevronDown aria-hidden className="size-4" />
+            <Link href={groupHref}>
+              <span>
+                {group.shortName}の記録をすべて見る
+                <span className="whitespace-nowrap">
+                  （{group.meetings.length}回）
+                </span>
+              </span>
+              <ChevronRight aria-hidden className="size-4 shrink-0" />
+            </Link>
           </Button>
         </div>
       )}

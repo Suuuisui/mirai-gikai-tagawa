@@ -73,6 +73,12 @@ export const routes = {
   committeesByTopic: (topicId: string) =>
     `/committees?${COMMITTEE_TOPIC_PARAM}=${encodeURIComponent(topicId)}` as const,
   committeeMeeting: (id: string) => `/committees/${id}` as const,
+  /**
+   * 委員会ごとの記録ページ（その委員会の全会議を年ごとに並べる）。
+   * slug は getCommitteeSlug の戻り値。未登録の委員会は委員会名そのものなのでエンコードする
+   */
+  committeeGroup: (slug: string) =>
+    `/committees/group/${encodeURIComponent(slug)}` as const,
 
   // ── タグ ──────────────────────────────────────────
   tagBills: (tagId: string) => `/tags/${tagId}` as const,

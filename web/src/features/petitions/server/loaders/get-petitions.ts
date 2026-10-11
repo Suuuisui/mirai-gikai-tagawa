@@ -15,7 +15,7 @@ import {
 
 /** 請願・陳情カードから議員ページ・委員会の記録へリンクするための解決表 */
 export interface PetitionLinkContext extends MemberLinkContext {
-  /** 委員会の記録があり、一覧ページのアンカーへ飛べる委員会名 */
+  /** 委員会の記録があり、委員会ごとの記録ページ（/committees/group/…）へ飛べる委員会名 */
   committeeNames: ReadonlySet<string>;
 }
 

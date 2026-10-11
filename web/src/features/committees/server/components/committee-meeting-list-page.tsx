@@ -1,27 +1,19 @@
-import { Info } from "lucide-react";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { TextLink } from "@/components/ui/text-link";
 import { SourceBadge } from "@/features/sources/shared/components/source-badge";
-import {
-  SOURCE_KIND_ORDER,
-  type SourceKind,
-} from "@/features/sources/shared/data/source-kinds";
+import { SOURCE_KIND_ORDER } from "@/features/sources/shared/data/source-kinds";
 import { routes } from "@/lib/routes";
 import { CommitteeExplorer } from "../../client/components/committee-explorer";
 import type { CommitteeMeetingListItem } from "../../shared/types";
-import { countMeetingsBySourceKind } from "../../shared/utils/committee-source";
+import {
+  countMeetingsBySourceKind,
+  SOURCE_COUNT_LABELS,
+} from "../../shared/utils/committee-source";
+import { CommitteeSourceNote } from "./committee-source-note";
 
 interface CommitteeMeetingListPageProps {
   meetings: CommitteeMeetingListItem[];
 }
-
-/** 出典の区分ごとの、件数に添える言い方 */
-const SOURCE_COUNT_LABELS: Record<SourceKind, string> = {
-  official: "会議録をもとにした記録",
-  transcript: "YouTube中継をもとにした記録",
-  disclosure: "開示文書をもとにした記録",
-};
 
 export function CommitteeMeetingListPage({
   meetings,
@@ -68,20 +60,7 @@ export function CommitteeMeetingListPage({
             <CommitteeExplorer meetings={meetings} />
 
             {/* 出典・注意書き */}
-            <div className="flex gap-2 rounded-lg bg-mirai-surface px-4 py-3.5 text-xs leading-relaxed text-mirai-text-note">
-              <Info aria-hidden className="mt-0.5 size-4 shrink-0" />
-              <div className="flex flex-col gap-1.5">
-                <p>
-                  各ページの見出し・要約・要点は、それぞれの記録に示した資料（公式の会議録、
-                  公式YouTube中継の文字起こし、情報開示請求で入手した文書）をもとに、
-                  運営者がAIを活用して整理したものです。中継の文字起こしには聞き取りの
-                  誤りが含まれることがあります。正確な内容は原本・中継映像をご確認ください。
-                </p>
-                <TextLink href={routes.sources()} className="text-xs">
-                  出典の種類と読み方について
-                </TextLink>
-              </div>
-            </div>
+            <CommitteeSourceNote />
           </div>
         )}
       </Container>

@@ -5,7 +5,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { CommitteeMeetingListItem } from "../../shared/types";
-import { committeeSectionHref } from "../../shared/utils/committee-groups";
+import { committeeGroupHref } from "../../shared/utils/committee-groups";
 import type { AdjacentMeetings } from "../../shared/utils/committee-list";
 
 interface NeighborNavProps {
@@ -14,7 +14,7 @@ interface NeighborNavProps {
   neighbors: AdjacentMeetings;
 }
 
-/** 同じ委員会の「前の会議／次の会議」と、委員会別一覧への導線 */
+/** 同じ委員会の「前の会議／次の会議」と、委員会ごとの記録ページへの導線 */
 export function NeighborNav({
   committeeLabel,
   committeeName,
@@ -30,7 +30,7 @@ export function NeighborNav({
         <NeighborLink meeting={neighbors.newer} direction="newer" />
       </div>
       <TextLink
-        href={committeeSectionHref(committeeName) as Route}
+        href={committeeGroupHref(committeeName) as Route}
         className="text-sm"
       >
         {committeeLabel}の記録一覧へ

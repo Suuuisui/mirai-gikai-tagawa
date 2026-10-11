@@ -6,7 +6,7 @@ import { FileText } from "lucide-react";
 import type { Route } from "next";
 import { Badge } from "@/components/ui/badge";
 import { TextLink } from "@/components/ui/text-link";
-import { committeeSectionHref } from "@/features/committees/shared/utils/committee-groups";
+import { committeeGroupHref } from "@/features/committees/shared/utils/committee-groups";
 import { COMMITTEE_SOURCES } from "@/features/committees/shared/utils/committee-source";
 import { resolveMemberPageKey } from "@/features/general-questions/shared/utils/question-links";
 import { MemberLink } from "@/features/members/server/components/member-link";
@@ -105,7 +105,7 @@ export function PetitionCard({
                 context.committeeNames.has(committee) ? (
                   <TextLink
                     key={committee}
-                    href={committeeSectionHref(committee) as Route}
+                    href={committeeGroupHref(committee) as Route}
                   >
                     {committee}
                   </TextLink>

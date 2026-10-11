@@ -4,6 +4,7 @@ import {
   getCommitteeProfile,
 } from "../data/committee-profiles";
 import type { CommitteeMeetingListItem } from "../types";
+import { getCommitteeSlug, resolveCommitteeName } from "./committee-slug";
 
 /** 一覧に表示する委員会ごとのまとまり */
 export interface CommitteeGroup {
@@ -24,6 +25,14 @@ const KIND_ORDER: Record<CommitteeKind, number> = {
   special: 1,
   other: 2,
 };
+
+/**
+ * 種別を表示順に並べた配列（一覧・委員会ごとのページのセクションの順）。
+ * KIND_ORDER から作るので、種別を足したときは Record の型エラーで気づける
+ */
+export const COMMITTEE_KIND_ORDER: readonly CommitteeKind[] = (
+  Object.keys(KIND_ORDER) as CommitteeKind[]
+).sort((a, b) => KIND_ORDER[a] - KIND_ORDER[b]);
 
 /**
  * 会議一覧を委員会ごとにまとめ、種別→会議数の多い順に並べる。
@@ -73,14 +82,34 @@ export function buildCommitteeGroups(
   });
 }
 
-/** 一覧ページで委員会カードに付けるアンカーid（詳細ページの「一覧へ」リンクと共有） */
-export function committeeSectionId(committeeName: string): string {
-  return `committee-${encodeURIComponent(committeeName)}`;
+/**
+ * 委員会ごとのページのパラメータ（slug か委員会名）から、その委員会のまとまりを引く。
+ * 会議が1件も無い委員会はまとまりが作られないので、存在しない委員会と同じく null
+ */
+export function findCommitteeGroup(
+  groups: readonly CommitteeGroup[],
+  slugParam: string
+): CommitteeGroup | null {
+  const committeeName = resolveCommitteeName(
+    slugParam,
+    groups.map((group) => group.committeeName)
+  );
+  if (committeeName === null) return null;
+  return groups.find((group) => group.committeeName === committeeName) ?? null;
 }
 
-/** 委員会記録一覧の、その委員会のカードへ飛ぶリンク */
-export function committeeSectionHref(committeeName: string): string {
-  return `${routes.committees()}#${committeeSectionId(committeeName)}`;
+/** その委員会の全会議を年ごとに並べたページ（/committees/group/[slug]）へのリンク */
+export function committeeGroupHref(committeeName: string) {
+  return routes.committeeGroup(getCommitteeSlug(committeeName));
+}
+
+/**
+ * 一覧ページで委員会カードに付けるアンカーid。
+ * 以前は請願・陳情のページが「#committee-…」でカードへ飛んでいた。
+ * 外に残っているリンクのために、idは変えない
+ */
+export function committeeSectionId(committeeName: string): string {
+  return `committee-${encodeURIComponent(committeeName)}`;
 }
 
 /** 「2021年〜2026年」のような開催期間の表示文字列を作る */
