@@ -1,4 +1,5 @@
 import type { Route } from "next";
+import type { ReactNode } from "react";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { JumpNav, jumpTargetClassName } from "@/components/ui/jump-nav";
@@ -48,7 +49,7 @@ function SourceKindSection({
   children,
 }: {
   kind: SourceKind;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }) {
   const info = SOURCE_KINDS[kind];
   const origins = SOURCE_ORIGINS[kind];
@@ -116,7 +117,7 @@ function SourceKindSection({
 }
 
 /** 補足の小さな箱（いまの件数や状況） */
-function FactBox({ children }: { children: React.ReactNode }) {
+function FactBox({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-mirai-border-muted bg-white px-4 py-3.5 text-sm leading-relaxed text-mirai-text-secondary">
       {children}

@@ -266,7 +266,7 @@ export function CommitteeMeetingDetailPage({
                 をもとに、運営者がAIを活用して整理・要約したものです。
                 {isTranscript && SOURCE_KINDS.transcript.caution}
                 {sourceNote.text && ` ${sourceNote.text}`}
-                {isTranscript ? "" : "正確な内容は原本をご確認ください。"}
+                {!isTranscript && "正確な内容は原本をご確認ください。"}
                 誤りに気づかれた場合はお問い合わせからご連絡ください。
               </p>
               <TextLink href={routes.sources() as Route} className="text-xs">
