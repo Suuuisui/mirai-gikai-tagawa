@@ -2,7 +2,7 @@ import { COUNCIL_ELECTION_HISTORY } from "../../shared/data/turnout-data";
 import { formatPeople } from "../../shared/utils/turnout";
 import { TURNOUT_SECTIONS } from "./section-ids";
 import { MeterList } from "./turnout-bars";
-import { TurnoutSection } from "./turnout-section";
+import { SOURCE_TALLY_SHEET, TurnoutSection } from "./turnout-section";
 
 /** 市議会議員選挙の投票率と期日前投票者数の移り変わり */
 export function HistorySection() {
@@ -11,6 +11,7 @@ export function HistorySection() {
       id={TURNOUT_SECTIONS.history.id}
       title="市議会議員選挙の投票率の推移"
       description="4年ごとの一般選挙と、令和8年7月の補欠選挙です"
+      sources={[SOURCE_TALLY_SHEET]}
     >
       <MeterList
         items={COUNCIL_ELECTION_HISTORY.map((row) => {

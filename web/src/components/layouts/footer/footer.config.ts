@@ -55,6 +55,10 @@ export const primaryLinks: FooterLink[] = [
     href: routes.elections(),
   },
   {
+    label: "情報のもと（出典）",
+    href: routes.sources(),
+  },
+  {
     label: "みらい議会とは",
     href: EXTERNAL_LINKS.ABOUT_NOTE,
     external: true,

@@ -7,6 +7,7 @@ import type {
   CommitteeMeetingSummary,
 } from "../../shared/types";
 import { toStringArray } from "../../shared/utils/committee-meeting-parser";
+import { toCommitteeSourceType } from "../../shared/utils/committee-source";
 
 type CommitteeMeetingRow = {
   id: string;
@@ -39,7 +40,7 @@ function toMeeting(row: CommitteeMeetingRow): CommitteeMeeting {
     agenda_items: toStringArray(row.agenda_items),
     attendees: toStringArray(row.attendees),
     minutes_text: row.minutes_text ?? null,
-    source_type: row.source_type === "youtube" ? "youtube" : "disclosure",
+    source_type: toCommitteeSourceType(row.source_type),
     source_note: row.source_note,
     youtube_url: row.youtube_url,
     updated_at: row.updated_at,
@@ -101,12 +102,12 @@ export async function findAllCommitteeMeetingListItems(): Promise<
     meeting_date: row.meeting_date,
     headline: row.headline,
     topics: toStringArray(row.topics),
-    source_type: row.source_type === "youtube" ? "youtube" : "disclosure",
+    source_type: toCommitteeSourceType(row.source_type),
   }));
 }
 
 const PETITION_REF_COLUMNS =
-  "id, committee_name, meeting_date, headline, agenda_items, key_points";
+  "id, committee_name, meeting_date, headline, agenda_items, key_points, source_type";
 
 /**
  * 請願・陳情の審査の経緯（どの会議で審査され、何が決まったか）を引くための
@@ -135,6 +136,7 @@ export async function findAllCommitteeMeetingPetitionRefs(): Promise<
     headline: row.headline,
     agenda_items: toStringArray(row.agenda_items),
     key_points: toStringArray(row.key_points),
+    source_type: toCommitteeSourceType(row.source_type),
   }));
 }
 

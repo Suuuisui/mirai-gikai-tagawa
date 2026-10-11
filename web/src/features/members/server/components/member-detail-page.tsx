@@ -12,6 +12,7 @@ import {
   VOTE_LABEL,
 } from "@/features/bills/shared/utils/member-vote-display";
 import { MemberQuestionsSection } from "@/features/general-questions/server/components/member-questions-section";
+import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
@@ -242,7 +243,12 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
           </ShowMoreList>
         </section>
 
-        <div className="mt-10 rounded-md bg-white px-4 py-4 text-xs leading-[1.8] text-mirai-text-note">
+        <div className="mt-10 flex flex-col gap-1 rounded-md bg-white px-4 py-4 text-xs leading-[1.8] text-mirai-text-note">
+          <SourceBadge
+            kind="official"
+            detail="議員名簿と議決結果のページ"
+            className="mb-1"
+          />
           <p>
             ※田川市議会が公開している「賛否が分かれた案件」の議員別賛否のみを掲載しています。全会一致で議決された議案は含まれません。
           </p>

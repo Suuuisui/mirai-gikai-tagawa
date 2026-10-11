@@ -8,6 +8,7 @@ import { InterviewLandingSection } from "@/features/interview-config/client/comp
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { getPublicReportsByBillId } from "@/features/interview-report/server/loaders/get-public-reports-by-bill-id";
 import { getMemberNameSet } from "@/features/members/server/loaders/get-member-vote-data";
+import { SourceList } from "@/features/sources/shared/components/source-list";
 import { BillTopicsPreviewSection } from "@/features/user-topic-analysis/server/components/bill-topics-preview-section";
 import { getPublicTopicAnalysis } from "@/features/user-topic-analysis/server/loaders/get-public-topic-analysis";
 import { routes } from "@/lib/routes";
@@ -16,6 +17,7 @@ import { BillDisclaimer } from "../../../client/components/bill-detail/bill-disc
 import { BillStatusProgress } from "../../../client/components/bill-detail/bill-status-progress";
 import { MiraiStanceCard } from "../../../client/components/bill-detail/mirai-stance-card";
 import type { BillWithContent } from "../../../shared/types";
+import { buildBillSourceRefs } from "../../../shared/utils/bill-sources";
 import { isMemberVotesSectionVisible } from "../../../shared/utils/member-votes-visibility";
 import { getAdjacentSessionBills } from "../../loaders/get-adjacent-session-bills";
 import { BillShareButtons } from "../share/bill-share-buttons";
@@ -44,6 +46,8 @@ export async function BillDetailLayout({
     bill.bill_content?.summary ?? "",
     bill.bill_content?.content ?? "",
   ]);
+  // 事実（議決結果など）と解説が、それぞれ何をもとにしているか
+  const sourceRefs = buildBillSourceRefs(bill.bill_content?.content);
   const [
     interviewConfig,
     publicReportsResult,
@@ -112,6 +116,14 @@ export async function BillDetailLayout({
               />
             </div>
           )}
+
+          {/* この議案の情報のもと（出典）。解説を読む前に、何をもとにした内容かが分かるようにする
+              （本文に出典の記載が無い議案では非表示） */}
+          <SourceList
+            title="この議案の情報のもと"
+            items={sourceRefs}
+            className="mb-8"
+          />
 
           {/* 目次: 解説が長いページでもセクションへジャンプできるようにする
               （本文h2が少ない議案では非表示） */}

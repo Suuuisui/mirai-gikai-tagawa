@@ -88,7 +88,7 @@ function UpcomingSessionCard({ upcoming }: { upcoming: UpcomingSessionView }) {
       </ul>
       {upcoming.link && (
         <p className="text-xs text-mirai-text-muted">
-          出典: <SourceLink link={upcoming.link} />
+          <SourceLink link={upcoming.link} showSource />
         </p>
       )}
     </div>

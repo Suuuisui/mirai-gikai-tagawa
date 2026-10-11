@@ -1,15 +1,18 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyBillLabelAliases,
+  billNumberCore,
   buildBillName,
   buildDefaultSummary,
-  buildSourceSection,
   buildStatusNote,
   carryOverMissingSessions,
+  findBillLabelAliases,
   mergeSessions,
   NO_RESULT_NOTE,
   pickActiveSessionKey,
+  pruneOngoingSessions,
 } from "./session-data-utils";
-import type { SessionSource } from "./source-data";
+import type { BillSource, SessionSource } from "./source-data";
 
 function session(key: string, startDate: string): SessionSource {
   return {
@@ -21,6 +24,163 @@ function session(key: string, startDate: string): SessionSource {
     bills: [],
   };
 }
+
+function bill(
+  label: string | null,
+  title: string,
+  proposer: BillSource["proposer"] = "mayor",
+  resultLabel: string | null = "原案可決"
+): BillSource {
+  return {
+    billNumberLabel: label,
+    title,
+    proposer,
+    resultLabel,
+    resolvedDate: "2026-09-29",
+  };
+}
+
+/** 公式ページが会期の途中（9月29日の議決分まで）で公開された9月定例会 */
+const officialR86: SessionSource = {
+  ...session("r8-6-teirei", "2026-09-07"),
+  sourceUrl: "https://example.com/results",
+  bills: [
+    bill("議案第50号", "一般会計補正予算"),
+    bill("議案第61号", "教育委員会委員の任命について（小森田 加恵 氏）", "mayor", "同意"),
+    // 公式ページは「議員提出 議案第62号」と2行で書くので、読み取りは「議案第62号」になる
+    bill("議案第62号", "政治倫理条例検討特別委員会の設置について", "member"),
+    bill(null, "市長の退職の期日に関する同意について", "mayor", "同意"),
+  ],
+};
+
+/** 会期中に手で置いていた同じ会期（最終日に議決される決算と追加議案を含む） */
+const ongoingR86: SessionSource = {
+  ...session("r8-6-teirei", "2026-09-07"),
+  sourceUrl: "https://example.com/submitted",
+  bills: [
+    bill("議案第50号", "一般会計補正予算"),
+    bill("議案第61号", "教育委員会委員の任命について（小森田加恵氏）", "mayor", "同意"),
+    bill("議員提出議案第62号", "政治倫理条例検討特別委員会の設置について", "member"),
+    bill(null, "市長の退職の期日に関する同意について", "mayor", "同意"),
+    bill("認定第1号", "一般会計決算", "mayor", null),
+    // 市長提出の追加議案。議員提出議案第62号と番号は同じだが提出者が違う別の議案
+    bill("議案第62号", "一般会計補正予算（追加）", "mayor", null),
+  ],
+};
+
+describe("billNumberCore", () => {
+  it("提出者の語を除いた番号にする", () => {
+    expect(billNumberCore("議員提出議案第62号")).toBe("議案第62号");
+    expect(billNumberCore("委員会提出議案第3号")).toBe("議案第3号");
+  });
+
+  it("提出者の語が無い番号はそのまま", () => {
+    expect(billNumberCore("議案第50号")).toBe("議案第50号");
+    expect(billNumberCore("認定第1号")).toBe("認定第1号");
+  });
+});
+
+describe("findBillLabelAliases / applyBillLabelAliases", () => {
+  it("提出者と番号が同じで表記だけ違う議案の読み替えを見つける", () => {
+    expect(findBillLabelAliases([ongoingR86], [officialR86])).toEqual([
+      {
+        sessionKey: "r8-6-teirei",
+        proposer: "member",
+        officialLabel: "議案第62号",
+        label: "議員提出議案第62号",
+      },
+    ]);
+  });
+
+  it("公式ページにまだ無い会期や、表記が同じ議案からは何も見つけない", () => {
+    expect(findBillLabelAliases([ongoingR86], [])).toEqual([]);
+    expect(findBillLabelAliases([officialR86], [officialR86])).toEqual([]);
+  });
+
+  it("読み替えは同じ会期・同じ提出者の議案だけに当てる", () => {
+    const aliases = findBillLabelAliases([ongoingR86], [officialR86]);
+    const other = {
+      ...session("r8-4-teirei", "2026-06-12"),
+      bills: [bill("議案第62号", "別の会期の議員提出議案", "member")],
+    };
+    const withMayorBill = {
+      ...officialR86,
+      bills: [
+        ...officialR86.bills,
+        bill("議案第62号", "一般会計補正予算（追加）", "mayor"),
+      ],
+    };
+
+    const [applied, untouched] = applyBillLabelAliases(
+      [withMayorBill, other],
+      aliases
+    );
+
+    expect(applied.bills.map((b) => `${b.proposer}:${b.billNumberLabel}`)).toEqual([
+      "mayor:議案第50号",
+      "mayor:議案第61号",
+      "member:議員提出議案第62号",
+      "mayor:null",
+      "mayor:議案第62号",
+    ]);
+    expect(untouched).toBe(other);
+  });
+
+  it("読み替えが無ければ会期をそのまま返し、当て直しても変わらない", () => {
+    expect(applyBillLabelAliases([officialR86], [])).toEqual([officialR86]);
+    const aliases = findBillLabelAliases([ongoingR86], [officialR86]);
+    const once = applyBillLabelAliases([officialR86], aliases);
+    expect(applyBillLabelAliases(once, aliases)).toEqual(once);
+  });
+});
+
+describe("pruneOngoingSessions", () => {
+  it("公式ページに載った議案だけを外し、まだ載っていない議案は残す", () => {
+    const { kept, pruned, partial } = pruneOngoingSessions(
+      [ongoingR86],
+      [officialR86]
+    );
+
+    expect(pruned).toEqual([]);
+    expect(kept).toHaveLength(1);
+    expect(kept[0].bills.map((b) => `${b.proposer}:${b.billNumberLabel}`)).toEqual([
+      "mayor:認定第1号",
+      "mayor:議案第62号",
+    ]);
+    // 残した会期は、会期中の出典ページ（提出議案ページ）を保つ
+    expect(kept[0].sourceUrl).toBe("https://example.com/submitted");
+    expect(partial).toEqual(kept);
+  });
+
+  it("件名の空白や括弧書きの有無が違っても、番号が無い議案を同じ議案として外す", () => {
+    const ongoing = {
+      ...ongoingR86,
+      bills: [bill(null, "市長の退職の期日に関する同意について（案）", "mayor", null)],
+    };
+
+    expect(pruneOngoingSessions([ongoing], [officialR86]).pruned).toEqual([ongoing]);
+  });
+
+  it("すべての議案が載った会期は会期ごと外す", () => {
+    const allListed = { ...ongoingR86, bills: ongoingR86.bills.slice(0, 4) };
+    const { kept, pruned, partial } = pruneOngoingSessions(
+      [allListed, session("r8-7-teirei", "2026-12-01")],
+      [officialR86]
+    );
+
+    expect(pruned).toEqual([allListed]);
+    expect(kept.map((s) => s.key)).toEqual(["r8-7-teirei"]);
+    expect(partial).toEqual([]);
+  });
+
+  it("公式ページがまだ無い会期はそのまま残す", () => {
+    expect(pruneOngoingSessions([ongoingR86], [])).toEqual({
+      kept: [ongoingR86],
+      pruned: [],
+      partial: [],
+    });
+  });
+});
 
 describe("buildBillName", () => {
   it("議案番号と件名を全角空白でつなぎ、番号が無ければ件名だけにする", () => {
@@ -43,13 +203,32 @@ describe("mergeSessions", () => {
     ]);
   });
 
-  it("同じ会期が両方にあれば、消す先を示して止める", () => {
-    expect(() =>
-      mergeSessions(
-        [session("r8-6-teirei", "2026-09-07")],
-        [session("r8-6-teirei", "2026-09-07")]
-      )
-    ).toThrow(/ongoing-sessions\.json から削除/);
+  it("会期中だけの会期の議案には、会期中の出典ページを持たせる", () => {
+    const [merged] = mergeSessions([], [ongoingR86]);
+
+    expect(merged.bills.every((b) => b.ongoingSourceUrl === "https://example.com/submitted")).toBe(true);
+  });
+
+  it("同じ会期が両方にあれば、公式ページの議案の後ろにまだ載っていない議案を足す", () => {
+    const leftover = pruneOngoingSessions([ongoingR86], [officialR86]).kept;
+
+    const [merged] = mergeSessions([officialR86], leftover);
+
+    expect(merged.sourceUrl).toBe("https://example.com/results");
+    expect(merged.bills.map((b) => [b.billNumberLabel, b.ongoingSourceUrl])).toEqual([
+      ["議案第50号", undefined],
+      ["議案第61号", undefined],
+      ["議案第62号", undefined],
+      [null, undefined],
+      ["認定第1号", "https://example.com/submitted"],
+      ["議案第62号", "https://example.com/submitted"],
+    ]);
+  });
+
+  it("同じ議案が両方にあれば、消す先を示して止める", () => {
+    expect(() => mergeSessions([officialR86], [ongoingR86])).toThrow(
+      /議案第50号 は sessions\.json に取り込み済みです。data\/ongoing-sessions\.json から削除/
+    );
   });
 });
 
@@ -137,56 +316,5 @@ describe("buildDefaultSummary", () => {
     ).toBe(
       "令和元年（第5回）12月定例会に市長提出から提出されました。議決結果は出典ページに記載されていません。"
     );
-  });
-});
-
-describe("buildSourceSection", () => {
-  const base = {
-    sessionName: "令和8年（第6回）9月定例会",
-    sourceUrl: "https://example.com/r8-6",
-    isOngoing: false,
-    descriptionSource: null,
-    resultSource: undefined,
-  } as const;
-
-  it("解説が無い議案は公式ページのリンクと転記のみの注記だけ", () => {
-    expect(buildSourceSection(base)).toEqual([
-      "## 出典",
-      "",
-      "- [田川市議会「令和8年（第6回）9月定例会の提出議案と議決結果」](https://example.com/r8-6)（福岡県田川市公式サイト）",
-      "",
-      "※ この内容は田川市議会事務局が公開する情報を基に事実のみを転記したものです。分かりやすい解説文のAIによる生成は行っていません。",
-    ]);
-  });
-
-  it("会期中の会期は公式ページの題名を「提出議案」にする", () => {
-    expect(buildSourceSection({ ...base, isOngoing: true })[2]).toContain(
-      "9月定例会の提出議案」"
-    );
-  });
-
-  it("会議録ベースの解説と会議録由来の結果は、それぞれの箇条書きを添える", () => {
-    const lines = buildSourceSection({
-      ...base,
-      descriptionSource: "minutes",
-      resultSource: "minutes",
-    });
-
-    expect(lines[3]).toMatch(/^- \[田川市議会 会議録検索システム\]/);
-    expect(lines[4]).toMatch(/^- 議決結果は\[田川市議会 会議録検索システム\]/);
-    expect(lines.at(-1)).toMatch(/^※ 上記の解説は、田川市議会 会議録検索システム/);
-  });
-
-  it("中継ベースの解説は説明資料と中継の両方を出典に挙げる", () => {
-    const lines = buildSourceSection({
-      ...base,
-      descriptionSource: "broadcast",
-      resultSource: "broadcast",
-    });
-
-    expect(lines[3]).toContain("議案説明資料（PDF）");
-    expect(lines[4]).toContain("公式YouTubeチャンネル");
-    expect(lines[5]).toContain("中継映像で確認したものです");
-    expect(lines.at(-1)).toContain("中継映像（自動字幕）をもとに");
   });
 });

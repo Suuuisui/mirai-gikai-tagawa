@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   groupMeetingsByCommittee,
-  sourceTypeLabel,
   toStringArray,
 } from "./committee-meeting-parser";
 
@@ -46,12 +45,5 @@ describe("groupMeetingsByCommittee", () => {
 
   it("空配列は空のグループ一覧になる", () => {
     expect(groupMeetingsByCommittee([])).toEqual([]);
-  });
-});
-
-describe("sourceTypeLabel", () => {
-  it("出典種別に応じたラベルを返す", () => {
-    expect(sourceTypeLabel("disclosure")).toBe("情報開示請求で入手した文書");
-    expect(sourceTypeLabel("youtube")).toBe("公式YouTube中継の自動字幕");
   });
 });

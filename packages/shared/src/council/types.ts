@@ -116,3 +116,15 @@ export interface GeneralQuestionRecord {
   /** 通告書PDFのURL */
   pdfUrl: string | null;
 }
+
+/** 会議録検索システムに載っている本会議1日分の会議録 */
+export interface OfficialMinutesRecord {
+  /** 開催日（YYYY-MM-DD） */
+  date: string;
+  /** 会議録のファイル名（例: R080612A。会議録を開くURLに使う） */
+  fileName: string;
+  /** 会議名（例: 令和8年 第4回定例会） */
+  sessionName: string;
+  /** 何日目か（例: 第1日） */
+  dayLabel: string;
+}

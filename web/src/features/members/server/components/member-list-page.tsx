@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
+import { TextLink } from "@/components/ui/text-link";
+import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import { routes } from "@/lib/routes";
 import {
   MEMBER_PROFILES,
@@ -215,7 +217,12 @@ export async function MemberListPage() {
         </section>
 
         {/* データの範囲についての注記 */}
-        <div className="mt-10 rounded-md bg-white px-4 py-4 text-xs leading-[1.8] text-mirai-text-note">
+        <div className="mt-10 flex flex-col gap-1 rounded-md bg-white px-4 py-4 text-xs leading-[1.8] text-mirai-text-note">
+          <SourceBadge
+            kind="official"
+            detail="議員名簿と議決結果のページ"
+            className="mb-1"
+          />
           <p>
             ※田川市議会は「賛否が分かれた案件」についてのみ議員別の賛否を公開しており、このページはその公開分を集計したものです。全会一致で議決された議案は含まれません。
           </p>
@@ -227,6 +234,9 @@ export async function MemberListPage() {
             ※氏名・会派・役職は田川市議会公式サイトの議員名簿（{ROSTER_AS_OF}
             時点）より。会派の見出しは名簿時点の所属で、採決当時の会派は各議員のページで確認できます。
           </p>
+          <TextLink href={routes.sources()} className="mt-1 text-xs">
+            出典の種類と読み方について
+          </TextLink>
         </div>
       </Container>
 

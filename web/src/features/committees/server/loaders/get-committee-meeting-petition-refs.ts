@@ -18,7 +18,9 @@ const _getCachedCommitteeMeetingPetitionRefs = unstable_cache(
   async (): Promise<CommitteeMeetingPetitionRef[]> => {
     return findAllCommitteeMeetingPetitionRefs();
   },
-  ["committee-meeting-petition-refs"],
+  // v2: 記録の出典種別（source_type）を足した。Data Cache はデプロイをまたいで残るので、
+  // 形を変えたらキーも変えて古い形のキャッシュを読まないようにする
+  ["committee-meeting-petition-refs-v2"],
   {
     revalidate: 3600,
     tags: [CACHE_TAGS.COMMITTEE_MEETINGS],

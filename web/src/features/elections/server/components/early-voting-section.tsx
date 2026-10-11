@@ -21,7 +21,7 @@ import {
   type MeterItem,
   MeterList,
 } from "./turnout-bars";
-import { TurnoutSection } from "./turnout-section";
+import { SOURCE_TALLY_SHEET, TurnoutSection } from "./turnout-section";
 
 const DAY_SERIES: readonly ChartSeries[] = [
   { label: "当日に投票した人の累計", kind: "focus" },
@@ -130,6 +130,10 @@ export function EarlyVotingSection({
       id={TURNOUT_SECTIONS.early.id}
       title="期日前投票と当日の投票"
       description="投票した人のうち、期日前投票をした人の割合です"
+      sources={[
+        SOURCE_TALLY_SHEET,
+        { kind: "official", detail: "投・開票速報（当日の時刻ごとの人数）" },
+      ]}
     >
       <MeterList items={earlyItems} />
 

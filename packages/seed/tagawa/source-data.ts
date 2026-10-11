@@ -85,6 +85,16 @@ export const ONGOING_SESSIONS_JSON_PATH = path.join(
   "data/ongoing-sessions.json"
 );
 
+/**
+ * 公式ページの番号表記を、サイトで先に公開していた表記に読み替える対応表。
+ * scrape.ts が、会期中に手で置いた議案と公式ページの議案で表記が違うのを見つけたら自動で足す
+ * （議案の id＝URL は番号表記から決まるので、表記が変わると同じ議案が二重に公開される）
+ */
+export const BILL_LABEL_ALIASES_JSON_PATH = path.join(
+  import.meta.dirname,
+  "data/bill-label-aliases.json"
+);
+
 function loadSessionsFile(jsonPath: string): SessionSource[] {
   return JSON.parse(readFileSync(jsonPath, "utf-8")) as SessionSource[];
 }

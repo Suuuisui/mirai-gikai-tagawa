@@ -9,7 +9,7 @@ interface EventTimelineProps {
   markLatest?: boolean;
 }
 
-/** 日付・見出し・説明・出典リンクを縦のタイムラインで並べる */
+/** 日付・見出し・説明・出典（区分のバッジとリンク）を縦のタイムラインで並べる */
 export function EventTimeline({
   items,
   markLatest = false,
@@ -40,7 +40,11 @@ export function EventTimeline({
             {event.description}
           </p>
           {event.link && (
-            <SourceLink link={event.link} className="mt-1.5 text-xs" />
+            <SourceLink
+              link={event.link}
+              className="mt-1.5 text-xs"
+              showSource
+            />
           )}
         </li>
       ))}

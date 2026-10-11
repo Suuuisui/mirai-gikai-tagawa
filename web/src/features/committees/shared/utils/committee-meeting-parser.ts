@@ -1,4 +1,4 @@
-import type { CommitteeMeeting, CommitteeMeetingSummary } from "../types";
+import type { CommitteeMeetingSummary } from "../types";
 
 /** jsonbカラムの値を文字列配列として安全に解釈する（不正値は空配列） */
 export function toStringArray(value: unknown): string[] {
@@ -26,13 +26,4 @@ export function groupMeetingsByCommittee<
     committeeName,
     meetings: items,
   }));
-}
-
-/** 出典種別の表示ラベル */
-export function sourceTypeLabel(
-  sourceType: CommitteeMeeting["source_type"]
-): string {
-  return sourceType === "disclosure"
-    ? "情報開示請求で入手した文書"
-    : "公式YouTube中継の自動字幕";
 }

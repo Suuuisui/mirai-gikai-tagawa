@@ -22,7 +22,7 @@ export function ActionsSection({ actions }: ActionsSectionProps) {
     >
       <SectionHeading>就任後にしたこと</SectionHeading>
       <p className="text-xs leading-relaxed text-mirai-text-muted">
-        委員会の記録と市の公式情報から、市長と市役所（執行部）の動きを新しい順に拾っています。各項目から出典の記録に飛べます。
+        委員会の記録と市の公式情報から、市長と市役所（執行部）の動きを新しい順に拾っています。各項目に、もとにした資料の区分と記録へのリンクを付けています。
       </p>
       <EventTimeline items={actions} markLatest />
       <TextLink href={routes.committees()} className="text-sm">

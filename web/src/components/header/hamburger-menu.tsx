@@ -70,6 +70,7 @@ type InfoLinkItem = {
 };
 
 const INFO_LINKS: InfoLinkItem[] = [
+  { label: "情報のもと（出典）", href: routes.sources() },
   { label: "利用規約", href: routes.terms() },
   { label: "プライバシーポリシー", href: routes.privacy() },
 ];

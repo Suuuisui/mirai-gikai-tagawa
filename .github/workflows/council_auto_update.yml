@@ -8,9 +8,12 @@ name: Council Auto Update
 #   変わった会期（解説文が更新された会期を含む）だけ本番DBへ差分投入して
 #   再検証（/api/revalidate）する
 # - 請願・陳情、一般質問（通告）、一般質問の録画リンク → web の静的データを更新する
+# - 本会議の会議録の一覧（会議録検索システム）→ 新しく載った日を拾い、各ページの
+#   「公式の会議録を読む」リンクに使う静的データを更新する
 # - 変更があれば検証（lint / typecheck / test）のうえ main にコミットし、
 #   デプロイと Integration Tests（visual-smoke を含む）を起動する
-# - 人の作業が必要なこと（解説文が無い新しい議案、委員会記録に無い中継動画）を Issue に書く
+# - 人の作業が必要なこと（解説文が無い新しい議案、委員会記録に無い中継動画、
+#   会議録が公開されたのに中継の文字起こしをもとにしたままの記録・解説）を Issue に書く
 #
 # 必要な Secrets: SUPABASE_URL / SUPABASE_SECRET_KEY（本番DB。service_role の JWT）、
 #   REVALIDATE_SECRET（web の /api/revalidate）。無ければDB投入と再検証を飛ばす
@@ -87,7 +90,11 @@ jobs:
       - name: 一般質問の通告（公式サイト）
         run: pnpm --filter @mirai-gikai/seed tagawa:scrape-questions
 
-      - name: 委員会記録にまだ無い中継動画を探す
+      # 今年と前年の分だけ取り直す（約15リクエスト）。サイト側の不調で取れなかった年は前回のまま残す
+      - name: 本会議の会議録の一覧（会議録検索システム）
+        run: pnpm --filter @mirai-gikai/seed tagawa:scrape-minutes-index
+
+      - name: 委員会記録の不足を探す（未収録の中継動画・会議録が出た本会議）
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
@@ -117,7 +124,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add packages/seed/tagawa/data packages/seed/csv/data \
-            web/src/features/petitions/shared/data web/src/features/general-questions/shared/data
+            web/src/features/petitions/shared/data web/src/features/general-questions/shared/data \
+            web/src/features/official-minutes/shared/data
           { cat "$OUT_DIR/commit-subject.txt"; echo; cat "$OUT_DIR/report.md"; } | git commit -q -F -
           git fetch -q origin main
           git rebase -q origin/main

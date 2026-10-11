@@ -1,11 +1,13 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import { getCommitteeProfile } from "../../shared/data/committee-profiles";
 import { resolveTopics } from "../../shared/data/committee-topics";
 import type { CommitteeMeetingListItem } from "../../shared/types";
+import { COMMITTEE_SOURCES } from "../../shared/utils/committee-source";
 
 interface CommitteeMeetingRowProps {
   meeting: CommitteeMeetingListItem;
@@ -18,13 +20,15 @@ const MAX_TOPIC_CHIPS = 2;
 
 /**
  * 一覧の会議1件分。見出しを主役にして、日付・委員会・テーマを補足として添える。
- * 見出しが未生成の記録は日付だけでは中身が分からないため、その旨を示す
+ * 見出しが未生成の記録は日付だけでは中身が分からないため、その旨を示す。
+ * 行の末尾に、その記録が何をもとにしているか（出典バッジ）を必ず添える
  */
 export function CommitteeMeetingRow({
   meeting,
   showCommitteeName = false,
 }: CommitteeMeetingRowProps) {
   const topics = resolveTopics(meeting.topics).slice(0, MAX_TOPIC_CHIPS);
+  const source = COMMITTEE_SOURCES[meeting.source_type];
 
   return (
     <Link
@@ -51,6 +55,11 @@ export function CommitteeMeetingRow({
             {topic.label}
           </Badge>
         ))}
+        <SourceBadge
+          kind={source.kind}
+          detail={source.detail}
+          className="px-1.5 py-0 text-[11px]"
+        />
       </div>
     </Link>
   );

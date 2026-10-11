@@ -19,6 +19,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { buildBillSourceSection } from "@mirai-gikai/shared/council/bill-source-section";
 import {
   loadOngoingSessions,
   loadTagawaSessions,
@@ -29,7 +30,6 @@ import { BILL_DESCRIPTIONS, billDescriptionKey } from "./bill-descriptions";
 import {
   buildBillName,
   buildDefaultSummary,
-  buildSourceSection,
   buildStatusNote,
   mergeSessions,
   pickActiveSessionKey,
@@ -40,6 +40,7 @@ import { BATCH_D_OVERRIDES } from "./bill-descriptions-batch-d";
 import { BATCH_E_OVERRIDES } from "./bill-descriptions-batch-e";
 import { BATCH_F_OVERRIDES } from "./bill-descriptions-batch-f";
 import { BATCH_G_OVERRIDES } from "./bill-descriptions-batch-g";
+import { BATCH_H_OVERRIDES } from "./bill-descriptions-batch-h";
 import { FEATURED_BILLS } from "./featured-bills-data";
 import { MEMBER_VOTES } from "./member-votes-data";
 import { BILL_SPONSORS } from "./bill-sponsors-data";
@@ -70,6 +71,7 @@ const ALL_BILL_DESCRIPTIONS = {
   ...BATCH_E_OVERRIDES,
   ...BATCH_F_OVERRIDES,
   ...BATCH_G_OVERRIDES,
+  ...BATCH_H_OVERRIDES,
 };
 
 const CSV_DATA_DIR = path.join(import.meta.dirname, "../csv/data");
@@ -217,9 +219,13 @@ function writeCsv(filename: string, headers: string[], rows: Array<Record<string
 }
 
 function main() {
-  const ongoingSessions = loadOngoingSessions();
-  const ongoingKeys = new Set(ongoingSessions.map((s) => s.key));
-  const allSessions = mergeSessions(loadTagawaSessions(), ongoingSessions);
+  // 公式の議決結果ページから取り込んだ会期に、会期中として手で置いた議案を合わせる。
+  // 公式ページにまだ載っていない議案（会期の途中で公開されたページに無い最終日の議決分など）は
+  // bill.ongoingSourceUrl が入り、出典を「提出議案」ページにする
+  const allSessions = mergeSessions(
+    loadTagawaSessions(),
+    loadOngoingSessions()
+  );
   const activeSessionKey = pickActiveSessionKey(allSessions);
   const dietSessionRows: Array<Record<string, unknown>> = [];
   const billRows: Array<Record<string, unknown>> = [];
@@ -303,7 +309,7 @@ function main() {
         // 注目の議案の表示順（FEATURED_BILLS配列の並び順。小さいほど上位）
         featured_priority: featuredIndex >= 0 ? featuredIndex + 1 : null,
         share_thumbnail_url: null,
-        shugiin_url: session.sourceUrl,
+        shugiin_url: bill.ongoingSourceUrl ?? session.sourceUrl,
         diet_session_id: dietSessionId,
         knowledge_source: null,
         use_knowledge_source_in_chat: false,
@@ -369,10 +375,10 @@ function main() {
         `- **議決結果**: ${outcome ?? "出典に記載なし（不明）"}`,
         ...(bill.resultLabel ? [`- **議決日**: ${bill.resolvedDate}`] : []),
         "",
-        ...buildSourceSection({
+        ...buildBillSourceSection({
           sessionName: session.name,
-          sourceUrl: session.sourceUrl,
-          isOngoing: ongoingKeys.has(session.key),
+          sourceUrl: bill.ongoingSourceUrl ?? session.sourceUrl,
+          isOngoing: bill.ongoingSourceUrl !== undefined,
           descriptionSource: descriptionOverride?.source ?? null,
           resultSource: bill.resultSource,
         }),

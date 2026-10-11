@@ -119,6 +119,14 @@
     "./council/family-names": {
       "types": "./src/council/family-names.ts",
       "default": "./src/council/family-names.ts"
+    },
+    "./council/official-minutes": {
+      "types": "./src/council/official-minutes.ts",
+      "default": "./src/council/official-minutes.ts"
+    },
+    "./council/bill-source-section": {
+      "types": "./src/council/bill-source-section.ts",
+      "default": "./src/council/bill-source-section.ts"
     }
   },
   "dependencies": {

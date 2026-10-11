@@ -5,27 +5,197 @@
  * 入力→出力だけを扱うので session-data-utils.test.ts で回帰を守る。
  */
 
-import type { BillDescriptionSource } from "./bill-descriptions";
-import type { BillSource, SessionSource } from "./source-data";
+import type { BillSource, Proposer, SessionSource } from "./source-data";
+
+/** 公式ページの番号表記を、サイトで先に公開していた表記に読み替える対応 */
+export interface BillLabelAlias {
+  sessionKey: string;
+  proposer: Proposer;
+  /** 公式ページから読み取った表記（例: 議案第62号） */
+  officialLabel: string;
+  /** サイトで使い続ける表記（例: 議員提出議案第62号） */
+  label: string;
+}
 
 /**
- * 公式サイトから取り込んだ会期と、手で管理する会期中の会期を結合する。
- * 同じ key が両方にあるのは「議決結果ページが公開されたのに
- * ongoing-sessions.json から消し忘れた」状態なので、対処法つきで止める
+ * 番号表記から提出者の語を除いたもの（「議員提出議案第62号」→「議案第62号」）。
+ * 公式ページは議員提出議案を「議員提出 議案第62号」と2行に分けて書くことがあり、
+ * 読み取ると「議案第62号」になる
+ */
+export function billNumberCore(label: string): string {
+  return label.replace(/^(議員提出|委員会提出)/, "");
+}
+
+/** 件名の比較用（空白と括弧書きの有無の違いを吸収する） */
+function normalizeTitle(title: string): string {
+  return title
+    .normalize("NFKC")
+    .replace(/\s+/g, "")
+    .replace(/[（(][^（()）]*[）)]$/, "");
+}
+
+/** 会期中に手で置いた議案と、公式ページから読み取った議案が同じ議案か */
+function isSameBill(ongoing: BillSource, scraped: BillSource): boolean {
+  if (ongoing.proposer !== scraped.proposer) return false;
+  if (ongoing.billNumberLabel !== null && scraped.billNumberLabel !== null) {
+    return (
+      billNumberCore(ongoing.billNumberLabel) ===
+      billNumberCore(scraped.billNumberLabel)
+    );
+  }
+  return (
+    ongoing.billNumberLabel === scraped.billNumberLabel &&
+    normalizeTitle(ongoing.title) === normalizeTitle(scraped.title)
+  );
+}
+
+/** 会期データに番号表記の読み替えを当てる（当てはまらない議案はそのまま） */
+export function applyBillLabelAliases(
+  sessions: readonly SessionSource[],
+  aliases: readonly BillLabelAlias[]
+): SessionSource[] {
+  if (aliases.length === 0) return [...sessions];
+  return sessions.map((session) => {
+    const forSession = aliases.filter((a) => a.sessionKey === session.key);
+    if (forSession.length === 0) return session;
+    return {
+      ...session,
+      bills: session.bills.map((bill) => {
+        const alias = forSession.find(
+          (a) =>
+            a.proposer === bill.proposer &&
+            a.officialLabel === bill.billNumberLabel
+        );
+        return alias ? { ...bill, billNumberLabel: alias.label } : bill;
+      }),
+    };
+  });
+}
+
+/**
+ * 会期中に手で置いた議案と公式ページの議案で、提出者と番号は同じなのに表記だけが
+ * 違うものを探す。議案の id（＝URL）は番号表記から決まるので、表記が変わると
+ * 同じ議案が別の id で二重に公開され、解説も外れる。先に公開していた表記（会期中の方）を
+ * 使い続けるための読み替えを返す
+ */
+export function findBillLabelAliases(
+  ongoing: readonly SessionSource[],
+  scraped: readonly SessionSource[]
+): BillLabelAlias[] {
+  const scrapedByKey = new Map(scraped.map((s) => [s.key, s]));
+  return ongoing.flatMap((session) => {
+    const official = scrapedByKey.get(session.key);
+    if (!official) return [];
+    return session.bills.flatMap((bill) => {
+      if (bill.billNumberLabel === null) return [];
+      const counterpart = official.bills.find(
+        (b) =>
+          isSameBill(bill, b) && b.billNumberLabel !== bill.billNumberLabel
+      );
+      return counterpart?.billNumberLabel
+        ? [
+            {
+              sessionKey: session.key,
+              proposer: bill.proposer,
+              officialLabel: counterpart.billNumberLabel,
+              label: bill.billNumberLabel,
+            },
+          ]
+        : [];
+    });
+  });
+}
+
+/**
+ * 会期中の一覧から、公式の議決結果ページに載った議案を外す。
+ * 公式ページは会期の途中（最終日より前）に公開されることがあり、その時点では
+ * 最終日に議決される議案（決算の認定や追加議案）がまだ載っていない。
+ * 載っていない議案は会期中の一覧に残し、すべて載ったら会期ごと外す
+ */
+export function pruneOngoingSessions(
+  ongoing: readonly SessionSource[],
+  scraped: readonly SessionSource[]
+): {
+  /** 会期中の一覧に残すもの（公式ページに無い会期と、一部の議案がまだ載っていない会期） */
+  kept: SessionSource[];
+  /** すべての議案が公式ページに載り、会期中の一覧から外れた会期 */
+  pruned: SessionSource[];
+  /** 公式ページに載ったが、まだ載っていない議案が残っている会期（残した議案だけを持つ） */
+  partial: SessionSource[];
+} {
+  const scrapedByKey = new Map(scraped.map((s) => [s.key, s]));
+  const kept: SessionSource[] = [];
+  const pruned: SessionSource[] = [];
+  const partial: SessionSource[] = [];
+  for (const session of ongoing) {
+    const official = scrapedByKey.get(session.key);
+    if (!official) {
+      kept.push(session);
+      continue;
+    }
+    const remaining = session.bills.filter(
+      (bill) => !official.bills.some((b) => isSameBill(bill, b))
+    );
+    if (remaining.length === 0) {
+      pruned.push(session);
+    } else {
+      const leftover = { ...session, bills: remaining };
+      kept.push(leftover);
+      partial.push(leftover);
+    }
+  }
+  return { kept, pruned, partial };
+}
+
+/** 会期データを合わせた後の議案。公式ページに未掲載の議案は出典ページを別に持つ */
+export interface MergedBill extends BillSource {
+  /**
+   * 会期中として手で置いた議案（公式の議決結果ページにまだ載っていない）の出典ページ。
+   * 会期中の「提出議案」ページのURL。公式ページから取り込んだ議案には無い
+   */
+  ongoingSourceUrl?: string;
+}
+
+export interface MergedSession extends Omit<SessionSource, "bills"> {
+  bills: MergedBill[];
+}
+
+/**
+ * 公式サイトから取り込んだ会期と、手で管理する会期中の会期を合わせる。
+ * 同じ会期が両方にあるとき（公式ページが会期の途中で公開されたとき）は、
+ * 公式ページの議案の後ろに、まだ載っていない議案を足す。
+ * 同じ議案が両方にあるのは「公式ページに載ったのに ongoing-sessions.json から
+ * 消し忘れた」状態なので、対処法つきで止める（tagawa:scrape が自動で外す）
  */
 export function mergeSessions(
   scraped: readonly SessionSource[],
   ongoing: readonly SessionSource[]
-): SessionSource[] {
-  const scrapedKeys = new Set(scraped.map((s) => s.key));
-  for (const session of ongoing) {
-    if (scrapedKeys.has(session.key)) {
-      throw new Error(
-        `会期 ${session.key} は sessions.json に取り込み済みです。data/ongoing-sessions.json から削除してください`
-      );
+): MergedSession[] {
+  const ongoingByKey = new Map(ongoing.map((s) => [s.key, s]));
+  const asOngoingBills = (session: SessionSource): MergedBill[] =>
+    session.bills.map((bill) => ({
+      ...bill,
+      ongoingSourceUrl: session.sourceUrl,
+    }));
+
+  const merged: MergedSession[] = scraped.map((session) => {
+    const extra = ongoingByKey.get(session.key);
+    if (!extra) return session;
+    for (const bill of extra.bills) {
+      if (session.bills.some((b) => isSameBill(bill, b))) {
+        throw new Error(
+          `会期 ${session.key} の ${bill.billNumberLabel ?? bill.title} は sessions.json に取り込み済みです。data/ongoing-sessions.json から削除してください（tagawa:scrape を実行すると自動で外れます）`
+        );
+      }
     }
-  }
-  return [...scraped, ...ongoing];
+    return { ...session, bills: [...session.bills, ...asOngoingBills(extra)] };
+  });
+
+  const scrapedKeys = new Set(scraped.map((s) => s.key));
+  const ongoingOnly: MergedSession[] = ongoing
+    .filter((session) => !scrapedKeys.has(session.key))
+    .map((session) => ({ ...session, bills: asOngoingBills(session) }));
+  return [...merged, ...ongoingOnly];
 }
 
 /**
@@ -70,13 +240,6 @@ const RESULT_SOURCE_SUFFIX: Partial<Record<ResultSource, string>> = {
   broadcast: "（本会議の中継映像より）",
 };
 
-const RESULT_SOURCE_BULLET: Partial<Record<ResultSource, string>> = {
-  minutes:
-    "- 議決結果は[田川市議会 会議録検索システム](https://www.kensakusystem.jp/tagawa/index.html)の本会議録から自動抽出したものです",
-  broadcast:
-    "- 議決結果は公式YouTubeチャンネルの本会議中継映像で確認したものです（議決結果ページの公開後に照合します）",
-};
-
 export const NO_RESULT_NOTE = "議決結果不明（出典に記載なし）";
 
 /** bills.name（「議案第50号　件名」。番号が無い案件は件名だけ） */
@@ -107,64 +270,4 @@ export function buildDefaultSummary(
     return `${sessionName}に${proposerLabel}から提出され、${bill.statusNote}です。`;
   }
   return `${sessionName}に${proposerLabel}から提出されました。議決結果は出典ページに記載されていません。`;
-}
-
-const EXPLANATION_MATERIALS_BULLET =
-  "- 田川市議会公式サイトに掲載の議案説明資料（PDF）等の公開情報";
-
-/** 解説文の典拠ごとの「## 出典」の箇条書きと末尾の注記 */
-const DESCRIPTION_SOURCE_CITATIONS: Record<
-  BillDescriptionSource,
-  { bullets: string[]; note: string }
-> = {
-  minutes: {
-    bullets: [
-      "- [田川市議会 会議録検索システム](https://www.kensakusystem.jp/tagawa/index.html)の本会議録（提案理由説明・委員会審査結果報告・質疑・討論等）",
-    ],
-    note: "※ 上記の解説は、田川市議会 会議録検索システムで公開されている本会議録（提案理由説明・委員会審査結果報告・質疑・討論の内容）をもとに作成しています。",
-  },
-  "explanation-materials": {
-    bullets: [EXPLANATION_MATERIALS_BULLET],
-    note: "※ 上記の解説は、田川市議会公式サイトが公開する議案説明資料等の情報をもとに作成しています。本会議での質疑・討論の内容は、会議録が本稿執筆時点（2026年7月）で田川市議会 会議録検索システムに未公開のため反映していません。",
-  },
-  broadcast: {
-    bullets: [
-      EXPLANATION_MATERIALS_BULLET,
-      "- [田川市議会 公式YouTubeチャンネル](https://www.joho.tagawa.fukuoka.jp/kiji0037830/index.html)の本会議中継映像（提案理由説明・質疑・討論・採決）",
-    ],
-    note: "※ 上記の解説は、田川市議会公式サイトが公開する議案説明資料等と、公式YouTubeチャンネルの本会議中継映像（自動字幕）をもとに作成しています。本会議録は本稿執筆時点（2026年9月）で田川市議会 会議録検索システムに未公開のため、発言の細部は中継映像でご確認ください。",
-  },
-};
-
-const NOTE_FACTS_ONLY =
-  "※ この内容は田川市議会事務局が公開する情報を基に事実のみを転記したものです。分かりやすい解説文のAIによる生成は行っていません。";
-
-export interface SourceSectionInput {
-  sessionName: string;
-  sourceUrl: string;
-  /** 会期中の会期は公式ページの題名が「提出議案」（議決結果ページはまだ無い） */
-  isOngoing: boolean;
-  /** 解説文の典拠。解説が無い議案は null */
-  descriptionSource: BillDescriptionSource | null;
-  resultSource: BillSource["resultSource"];
-}
-
-/** bill_contents.content 末尾の「## 出典」セクション（見出しから注記まで） */
-export function buildSourceSection(input: SourceSectionInput): string[] {
-  const pageTitle = input.isOngoing ? "提出議案" : "提出議案と議決結果";
-  const citations = input.descriptionSource
-    ? DESCRIPTION_SOURCE_CITATIONS[input.descriptionSource]
-    : null;
-  const resultBullet = input.resultSource
-    ? RESULT_SOURCE_BULLET[input.resultSource]
-    : undefined;
-  return [
-    "## 出典",
-    "",
-    `- [田川市議会「${input.sessionName}の${pageTitle}」](${input.sourceUrl})（福岡県田川市公式サイト）`,
-    ...(citations?.bullets ?? []),
-    ...(resultBullet ? [resultBullet] : []),
-    "",
-    citations?.note ?? NOTE_FACTS_ONLY,
-  ];
 }
