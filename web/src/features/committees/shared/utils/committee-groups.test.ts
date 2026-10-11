@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import type { CommitteeMeetingListItem } from "../types";
 import {
   buildCommitteeGroups,
+  committeeGroupHref,
   committeeSectionId,
+  findCommitteeGroup,
   formatPeriodLabel,
 } from "./committee-groups";
 
@@ -77,6 +79,60 @@ describe("buildCommitteeGroups", () => {
 
   it("空配列は空のグループ一覧になる", () => {
     expect(buildCommitteeGroups([])).toEqual([]);
+  });
+});
+
+describe("findCommitteeGroup", () => {
+  const groups = buildCommitteeGroups([
+    makeMeeting("総務文教委員会", "2026-01-12"),
+    makeMeeting("厚生委員会", "2026-01-11"),
+    makeMeeting("架空の特別委員会", "2026-01-10"),
+  ]);
+
+  it("登録済みの委員会は slug で引ける", () => {
+    expect(findCommitteeGroup(groups, "somu-bunkyo")?.committeeName).toBe(
+      "総務文教委員会"
+    );
+    expect(findCommitteeGroup(groups, "kosei")?.committeeName).toBe(
+      "厚生委員会"
+    );
+  });
+
+  it("未登録の委員会は委員会名（エンコードされていてもよい）で引ける", () => {
+    expect(findCommitteeGroup(groups, "架空の特別委員会")?.committeeName).toBe(
+      "架空の特別委員会"
+    );
+    expect(
+      findCommitteeGroup(groups, encodeURIComponent("架空の特別委員会"))
+        ?.committeeName
+    ).toBe("架空の特別委員会");
+  });
+
+  it("会議が1件も無い委員会は、slug が登録済みでも null", () => {
+    expect(findCommitteeGroup(groups, "gikai-hokokukai")).toBeNull();
+  });
+
+  it("存在しない slug・壊れたエンコードは null", () => {
+    expect(findCommitteeGroup(groups, "no-such-committee")).toBeNull();
+    expect(findCommitteeGroup(groups, "%E3")).toBeNull();
+  });
+
+  it("まとまりが1つも無ければ null", () => {
+    expect(findCommitteeGroup([], "kosei")).toBeNull();
+  });
+});
+
+describe("committeeGroupHref", () => {
+  it("登録済みの委員会は slug のパスにする", () => {
+    expect(committeeGroupHref("総務文教委員会")).toBe(
+      "/committees/group/somu-bunkyo"
+    );
+  });
+
+  it("未登録の委員会は委員会名をエンコードしたパスにする", () => {
+    expect(committeeGroupHref("架空の特別委員会")).toBe(
+      `/committees/group/${encodeURIComponent("架空の特別委員会")}`
+    );
   });
 });
 

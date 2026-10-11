@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getBillsLite } from "@/features/bills/server/loaders/get-bills";
 import { getCommitteeMeetings } from "@/features/committees/server/loaders/get-committee-meetings";
+import { buildCommitteeGroups } from "@/features/committees/shared/utils/committee-groups";
+import { getCommitteeSlug } from "@/features/committees/shared/utils/committee-slug";
 import { getAllDietSessions } from "@/features/diet-sessions/server/loaders/get-all-diet-sessions";
 import {
   getQuestionSessionGroups,
@@ -106,6 +108,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "weekly" as const,
     priority: 0.8,
   }));
+
+  // 委員会ごとの記録ページは、その委員会の会議の更新日時のうち最も新しいもの
+  const latestMeetingByCommittee = latestDateByKey(
+    committeeMeetings,
+    (meeting) => [meeting.committee_name],
+    (meeting) => meeting.updated_at
+  );
+  const committeeGroupUrls = buildCommitteeGroups(committeeMeetings).map(
+    (group) => ({
+      url: `${baseUrl}${routes.committeeGroup(getCommitteeSlug(group.committeeName))}`,
+      lastModified: latestMeetingByCommittee.get(group.committeeName),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    })
+  );
 
   const committeeMeetingUrls = committeeMeetings.map((meeting) => ({
     url: `${baseUrl}${routes.committeeMeeting(meeting.id)}`,
@@ -291,6 +308,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...tagUrls,
     ...memberUrls,
     ...proposerUrls,
+    ...committeeGroupUrls,
     ...committeeMeetingUrls,
     ...questionSessionEntries,
     ...topicUrls,

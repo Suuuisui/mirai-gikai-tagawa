@@ -16,6 +16,7 @@ import { formatDateWithDots } from "@/lib/utils/date";
 import { getCommitteeProfile } from "../../shared/data/committee-profiles";
 import { resolveTopics } from "../../shared/data/committee-topics";
 import type { CommitteeMeeting } from "../../shared/types";
+import { committeeGroupHref } from "../../shared/utils/committee-groups";
 import type { AdjacentMeetings } from "../../shared/utils/committee-list";
 import {
   COMMITTEE_SOURCES,
@@ -292,7 +293,11 @@ export function CommitteeMeetingDetailPage({
             { label: "TOP", href: routes.home() },
             { label: "委員会の記録", href: routes.committees() },
             {
-              label: `${committeeLabel}（${formatDateWithDots(meeting.meeting_date)}）`,
+              label: committeeLabel,
+              href: committeeGroupHref(meeting.committee_name),
+            },
+            {
+              label: `${formatDateWithDots(meeting.meeting_date)}の会議`,
             },
           ]}
         />

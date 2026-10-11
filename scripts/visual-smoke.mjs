@@ -54,6 +54,7 @@ const DYNAMIC_ROUTE_PATTERNS = [
   /^\/sessions\/[^/]+$/,
   /^\/members\/[^/]+$/,
   /^\/committees\/[^/]+$/,
+  /^\/committees\/group\/[^/]+$/,
   /^\/questions\/[^/]+$/,
   /^\/tags\/[^/]+$/,
   /^\/archive\/[^/]+\/bills$/,
