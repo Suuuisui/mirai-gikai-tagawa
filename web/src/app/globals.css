@@ -112,6 +112,16 @@
   --color-mirai-badge-yellow: #fff0b3;
   --color-mirai-info-blue: #c5d7fb;
 
+  /* 出典バッジ（情報のもとの3区分）。面は DADS の 50 番台、枠は 200 番台。
+     公式=青、中継の文字起こし=黄（聞き取りの誤りに注意）、情報開示請求=紫。
+     色だけに頼らず、必ずアイコンと文字を添える */
+  --color-source-official: #e8f1fe;
+  --color-source-official-border: #c5d7fb;
+  --color-source-transcript: #fbf5e0;
+  --color-source-transcript-border: #ffe380;
+  --color-source-disclosure: #f1eafa;
+  --color-source-disclosure-border: #ddc2ff;
+
   /* Progress（DADS solid-gray-100 / green-200） */
   --color-mirai-progress-track: #e6e6e6;
   --color-mirai-progress-fill: #9bd4b5;

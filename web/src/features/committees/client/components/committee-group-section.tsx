@@ -1,9 +1,10 @@
 "use client";
 
-import { ChevronDown, FileText } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { jumpTargetClassName } from "@/components/ui/jump-nav";
+import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import { cn } from "@/lib/utils";
 import {
   type CommitteeGroup,
@@ -51,10 +52,11 @@ export function CommitteeGroupSection({ group }: CommitteeGroupSectionProps) {
           {formatPeriodLabel(group.period)}
         </span>
         {group.disclosureCount > 0 && (
-          <span className="inline-flex items-center gap-1 rounded-md bg-mirai-surface px-2.5 py-1 font-medium text-mirai-text-secondary">
-            <FileText aria-hidden className="size-3.5" />
-            開示文書 {group.disclosureCount}件
-          </span>
+          <SourceBadge
+            kind="disclosure"
+            detail={`開示文書 ${group.disclosureCount}件`}
+            className="px-2.5 py-1"
+          />
         )}
       </div>
 

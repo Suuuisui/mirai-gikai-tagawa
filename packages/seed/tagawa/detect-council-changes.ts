@@ -15,9 +15,12 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { parseBillSources } from "@mirai-gikai/shared/council/bill-source-section";
+import type { OfficialMinutesRecord } from "@mirai-gikai/shared/council/types";
 import { parse } from "csv-parse/sync";
 import {
   type BillContentRow,
+  type BillDescriptionState,
   type BillRef,
   buildCommitSubject,
   buildUpdateReport,
@@ -27,21 +30,34 @@ import {
   findChangedBillContents,
   findLostDescriptions,
   findOngoingKeyMismatches,
+  findSessionIdsWithChangedBillRows,
+  findSessionsAwaitingMinutes,
+  findStaleOngoingBills,
   hasDataChanges,
   hasDescription,
   listNewBills,
+  listNewLabelAliases,
+  listNewlyOfficialSessionKeys,
+  listPendingOfficialBills,
   listRemovedBills,
   needsHumanFollowUp,
   parseOutDir,
-  pruneOngoingSessions,
+  type RecordAwaitingMinutes,
   type UpdateReportInput,
 } from "./council-update-utils";
-import { buildBillName } from "./session-data-utils";
+import { diffMinutesRecords, parseStoredMinutesIndex } from "./minutes-index-parser";
+import {
+  type BillLabelAlias,
+  buildBillName,
+  mergeSessions,
+} from "./session-data-utils";
 import type { SessionSource } from "./source-data";
 
 const REPO_ROOT = path.resolve(import.meta.dirname, "../../..");
 const SESSIONS_PATH = "packages/seed/tagawa/data/sessions.json";
 const ONGOING_PATH = "packages/seed/tagawa/data/ongoing-sessions.json";
+const LABEL_ALIASES_PATH = "packages/seed/tagawa/data/bill-label-aliases.json";
+const OFFICIAL_MINUTES_PATH = "packages/seed/tagawa/data/official-minutes.json";
 const VIDEOS_PATH = "packages/seed/tagawa/data/question-videos.json";
 const PETITIONS_PATH = "web/src/features/petitions/shared/data/petitions-data.ts";
 const QUESTIONS_PATH = "web/src/features/general-questions/shared/data/general-questions-data.ts";
@@ -79,6 +95,15 @@ function parseSessions(json: string): SessionSource[] {
   return json.trim() === "" ? [] : (JSON.parse(json) as SessionSource[]);
 }
 
+function parseLabelAliases(json: string): BillLabelAlias[] {
+  return json.trim() === "" ? [] : (JSON.parse(json) as BillLabelAlias[]);
+}
+
+/** 会議録の一覧（data/official-minutes.json）。まだ無いとき（初回）は空 */
+function parseMinutes(json: string): OfficialMinutesRecord[] {
+  return json.trim() === "" ? [] : parseStoredMinutesIndex(json).records;
+}
+
 function parseVideos(json: string): ChannelVideo[] {
   return json.trim() === "" ? [] : (JSON.parse(json) as ChannelVideo[]);
 }
@@ -98,21 +123,27 @@ interface CsvIndex {
   slugBySessionId: Map<string, string>;
   billIdByName: Map<string, string>;
   billById: Map<string, { name: string; sessionId: string }>;
+  /** bills_rows.csv の行そのまま（行の増減・変化の検出用） */
+  billRows: Record<string, string>[];
   contents: BillContentRow[];
+  contentById: Map<string, string>;
 }
 
 function buildCsvIndex(source: "committed" | "working"): CsvIndex {
   const sessions = readCsvRows("diet_sessions_rows.csv", source);
   const bills = readCsvRows("bills_rows.csv", source);
+  const contents = readCsvRows("bill_contents_rows.csv", source).map((r) => ({
+    bill_id: r.bill_id,
+    content: r.content,
+  }));
   return {
     sessionIdBySlug: new Map(sessions.map((r) => [r.slug, r.id])),
     slugBySessionId: new Map(sessions.map((r) => [r.id, r.slug])),
     billIdByName: new Map(bills.map((r) => [`${r.diet_session_id}|${r.name}`, r.id])),
     billById: new Map(bills.map((r) => [r.id, { name: r.name, sessionId: r.diet_session_id }])),
-    contents: readCsvRows("bill_contents_rows.csv", source).map((r) => ({
-      bill_id: r.bill_id,
-      content: r.content,
-    })),
+    billRows: bills,
+    contents,
+    contentById: new Map(contents.map((row) => [row.bill_id, row.content])),
   };
 }
 
@@ -135,11 +166,17 @@ function main() {
   const nextSessions = parseSessions(readWorking(SESSIONS_PATH));
   const prevOngoing = parseSessions(readCommitted(ONGOING_PATH));
   const nextOngoing = parseSessions(readWorking(ONGOING_PATH));
-  const prevAll = [...prevSessions, ...prevOngoing];
-  const nextAll = [...nextSessions, ...nextOngoing];
+  // 同じ会期が両方にあるとき（公式ページが会期の途中で公開され、最終日の議案がまだ
+  // 載っていないとき）は1つの会期に合わせてから比べる
+  const prevAll = mergeSessions(prevSessions, prevOngoing);
+  const nextAll = mergeSessions(nextSessions, nextOngoing);
 
   const sessions = diffSessions(prevAll, nextAll);
-  const prunedOngoingKeys = pruneOngoingSessions(prevOngoing, nextSessions).pruned.map((s) => s.key);
+  const prunedOngoingKeys = listNewlyOfficialSessionKeys(prevSessions, prevOngoing, nextSessions);
+  const newLabelAliases = listNewLabelAliases(
+    parseLabelAliases(readCommitted(LABEL_ALIASES_PATH)),
+    parseLabelAliases(readWorking(LABEL_ALIASES_PATH))
+  );
 
   const prevCsv = buildCsvIndex("committed");
   const nextCsv = buildCsvIndex("working");
@@ -160,18 +197,62 @@ function main() {
       return slug ? [slug] : [];
     })
   );
+  // 議案の行（bills_rows.csv）が増えた・変わった会期。会期データを PR で先にコミットしたときは
+  // 上の会期データの比較に差が出ないので、CSV の行からも拾う
+  const sessionsWithChangedBillRows = findSessionIdsWithChangedBillRows(
+    prevCsv.billRows,
+    nextCsv.billRows
+  ).flatMap((sessionId) => {
+    const slug = nextCsv.slugBySessionId.get(sessionId);
+    return slug ? [slug] : [];
+  });
   const changedSessions = [
     ...new Set([
       ...sessions.added,
       ...sessions.changed,
       ...prunedOngoingKeys,
       ...sessionsWithChangedContents,
+      ...sessionsWithChangedBillRows,
     ]),
   ].sort();
 
   const prevVideos = parseVideos(readCommitted(VIDEOS_PATH));
   const nextVideos = parseVideos(readWorking(VIDEOS_PATH));
   const knownVideoIds = new Set(prevVideos.map((v) => v.id));
+
+  // 会議録検索システムの本会議の会議録。新しく載った日と、載ったのに記録・解説が
+  // 中継の文字起こしなどをもとにしたままのものを拾う
+  const nextMinutes = parseMinutes(readWorking(OFFICIAL_MINUTES_PATH));
+  const newOfficialMinutes = diffMinutesRecords(
+    parseMinutes(readCommitted(OFFICIAL_MINUTES_PATH)),
+    nextMinutes
+  );
+  const minutesDates = new Set(nextMinutes.map((record) => record.date));
+  // 議案ごとの解説の典拠（本文の「## 出典」から読む）と議決日
+  const descriptionStates = new Map<string, BillDescriptionState[]>();
+  for (const session of nextAll) {
+    descriptionStates.set(
+      session.key,
+      session.bills.flatMap((bill) => {
+        const billId = findBillId(nextCsv, {
+          sessionKey: session.key,
+          sessionName: session.name,
+          billNumberLabel: bill.billNumberLabel,
+          title: bill.title,
+        });
+        const content = billId ? nextCsv.contentById.get(billId) : undefined;
+        return content === undefined
+          ? []
+          : [
+              {
+                source: parseBillSources(content)?.descriptionSource ?? null,
+                resolvedDate: bill.resolvedDate,
+              },
+            ];
+      })
+    );
+  }
+  const awaitingMinutesPath = path.join(outDir, "records-awaiting-minutes.json");
 
   const unrecordedPath = path.join(outDir, "unrecorded-videos.json");
   const warningsPath = path.join(outDir, "warnings.txt");
@@ -190,12 +271,22 @@ function main() {
       (id) => nextCsv.billById.get(id)?.name ?? id
     ),
     prunedOngoingKeys,
+    pendingOfficialBills: listPendingOfficialBills(nextOngoing, nextSessions),
+    staleOngoingBills: findStaleOngoingBills(nextOngoing, todayInJst()),
+    newLabelAliases,
     petitions: { added: petitions.added.length, changed: petitions.changed.length },
     questions: { added: questions.added.length, changed: questions.changed.length },
     addedQuestionVideos: nextVideos.filter((v) => !knownVideoIds.has(v.id)),
     unrecordedVideos: existsSync(unrecordedPath)
       ? (JSON.parse(readFileSync(unrecordedPath, "utf-8")) as ChannelVideo[])
       : [],
+    newOfficialMinutes,
+    officialMinutesIndexChanged:
+      readCommitted(OFFICIAL_MINUTES_PATH) !== readWorking(OFFICIAL_MINUTES_PATH),
+    recordsAwaitingMinutes: existsSync(awaitingMinutesPath)
+      ? (JSON.parse(readFileSync(awaitingMinutesPath, "utf-8")) as RecordAwaitingMinutes[])
+      : [],
+    sessionsAwaitingMinutes: findSessionsAwaitingMinutes(nextAll, descriptionStates, minutesDates),
     warnings: [
       ...(existsSync(warningsPath)
         ? readFileSync(warningsPath, "utf-8").split("\n").filter((line) => line.trim() !== "")

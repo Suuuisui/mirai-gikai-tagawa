@@ -7,9 +7,11 @@
  */
 
 import path from "node:path";
+import type { BillDescriptionSource } from "@mirai-gikai/shared/council/bill-source-section";
+import type { OfficialMinutesRecord } from "@mirai-gikai/shared/council/types";
 import { billDescriptionKey } from "./bill-descriptions";
 import { parseWarekiDate } from "./council-html-utils";
-import { buildBillName } from "./session-data-utils";
+import { type BillLabelAlias, buildBillName } from "./session-data-utils";
 import type { BillSource, SessionSource } from "./source-data";
 
 /**
@@ -50,22 +52,6 @@ export function diffSessions(
   }
   const removed = [...prevByKey.keys()].filter((key) => !nextByKey.has(key));
   return { added: added.sort(), changed: changed.sort(), removed: removed.sort() };
-}
-
-/**
- * 公式サイトから取り込めた会期を、手で管理する会期中の一覧から外す。
- * 閉会して「提出議案と議決結果」ページが公開された会期は sessions.json に入るので、
- * ongoing-sessions.json に残したままだと build-csv.ts がキー重複で止まる
- */
-export function pruneOngoingSessions(
-  ongoing: readonly SessionSource[],
-  scraped: readonly SessionSource[]
-): { kept: SessionSource[]; pruned: SessionSource[] } {
-  const scrapedKeys = new Set(scraped.map((s) => s.key));
-  return {
-    kept: ongoing.filter((s) => !scrapedKeys.has(s.key)),
-    pruned: ongoing.filter((s) => scrapedKeys.has(s.key)),
-  };
 }
 
 /**
@@ -135,6 +121,75 @@ export function listRemovedBills(
   next: readonly SessionSource[]
 ): BillRef[] {
   return collectBillRefs(previous, billIdentities(next));
+}
+
+/**
+ * 会期中として手で置いていた会期のうち、今回はじめて公式の議決結果ページを取り込めたもの。
+ * 前回すでに公式ページがあった会期（未掲載の議案だけが会期中データに残っている会期）は含めない
+ */
+export function listNewlyOfficialSessionKeys(
+  previousScraped: readonly SessionSource[],
+  previousOngoing: readonly SessionSource[],
+  nextScraped: readonly SessionSource[]
+): string[] {
+  const before = new Set(previousScraped.map((s) => s.key));
+  const after = new Set(nextScraped.map((s) => s.key));
+  return previousOngoing
+    .map((s) => s.key)
+    .filter((key) => !before.has(key) && after.has(key));
+}
+
+/**
+ * 公式の議決結果ページはあるのに、まだそこに載っていない議案
+ * （会期中データのまま掲載しているもの。最終日に議決された決算や追加議案など）
+ */
+export function listPendingOfficialBills(
+  ongoing: readonly SessionSource[],
+  scraped: readonly SessionSource[]
+): BillRef[] {
+  const scrapedKeys = new Set(scraped.map((s) => s.key));
+  return collectBillRefs(
+    ongoing.filter((s) => scrapedKeys.has(s.key)),
+    new Set()
+  );
+}
+
+/** 会期が終わってから、会期中データに残したままにしてよい日数 */
+export const STALE_ONGOING_DAYS = 14;
+
+/**
+ * 会期が終わって STALE_ONGOING_DAYS 日たっても会期中データに残っている議案。
+ * 公式ページに載れば自動で外れるので、残り続けるのは、公式ページの更新が遅れているか、
+ * 番号・提出者の表記が合わず同じ議案だと判定できていないか、撤回されたかのどれか。
+ * 放っておくと中継をもとにした結果のまま（または二重に）公開され続けるので、人が確かめる
+ */
+export function findStaleOngoingBills(
+  ongoing: readonly SessionSource[],
+  today: string,
+  days: number = STALE_ONGOING_DAYS
+): BillRef[] {
+  const threshold = new Date(`${today}T00:00:00Z`);
+  threshold.setUTCDate(threshold.getUTCDate() - days);
+  const thresholdDate = threshold.toISOString().slice(0, 10);
+  return collectBillRefs(
+    ongoing.filter((s) => s.endDate < thresholdDate),
+    new Set()
+  );
+}
+
+function labelAliasKey(alias: BillLabelAlias): string {
+  return `${alias.sessionKey}|${alias.proposer}|${alias.officialLabel}`;
+}
+
+/** 今回足された番号表記の読み替えを「会期キー: 公式の表記 → 使い続ける表記」の形で返す */
+export function listNewLabelAliases(
+  previous: readonly BillLabelAlias[],
+  next: readonly BillLabelAlias[]
+): string[] {
+  const known = new Set(previous.map(labelAliasKey));
+  return next
+    .filter((alias) => !known.has(labelAliasKey(alias)))
+    .map((alias) => `${alias.sessionKey}: ${alias.officialLabel} → ${alias.label}`);
 }
 
 /** レポート用の1行（会期名（キー）: 議案番号　件名） */
@@ -215,6 +270,26 @@ export function findChangedBillContents(
       return prev !== undefined && prev !== row.content;
     })
     .map((row) => row.bill_id);
+}
+
+/**
+ * bills_rows.csv の行が増えた・中身が変わった会期の id（diet_session_id）。
+ * 会期データ（sessions.json / ongoing-sessions.json）を PR で先にコミットした場合、
+ * HEAD との比較では会期データに差が出ない。CSV は自動更新だけが作り直すので、
+ * CSV の行の差からも「本番DBへ投入し直す会期」を拾う（新しい議案の行、結果・状態の変化）
+ */
+export function findSessionIdsWithChangedBillRows(
+  previous: readonly Record<string, string>[],
+  next: readonly Record<string, string>[]
+): string[] {
+  const before = new Map(previous.map((row) => [row.id, JSON.stringify(row)]));
+  const sessionIds = new Set<string>();
+  for (const row of next) {
+    if (before.get(row.id) !== JSON.stringify(row)) {
+      sessionIds.add(row.diet_session_id);
+    }
+  }
+  return [...sessionIds];
 }
 
 /**
@@ -315,6 +390,103 @@ export function splitVideosByRecency(
   return { recent, older };
 }
 
+// ---------------------------------------------------------------- 会議録（会議録検索システム）
+
+/** 委員会記録のうち、何をもとにした記録かの判定に使う欄 */
+export interface MeetingSourceReference {
+  committee_name: string;
+  meeting_date: string;
+  source_type: string;
+  headline: string | null;
+}
+
+/** 会議を特定する組（委員会名と開催日） */
+export interface MeetingKey {
+  committeeName: string;
+  meetingDate: string;
+}
+
+/** 公式の会議録が公開されたのに、中継の文字起こしをもとにしたままの本会議の記録 */
+export interface RecordAwaitingMinutes extends MeetingKey {
+  headline: string | null;
+}
+
+/**
+ * 会議録検索システムに会議録が載った日の本会議の記録のうち、まだ中継の文字起こし
+ * （source_type が youtube）をもとにしているものを、開催日の古い順に返す。
+ * 会議録に載るのは本会議だけなので、委員会の記録は対象にしない。
+ * backlog（順次作り直すと決めて、毎日は知らせない古い記録）は除く
+ */
+export function findRecordsAwaitingMinutes(
+  meetings: readonly MeetingSourceReference[],
+  minutesDates: ReadonlySet<string>,
+  backlog: readonly MeetingKey[] = []
+): RecordAwaitingMinutes[] {
+  const skipped = new Set(backlog.map((m) => `${m.committeeName}|${m.meetingDate}`));
+  return meetings
+    .filter(
+      (m) =>
+        m.committee_name.startsWith("本会議") &&
+        m.source_type === "youtube" &&
+        minutesDates.has(m.meeting_date.slice(0, 10)) &&
+        !skipped.has(`${m.committee_name}|${m.meeting_date.slice(0, 10)}`)
+    )
+    .map((m) => ({
+      committeeName: m.committee_name,
+      meetingDate: m.meeting_date.slice(0, 10),
+      headline: m.headline,
+    }))
+    .sort(
+      (a, b) =>
+        a.meetingDate.localeCompare(b.meetingDate) || a.committeeName.localeCompare(b.committeeName, "ja")
+    );
+}
+
+/** 会議録が公開された会期のうち、解説が会議録をもとにしていない議案が残っているもの */
+export interface SessionAwaitingMinutes {
+  sessionKey: string;
+  sessionName: string;
+  /** 解説が中継の文字起こし・説明資料をもとにしたままの議案の数 */
+  billCount: number;
+}
+
+/** 議案1件の、解説の典拠と議決日（会期中の議案は提出日） */
+export interface BillDescriptionState {
+  source: BillDescriptionSource | null;
+  /** YYYY-MM-DD */
+  resolvedDate: string;
+}
+
+/**
+ * 議決した日（会期中の議案は提出日）の本会議の会議録が公開されているのに、解説が
+ * 中継の文字起こし（broadcast）や説明資料だけ（explanation-materials）のままの議案を、
+ * 会期ごとに数える。会期の途中の日の会議録だけが先に公開されても、まだ会議録が無い日に
+ * 議決された議案は数えない。
+ * bills は会期キー → その会期の議案の状態
+ */
+export function findSessionsAwaitingMinutes(
+  sessions: readonly Pick<SessionSource, "key" | "name">[],
+  bills: ReadonlyMap<string, readonly BillDescriptionState[]>,
+  minutesDates: ReadonlySet<string>
+): SessionAwaitingMinutes[] {
+  return sessions.flatMap((session) => {
+    const billCount = (bills.get(session.key) ?? []).filter(
+      (bill) =>
+        (bill.source === "broadcast" || bill.source === "explanation-materials") &&
+        minutesDates.has(bill.resolvedDate.slice(0, 10))
+    ).length;
+    return billCount > 0 ? [{ sessionKey: session.key, sessionName: session.name, billCount }] : [];
+  });
+}
+
+/** レポートに1日ずつ載せる会議録の上限（これを超える分は件数だけ） */
+export const MAX_LISTED_MINUTES = 20;
+
+/** 「令和8年 第4回定例会 第1日（2026-06-12）」のようなレポート用の1行 */
+export function formatMinutesRecord(record: OfficialMinutesRecord): string {
+  return `${record.sessionName} ${record.dayLabel}（${record.date}）`;
+}
+
 // ---------------------------------------------------------------- レポート
 
 export interface RecordDiffSummary {
@@ -336,11 +508,26 @@ export interface UpdateReportInput {
   updatedBillContents: number;
   /** 前回は解説文があったのに無くなった議案（表示名） */
   lostDescriptions: string[];
+  /** 公式の議決結果ページが新しく公開された会期（会期中として手で置いていたもの） */
   prunedOngoingKeys: string[];
+  /** 公式の議決結果ページにまだ載っておらず、会期中のデータのまま掲載している議案 */
+  pendingOfficialBills: BillRef[];
+  /** 会期が終わって日がたつのに会期中データに残っている議案（人が確かめる） */
+  staleOngoingBills: BillRef[];
+  /** 今回足した番号表記の読み替え（「会期キー: 公式の表記 → 使い続ける表記」） */
+  newLabelAliases: string[];
   petitions: RecordDiffSummary;
   questions: RecordDiffSummary;
   addedQuestionVideos: ChannelVideo[];
   unrecordedVideos: ChannelVideo[];
+  /** 会議録検索システムに新しく載った本会議の会議録 */
+  newOfficialMinutes: OfficialMinutesRecord[];
+  /** 会議録の一覧（data/official-minutes.json）が前回と違うか（リンク用コードの変更・削除を含む） */
+  officialMinutesIndexChanged: boolean;
+  /** 会議録が公開されたのに、中継の文字起こしをもとにしたままの本会議の記録 */
+  recordsAwaitingMinutes: RecordAwaitingMinutes[];
+  /** 会議録が公開されたのに、解説が会議録をもとにしていない議案が残る会期 */
+  sessionsAwaitingMinutes: SessionAwaitingMinutes[];
   /** yt-dlp が使えなかった等、確認が必要な警告 */
   warnings: string[];
 }
@@ -353,9 +540,12 @@ export function hasDataChanges(input: UpdateReportInput): boolean {
     input.sessions.removed.length > 0 ||
     input.changedSessions.length > 0 ||
     input.prunedOngoingKeys.length > 0 ||
+    input.newLabelAliases.length > 0 ||
     input.petitions.added + input.petitions.changed > 0 ||
     input.questions.added + input.questions.changed > 0 ||
-    input.addedQuestionVideos.length > 0
+    input.addedQuestionVideos.length > 0 ||
+    input.newOfficialMinutes.length > 0 ||
+    input.officialMinutesIndexChanged
   );
 }
 
@@ -368,8 +558,11 @@ export function needsHumanFollowUp(input: UpdateReportInput): boolean {
     input.billsWithoutDescription.length > 0 ||
     input.removedBills.length > 0 ||
     input.lostDescriptions.length > 0 ||
+    input.staleOngoingBills.length > 0 ||
     input.sessions.removed.length > 0 ||
     splitVideosByRecency(input.unrecordedVideos, input.date).recent.length > 0 ||
+    input.recordsAwaitingMinutes.length > 0 ||
+    input.sessionsAwaitingMinutes.length > 0 ||
     input.warnings.length > 0
   );
 }
@@ -389,7 +582,15 @@ export function buildUpdateReport(input: UpdateReportInput): string {
     sessionLines.push(`- 議案や議決結果が更新された会期: ${input.sessions.changed.join("、")}`);
   if (input.prunedOngoingKeys.length > 0)
     sessionLines.push(
-      `- 議決結果ページが公開されたため「会期中」の扱いを終えた会期: ${input.prunedOngoingKeys.join("、")}`
+      `- 議決結果ページが公開され、公式の結果に切り替えた会期: ${input.prunedOngoingKeys.join("、")}`
+    );
+  if (input.pendingOfficialBills.length > 0)
+    sessionLines.push(
+      `- 公式の議決結果ページにまだ載っていない議案: ${input.pendingOfficialBills.length}件（会期中のデータのまま掲載。ページに載ると自動で切り替わります）`
+    );
+  if (input.newLabelAliases.length > 0)
+    sessionLines.push(
+      `- 公式ページの番号表記が掲載済みの表記と違うため読み替えた議案（URLを変えないため）: ${input.newLabelAliases.join("、")}`
     );
   if (input.updatedBillContents > 0)
     sessionLines.push(`- 解説文が更新された議案: ${input.updatedBillContents}件`);
@@ -399,6 +600,16 @@ export function buildUpdateReport(input: UpdateReportInput): string {
     sessionLines.push(`- ⚠️ 公式サイトから消えた会期（要確認）: ${input.sessions.removed.join("、")}`);
   lines.push("### 議案・議決結果");
   lines.push(...(sessionLines.length > 0 ? sessionLines : ["- 変化なし"]));
+  if (input.pendingOfficialBills.length > 0) {
+    lines.push(
+      "",
+      "<details><summary>公式の議決結果ページにまだ載っていない議案</summary>",
+      "",
+      ...input.pendingOfficialBills.map((b) => `- ${formatBillRef(b)}`),
+      "",
+      "</details>"
+    );
+  }
   if (input.newBills.length > 0) {
     lines.push("", `新しい議案 ${input.newBills.length}件:`);
     lines.push(...input.newBills.map((b) => `- ${formatBillRef(b)}`));
@@ -411,6 +622,21 @@ export function buildUpdateReport(input: UpdateReportInput): string {
     `- 一般質問: ${formatRecordDiff(input.questions, "人分")}`,
     `- 一般質問の録画の追加: ${input.addedQuestionVideos.length}本`
   );
+  lines.push("");
+
+  lines.push("### 本会議の会議録（会議録検索システム）");
+  if (input.newOfficialMinutes.length > 0) {
+    // 新しい順に並べ、多いとき（一覧を初めて作った日など）は先頭だけ載せる
+    const newest = [...input.newOfficialMinutes].reverse();
+    const shown = newest.slice(0, MAX_LISTED_MINUTES);
+    lines.push(
+      `- 新しく公開された会議録: ${input.newOfficialMinutes.length}日分`,
+      ...shown.map((record) => `  - ${formatMinutesRecord(record)}`),
+      ...(newest.length > shown.length ? [`  - ほか${newest.length - shown.length}日分`] : [])
+    );
+  } else {
+    lines.push("- 新しく公開された会議録: なし");
+  }
   lines.push("");
 
   const todo: string[] = [];
@@ -438,6 +664,14 @@ export function buildUpdateReport(input: UpdateReportInput): string {
       ""
     );
   }
+  if (input.staleOngoingBills.length > 0) {
+    todo.push(
+      `#### 閉会から${STALE_ONGOING_DAYS}日たっても公式ページに載らない議案（${input.staleOngoingBills.length}件）`,
+      "会期中データ（`data/ongoing-sessions.json`）に残ったままです。公式の議決結果ページを確かめ、載っているのに外れない場合は番号・提出者の表記を合わせ、撤回などで載らない議案は会期中データから消してください。",
+      ...input.staleOngoingBills.map((b) => `- ${formatBillRef(b)}`),
+      ""
+    );
+  }
   if (input.unrecordedVideos.length > 0) {
     const { recent, older } = splitVideosByRecency(input.unrecordedVideos, input.date);
     todo.push(
@@ -454,6 +688,24 @@ export function buildUpdateReport(input: UpdateReportInput): string {
             "</details>",
           ]
         : []),
+      ""
+    );
+  }
+  if (input.recordsAwaitingMinutes.length > 0) {
+    todo.push(
+      `#### 会議録が公開された本会議の記録（${input.recordsAwaitingMinutes.length}件）`,
+      "いまは中継の文字起こしをもとにしています。会議録をもとに要約を作り直し、`replaces_source_type: \"youtube\"` を付けて `scripts/import-committee-meetings.mjs` で置き換えてください（手順は docs/20261011_1300_出典の明示と会議録の取り込み.md）。",
+      ...input.recordsAwaitingMinutes.map(
+        (r) => `- ${r.meetingDate} ${r.committeeName}${r.headline ? `: ${r.headline}` : ""}`
+      ),
+      ""
+    );
+  }
+  if (input.sessionsAwaitingMinutes.length > 0) {
+    todo.push(
+      `#### 会議録が公開された会期の議案の解説（${input.sessionsAwaitingMinutes.length}会期）`,
+      "解説が中継の文字起こしや説明資料をもとにしたままです。`packages/seed/tagawa/bill-descriptions*.ts` を会議録（提案理由・質疑・委員長報告・討論・採決）で書き直し、`source` を `\"minutes\"` にしてください。",
+      ...input.sessionsAwaitingMinutes.map((s) => `- ${s.sessionName}（${s.sessionKey}）: ${s.billCount}件`),
       ""
     );
   }
@@ -474,5 +726,6 @@ export function buildCommitSubject(input: UpdateReportInput): string {
   if (input.questions.added + input.questions.changed > 0)
     parts.push(`一般質問 ${formatRecordDiff(input.questions, "人分")}`);
   if (input.addedQuestionVideos.length > 0) parts.push(`録画 ${input.addedQuestionVideos.length}本`);
+  if (input.newOfficialMinutes.length > 0) parts.push(`会議録 ${input.newOfficialMinutes.length}日分`);
   return `市議会データの自動更新 ${input.date}: ${parts.join(" / ") || "データ整理"}`;
 }

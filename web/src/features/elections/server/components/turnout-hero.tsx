@@ -1,5 +1,6 @@
 import { Container } from "@/components/layouts/container";
 import { JumpNav } from "@/components/ui/jump-nav";
+import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import {
   formatPeople,
   formatPercent,
@@ -50,6 +51,11 @@ export function TurnoutHero({ mayor, byElectionRate }: TurnoutHeroProps) {
           <p className="text-sm leading-relaxed text-mirai-text-secondary">
             {HERO_DESCRIPTION}
           </p>
+          <SourceBadge
+            kind="disclosure"
+            detail="選挙管理委員会の集計資料"
+            className="mt-1 bg-white"
+          />
         </div>
 
         <div className="flex flex-col gap-4 rounded-lg bg-white p-5">

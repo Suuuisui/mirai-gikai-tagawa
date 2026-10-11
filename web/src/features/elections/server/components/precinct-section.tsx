@@ -12,7 +12,7 @@ import {
 } from "../../shared/utils/turnout";
 import { TURNOUT_SECTIONS } from "./section-ids";
 import { MeterList } from "./turnout-bars";
-import { TurnoutSection } from "./turnout-section";
+import { SOURCE_TALLY_SHEET, TurnoutSection } from "./turnout-section";
 
 /** 投票所の名前と人数。人数の塊ごとに折り返し、数字の途中では折れないようにする */
 function PrecinctNote({ row }: { row: PrecinctTurnout }) {
@@ -55,6 +55,7 @@ export function PrecinctSection({
       id={TURNOUT_SECTIONS.precincts.id}
       title="投票区ごとの投票率"
       description={`${electionLabel}。投票区の番号順です`}
+      sources={[SOURCE_TALLY_SHEET]}
     >
       <p className="text-sm leading-relaxed text-mirai-text">{summary}</p>
       <MeterList

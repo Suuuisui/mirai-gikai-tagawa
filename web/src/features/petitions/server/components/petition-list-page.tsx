@@ -5,6 +5,8 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { ShowMoreList } from "@/components/ui/show-more-list";
 import { SourceNote } from "@/components/ui/source-note";
 import { TextLink } from "@/components/ui/text-link";
+import { SourceList } from "@/features/sources/shared/components/source-list";
+import type { SourceRef } from "@/features/sources/shared/data/source-kinds";
 import { routes } from "@/lib/routes";
 import { findPetitionNote } from "../../shared/data/petition-notes";
 import {
@@ -25,6 +27,33 @@ interface PetitionListPageProps {
 const CLOSED_INITIAL_COUNT = 10;
 const OFFICIAL_INDEX_URL = "https://www.joho.tagawa.fukuoka.jp/list00713.html";
 const MINUTES_SEARCH_URL = "https://www.kensakusystem.jp/tagawa/index.html";
+
+/** このページの各部分が何をもとにしているか（カードの中のバッジと同じ区分） */
+const PAGE_SOURCES: readonly SourceRef[] = [
+  {
+    kind: "official",
+    detail: "請願・陳情のページ",
+    scope: "件名・上程日・付託先・結果・紹介議員",
+    href: OFFICIAL_INDEX_URL,
+  },
+  {
+    kind: "official",
+    detail: "請願文・陳情文の原文",
+    scope: "要望の内容、提出者が挙げる理由（運営者が平易に書き直したもの）",
+  },
+  {
+    kind: "official",
+    detail: "本会議の会議録",
+    scope: "審査の結果と理由（委員長報告・討論・採決）",
+    href: MINUTES_SEARCH_URL,
+  },
+  {
+    kind: "transcript",
+    detail: "YouTube中継",
+    scope:
+      "審査の経緯（当サイトの委員会の記録。開示文書がもとの記録もあります）",
+  },
+];
 
 /**
  * 請願・陳情の一覧ページ（/petitions）。
@@ -80,6 +109,8 @@ export function PetitionListPage({
           </p>
         ) : (
           <div className="flex flex-col gap-12">
+            <SourceList title="このページの情報のもと" items={PAGE_SOURCES} />
+
             {open.length > 0 && (
               <section className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1.5">
@@ -117,7 +148,7 @@ export function PetitionListPage({
                 田川市議会 会議録検索システム
               </TextLink>
               ）の委員長報告・討論・採決を運営者がまとめたもの、
-              「審査の経緯」は当サイトの委員会の記録（中継の自動字幕や開示文書の要約）と照合したものです。
+              「審査の経緯」は当サイトの委員会の記録（中継の文字起こしや開示文書の要約）と照合したものです。
               原文（PDF）と最新の審査状況は
               <TextLink external href={OFFICIAL_INDEX_URL} className="mx-1">
                 公式サイト

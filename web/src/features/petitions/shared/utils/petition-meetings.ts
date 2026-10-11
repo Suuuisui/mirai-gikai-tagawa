@@ -1,5 +1,8 @@
 import type { PetitionRecord } from "@mirai-gikai/shared/council/types";
-import type { CommitteeMeetingPetitionRef } from "@/features/committees/shared/types";
+import type {
+  CommitteeMeetingPetitionRef,
+  CommitteeMeetingSourceType,
+} from "@/features/committees/shared/types";
 import { isPetitionOpen, PETITION_KIND_LABEL } from "./petition-display";
 
 /** 請願・陳情を審査した（言及した）会議と、その会議の要点のうち関係する行 */
@@ -8,6 +11,8 @@ export interface PetitionMeetingMatch {
   committeeName: string;
   meetingDate: string;
   headline: string | null;
+  /** その会議の記録が何をもとにしているか（出典バッジ用） */
+  sourceType: CommitteeMeetingSourceType;
   /** その請願・陳情に触れている要点（審査の結果や理由）。無い会議は空 */
   notes: string[];
 }
@@ -97,6 +102,7 @@ export function matchPetitionMeetings(
           committeeName: meeting.committee_name,
           meetingDate: meeting.meeting_date,
           headline: meeting.headline,
+          sourceType: meeting.source_type,
           notes: meeting.key_points.filter(
             (line) =>
               lineMentionsPetition(line, record) ||

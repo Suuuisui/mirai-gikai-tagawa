@@ -36,6 +36,7 @@ function meeting(
   return {
     committee_name: "総務文教委員会",
     headline: null,
+    source_type: "youtube",
     agenda_items: [],
     key_points: [],
     ...overrides,

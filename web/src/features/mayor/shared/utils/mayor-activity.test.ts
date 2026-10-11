@@ -159,6 +159,18 @@ describe("createSourceResolver", () => {
         committee_name: "議会運営委員会",
         meeting_date: "2026-08-04",
       },
+      {
+        id: "m3",
+        committee_name: "本会議",
+        meeting_date: "2026-06-12",
+        source_type: "minutes",
+      },
+      {
+        id: "m4",
+        committee_name: "厚生委員会",
+        meeting_date: "2026-09-15",
+        source_type: "youtube",
+      },
     ],
     bills: [{ id: "b1", name: "市長の退職の期日に関する同意について" }],
   });
@@ -186,17 +198,49 @@ describe("createSourceResolver", () => {
     ).toEqual({ href: "/bills/b1", label: "議案を見る", external: false });
   });
 
-  it("公式ページはそのまま外部リンクにする", () => {
+  it("公式ページはそのまま外部リンクにし、公式の区分を付ける", () => {
     expect(
       resolve({ kind: "official", url: "https://example.com", label: "公式" })
-    ).toEqual({ href: "https://example.com", label: "公式", external: true });
+    ).toEqual({
+      href: "https://example.com",
+      label: "公式",
+      external: true,
+      source: { kind: "official", detail: "市公式サイト" },
+    });
+  });
+
+  it("会議の記録には、その記録のもと（会議録・中継）の区分を付ける", () => {
+    expect(
+      resolve({
+        kind: "meeting",
+        committeeName: "本会議",
+        meetingDate: "2026-06-12",
+      })?.source
+    ).toEqual({ kind: "official", detail: "会議録" });
+    expect(
+      resolve({
+        kind: "meeting",
+        committeeName: "厚生委員会",
+        meetingDate: "2026-09-15",
+      })?.source
+    ).toEqual({ kind: "transcript", detail: "YouTube中継" });
+  });
+
+  it("記録のもとが分からない会議には区分を付けない", () => {
+    expect(
+      resolve({
+        kind: "meeting",
+        committeeName: "総務文教委員会",
+        meetingDate: "2026-08-04",
+      })?.source
+    ).toBeUndefined();
   });
 
   it("一覧に無い会議・議案は null（リンクを出さない）", () => {
     expect(
       resolve({
         kind: "meeting",
-        committeeName: "厚生委員会",
+        committeeName: "建設経済委員会",
         meetingDate: "2026-08-04",
       })
     ).toBeNull();

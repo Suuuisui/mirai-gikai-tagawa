@@ -23,9 +23,15 @@
 
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import path from "node:path";
-import { pruneOngoingSessions } from "./council-update-utils";
-import { carryOverMissingSessions } from "./session-data-utils";
 import {
+  applyBillLabelAliases,
+  type BillLabelAlias,
+  carryOverMissingSessions,
+  findBillLabelAliases,
+  pruneOngoingSessions,
+} from "./session-data-utils";
+import {
+  BILL_LABEL_ALIASES_JSON_PATH,
   ONGOING_SESSIONS_JSON_PATH,
   SESSIONS_JSON_PATH,
   loadOngoingSessions,
@@ -682,6 +688,32 @@ async function main() {
 
   allSessions.sort((a, b) => a.startDate.localeCompare(b.startDate));
 
+  // 公式ページの番号表記が、会期中に手で置いて公開済みの表記と違うことがある
+  // （例: 公式「議員提出 議案第62号」→ 読み取りは「議案第62号」、掲載済みは「議員提出議案第62号」）。
+  // 表記が変わると議案の id（URL）が変わり、同じ議案が二重に公開されて解説も外れるので、
+  // 掲載済みの表記に読み替える。見つけた読み替えはファイルに残し、次回以降も当てる
+  const ongoingSessions = existsSync(ONGOING_SESSIONS_JSON_PATH)
+    ? loadOngoingSessions()
+    : [];
+  const knownAliases: BillLabelAlias[] = existsSync(BILL_LABEL_ALIASES_JSON_PATH)
+    ? JSON.parse(readFileSync(BILL_LABEL_ALIASES_JSON_PATH, "utf-8"))
+    : [];
+  allSessions = applyBillLabelAliases(allSessions, knownAliases);
+  const newAliases = findBillLabelAliases(ongoingSessions, allSessions);
+  if (newAliases.length > 0) {
+    allSessions = applyBillLabelAliases(allSessions, newAliases);
+    writeFileSync(
+      BILL_LABEL_ALIASES_JSON_PATH,
+      `${JSON.stringify([...knownAliases, ...newAliases], null, 2)}\n`,
+      "utf-8"
+    );
+    for (const alias of newAliases) {
+      console.log(
+        `  ${alias.sessionKey}: 公式ページの「${alias.officialLabel}」を掲載済みの「${alias.label}」に読み替えます（bill-label-aliases.json に追加）`
+      );
+    }
+  }
+
   const dupKeys = allSessions.map((s) => s.key);
   if (new Set(dupKeys).size !== dupKeys.length) {
     throw new Error(`会期キーが重複しています: ${dupKeys.join(", ")}`);
@@ -690,15 +722,22 @@ async function main() {
   mkdirSync(path.dirname(OUT_PATH), { recursive: true });
   writeFileSync(OUT_PATH, `${JSON.stringify(allSessions, null, 2)}\n`, "utf-8");
 
-  // 会期中として手で置いていた会期の議決結果ページが公開され今回取り込めたら、
-  // ongoing-sessions.json から外す（残すと build-csv.ts がキー重複で止まる）
-  if (existsSync(ONGOING_SESSIONS_JSON_PATH)) {
-    const { kept, pruned } = pruneOngoingSessions(loadOngoingSessions(), allSessions);
-    if (pruned.length > 0) {
+  // 会期中として手で置いていた議案のうち、公式の議決結果ページに載ったものを
+  // ongoing-sessions.json から外す（残すと build-csv.ts が議案の重複で止まる）。
+  // 公式ページは最終日より前に公開されることがあるので、まだ載っていない議案
+  // （最終日に議決される決算・追加議案など）は残す
+  if (ongoingSessions.length > 0) {
+    const { kept, pruned, partial } = pruneOngoingSessions(ongoingSessions, allSessions);
+    if (JSON.stringify(kept) !== JSON.stringify(ongoingSessions)) {
       writeFileSync(ONGOING_SESSIONS_JSON_PATH, `${JSON.stringify(kept, null, 2)}\n`, "utf-8");
-      for (const s of pruned) {
-        console.log(`  ${s.name}: 議決結果ページを取り込んだため会期中の一覧（ongoing-sessions.json）から外しました`);
-      }
+    }
+    for (const s of pruned) {
+      console.log(`  ${s.name}: すべての議案が議決結果ページに載ったため会期中の一覧（ongoing-sessions.json）から外しました`);
+    }
+    for (const s of partial) {
+      console.log(
+        `  ${s.name}: 議決結果ページにまだ載っていない議案 ${s.bills.length}件を会期中の一覧（ongoing-sessions.json）に残しました`
+      );
     }
   }
   const totalBills = allSessions.reduce((n, s) => n + s.bills.length, 0);

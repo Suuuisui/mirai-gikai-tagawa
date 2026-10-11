@@ -18,7 +18,7 @@ import { HistorySection } from "./history-section";
 import { PrecinctSection } from "./precinct-section";
 import { TURNOUT_SECTIONS } from "./section-ids";
 import { TurnoutHero } from "./turnout-hero";
-import { TurnoutSection } from "./turnout-section";
+import { SOURCE_AGE_TABLE, TurnoutSection } from "./turnout-section";
 
 /** ページ末尾の出典と注意書き */
 function TurnoutSourceNote() {
@@ -34,6 +34,9 @@ function TurnoutSourceNote() {
         新市長のページ
       </TextLink>
       にあります。
+      <TextLink href={routes.sources()} className="ml-1">
+        出典の種類と読み方について
+      </TextLink>
     </SourceNote>
   );
 }
@@ -65,6 +68,7 @@ export function ElectionTurnoutPage() {
             id={TURNOUT_SECTIONS.myAge.id}
             title="あなたと同じ年齢の人は、どれくらい投票した？"
             description={`年齢と性別を選ぶと、${currentLabel}の投票率が出ます`}
+            sources={[SOURCE_AGE_TABLE]}
           >
             <AgeTurnoutExplorer
               current={MAYOR_ELECTION_2026.ages}

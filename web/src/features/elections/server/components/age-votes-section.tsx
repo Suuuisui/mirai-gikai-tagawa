@@ -13,7 +13,7 @@ import {
 } from "../../shared/utils/turnout";
 import { TURNOUT_SECTIONS } from "./section-ids";
 import { ChartFigure, type ChartSeries, StackedBarRow } from "./turnout-bars";
-import { TurnoutSection } from "./turnout-section";
+import { SOURCE_AGE_TABLE, TurnoutSection } from "./turnout-section";
 
 const VOTED: ChartSeries = { label: "投票した人（票の数）", kind: "focus" };
 const ABSTAINED: ChartSeries = { label: "投票しなかった人", kind: "remainder" };
@@ -139,6 +139,7 @@ export function AgeVotesSection({ ages, electionLabel }: AgeVotesSectionProps) {
       id={TURNOUT_SECTIONS.votes.id}
       title="年代別の票の数"
       description="年代ごとに、投票した人の数を並べました。1人1票なので、これがそのまま票の数です"
+      sources={[SOURCE_AGE_TABLE]}
     >
       <ul className="flex list-disc flex-col gap-1 pl-5 text-sm leading-relaxed text-mirai-text">
         <li>{MECHANISM}</li>

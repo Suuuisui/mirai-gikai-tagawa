@@ -14,7 +14,7 @@ import {
 } from "../../shared/utils/turnout";
 import { TURNOUT_SECTIONS } from "./section-ids";
 import { BarGroupRow, ChartFigure, type ChartSeries } from "./turnout-bars";
-import { TurnoutSection } from "./turnout-section";
+import { SOURCE_AGE_TABLE, TurnoutSection } from "./turnout-section";
 
 type BandComparison = ReturnType<typeof compareAgeBands>[number];
 
@@ -121,6 +121,7 @@ export function AgeBandSection({
       id={TURNOUT_SECTIONS.ageBands.id}
       title="年代別の投票率"
       description={`5歳ごとの投票率です。${previousLabel}と並べています`}
+      sources={[SOURCE_AGE_TABLE]}
     >
       <ul className="flex list-disc flex-col gap-1 pl-5 text-sm leading-relaxed text-mirai-text">
         <li>{lowHigh}</li>
@@ -183,6 +184,7 @@ export function AgeCompositionSection({
       id={TURNOUT_SECTIONS.composition.id}
       title="投票した人の年代"
       description="有権者全体に占める割合と、投票した人全体に占める割合を年代ごとに比べました"
+      sources={[SOURCE_AGE_TABLE]}
     >
       <p className="text-sm leading-relaxed text-mirai-text">{summary}</p>
       <ChartFigure

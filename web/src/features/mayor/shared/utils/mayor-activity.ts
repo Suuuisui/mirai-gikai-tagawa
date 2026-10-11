@@ -1,5 +1,8 @@
 import type { Route } from "next";
 import { getCommitteeProfile } from "@/features/committees/shared/data/committee-profiles";
+import type { CommitteeMeetingSourceType } from "@/features/committees/shared/types";
+import { COMMITTEE_SOURCES } from "@/features/committees/shared/utils/committee-source";
+import type { SourceTag } from "@/features/sources/shared/data/source-kinds";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots, toDateString } from "@/lib/utils/date";
 import type { TimelineSource, UpcomingSession } from "../data/mayor-profile";
@@ -105,15 +108,27 @@ export function calculateVoteShares<T extends { votes: number }>(
 }
 
 /** 出典へのリンク。外部は新しいタブで開き、内部は typedRoutes の Route を保つ */
-export type ResolvedLink =
+export type ResolvedLink = (
   | { external: true; href: string; label: string }
-  | { external: false; href: Route; label: string };
+  | { external: false; href: Route; label: string }
+) & {
+  /** リンク先のもとの資料の区分。分からないときは付けない */
+  source?: SourceTag;
+};
+
+/** 市の公式サイトのページを指すリンクに付けるバッジ */
+export const OFFICIAL_SITE_SOURCE: SourceTag = {
+  kind: "official",
+  detail: "市公式サイト",
+};
 
 export interface SourceLists {
   meetings: readonly {
     id: string;
     committee_name: string;
     meeting_date: string;
+    /** 記録のもと。あれば出典バッジに使う */
+    source_type?: CommitteeMeetingSourceType;
   }[];
   bills: readonly { id: string; name: string }[];
 }
@@ -130,17 +145,19 @@ function meetingKey(committeeName: string, meetingDate: string): string {
 export function createSourceResolver(
   lists: SourceLists
 ): (source: TimelineSource) => ResolvedLink | null {
-  const meetingIds = new Map(
-    lists.meetings.map((m) => [
-      meetingKey(m.committee_name, m.meeting_date),
-      m.id,
-    ])
+  const meetingsByKey = new Map(
+    lists.meetings.map((m) => [meetingKey(m.committee_name, m.meeting_date), m])
   );
   const billIds = new Map(lists.bills.map((b) => [b.name, b.id]));
 
   return (source) => {
     if (source.kind === "official") {
-      return { href: source.url, label: source.label, external: true };
+      return {
+        href: source.url,
+        label: source.label,
+        external: true,
+        source: OFFICIAL_SITE_SOURCE,
+      };
     }
     if (source.kind === "bill") {
       const id = billIds.get(source.billName);
@@ -152,15 +169,20 @@ export function createSourceResolver(
           }
         : null;
     }
-    const id = meetingIds.get(
+    const meeting = meetingsByKey.get(
       meetingKey(source.committeeName, source.meetingDate)
     );
-    return id
-      ? {
-          href: routes.committeeMeeting(id) as Route,
-          label: `${getCommitteeProfile(source.committeeName).shortName}の記録`,
-          external: false,
-        }
-      : null;
+    if (!meeting) return null;
+    const meetingSource = meeting.source_type
+      ? COMMITTEE_SOURCES[meeting.source_type]
+      : undefined;
+    return {
+      href: routes.committeeMeeting(meeting.id) as Route,
+      label: `${getCommitteeProfile(source.committeeName).shortName}の記録`,
+      external: false,
+      ...(meetingSource && {
+        source: { kind: meetingSource.kind, detail: meetingSource.detail },
+      }),
+    };
   };
 }

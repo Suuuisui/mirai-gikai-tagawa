@@ -163,6 +163,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.7,
     },
+    // 出典の説明ページ。中の件数は委員会記録に連動するが、説明が主なので月次の扱い
+    {
+      url: `${baseUrl}${routes.sources()}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    },
     // 利用規約・プライバシーポリシーはbillデータと無関係な固定ページのため、
     // 他エントリと違いlastModifiedにlatestBillUpdatedAtを流用しない（省略可能）
     {

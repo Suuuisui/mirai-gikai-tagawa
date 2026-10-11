@@ -1,5 +1,9 @@
-/** 委員会会議録のデータ出典 */
-export type CommitteeMeetingSourceType = "disclosure" | "youtube";
+/**
+ * 会議の記録のもと。
+ * minutes: 会議録検索システムの本会議の会議録 / youtube: 公式YouTube中継の文字起こし /
+ * disclosure: 情報開示請求で入手した文書。画面での名前と色は committee-source.ts
+ */
+export type CommitteeMeetingSourceType = "minutes" | "youtube" | "disclosure";
 
 /** 委員会の会議録（1回の会議 = 1レコード） */
 export interface CommitteeMeeting {
@@ -50,4 +54,5 @@ export interface CommitteeMeetingPetitionRef {
   headline: string | null;
   agenda_items: string[];
   key_points: string[];
+  source_type: CommitteeMeetingSourceType;
 }

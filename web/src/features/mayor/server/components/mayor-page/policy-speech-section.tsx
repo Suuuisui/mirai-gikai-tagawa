@@ -75,7 +75,7 @@ export function PolicySpeechSection({ link }: PolicySpeechSectionProps) {
       )}
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
-        {link && <SourceLink link={link} />}
+        {link && <SourceLink link={link} showSource />}
         <TextLink external href={speech.videoUrl}>
           <Youtube aria-hidden className="size-3.5" />
           中継映像で所信表明を見る

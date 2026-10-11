@@ -15,6 +15,8 @@ export const routes = {
   terms: () => "/terms" as const,
   privacy: () => "/privacy" as const,
   search: () => "/search" as const,
+  /** 情報のもと（出典）の種類と読み方の説明 */
+  sources: () => "/sources" as const,
 
   // ── 議案 ──────────────────────────────────────────
   billDetail: (billId: string) => `/bills/${billId}` as const,
