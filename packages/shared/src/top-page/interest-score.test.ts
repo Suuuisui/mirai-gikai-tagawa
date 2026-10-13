@@ -235,12 +235,58 @@ describe("isHotTopicBill", () => {
     expect(isHotTopicBill(bill, FIXED_NOW)).toBe(false);
   });
 
-  it("直近でもスコアが閾値を超えない議案（加点要素なし）は話題議案として扱わない", () => {
+  it("直近でも異例の議決でない議案（加点要素なし）は話題議案として扱わない", () => {
     const bill = createBill({
       submitted_date: isoDaysBefore(30),
     });
 
     expect(isHotTopicBill(bill, FIXED_NOW)).toBe(false);
+  });
+
+  it("直近に異議なく可決された議案は、解説の定型と新しさの加点でスコアが50を超えても話題議案として扱わない（非核三原則の意見書のケース）", () => {
+    const bill = createBill({
+      status_note: "原案可決",
+      submitted_date: isoDaysBefore(5),
+      bill_contents: [
+        {
+          title: "非核三原則の堅持を求める意見書について",
+          summary: "",
+          content:
+            "## 議会での主な論点\n賛成討論のあと、反対討論はなく異議なく原案可決。",
+        },
+      ],
+    });
+
+    expect(computeBillInterestScore(bill, FIXED_NOW)).toBeGreaterThan(50);
+    expect(isHotTopicBill(bill, FIXED_NOW)).toBe(false);
+  });
+
+  it.each([
+    "不認定（本会議の中継映像より）",
+    "継続審議",
+    "修正議決",
+  ])("直近の「%s」は話題議案として扱う", (statusNote) => {
+    const bill = createBill({
+      status_note: statusNote,
+      submitted_date: isoDaysBefore(5),
+    });
+
+    expect(isHotTopicBill(bill, FIXED_NOW)).toBe(true);
+  });
+
+  it("ちょうど90日前の否決議案は話題議案として扱い、91日前は扱わない", () => {
+    expect(
+      isHotTopicBill(
+        createBill({ status_note: "否決", submitted_date: isoDaysBefore(90) }),
+        FIXED_NOW
+      )
+    ).toBe(true);
+    expect(
+      isHotTopicBill(
+        createBill({ status_note: "否決", submitted_date: isoDaysBefore(91) }),
+        FIXED_NOW
+      )
+    ).toBe(false);
   });
 
   it("submitted_date が null の場合は話題議案として扱わない", () => {

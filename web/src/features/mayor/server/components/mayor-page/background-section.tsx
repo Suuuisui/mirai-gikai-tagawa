@@ -9,7 +9,7 @@ import {
 import { compactName } from "../../../shared/utils/mayor-activity";
 import type { TimelineItem } from "../../loaders/get-mayor-activity";
 import { EventTimeline } from "./event-timeline";
-import { MAYOR_SECTIONS } from "./section-ids";
+import { MAYOR_SECTIONS } from "../../../shared/data/section-ids";
 
 const MAYOR_NAME = compactName(MAYOR_PROFILE.name);
 const TIMELINE_NOTE = `前市長・${FORMER_MAYOR_NAME}氏の問題が表面化してから、${MAYOR_NAME}市長の就任までを古い順に並べています。各項目から当時の記録に飛べます。`;

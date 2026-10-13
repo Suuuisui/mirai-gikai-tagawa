@@ -12,7 +12,7 @@ import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { UpcomingSessionView } from "../../loaders/get-mayor-activity";
-import { MAYOR_SECTIONS } from "./section-ids";
+import { MAYOR_SECTIONS } from "../../../shared/data/section-ids";
 import { SourceLink } from "./source-link";
 
 interface UpcomingSectionProps {

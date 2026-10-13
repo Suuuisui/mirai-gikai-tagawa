@@ -9,7 +9,7 @@ import {
   type PolicyPillar,
 } from "../../../shared/data/mayor-profile";
 import type { ResolvedLink } from "../../../shared/utils/mayor-activity";
-import { MAYOR_SECTIONS } from "./section-ids";
+import { MAYOR_SECTIONS } from "../../../shared/data/section-ids";
 import { SourceLink } from "./source-link";
 
 interface PolicySpeechSectionProps {

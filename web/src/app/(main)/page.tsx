@@ -3,7 +3,7 @@ import { Container } from "@/components/layouts/container";
 import { JsonLd } from "@/components/seo/json-ld";
 import { About } from "@/components/top/about";
 import { Hero } from "@/components/top/hero";
-import { MayorBanner } from "@/components/top/mayor-banner";
+import { MayorHighlights } from "@/components/top/mayor-highlights";
 import {
   SectionJumpNav,
   TOP_SECTION_IDS,
@@ -71,6 +71,25 @@ export default async function Home() {
       }
     : null;
 
+  // 閉会中は、終わったばかりの会期のまとめ・一般質問へ会期バナーからたどれるようにする
+  const latestSession = previousSessionData
+    ? {
+        session: previousSessionData.session,
+        questionCount: countQuestionsForSession(
+          previousSessionData.session.slug
+        ),
+      }
+    : null;
+
+  const sessionBanner = (
+    <CurrentDietSession
+      session={currentSession}
+      questions={currentQuestions}
+      latestSession={latestSession}
+    />
+  );
+  const mayorHighlights = <MayorHighlights now={now} />;
+
   const toBillChatContext = (bill: BillWithContent) => {
     return {
       id: bill.id,
@@ -87,14 +106,21 @@ export default async function Home() {
       <JsonLd data={buildOrganizationJsonLd(env.webUrl)} />
       <Hero />
 
-      {/* 本日の田川市議会セクション */}
-      <CurrentDietSession
-        session={currentSession}
-        questions={currentQuestions}
-      />
-
-      {/* 新市長の特設ページへの導線（市長交代直後で関心が高い） */}
-      <MayorBanner now={now} />
+      {/*
+        ヒーロー直下の2ブロックは「いま関心が高い順」に並べる。
+        閉会中は市長が代わってからの動きを先に、会期中は開かれている議会を先に出す
+      */}
+      {currentSession ? (
+        <>
+          {sessionBanner}
+          {mayorHighlights}
+        </>
+      ) : (
+        <>
+          {mayorHighlights}
+          {sessionBanner}
+        </>
+      )}
 
       {/* 議案一覧セクション */}
       <Container className="">

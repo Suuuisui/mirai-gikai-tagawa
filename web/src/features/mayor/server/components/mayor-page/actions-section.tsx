@@ -6,7 +6,7 @@ import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import type { TimelineItem } from "../../loaders/get-mayor-activity";
 import { EventTimeline } from "./event-timeline";
-import { MAYOR_SECTIONS } from "./section-ids";
+import { MAYOR_SECTIONS } from "../../../shared/data/section-ids";
 
 interface ActionsSectionProps {
   /** 新しい順 */
