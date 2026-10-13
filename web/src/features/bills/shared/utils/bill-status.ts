@@ -1,16 +1,24 @@
 import type { BillStatusEnum } from "../types";
+import { getBillResultLabel } from "./bill-result-label";
 
-/** カード用の簡略化されたステータスラベルを取得 */
-export function getCardStatusLabel(status: BillStatusEnum): string {
+/**
+ * カード用の簡略化されたステータスラベルを取得。
+ * 議決済みの議案は、議決の種類に合った語（認定・同意・承認・不認定など）を
+ * bills.status_note から決める（bill-result-label.ts）。
+ * 審議中の議案は status_note に委員会の結論などが入るので使わない
+ */
+export function getCardStatusLabel(
+  status: BillStatusEnum,
+  statusNote?: string | null
+): string {
   switch (status) {
     case "introduced":
     case "in_originating_house":
     case "in_receiving_house":
       return "田川市議会審議中";
     case "enacted":
-      return "可決";
     case "rejected":
-      return "否決";
+      return getBillResultLabel(status, statusNote);
     default:
       return "議案提出前";
   }

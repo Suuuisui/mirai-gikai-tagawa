@@ -10,6 +10,7 @@ function item(overrides: Partial<SearchItem>): SearchItem {
     summary: "summary",
     submittedDate: null,
     status: "enacted",
+    statusNote: null,
     tags: [],
     ...overrides,
   };

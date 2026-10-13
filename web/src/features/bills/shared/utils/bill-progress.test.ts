@@ -119,6 +119,31 @@ describe("getBaseSteps", () => {
 
   test("rejected の場合は最終ステップが '審議\\n終了'", () => {
     expect(getBaseSteps("rejected")[3].label).toBe("審議\n終了");
+    expect(getBaseSteps("rejected", "不認定")[3].label).toBe("審議\n終了");
+  });
+
+  test.each([
+    ["認定", "認定"],
+    ["同意", "同意"],
+    ["承認", "承認"],
+    ["原案可決", "可決"],
+    ["認定（本会議の中継映像より）", "認定"],
+  ])("enacted は最終ステップが議決結果（status_note「%s」→ %s）", (statusNote, expected) => {
+    expect(getBaseSteps("enacted", statusNote)[3].label).toBe(expected);
+  });
+
+  test("enacted でも status_note が空・想定外の語なら '可決'", () => {
+    expect(getBaseSteps("enacted", null)[3].label).toBe("可決");
+    expect(getBaseSteps("enacted", "懲罰を科す(陳謝)")[3].label).toBe("可決");
+  });
+
+  test("結果がまだ無い議案は status_note によらず '可決'", () => {
+    expect(getBaseSteps("introduced", "委員会で認定と決定")[3].label).toBe(
+      "可決"
+    );
+    expect(getBaseSteps("in_originating_house", "継続審議")[3].label).toBe(
+      "可決"
+    );
   });
 
   test("最終ステップ以外のラベルはステータスによらず共通", () => {

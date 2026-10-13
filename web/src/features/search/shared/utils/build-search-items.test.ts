@@ -77,20 +77,26 @@ describe("buildSearchItems", () => {
     expect(buildSearchItems(bills)[0].tags).toEqual(["防災", "教育"]);
   });
 
-  it("carries over id, name, submittedDate, and status as-is", () => {
+  it("carries over id, name, submittedDate, status, and statusNote as-is", () => {
     const bills = [
       bill({
         id: "bill-xyz",
-        name: "議案第9号",
+        name: "認定第1号",
         submitted_date: "2023-09-01",
         status: "rejected",
+        status_note: "不認定",
       }),
     ];
 
     const result = buildSearchItems(bills)[0];
     expect(result.id).toBe("bill-xyz");
-    expect(result.name).toBe("議案第9号");
+    expect(result.name).toBe("認定第1号");
     expect(result.submittedDate).toBe("2023-09-01");
     expect(result.status).toBe("rejected");
+    expect(result.statusNote).toBe("不認定");
+  });
+
+  it("keeps statusNote null when the bill has no status_note", () => {
+    expect(buildSearchItems([bill({})])[0].statusNote).toBeNull();
   });
 });

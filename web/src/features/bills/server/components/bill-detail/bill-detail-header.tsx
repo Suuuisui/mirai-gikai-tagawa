@@ -92,7 +92,11 @@ export async function BillDetailHeader({
           </h1>
         )}
         <div className="flex flex-row flex-wrap items-center gap-4">
-          <BillStatusBadge status={bill.status} className="w-fit" />
+          <BillStatusBadge
+            status={bill.status}
+            statusNote={bill.status_note}
+            className="w-fit"
+          />
           <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
             {bill.submitted_date && (
               <time className="whitespace-nowrap">

@@ -1,4 +1,5 @@
 import type { BillStatusEnum, HouseEnum } from "../types";
+import { getBillResultLabel } from "./bill-result-label";
 
 // ステップ番号マッピング
 const STATUS_TO_STEP: Record<BillStatusEnum, number> = {
@@ -66,15 +67,32 @@ export function getCurrentStep(status: BillStatusEnum): number {
 }
 
 /**
- * 審議ステータス進捗バーの基本ステップ定義を生成する
- * 最終ステップのラベルはステータスに応じて出し分ける（否決の場合にも
- * 「可決」と表示されると可決したかのように誤解されるため）
+ * 最終ステップのラベル。成立した議案は、見出しのバッジと同じ語（認定・同意・承認など。
+ * bills.status_note から決める）にする。成立しなかった議案は「審議終了」
+ * （「可決」と表示されると可決したかのように誤解されるため）。
+ * 結果がまだ無い議案は、議決の種類が status_note から分からないので「可決」のまま
  */
-export function getBaseSteps(status: BillStatusEnum): { label: string }[] {
+function getFinalStepLabel(
+  status: BillStatusEnum,
+  statusNote: string | null | undefined
+): string {
+  if (status === "rejected") return "審議\n終了";
+  if (status === "enacted") return getBillResultLabel(status, statusNote);
+  return "可決";
+}
+
+/**
+ * 審議ステータス進捗バーの基本ステップ定義を生成する
+ * 最終ステップのラベルはステータスと議決結果（status_note）に応じて出し分ける
+ */
+export function getBaseSteps(
+  status: BillStatusEnum,
+  statusNote?: string | null
+): { label: string }[] {
   return [
     { label: "議案\n提出" },
     { label: "委員会\n審査" },
     { label: "本会議\n議決" },
-    { label: status === "rejected" ? "審議\n終了" : "可決" },
+    { label: getFinalStepLabel(status, statusNote) },
   ];
 }

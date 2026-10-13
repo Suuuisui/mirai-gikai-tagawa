@@ -74,7 +74,11 @@ export function BillCard({ bill }: BillCardProps) {
                 )}
               </CardTitle>
               <div className="flex flex-row flex-wrap items-center gap-x-4 gap-y-2">
-                <BillStatusBadge status={bill.status} className="w-fit" />
+                <BillStatusBadge
+                  status={bill.status}
+                  statusNote={bill.status_note}
+                  className="w-fit"
+                />
                 {voteLabel && (
                   <Badge variant="light" className="w-fit">
                     {voteLabel.text}
