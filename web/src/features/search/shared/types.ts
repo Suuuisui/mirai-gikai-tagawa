@@ -11,5 +11,7 @@ export interface SearchItem {
   summary: string;
   submittedDate: string | null;
   status: BillStatusEnum;
+  /** bills.status_note（議決結果の語。バッジの「認定」「同意」などを決めるのに使う） */
+  statusNote: string | null;
   tags: string[];
 }

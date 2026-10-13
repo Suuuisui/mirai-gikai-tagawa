@@ -10,6 +10,7 @@ function makeItem(tags: string[]): SearchItem {
     summary: "",
     submittedDate: null,
     status: "enacted",
+    statusNote: null,
     tags,
   };
 }

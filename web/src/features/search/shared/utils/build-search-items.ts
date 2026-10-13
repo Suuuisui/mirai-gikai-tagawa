@@ -23,6 +23,7 @@ export function buildSearchItems(bills: BillWithContentLite[]): SearchItem[] {
     summary: truncateSummary(bill.bill_content?.summary),
     submittedDate: bill.submitted_date,
     status: bill.status,
+    statusNote: bill.status_note,
     tags: bill.tags.map((tag) => tag.label),
   }));
 }

@@ -49,13 +49,13 @@ function filterBills(
 }
 
 /**
- * ステータスの内訳ラベル（例:「可決11・否決1」）。
+ * 議決結果の内訳ラベル（例:「同意11・不同意1」）。語はカードのバッジと同じ。
  * グループに否決等が含まれることが折りたたみ中でも分かるようにする
  */
 function summarizeGroupStatuses(bills: BillWithContent[]): string {
   const counts = new Map<string, number>();
   for (const bill of bills) {
-    const label = getCardStatusLabel(bill.status);
+    const label = getCardStatusLabel(bill.status, bill.status_note);
     counts.set(label, (counts.get(label) ?? 0) + 1);
   }
   return [...counts.entries()]
@@ -116,8 +116,10 @@ export function BillListWithStatusFilter({ bills }: Props) {
 
   const filters: { key: FilterType; label: string; count: number }[] = [
     { key: "all", label: "ALL", count: counts.all },
-    { key: "enacted", label: "可決", count: counts.enacted },
-    { key: "rejected", label: "否決", count: counts.rejected },
+    // カードのバッジは議決の種類ごとの語（認定・同意・不認定など）になるので、
+    // 絞り込みは「など」を付けてまとめる
+    { key: "enacted", label: "可決など", count: counts.enacted },
+    { key: "rejected", label: "否決など", count: counts.rejected },
     { key: "other", label: "その他", count: counts.other },
   ];
 

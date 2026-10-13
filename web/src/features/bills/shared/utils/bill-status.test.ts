@@ -25,6 +25,39 @@ describe("getCardStatusLabel", () => {
   it("preparing → 議案提出前", () => {
     expect(getCardStatusLabel("preparing")).toBe("議案提出前");
   });
+
+  describe("議決済みの議案は status_note の語を出す", () => {
+    it.each([
+      ["enacted", "認定", "認定"],
+      ["enacted", "同意", "同意"],
+      ["enacted", "承認", "承認"],
+      ["enacted", "原案可決", "可決"],
+      ["enacted", "認定（本会議の中継映像より）", "認定"],
+      ["rejected", "不認定（本会議の中継映像より）", "不認定"],
+      ["rejected", "否決", "否決"],
+    ] as const)("%s・「%s」→ %s", (status, statusNote, expected) => {
+      expect(getCardStatusLabel(status, statusNote)).toBe(expected);
+    });
+
+    it("status_note が空・想定外の語なら可決・否決のまま", () => {
+      expect(getCardStatusLabel("enacted", null)).toBe("可決");
+      expect(getCardStatusLabel("rejected", "")).toBe("否決");
+      expect(getCardStatusLabel("enacted", "懲罰を科す(陳謝)")).toBe("可決");
+    });
+  });
+
+  it.each([
+    ["introduced", "常任委員会で原案可決（本会議の議決結果は公表後に掲載）"],
+    ["introduced", "不認定"],
+    ["in_originating_house", "継続審議"],
+    ["in_receiving_house", "認定"],
+  ] as const)("審議中 %s は status_note「%s」があっても審議中のまま", (status, statusNote) => {
+    expect(getCardStatusLabel(status, statusNote)).toBe("田川市議会審議中");
+  });
+
+  it("preparing は status_note があっても議案提出前のまま", () => {
+    expect(getCardStatusLabel("preparing", "認定")).toBe("議案提出前");
+  });
 });
 
 describe("getStatusVariant", () => {

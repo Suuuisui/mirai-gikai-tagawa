@@ -96,7 +96,10 @@ export function BillStatusProgress({
   const isPreparing = status === "preparing";
   const currentStep = getCurrentStep(status);
 
-  const orderedSteps = getOrderedSteps(originatingHouse, getBaseSteps(status));
+  const orderedSteps = getOrderedSteps(
+    originatingHouse,
+    getBaseSteps(status, statusNote)
+  );
   const progressWidth = calculateProgressWidth(currentStep);
 
   const statusMessage = getStatusMessage(status, statusNote);

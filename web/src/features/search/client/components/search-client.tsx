@@ -103,7 +103,11 @@ export function SearchClient({ items }: SearchClientProps) {
                     {item.title}
                   </h2>
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                    <BillStatusBadge status={item.status} className="w-fit" />
+                    <BillStatusBadge
+                      status={item.status}
+                      statusNote={item.statusNote}
+                      className="w-fit"
+                    />
                     {item.submittedDate && (
                       <time className="whitespace-nowrap text-xs text-mirai-text-muted">
                         {formatDateWithDots(item.submittedDate)}{" "}
