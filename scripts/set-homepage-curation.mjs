@@ -5,16 +5,20 @@
  *
  * 書き換える列（admin の保存処理と同じ）:
  * - bills.is_featured / bills.featured_priority（注目の議案。配列の順＝表示順）
- * - tags.featured_priority（タグ別セクション。配列の順＝表示順、載せないタグは非表示）
- * - bills_tags.pinned_priority（タグ枠の固定。定義に書いたタグだけ入れ替える）
+ * - tags.featured_priority（タグ別セクション。配列の順＝表示順）
+ * - bills_tags.pinned_priority（タグ枠の固定。配列の順＝表示順）
  *
- * 定義ファイルの形（下の「現在の設定」の出力と同じ形なので、控えをそのまま渡せば元に戻せる）:
+ * 定義ファイルの形（--dump の出力と同じ形なので、控えをそのまま渡せば元に戻せる）:
  *   {
  *     "featuredBillIds": ["<議案ID>", ...],
  *     "tagIds": ["<タグID>", ...],
  *     "pinnedBillIdsByTagId": { "<タグID>": ["<議案ID>", ...] }
  *   }
- *   どのキーも省略でき、省略した項目は変更しない。
+ *   - 3つのキーはどれも省略でき、省略した項目は変更しない
+ *   - 書いたキーは「その項目の全体」として扱う。載せなかった議案は注目から外れ、
+ *     載せなかったタグはトップページに出なくなり、pinnedBillIdsByTagId に
+ *     載せなかったタグの固定は解除される
+ *   - "_" で始まるキー（"_comment" など）はメモとして無視する
  *
  * 使い方:
  *   # 現在の設定を書き出す（控え。投入はしない）
@@ -96,10 +100,27 @@ if (arg === "--dump") {
   process.exit(0);
 }
 
+const DEFINITION_KEYS = ["featuredBillIds", "tagIds", "pinnedBillIdsByTagId"];
+
 const next = JSON.parse(readFileSync(arg, "utf8"));
+// キーの打ち間違いを「変更なし」として黙って通さない
+const unknownKeys = Object.keys(next).filter(
+  (name) => !name.startsWith("_") && !DEFINITION_KEYS.includes(name)
+);
+if (unknownKeys.length > 0) fail(`定義に知らないキーがあります: ${unknownKeys.join(", ")}`);
+if (!DEFINITION_KEYS.some((name) => name in next)) {
+  fail(`定義に ${DEFINITION_KEYS.join(" / ")} のどれもありません`);
+}
+
 const featuredBillIds = next.featuredBillIds ?? null;
 const tagIds = next.tagIds ?? null;
-const pinnedBillIdsByTagId = next.pinnedBillIdsByTagId ?? {};
+// 固定は全体を入れ替える。いま固定があるのに定義に載っていないタグは解除する
+const pinnedBillIdsByTagId = next.pinnedBillIdsByTagId
+  ? {
+      ...Object.fromEntries(Object.keys(current.pinnedBillIdsByTagId).map((tagId) => [tagId, []])),
+      ...next.pinnedBillIdsByTagId,
+    }
+  : {};
 
 // ── 検証（admin の保存処理と同じ条件） ──────────────────────
 if (featuredBillIds) assertUnique(featuredBillIds, "featuredBillIds");
@@ -141,10 +162,15 @@ for (const id of referencedBillIds) {
 for (const id of referencedTagIds) {
   if (!tagById.has(id)) fail(`タグが見つかりません: ${id}`);
 }
+// 注目の議案はタグ枠から外れるので、固定しても表示されない（その枠は自動選定で埋まる）
+const featuredAfterUpdate = new Set(featuredBillIds ?? current.featuredBillIds);
 for (const [tagId, billIds] of Object.entries(pinnedBillIdsByTagId)) {
   for (const billId of billIds) {
     if (!linkKeys.has(`${tagId}|${billId}`)) {
       fail(`タグ「${tagById.get(tagId).label}」に紐づいていない議案です: ${billById.get(billId).name}`);
+    }
+    if (featuredAfterUpdate.has(billId)) {
+      fail(`注目の議案はタグ枠に固定できません: ${billById.get(billId).name}`);
     }
   }
 }

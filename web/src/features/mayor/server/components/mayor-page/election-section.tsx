@@ -11,7 +11,7 @@ import {
   MAYORAL_ELECTION,
 } from "../../../shared/data/mayor-profile";
 import { calculateVoteShares } from "../../../shared/utils/mayor-activity";
-import { MAYOR_SECTIONS } from "./section-ids";
+import { MAYOR_SECTIONS } from "../../../shared/data/section-ids";
 import { SourceLink } from "./source-link";
 
 const STATUS_LABELS: Record<ElectionCandidate["status"], string> = {

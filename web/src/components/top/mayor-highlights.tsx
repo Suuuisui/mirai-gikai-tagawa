@@ -2,11 +2,11 @@ import { ChevronRight, UserCheck } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { MAYOR_SECTIONS } from "@/features/mayor/server/components/mayor-page/section-ids";
 import {
   MAYOR_ACTIONS,
   MAYOR_PROFILE,
 } from "@/features/mayor/shared/data/mayor-profile";
+import { MAYOR_SECTIONS } from "@/features/mayor/shared/data/section-ids";
 import {
   compactName,
   daysSinceInauguration,
@@ -26,7 +26,8 @@ interface MayorHighlightsProps {
 /**
  * トップページで、市長が代わってからの動きを新しい順に見せるブロック。
  * 市長交代で関心が高いため、閉会中はページの先頭（ヒーロー直下）に置く。
- * ブロック全体が特設ページの「就任後にしたこと」へのリンクになる
+ * リンクは末尾の「すべて見る」1つだけにし、その押せる範囲をブロック全体に
+ * 広げている（ブロックごとリンクで包むと、リンクの読み上げが全文になるため）
  */
 export function MayorHighlights({ now }: MayorHighlightsProps) {
   const days = daysSinceInauguration(MAYOR_PROFILE.inaugurationDate, now);
@@ -37,10 +38,7 @@ export function MayorHighlights({ now }: MayorHighlightsProps) {
   );
 
   return (
-    <Link
-      href={`${routes.mayor()}#${MAYOR_SECTIONS.actions.id}` as Route}
-      className="group block w-full bg-mirai-surface-key px-6 py-6 transition-colors hover:bg-mirai-surface-key-subtle md:mt-2 md:rounded-lg"
-    >
+    <section className="group relative w-full bg-mirai-surface-key px-6 py-6 transition-colors hover:bg-mirai-surface-key-subtle md:mt-2 md:rounded-lg">
       <div className="flex items-center gap-4">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-white text-primary">
           <UserCheck aria-hidden className="size-6" />
@@ -86,13 +84,18 @@ export function MayorHighlights({ now }: MayorHighlightsProps) {
         ))}
       </ol>
 
-      <p className="mt-3 flex items-center justify-end gap-0.5 text-sm font-bold text-primary">
-        就任後の動きをすべて見る（{MAYOR_ACTIONS.length}件）
-        <ChevronRight
-          aria-hidden
-          className="size-4 transition-transform group-hover:translate-x-0.5"
-        />
+      <p className="mt-3 flex justify-end">
+        <Link
+          href={`${routes.mayor()}#${MAYOR_SECTIONS.actions.id}` as Route}
+          className="flex items-center gap-0.5 text-sm font-bold text-primary after:absolute after:inset-0 after:content-['']"
+        >
+          就任後の動きをすべて見る（{MAYOR_ACTIONS.length}件）
+          <ChevronRight
+            aria-hidden
+            className="size-4 transition-transform group-hover:translate-x-0.5"
+          />
+        </Link>
       </p>
-    </Link>
+    </section>
   );
 }

@@ -9,7 +9,7 @@ import {
   calculateAge,
   daysSinceInauguration,
 } from "../../../shared/utils/mayor-activity";
-import { MAYOR_SECTIONS } from "./section-ids";
+import { MAYOR_SECTIONS } from "../../../shared/data/section-ids";
 import { SourceLink } from "./source-link";
 
 const JUMP_ENTRIES = Object.values(MAYOR_SECTIONS).map((section) => ({
