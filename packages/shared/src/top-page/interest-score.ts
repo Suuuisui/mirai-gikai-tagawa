@@ -182,44 +182,32 @@ export function computeBillInterestScore(
 
 /**
  * 「直近の会期で実際に話題になった議案」かどうかを判定する。
- * 興味度スコアが MIN_NOTABLE_SCORE を超えるだけでは、去年の否決議案のように
- * 「かつて話題だった」議案も拾ってしまう。トップページのタグ別セクション
- * 自動昇格は「今まさに話題」なセクションのみを対象にしたいため、閾値超えに
- * 加えて submitted_date が HOT_TOPIC_WINDOW_DAYS 以内であることも要求する。
+ * 否決・不認定など異例の議決（isControversialStatus）が
+ * HOT_TOPIC_WINDOW_DAYS 以内にあった議案だけを対象にする
+ * （トップページのタグ別セクション自動昇格の判定用）。
+ *
+ * 以前は興味度スコアが MIN_NOTABLE_SCORE を超えるかどうかで判定していたが、
+ * 「反対討論」「議会での主な論点」のように解説の定型で入る加点と新しさの
+ * 加点だけで閾値を超えてしまい（25+15+15=55）、異議なく可決された意見書の
+ * セクションまで、運営が決めた並び順より上に出ていた（2026年10月の実例）。
+ * 運営が決めた並び順を覆すのは、議決そのものが異例だったときに限る。
  * @param now 経過日数計算の基準時刻。省略時は現在時刻（テストで日付を固定する用途）。
  */
 export function isHotTopicBill(
-  bill: BillForInterestScore,
+  bill: Pick<BillForInterestScore, "status_note" | "submitted_date">,
   now: Date = new Date()
 ): boolean {
-  return isHotTopicScore(
-    computeBillInterestScore(bill, now),
-    bill.submitted_date,
-    now
-  );
-}
-
-/**
- * `isHotTopicBill` の判定を、計算済みの興味度スコアから行うバリアント。
- * adminのトップページ編集画面のように、スコアを別途表示するため既に
- * 計算している呼び出し元が、本文の再スキャンなしで判定できるようにする。
- */
-export function isHotTopicScore(
-  score: number,
-  submittedDate: string | null,
-  now: Date = new Date()
-): boolean {
-  if (submittedDate === null) {
+  if (bill.submitted_date === null) {
     return false;
   }
 
   const elapsedDays =
-    (now.getTime() - new Date(submittedDate).getTime()) / MS_PER_DAY;
+    (now.getTime() - new Date(bill.submitted_date).getTime()) / MS_PER_DAY;
   if (elapsedDays > HOT_TOPIC_WINDOW_DAYS) {
     return false;
   }
 
-  return score > MIN_NOTABLE_SCORE;
+  return isControversialStatus(bill.status_note);
 }
 
 /**

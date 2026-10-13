@@ -108,9 +108,9 @@ const _getCachedBillsByFeaturedTags = unstable_cache(
     }));
 
     // セクション（タグ）の並び順は基本的に運営が設定した featured_priority の
-    // 昇順。ただし直近90日以内に否決・不信任決議など話題性の高い議案
-    // （興味度スコアが MIN_NOTABLE_SCORE 超）が出たセクションだけは
-    // 自動的に上位へ昇格する。詳細は sortBillsByTagSections のドキュメントを参照。
+    // 昇順。ただし直近90日以内に否決・不認定など異例の議決があった議案が
+    // 枠に出ているセクションだけは自動的に上位へ昇格する。
+    // 詳細は sortBillsByTagSections のドキュメントを参照。
     const now = new Date();
     return sortBillsByTagSections(
       resultsWithInterview,
@@ -119,8 +119,7 @@ const _getCachedBillsByFeaturedTags = unstable_cache(
           { ...bill, bill_contents: bill.bill_content },
           now
         ),
-      (bill) =>
-        isHotTopicBill({ ...bill, bill_contents: bill.bill_content }, now)
+      (bill) => isHotTopicBill(bill, now)
     );
   },
   ["featured-bills-list"],

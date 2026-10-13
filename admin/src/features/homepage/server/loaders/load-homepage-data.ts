@@ -5,7 +5,7 @@ import {
   type BillForInterestScore,
   computeBillInterestScore,
   isControversialStatus,
-  isHotTopicScore,
+  isHotTopicBill,
   sortByInterestKey,
 } from "@mirai-gikai/shared/top-page/interest-score";
 import { selectTagSectionBills } from "@mirai-gikai/shared/top-page/select-tag-section-bills";
@@ -74,7 +74,7 @@ export async function loadHomepageData(): Promise<HomepageData> {
         sessionName: row.diet_sessions?.name ?? null,
         tags,
         interestScore,
-        isHot: isHotTopicScore(interestScore, row.submitted_date, now),
+        isHot: isHotTopicBill(row, now),
       },
       isFeatured: row.is_featured,
       featuredPriority: row.featured_priority,

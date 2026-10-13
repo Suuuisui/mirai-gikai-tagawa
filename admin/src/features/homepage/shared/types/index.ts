@@ -26,7 +26,7 @@ export type CurationBill = {
   tags: Array<{ id: string; label: string }>;
   /** 興味度スコア（interest-score.ts）。候補を比較する際の目安 */
   interestScore: number;
-  /** 直近90日以内かつ話題性の高い議案か（タグセクション自動昇格の要因） */
+  /** 直近90日以内に否決・不認定など異例の議決があった議案か（タグセクション自動昇格の要因） */
   isHot: boolean;
 };
 
@@ -43,7 +43,7 @@ export type FeaturedTagSection = {
   pinnedBillIds: string[];
   /** ピン留め候補（このタグの公開議案のうち枠外のもの。興味度スコア降順） */
   pinCandidates: CurationBill[];
-  /** 話題性の高い議案を含み、設定順より上に自動昇格しているか */
+  /** 直近に異例の議決があった議案を含み、設定順より上に自動昇格しているか */
   isHot: boolean;
 };
 
