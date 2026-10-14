@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   type BillForInterestScore,
+  computeBillBaseInterestScore,
   computeBillInterestScore,
   isHotTopicBill,
   sortBillsTagRowsByInterestDesc,
@@ -201,6 +202,38 @@ describe("computeBillInterestScore", () => {
       new Date("2026-07-01")
     );
     expect(score).toBe(0);
+  });
+});
+
+describe("computeBillBaseInterestScore", () => {
+  it("新しさの加点を含まないので、提出時期が違っても同じ議案は同じ点になる", () => {
+    const content = {
+      title: "",
+      summary: "",
+      content: "反対討論があった。\n## 議会での主な論点\n詳細",
+    };
+    const recent = createBill({
+      submitted_date: daysAgo(10),
+      bill_contents: [content],
+    });
+    const old = createBill({
+      submitted_date: FAR_PAST_SUBMITTED_DATE,
+      bill_contents: [content],
+    });
+
+    expect(computeBillBaseInterestScore(recent)).toBe(40);
+    expect(computeBillBaseInterestScore(old)).toBe(40);
+  });
+
+  it("興味度スコアは中身の点数に新しさの加点を足したもの", () => {
+    const bill = createBill({
+      status_note: "否決",
+      submitted_date: daysAgo(10),
+    });
+
+    expect(computeBillInterestScore(bill)).toBe(
+      computeBillBaseInterestScore(bill) + 15
+    );
   });
 });
 
