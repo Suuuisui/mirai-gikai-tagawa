@@ -114,9 +114,15 @@ export function summarizeSessionResults(
 /**
  * BillWithContent（`bill_content` 単数フィールド）を、
  * 興味度スコアの関数が期待する形（`bill_contents`）に変換する。
+ * 本会議でまだ議決されていない議案（会期中）の status_note には委員会の結論
+ * （「委員会で不認定と決定」など）が入るため、議決の結果としては数えない
  */
 function toInterestScoreInput(bill: BillWithContent): BillForInterestScore {
-  return { ...bill, bill_contents: bill.bill_content ?? null };
+  return {
+    ...bill,
+    status_note: bill.status === "introduced" ? null : bill.status_note,
+    bill_contents: bill.bill_content ?? null,
+  };
 }
 
 /**
@@ -136,16 +142,17 @@ export function pickSessionHighlights(
   bills: BillWithContent[],
   count: number
 ): BillWithContent[] {
-  const scored = bills.map((bill) => ({
-    bill,
-    score: computeBillBaseInterestScore(toInterestScoreInput(bill)),
-  }));
+  const scored = bills.map((bill) => {
+    const input = toInterestScoreInput(bill);
+    return {
+      bill,
+      isControversial: isControversialStatus(input.status_note),
+      score: computeBillBaseInterestScore(input),
+    };
+  });
 
   const eligible = scored.filter(
-    ({ bill, score }) =>
-      (bill.status !== "introduced" &&
-        isControversialStatus(bill.status_note)) ||
-      score > MIN_NOTABLE_SCORE
+    ({ isControversial, score }) => isControversial || score > MIN_NOTABLE_SCORE
   );
 
   return sortByInterestKey(eligible, ({ bill, score }) => ({

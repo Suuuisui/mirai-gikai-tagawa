@@ -235,11 +235,13 @@ describe("pickSessionHighlights", () => {
   });
 
   it("会期中でまだ本会議の議決が無い議案は、委員会の結論が不認定でも異例の議決として数えない", () => {
+    // 不認定の加点（+50）を数えると、論点の見出し（+15）だけで閾値を超えてしまう
     const bills = [
       makeBillWithContent({
         id: "in-committee",
         status: "introduced",
         status_note: "委員会で不認定と決定",
+        bill_content: withContent("## 議会での主な論点\n詳細"),
       }),
     ];
 
