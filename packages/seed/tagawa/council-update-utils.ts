@@ -487,6 +487,84 @@ export function formatMinutesRecord(record: OfficialMinutesRecord): string {
   return `${record.sessionName} ${record.dayLabel}（${record.date}）`;
 }
 
+// ---------------------------------------------------------------- トップページの注目・固定
+
+/** 本番DBにあるトップページの設定（admin の「トップページ編集」で決めるもの） */
+export interface HomepageCurationState {
+  /** 注目の議案のID（表示順） */
+  featuredBillIds: string[];
+  /** トップページに出しているタグ（表示順）と、その枠に固定した議案のID */
+  tags: { id: string; label: string; pinnedBillIds: string[] }[];
+}
+
+/** 会期の判定に使う、生成済み CSV の会期と議案 */
+export interface CurationSessionRow {
+  id: string;
+  key: string;
+  name: string;
+  /** YYYY-MM-DD */
+  startDate: string;
+}
+
+export interface CurationBillRow {
+  id: string;
+  sessionId: string;
+  tagIds: readonly string[];
+}
+
+/** 最新の会期の議案が1件も入っていないトップページの枠 */
+export interface StaleHomepageCuration {
+  sessionKey: string;
+  sessionName: string;
+  /** 「注目の議案（3件）」「タグ「予算」の固定（3件）」のような枠の説明 */
+  slots: string[];
+}
+
+/**
+ * トップページの注目の議案・タグ枠の固定が、前の会期の議案のままになっていないかを調べる。
+ * 最新の会期（議案がある会期のうち開会日が最も新しいもの）の議案が、
+ * - 注目の議案に1件も無い
+ * - 固定のあるタグ枠に1件も無い（そのタグに最新の会期の議案があるときだけ。固定の無い枠は自動で選ばれる）
+ * ときに、その枠を返す。どれにも当たらなければ null。
+ * 固定は会期が変わっても自動では入れ替わらないため、毎日の自動更新で見直しを促す
+ */
+export function findStaleHomepageCuration(
+  curation: HomepageCurationState,
+  sessions: readonly CurationSessionRow[],
+  bills: readonly CurationBillRow[]
+): StaleHomepageCuration | null {
+  const sessionIdsWithBills = new Set(bills.map((bill) => bill.sessionId));
+  const latest = sessions
+    .filter((session) => sessionIdsWithBills.has(session.id))
+    .reduce<CurationSessionRow | null>(
+      (newest, session) =>
+        newest === null || session.startDate > newest.startDate ? session : newest,
+      null
+    );
+  if (latest === null) return null;
+
+  const latestBills = bills.filter((bill) => bill.sessionId === latest.id);
+  const latestBillIds = new Set(latestBills.map((bill) => bill.id));
+  const tagIdsWithLatestBills = new Set(latestBills.flatMap((bill) => bill.tagIds));
+  const hasLatest = (billIds: readonly string[]) => billIds.some((id) => latestBillIds.has(id));
+
+  const slots: string[] = [];
+  if (curation.featuredBillIds.length > 0 && !hasLatest(curation.featuredBillIds)) {
+    slots.push(`注目の議案（${curation.featuredBillIds.length}件）`);
+  }
+  for (const tag of curation.tags) {
+    if (
+      tag.pinnedBillIds.length > 0 &&
+      tagIdsWithLatestBills.has(tag.id) &&
+      !hasLatest(tag.pinnedBillIds)
+    ) {
+      slots.push(`タグ「${tag.label}」の固定（${tag.pinnedBillIds.length}件）`);
+    }
+  }
+
+  return slots.length > 0 ? { sessionKey: latest.key, sessionName: latest.name, slots } : null;
+}
+
 // ---------------------------------------------------------------- レポート
 
 export interface RecordDiffSummary {
@@ -528,6 +606,8 @@ export interface UpdateReportInput {
   recordsAwaitingMinutes: RecordAwaitingMinutes[];
   /** 会議録が公開されたのに、解説が会議録をもとにしていない議案が残る会期 */
   sessionsAwaitingMinutes: SessionAwaitingMinutes[];
+  /** トップページの注目・固定に最新の会期の議案が1件も無い枠（無ければ null） */
+  staleHomepageCuration: StaleHomepageCuration | null;
   /** yt-dlp が使えなかった等、確認が必要な警告 */
   warnings: string[];
 }
@@ -563,6 +643,7 @@ export function needsHumanFollowUp(input: UpdateReportInput): boolean {
     splitVideosByRecency(input.unrecordedVideos, input.date).recent.length > 0 ||
     input.recordsAwaitingMinutes.length > 0 ||
     input.sessionsAwaitingMinutes.length > 0 ||
+    input.staleHomepageCuration !== null ||
     input.warnings.length > 0
   );
 }
@@ -706,6 +787,15 @@ export function buildUpdateReport(input: UpdateReportInput): string {
       `#### 会議録が公開された会期の議案の解説（${input.sessionsAwaitingMinutes.length}会期）`,
       "解説が中継の文字起こしや説明資料をもとにしたままです。`packages/seed/tagawa/bill-descriptions*.ts` を会議録（提案理由・質疑・委員長報告・討論・採決）で書き直し、`source` を `\"minutes\"` にしてください。",
       ...input.sessionsAwaitingMinutes.map((s) => `- ${s.sessionName}（${s.sessionKey}）: ${s.billCount}件`),
+      ""
+    );
+  }
+  if (input.staleHomepageCuration !== null) {
+    const stale = input.staleHomepageCuration;
+    todo.push(
+      "#### トップページの注目・固定が前の会期のまま",
+      `最新の会期（${stale.sessionName}）の議案が、次の枠に1件も入っていません。会期の議案が出そろったら、admin の「トップページ編集」か \`scripts/set-homepage-curation.mjs\` で見直してください（選び方は docs/20261013_1900_トップページの並び替え.md）。固定していない枠は自動で選ばれます。`,
+      ...stale.slots.map((slot) => `- ${slot}`),
       ""
     );
   }

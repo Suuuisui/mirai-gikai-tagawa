@@ -17,6 +17,7 @@
     "tagawa:scrape-minutes-index": "tsx tagawa/scrape-minutes-index.ts",
     "tagawa:update-question-videos": "tsx tagawa/update-question-videos.ts",
     "tagawa:find-unrecorded-videos": "tsx tagawa/find-unrecorded-videos.ts",
+    "tagawa:check-homepage-curation": "tsx tagawa/check-homepage-curation.ts",
     "tagawa:detect-changes": "tsx tagawa/detect-council-changes.ts"
   },
   "dependencies": {

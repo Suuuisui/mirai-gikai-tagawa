@@ -13,7 +13,8 @@ name: Council Auto Update
 # - 変更があれば検証（lint / typecheck / test）のうえ main にコミットし、
 #   デプロイと Integration Tests（visual-smoke を含む）を起動する
 # - 人の作業が必要なこと（解説文が無い新しい議案、委員会記録に無い中継動画、
-#   会議録が公開されたのに中継の文字起こしをもとにしたままの記録・解説）を Issue に書く
+#   会議録が公開されたのに中継の文字起こしをもとにしたままの記録・解説、
+#   トップページの注目・固定に最新の会期の議案が1件も無い枠）を Issue に書く
 #
 # 必要な Secrets: SUPABASE_URL / SUPABASE_SECRET_KEY（本番DB。service_role の JWT）、
 #   REVALIDATE_SECRET（web の /api/revalidate）。無ければDB投入と再検証を飛ばす
@@ -101,6 +102,14 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
         run: pnpm --filter @mirai-gikai/seed tagawa:find-unrecorded-videos -- --out "$OUT_DIR"
+
+      # 注目・固定は人が決めるもので、会期が変わっても自動では入れ替わらない。
+      # 最新の会期（この日に取り込んだ CSV で判定）の議案が1件も入っていない枠を Issue に載せる
+      - name: トップページの注目・固定が前の会期のままか調べる
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: pnpm --filter @mirai-gikai/seed tagawa:check-homepage-curation -- --out "$OUT_DIR"
 
       - name: 変更を検出
         id: detect

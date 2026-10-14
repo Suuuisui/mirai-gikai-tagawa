@@ -13,6 +13,7 @@ import {
   findRecordsAwaitingMinutes,
   findSessionIdsWithChangedBillRows,
   findSessionsAwaitingMinutes,
+  findStaleHomepageCuration,
   findStaleOngoingBills,
   findUnrecordedVideos,
   formatBillRef,
@@ -279,6 +280,7 @@ describe("buildUpdateReport / hasDataChanges / needsHumanFollowUp / buildCommitS
     officialMinutesIndexChanged: false,
     recordsAwaitingMinutes: [],
     sessionsAwaitingMinutes: [],
+    staleHomepageCuration: null,
     warnings: [],
   };
   const ref = { sessionKey: "r8-6-teirei", sessionName: "9月定例会", billNumberLabel: "認定第1号", title: "決算" };
@@ -438,6 +440,119 @@ describe("buildUpdateReport / hasDataChanges / needsHumanFollowUp / buildCommitS
     expect(buildUpdateReport({ ...base, changedSessions: ["r8-6-teirei"], updatedBillContents: 3 })).toContain(
       "解説文が更新された議案: 3件"
     );
+  });
+});
+
+describe("トップページの注目・固定のレポート", () => {
+  const base: UpdateReportInput = {
+    date: "2026-12-01",
+    sessions: { added: [], changed: [], removed: [] },
+    changedSessions: [],
+    newBills: [],
+    removedBills: [],
+    billsWithoutDescription: [],
+    updatedBillContents: 0,
+    lostDescriptions: [],
+    prunedOngoingKeys: [],
+    pendingOfficialBills: [],
+    staleOngoingBills: [],
+    newLabelAliases: [],
+    petitions: { added: 0, changed: 0 },
+    questions: { added: 0, changed: 0 },
+    addedQuestionVideos: [],
+    unrecordedVideos: [],
+    newOfficialMinutes: [],
+    officialMinutesIndexChanged: false,
+    recordsAwaitingMinutes: [],
+    sessionsAwaitingMinutes: [],
+    staleHomepageCuration: null,
+    warnings: [],
+  };
+
+  it("前の会期のままの枠があれば人の作業として載せ、無ければ載せない", () => {
+    const input: UpdateReportInput = {
+      ...base,
+      staleHomepageCuration: {
+        sessionKey: "r8-7-teirei",
+        sessionName: "令和8年（第7回）12月定例会",
+        slots: ["注目の議案（3件）", "タグ「予算」の固定（3件）"],
+      },
+    };
+    const report = buildUpdateReport(input);
+    expect(report).toContain("#### トップページの注目・固定が前の会期のまま");
+    expect(report).toContain("最新の会期（令和8年（第7回）12月定例会）の議案が");
+    expect(report).toContain("- 注目の議案（3件）\n- タグ「予算」の固定（3件）");
+    expect(needsHumanFollowUp(input)).toBe(true);
+    // データの変化ではないので、コミット・デプロイはしない
+    expect(hasDataChanges(input)).toBe(false);
+
+    expect(buildUpdateReport(base)).not.toContain("トップページの注目・固定");
+    expect(needsHumanFollowUp(base)).toBe(false);
+  });
+});
+
+describe("findStaleHomepageCuration", () => {
+  const sessions = [
+    { id: "s-sep", key: "r8-6-teirei", name: "9月定例会", startDate: "2026-09-07" },
+    { id: "s-dec", key: "r8-7-teirei", name: "12月定例会", startDate: "2026-12-01" },
+    { id: "s-old", key: "r8-2-teirei", name: "3月定例会", startDate: "2026-02-19" },
+  ];
+  const septemberBills = [
+    { id: "sep-budget", sessionId: "s-sep", tagIds: ["tag-budget"] },
+    { id: "sep-ordinance", sessionId: "s-sep", tagIds: ["tag-ordinance"] },
+    { id: "sep-settlement", sessionId: "s-sep", tagIds: ["tag-settlement"] },
+  ];
+  const decemberBills = [
+    { id: "dec-budget", sessionId: "s-dec", tagIds: ["tag-budget"] },
+    { id: "dec-ordinance", sessionId: "s-dec", tagIds: ["tag-ordinance"] },
+  ];
+  const curation = {
+    featuredBillIds: ["sep-settlement", "sep-budget"],
+    tags: [
+      { id: "tag-budget", label: "予算", pinnedBillIds: ["sep-budget"] },
+      { id: "tag-ordinance", label: "条例", pinnedBillIds: [] },
+      { id: "tag-settlement", label: "決算", pinnedBillIds: ["sep-settlement"] },
+    ],
+  };
+
+  it("最新の会期の議案が注目にも固定にも入っていなければ、その枠を返す", () => {
+    expect(
+      findStaleHomepageCuration(curation, sessions, [...septemberBills, ...decemberBills])
+    ).toEqual({
+      sessionKey: "r8-7-teirei",
+      sessionName: "12月定例会",
+      // 条例は固定が無く自動で選ばれる。決算は最新の会期に決算の議案が無い
+      slots: ["注目の議案（2件）", "タグ「予算」の固定（1件）"],
+    });
+  });
+
+  it("最新の会期の議案が1件でも入っている枠は返さず、どの枠も入っていれば null", () => {
+    const updated = {
+      featuredBillIds: ["dec-budget", "sep-settlement"],
+      tags: [
+        { id: "tag-budget", label: "予算", pinnedBillIds: ["sep-budget", "dec-budget"] },
+        { id: "tag-settlement", label: "決算", pinnedBillIds: ["sep-settlement"] },
+      ],
+    };
+    expect(
+      findStaleHomepageCuration(updated, sessions, [...septemberBills, ...decemberBills])
+    ).toBeNull();
+  });
+
+  it("最新の会期は議案のある会期から決める（議案の無い会期は数えない）", () => {
+    // 12月定例会の議案がまだ無いうちは、9月定例会が最新なので前の会期のままとは言わない
+    expect(findStaleHomepageCuration(curation, sessions, septemberBills)).toBeNull();
+  });
+
+  it("注目も固定も無ければ、何も返さない", () => {
+    expect(
+      findStaleHomepageCuration(
+        { featuredBillIds: [], tags: [{ id: "tag-budget", label: "予算", pinnedBillIds: [] }] },
+        sessions,
+        [...septemberBills, ...decemberBills]
+      )
+    ).toBeNull();
+    expect(findStaleHomepageCuration(curation, sessions, [])).toBeNull();
   });
 });
 

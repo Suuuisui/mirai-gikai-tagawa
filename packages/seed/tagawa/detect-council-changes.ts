@@ -43,6 +43,7 @@ import {
   needsHumanFollowUp,
   parseOutDir,
   type RecordAwaitingMinutes,
+  type StaleHomepageCuration,
   type UpdateReportInput,
 } from "./council-update-utils";
 import { diffMinutesRecords, parseStoredMinutesIndex } from "./minutes-index-parser";
@@ -255,6 +256,7 @@ function main() {
   const awaitingMinutesPath = path.join(outDir, "records-awaiting-minutes.json");
 
   const unrecordedPath = path.join(outDir, "unrecorded-videos.json");
+  const staleCurationPath = path.join(outDir, "stale-homepage-curation.json");
   const warningsPath = path.join(outDir, "warnings.txt");
   const petitions = diffRecords(readCommitted(PETITIONS_PATH), readWorking(PETITIONS_PATH));
   const questions = diffRecords(readCommitted(QUESTIONS_PATH), readWorking(QUESTIONS_PATH));
@@ -287,6 +289,10 @@ function main() {
       ? (JSON.parse(readFileSync(awaitingMinutesPath, "utf-8")) as RecordAwaitingMinutes[])
       : [],
     sessionsAwaitingMinutes: findSessionsAwaitingMinutes(nextAll, descriptionStates, minutesDates),
+    // check-homepage-curation.ts が書いた結果（実行していない・確認できなかった日は null）
+    staleHomepageCuration: existsSync(staleCurationPath)
+      ? (JSON.parse(readFileSync(staleCurationPath, "utf-8")) as StaleHomepageCuration | null)
+      : null,
     warnings: [
       ...(existsSync(warningsPath)
         ? readFileSync(warningsPath, "utf-8").split("\n").filter((line) => line.trim() !== "")
