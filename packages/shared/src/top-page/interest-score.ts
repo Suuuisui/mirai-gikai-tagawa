@@ -77,8 +77,13 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
  * 書く際にほぼ定型で入るため、賛成多数で穏当に可決された議案でもこれだけで
  * 50点前後まで積み上がる（実例: 賛成14反対5で認定された決算議案が、反対討論
  * ＋論点見出し＋生活密着キーワードのヒットだけで48点）。テンプレート由来の
- * 加点だけでは超えられない水準を要求し、争点・否決・直近性など、追加の根拠を
+ * 加点だけでは超えられない水準を要求し、否決や運営の注目など、追加の根拠を
  * 持つ議案だけをこの閾値超えとして扱う。
+ *
+ * 比べる相手は中身の点数（computeBillBaseInterestScore）。新しさの加点（最大15点）を
+ * 足した点数と比べると、直近の会期では定型の加点だけで閾値を超えてしまう
+ * （2026年10月の実例: 令和7年12月定例会で8件が「ハイライト」の候補になり、
+ * 新しさの加点を除くと0件だった）。
  */
 export const MIN_NOTABLE_SCORE = 50;
 
@@ -116,13 +121,12 @@ function getSingleBillContent(
 }
 
 /**
- * 議案の「興味度スコア」を計算する純粋関数。
- * トップページのタグ別議案一覧のみで使用し、タグ詳細ページ等は従来通り日付順のまま。
- * @param now 新しさボーナスの基準時刻。省略時は現在時刻（テストで日付を固定する用途）。
+ * 議案の中身（議決の結果・解説・件名・資料）だけから求める興味度スコア。
+ * 新しさの加点を含まないので、提出時期に関係なく同じ議案は同じ点になる。
+ * 同じ会期の中で議案どうしを比べるとき（会期まとめのハイライト）に使う
  */
-export function computeBillInterestScore(
-  bill: BillForInterestScore,
-  now: Date = new Date()
+export function computeBillBaseInterestScore(
+  bill: BillForInterestScore
 ): number {
   const content = getSingleBillContent(bill);
   const title = content?.title ?? "";
@@ -167,17 +171,40 @@ export function computeBillInterestScore(
     score += SCORE_ROUTINE_PENALTY;
   }
 
-  if (bill.submitted_date !== null) {
-    const elapsedDays =
-      (now.getTime() - new Date(bill.submitted_date).getTime()) / MS_PER_DAY;
-    if (elapsedDays <= RECENCY_BONUS_HIGH_THRESHOLD_DAYS) {
-      score += SCORE_SUBMITTED_WITHIN_400_DAYS;
-    } else if (elapsedDays <= RECENCY_BONUS_LOW_THRESHOLD_DAYS) {
-      score += SCORE_SUBMITTED_WITHIN_800_DAYS;
-    }
-  }
-
   return score;
+}
+
+/** 提出（議決）日の新しさの加点。日付が無ければ0 */
+function computeRecencyBonus(submittedDate: string | null, now: Date): number {
+  if (submittedDate === null) {
+    return 0;
+  }
+  const elapsedDays =
+    (now.getTime() - new Date(submittedDate).getTime()) / MS_PER_DAY;
+  if (elapsedDays <= RECENCY_BONUS_HIGH_THRESHOLD_DAYS) {
+    return SCORE_SUBMITTED_WITHIN_400_DAYS;
+  }
+  if (elapsedDays <= RECENCY_BONUS_LOW_THRESHOLD_DAYS) {
+    return SCORE_SUBMITTED_WITHIN_800_DAYS;
+  }
+  return 0;
+}
+
+/**
+ * 議案の「興味度スコア」を計算する純粋関数。中身の点数
+ * （computeBillBaseInterestScore）に新しさの加点を足したもの。
+ * トップページのタグ別議案一覧など、会期をまたいで「いま」の関心で並べるときに使う
+ * （タグ詳細ページ等は従来通り日付順のまま）。
+ * @param now 新しさボーナスの基準時刻。省略時は現在時刻（テストで日付を固定する用途）。
+ */
+export function computeBillInterestScore(
+  bill: BillForInterestScore,
+  now: Date = new Date()
+): number {
+  return (
+    computeBillBaseInterestScore(bill) +
+    computeRecencyBonus(bill.submitted_date, now)
+  );
 }
 
 /**

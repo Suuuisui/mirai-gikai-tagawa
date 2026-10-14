@@ -1,7 +1,8 @@
 import type { Bill, BillWithContent } from "@/features/bills/shared/types";
 import {
   type BillForInterestScore,
-  computeBillInterestScore,
+  computeBillBaseInterestScore,
+  isControversialStatus,
   MIN_NOTABLE_SCORE,
   sortByInterestKey,
 } from "@/features/bills/shared/utils/interest-score";
@@ -112,30 +113,47 @@ export function summarizeSessionResults(
 
 /**
  * BillWithContent（`bill_content` 単数フィールド）を、
- * computeBillInterestScore が期待する形（`bill_contents`）に変換する。
+ * 興味度スコアの関数が期待する形（`bill_contents`）に変換する。
+ * 本会議でまだ議決されていない議案（会期中）の status_note には委員会の結論
+ * （「委員会で不認定と決定」など）が入るため、議決の結果としては数えない
  */
 function toInterestScoreInput(bill: BillWithContent): BillForInterestScore {
-  return { ...bill, bill_contents: bill.bill_content ?? null };
+  return {
+    ...bill,
+    status_note: bill.status === "introduced" ? null : bill.status_note,
+    bill_contents: bill.bill_content ?? null,
+  };
 }
 
 /**
- * 会期の議案一覧から、興味度スコア（computeBillInterestScore）が
- * MIN_NOTABLE_SCORE を上回る議案に絞り、スコアが高い順に上位 `count` 件を
- * 選ぶ純粋関数。「🔥この会期のハイライト」セクションで使用する。全議案が
- * MIN_NOTABLE_SCORE に届かない会期では、ハイライトなし（空配列）を返す。
- * @param now スコア計算の基準時刻（省略時は現在時刻。テストで日付を固定する用途）
+ * 会期の議案一覧から「🔥この会期のハイライト」に出す議案を、上位 `count` 件まで選ぶ純粋関数。
+ *
+ * 対象にするのは次のどちらかに当たる議案で、該当が無い会期ではハイライトなし（空配列）を返す。
+ * - 否決・不認定・継続審議など異例の議決があった議案（トップページのタグ別セクションの
+ *   自動昇格と同じ isControversialStatus。会期のページなので90日の期限は付けない）。
+ *   本会議でまだ議決されていない議案（会期中）は、status_note に委員会の結論が書かれていても数えない
+ * - 中身の点数（computeBillBaseInterestScore。新しさの加点を含まない）が MIN_NOTABLE_SCORE を超える議案
+ *
+ * 並び順は中身の点数の高い順（→ 議決日の新しい順 → id）。新しさの加点を使わないのは、
+ * 同じ会期の議案は提出時期がほぼ同じで比べる意味が無く、加点を足すと直近の会期だけ
+ * 解説の定型の加点で閾値を超えてしまうため
  */
 export function pickSessionHighlights(
   bills: BillWithContent[],
-  count: number,
-  now: Date = new Date()
+  count: number
 ): BillWithContent[] {
-  const scored = bills.map((bill) => ({
-    bill,
-    score: computeBillInterestScore(toInterestScoreInput(bill), now),
-  }));
+  const scored = bills.map((bill) => {
+    const input = toInterestScoreInput(bill);
+    return {
+      bill,
+      isControversial: isControversialStatus(input.status_note),
+      score: computeBillBaseInterestScore(input),
+    };
+  });
 
-  const eligible = scored.filter(({ score }) => score > MIN_NOTABLE_SCORE);
+  const eligible = scored.filter(
+    ({ isControversial, score }) => isControversial || score > MIN_NOTABLE_SCORE
+  );
 
   return sortByInterestKey(eligible, ({ bill, score }) => ({
     score,
