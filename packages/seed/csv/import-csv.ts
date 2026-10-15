@@ -4,6 +4,7 @@ import path from "node:path";
 import type { Database } from "@mirai-gikai/supabase";
 import { createAdminClient, clearAllData, type AdminClient } from "../shared/helper";
 import { castCsvValue } from "./csv-value-cast";
+import { checkSeedTarget } from "./remote-guard";
 import {
   type FeaturedBillSnapshot,
   resolveFeaturedBillUpdates,
@@ -399,7 +400,28 @@ async function restoreTagSettings(
   }
 }
 
+/**
+ * 消去する前に、復元用に控えたデータをファイルへ書き出す。
+ * メモリ上だけだと途中で失敗したときに失われるため。市民の回答等を含むので git 管理外
+ * （packages/seed/csv/.snapshots/）に置く。
+ */
+function writeSnapshotFile(snapshots: Record<string, unknown>): string {
+  const dir = path.join(import.meta.dirname, ".snapshots");
+  fs.mkdirSync(dir, { recursive: true });
+  const file = path.join(
+    dir,
+    `seed-csv-snapshot-${new Date().toISOString().replace(/[:.]/g, "-")}.json`
+  );
+  fs.writeFileSync(file, JSON.stringify(snapshots, null, 2), { mode: 0o600 });
+  return file;
+}
+
 async function importFromCsv() {
+  const blocked = checkSeedTarget(process.env.SUPABASE_URL, process.env);
+  if (blocked) {
+    console.error(`❌ ${blocked}`);
+    process.exit(1);
+  }
   const supabase = createAdminClient();
   const dataDir = path.join(import.meta.dirname, "data");
 
@@ -411,6 +433,15 @@ async function importFromCsv() {
     const featuredSnapshots = await snapshotFeaturedBills(supabase);
     const tagSettingsSnapshots = await snapshotTagSettings(supabase);
     const pinnedTagSnapshots = await snapshotPinnedTags(supabase);
+
+    const snapshotFile = writeSnapshotFile({
+      configSnapshots,
+      questionSnapshots,
+      featuredSnapshots,
+      tagSettingsSnapshots,
+      pinnedTagSnapshots,
+    });
+    console.log(`💾 消去前の設定を ${snapshotFile} に保存しました`);
 
     await clearAllData(supabase);
 

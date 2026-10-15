@@ -8,6 +8,10 @@
     "test:watch": "vitest"
   },
   "exports": {
+    "./supabase/fetch-all-pages": {
+      "types": "./src/supabase/fetch-all-pages.ts",
+      "default": "./src/supabase/fetch-all-pages.ts"
+    },
     "./ai/models": {
       "types": "./src/ai/models.ts",
       "default": "./src/ai/models.ts"

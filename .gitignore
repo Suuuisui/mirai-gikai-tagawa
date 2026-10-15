@@ -21,3 +21,6 @@ infra/cloud-run/config.env.*
 
 # visual-smoke のローカル実行成果物
 smoke-artifacts/
+
+# seed:csv が消去前に書き出す復元用スナップショット（回答等を含むため管理外）
+packages/seed/csv/.snapshots/

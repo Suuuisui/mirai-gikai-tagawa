@@ -10,23 +10,38 @@ on:
   issue_comment:
     types: [created]
 
+# 既定は読み取りのみ。書き込みが要るジョブだけ個別に権限を足す。
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
-  id-token: write
-  actions: write
+  contents: read
 
 jobs:
+  # 1) Claude に実装させ、対象 PR を特定する（書き込み権限あり。PR のコードは実行しない）
   claude:
+    # このリポジトリは PUBLIC。リポジトリ関係者（OWNER/MEMBER/COLLABORATOR）が書いた
+    # Issue / コメントだけを処理する。コメント起動の場合は Issue 本文の作者も同条件
+    # （第三者が書いた Issue 本文がプロンプトに入るのを防ぐ）。
     if: |
-      (github.event_name == 'issues' && contains(github.event.issue.body, '@claude')) ||
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude'))
+      (github.event_name == 'issues'
+        && contains(github.event.issue.body, '@claude')
+        && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.issue.author_association)) ||
+      (github.event_name == 'issue_comment'
+        && contains(github.event.comment.body, '@claude')
+        && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+        && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.issue.author_association))
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+      actions: read
+    outputs:
+      pr: ${{ steps.findpr.outputs.pr }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Claude Code 実行
         uses: anthropics/claude-code-action@cfc3eb22bfed5c26ef66e3223c982af27e4524de # v1
@@ -42,8 +57,14 @@ jobs:
           ISSUE_NUM: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
         run: |
-          PR=$(gh pr list --state open --json number,headRefName \
-            --jq 'first(.[] | select(.headRefName | startswith("claude/")).number)' || true)
+          # 対象は「この Issue 用の claude/issue-<番号>- ブランチ」「同一リポジトリ」
+          # 「作成者が Suuuisui か github-actions / claude のボット」の PR だけ。
+          PR=$(gh pr list --state open --json number,headRefName,isCrossRepository,author \
+            --jq "first(.[] | select(
+              (.headRefName | startswith(\"claude/issue-${ISSUE_NUM}-\"))
+              and (.isCrossRepository == false)
+              and ((.author.login) as \$a | [\"Suuuisui\",\"github-actions\",\"app/github-actions\",\"claude\",\"app/claude\",\"claude[bot]\",\"github-actions[bot]\"] | index(\$a))
+            ).number)" || true)
           if [ -z "$PR" ]; then
             BR=$(gh api "repos/${GITHUB_REPOSITORY}/branches" --paginate \
               --jq "[.[].name | select(startswith(\"claude/issue-${ISSUE_NUM}-\"))] | last // empty")
@@ -55,25 +76,31 @@ jobs:
           fi
           echo "pr=$PR" >> "$GITHUB_OUTPUT"
 
-      - name: PR ブランチに切り替え
-        if: steps.findpr.outputs.pr != ''
-        run: gh pr checkout "${{ steps.findpr.outputs.pr }}"
-        env:
-          GH_TOKEN: ${{ github.token }}
+  # 2) PR のコードを install / test する。書き込み権限なし・トークンを残さない
+  verify:
+    needs: claude
+    if: needs.claude.outputs.pr != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      PR_NUM: ${{ needs.claude.outputs.pr }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ needs.claude.outputs.pr }}/head
+          persist-credentials: false
 
       - name: Install pnpm
-        if: steps.findpr.outputs.pr != ''
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
 
       - name: Setup Node.js
-        if: steps.findpr.outputs.pr != ''
         uses: actions/setup-node@v6
         with:
           node-version: "20"
           cache: "pnpm"
 
       - name: テスト（lint / typecheck / build:ci / test）
-        if: steps.findpr.outputs.pr != ''
         run: |
           pnpm install --frozen-lockfile
           pnpm run lint
@@ -84,14 +111,22 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_dummy-for-build-check
 
+  # 3) テスト合格後にだけマージしてデプロイ起動（コードは checkout / 実行しない）
+  merge:
+    needs: [claude, verify]
+    if: needs.claude.outputs.pr != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
       - name: 自動マージ
-        if: steps.findpr.outputs.pr != ''
-        run: gh pr merge "${{ steps.findpr.outputs.pr }}" --squash --delete-branch
+        run: gh pr merge "${{ needs.claude.outputs.pr }}" --squash --delete-branch --repo "$GITHUB_REPOSITORY"
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: デプロイを起動（deploy.yml）
-        if: steps.findpr.outputs.pr != ''
-        run: gh workflow run deploy.yml --ref main
+        run: gh workflow run deploy.yml --ref main --repo "$GITHUB_REPOSITORY"
         env:
           GH_TOKEN: ${{ github.token }}

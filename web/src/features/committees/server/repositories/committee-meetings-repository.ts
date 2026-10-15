@@ -1,4 +1,5 @@
 import "server-only";
+import { fetchAllPages } from "@mirai-gikai/shared/supabase/fetch-all-pages";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type {
   CommitteeMeeting,
@@ -56,10 +57,14 @@ export async function findAllCommitteeMeetings(): Promise<
 > {
   const supabase = createAdminClient();
 
-  const { data, error } = await supabase
-    .from("committee_meetings")
-    .select(SUMMARY_COLUMNS)
-    .order("meeting_date", { ascending: false });
+  const { data, error } = await fetchAllPages((from, to) =>
+    supabase
+      .from("committee_meetings")
+      .select(SUMMARY_COLUMNS)
+      .order("meeting_date", { ascending: false })
+      .order("id")
+      .range(from, to)
+  );
 
   if (error) {
     throw new Error(`Failed to fetch committee meetings: ${error.message}`);
@@ -85,10 +90,14 @@ export async function findAllCommitteeMeetingListItems(): Promise<
 > {
   const supabase = createAdminClient();
 
-  const { data, error } = await supabase
-    .from("committee_meetings")
-    .select(LIST_COLUMNS)
-    .order("meeting_date", { ascending: false });
+  const { data, error } = await fetchAllPages((from, to) =>
+    supabase
+      .from("committee_meetings")
+      .select(LIST_COLUMNS)
+      .order("meeting_date", { ascending: false })
+      .order("id")
+      .range(from, to)
+  );
 
   if (error) {
     throw new Error(
@@ -118,10 +127,14 @@ export async function findAllCommitteeMeetingPetitionRefs(): Promise<
 > {
   const supabase = createAdminClient();
 
-  const { data, error } = await supabase
-    .from("committee_meetings")
-    .select(PETITION_REF_COLUMNS)
-    .order("meeting_date", { ascending: true });
+  const { data, error } = await fetchAllPages((from, to) =>
+    supabase
+      .from("committee_meetings")
+      .select(PETITION_REF_COLUMNS)
+      .order("meeting_date", { ascending: true })
+      .order("id")
+      .range(from, to)
+  );
 
   if (error) {
     throw new Error(

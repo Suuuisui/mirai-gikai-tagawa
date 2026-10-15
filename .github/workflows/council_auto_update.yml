@@ -192,6 +192,46 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # 投入に失敗した会期は、翌日以降は「差分なし」になり自動では再投入されない。
+      # 見落とさないよう、失敗したら必ず専用の Issue を作る（既にあれば追記する）。
+      # 投入に成功した日は、開いている失敗 Issue があれば閉じる
+      - name: 本番DBへの投入失敗を Issue に残す
+        if: ${{ !cancelled() && (steps.upsert.outcome == 'failure' || steps.upsert.outcome == 'success') }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSERT_OUTCOME: ${{ steps.upsert.outcome }}
+          CHANGED_SESSIONS: ${{ steps.detect.outputs.changed_sessions }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          LABEL=council-db-upsert-failed
+          TODAY=$(TZ=Asia/Tokyo date +%F)
+          EXISTING=$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number // empty')
+          if [ "$UPSERT_OUTCOME" = "success" ]; then
+            if [ -n "$EXISTING" ]; then
+              gh issue comment "$EXISTING" --body "$TODAY の自動更新で本番DBへの投入に成功しました（$RUN_URL）。ただし以前失敗した会期は自動では再投入されません。手元での再投入が済んでいれば閉じてください"
+            fi
+            exit 0
+          fi
+          BODY="$OUT_DIR/upsert-failed-issue.md"
+          {
+            echo "$TODAY の自動更新で、本番DBへの投入に失敗しました（$RUN_URL）。"
+            echo
+            echo "コミットとデプロイは済んでいますが、DB は古いままです。翌日以降は差分なしとなり自動では再投入されません。手元で次を実行してください（対象: $CHANGED_SESSIONS）:"
+            echo
+            echo '```bash'
+            echo "npx dotenv-cli -e <本番env> -- node scripts/upsert-sessions.mjs $CHANGED_SESSIONS"
+            echo "curl -X POST $WEB_URL/api/revalidate -H 'Authorization: Bearer <REVALIDATE_SECRET>' -H 'Content-Type: application/json' -d '{\"tags\":[\"bills\",\"diet-sessions\"]}'"
+            echo '```'
+            echo
+            echo "再投入できたらこの Issue を閉じてください。"
+          } > "$BODY"
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body-file "$BODY"
+          else
+            gh label create "$LABEL" --description "市議会データの本番DB投入に失敗したもの" --color D93F0B --force
+            gh issue create --title "市議会データの本番DBへの投入に失敗しました" --label "$LABEL" --body-file "$BODY"
+          fi
+
       # 解説文の執筆・委員会記録の追加など人の作業は Issue にまとめる。
       # Issue は1つを使い回し、本文を最新のレポートに置き換える（毎日同じ内容で通知しない）。
       # 作業が無くなったら閉じる。ジョブが途中で失敗した日は閉じない（確認したとは言えないため）

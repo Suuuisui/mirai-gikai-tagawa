@@ -96,6 +96,9 @@ export function BillContentsEditForm({
       <CardHeader>
         <CardTitle>議案コンテンツ編集</CardTitle>
         <p className="text-sm text-gray-600">{bill.name}</p>
+        <p className="text-xs text-gray-500">
+          自動投入された議案の解説文（タイトル・要約・内容）は、毎朝の自動更新でリポジトリ内の原稿の内容に戻る場合があります。恒久的に直すときは原稿（packages/seed/tagawa/bill-descriptions*.ts）も直してください。
+        </p>
       </CardHeader>
       <CardContent>
         <Form {...form}>
