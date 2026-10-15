@@ -70,7 +70,7 @@ export function BillFormFields({
               <Input {...field} />
             </FormControl>
             <FormDescription>
-              議案の正式名称を入力してください（最大200文字）
+              議案の正式名称を入力してください（最大200文字）。自動投入された議案は毎朝の自動更新で公式の名称に戻ります
             </FormDescription>
             <FormMessage />
           </FormItem>
@@ -99,7 +99,7 @@ export function BillFormFields({
                 </SelectContent>
               </Select>
               <FormDescription>
-                現在の審議状況を選択してください
+                現在の審議状況を選択してください。自動投入された議案は毎朝の自動更新で公式の議決結果に更新されます
               </FormDescription>
               {shouldAutoCloseInterviewOnBillStatus(field.value) && (
                 <p className="text-sm text-amber-700 bg-amber-50 p-3 rounded flex items-start gap-2">
@@ -157,7 +157,7 @@ export function BillFormFields({
               />
             </FormControl>
             <FormDescription>
-              審議状況の詳細や補足情報を入力してください（最大500文字）
+              審議状況の詳細や補足情報を入力してください（最大500文字）。自動投入された議案は毎朝の自動更新で上書きされます
             </FormDescription>
             <FormMessage />
           </FormItem>
@@ -173,7 +173,9 @@ export function BillFormFields({
             <FormControl>
               <Input type="date" {...field} />
             </FormControl>
-            <FormDescription>法案の提出日を設定してください</FormDescription>
+            <FormDescription>
+              法案の提出日を設定してください。自動投入された議案は毎朝の自動更新で上書きされます
+            </FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -193,7 +195,7 @@ export function BillFormFields({
               />
             </FormControl>
             <FormDescription>
-              議案のサムネイル画像を設定してください（任意）
+              議案のサムネイル画像を設定してください（任意）。ここで設定した画像は自動更新で上書きされません
             </FormDescription>
             <FormMessage />
           </FormItem>

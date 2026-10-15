@@ -1,5 +1,6 @@
 import "server-only";
 
+import { fetchAllPages } from "@mirai-gikai/shared/supabase/fetch-all-pages";
 import { createAdminClient } from "@mirai-gikai/supabase";
 
 /**
@@ -9,10 +10,11 @@ import { createAdminClient } from "@mirai-gikai/supabase";
  */
 export async function findPublishedBillsForCuration() {
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills")
-    .select(
-      `
+  const { data, error } = await fetchAllPages((from, to) =>
+    supabase
+      .from("bills")
+      .select(
+        `
       id,
       name,
       status_note,
@@ -24,11 +26,13 @@ export async function findPublishedBillsForCuration() {
       bill_contents ( title, summary, content, difficulty_level ),
       bills_tags ( pinned_priority, tags ( id, label ) )
     `
-    )
-    .eq("publish_status", "published")
-    .eq("bill_contents.difficulty_level", "normal")
-    .order("submitted_date", { ascending: false })
-    .limit(2000);
+      )
+      .eq("publish_status", "published")
+      .eq("bill_contents.difficulty_level", "normal")
+      .order("submitted_date", { ascending: false })
+      .order("id")
+      .range(from, to)
+  );
 
   if (error) {
     throw new Error(`公開議案の取得に失敗しました: ${error.message}`);
@@ -39,8 +43,8 @@ export async function findPublishedBillsForCuration() {
 
 /**
  * タグ枠のピン留め設定を保存する。
- * 対象タグの既存ピンをすべて解除してから、指定された議案に1始まりの
- * 優先順位を振り直す（orderedBillIdsの並び＝表示順）。
+ * 指定された議案に1始まりの優先順位を振り直し（orderedBillIdsの並び＝表示順）、
+ * そのあと指定から外れた議案のピンを解除する。
  */
 export async function updateTagPinnedBills(
   tagId: string,
@@ -48,16 +52,8 @@ export async function updateTagPinnedBills(
 ) {
   const supabase = createAdminClient();
 
-  const { error: clearError } = await supabase
-    .from("bills_tags")
-    .update({ pinned_priority: null })
-    .eq("tag_id", tagId)
-    .not("pinned_priority", "is", null);
-
-  if (clearError) {
-    throw new Error(`ピン留めの解除に失敗しました: ${clearError.message}`);
-  }
-
+  // 途中で失敗しても「ピンが全部消える」状態にならないよう、先に新しい順位を書き込み、
+  // 最後に今回の対象外になった議案のピンだけを解除する（旧: 全解除→個別設定）
   await Promise.all(
     orderedBillIds.map(async (billId, index) => {
       const { error } = await supabase
@@ -73,6 +69,24 @@ export async function updateTagPinnedBills(
       }
     })
   );
+
+  let clearQuery = supabase
+    .from("bills_tags")
+    .update({ pinned_priority: null })
+    .eq("tag_id", tagId)
+    .not("pinned_priority", "is", null);
+  if (orderedBillIds.length > 0) {
+    clearQuery = clearQuery.not(
+      "bill_id",
+      "in",
+      `(${orderedBillIds.join(",")})`
+    );
+  }
+  const { error: clearError } = await clearQuery;
+
+  if (clearError) {
+    throw new Error(`ピン留めの解除に失敗しました: ${clearError.message}`);
+  }
 }
 
 /**

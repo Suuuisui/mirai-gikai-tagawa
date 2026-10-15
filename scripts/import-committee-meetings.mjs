@@ -13,7 +13,8 @@
  *   }
  *
  * (committee_name, meeting_date, source_type) の一意制約で upsert するため
- * 再実行しても重複しない。
+ * 再実行しても重複しない。入力にあるキーだけを更新し、キーが無い列は既存の値を保つ
+ * （古い形式のJSONを再実行しても headline / topics 等は消えない）。
  *
  * replaces_source_type を付けたレコードは「より正確な資料で作り直した記録」として扱う。
  * 同じ委員会・同じ日で、その出典（例: "youtube"）の行があれば、新しい行を足さずに
@@ -58,21 +59,31 @@ for (const [i, r] of records.entries()) {
 
 const supabase = createClient(url, key);
 
-const toRow = (r) => ({
-  committee_name: r.committee_name,
-  meeting_date: r.meeting_date,
-  title: r.title,
-  headline: r.headline ?? null,
-  topics: r.topics ?? [],
-  summary: r.summary ?? null,
-  key_points: r.key_points ?? [],
-  agenda_items: r.agenda_items ?? [],
-  attendees: r.attendees ?? [],
-  minutes_text: r.minutes_text ?? null,
-  source_type: r.source_type,
-  source_note: r.source_note ?? null,
-  youtube_url: r.youtube_url ?? null,
-});
+// 入力にあるキーだけを行に入れる。キーが無い列は上書きしない（既存の見出し・テーマ等が
+// 列追加前の古いJSONの再実行で null / 空配列に戻るのを防ぐ）。
+// 新規行のときだけ、無い列はDBの既定値になる。
+const ROW_COLUMNS = [
+  "committee_name",
+  "meeting_date",
+  "title",
+  "headline",
+  "topics",
+  "summary",
+  "key_points",
+  "agenda_items",
+  "attendees",
+  "minutes_text",
+  "source_type",
+  "source_note",
+  "youtube_url",
+];
+const toRow = (r) =>
+  Object.fromEntries(
+    ROW_COLUMNS.filter((column) => r[column] !== undefined).map((column) => [
+      column,
+      r[column],
+    ])
+  );
 
 const dryRun = process.env.DRY_RUN === "1";
 
@@ -142,11 +153,20 @@ if (dryRun) {
   process.exit(0);
 }
 
+// 持っているキーの組が違う行は別々に upsert する（PostgREST は渡した列だけを更新するため、
+// キーの無い行をまとめて送ると他の行の列が null で上書きされる）
+const groups = new Map();
+for (const row of upsertRows) {
+  const signature = Object.keys(row).sort().join(",");
+  if (!groups.has(signature)) groups.set(signature, []);
+  groups.get(signature).push(row);
+}
+
 let upserted = 0;
-if (upsertRows.length > 0) {
+for (const rows of groups.values()) {
   const { data, error } = await supabase
     .from("committee_meetings")
-    .upsert(upsertRows, {
+    .upsert(rows, {
       onConflict: "committee_name,meeting_date,source_type",
     })
     .select("id, committee_name, meeting_date");
@@ -155,7 +175,7 @@ if (upsertRows.length > 0) {
     console.error(`upsert failed: ${error.message}`);
     process.exit(1);
   }
-  upserted = data.length;
+  upserted += data.length;
 }
 
 console.log(`replaced ${replaced} rows, upserted ${upserted} rows`);

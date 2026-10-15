@@ -126,109 +126,16 @@ const pinnedBillIdsByTagId = next.pinnedBillIdsByTagId
 if (featuredBillIds) assertUnique(featuredBillIds, "featuredBillIds");
 if (tagIds) assertUnique(tagIds, "tagIds");
 for (const [tagId, billIds] of Object.entries(pinnedBillIdsByTagId)) {
-  assertUnique(billIds, `pinnedBillIdsByTagId[${tagId}]`);
-  if (billIds.length > BILLS_PER_TAG) {
-    fail(`タグ ${tagId} の固定が${BILLS_PER_TAG}件を超えています`);
-  }
-}
-
-const referencedBillIds = [
-  ...new Set([...(featuredBillIds ?? []), ...Object.values(pinnedBillIdsByTagId).flat()]),
-];
-const referencedTagIds = [...new Set([...(tagIds ?? []), ...Object.keys(pinnedBillIdsByTagId)])];
-const [bills, tags, tagLinks] = await Promise.all([
-  referencedBillIds.length > 0
-    ? select("bills", "id,name,publish_status", (q) => q.in("id", referencedBillIds))
-    : [],
-  referencedTagIds.length > 0
-    ? select("tags", "id,label", (q) => q.in("id", referencedTagIds))
-    : [],
-  Object.keys(pinnedBillIdsByTagId).length > 0
-    ? select("bills_tags", "bill_id,tag_id", (q) =>
-        q.in("tag_id", Object.keys(pinnedBillIdsByTagId))
-      )
-    : [],
-]);
-const billById = new Map(bills.map((bill) => [bill.id, bill]));
-const tagById = new Map(tags.map((tag) => [tag.id, tag]));
-const linkKeys = new Set(tagLinks.map((link) => `${link.tag_id}|${link.bill_id}`));
-
-for (const id of referencedBillIds) {
-  const bill = billById.get(id);
-  if (!bill) fail(`議案が見つかりません: ${id}`);
-  // 非公開の議案は公開サイトに出ないので、注目・固定にしない
-  if (bill.publish_status !== "published") fail(`公開されていない議案です: ${bill.name}`);
-}
-for (const id of referencedTagIds) {
-  if (!tagById.has(id)) fail(`タグが見つかりません: ${id}`);
-}
-// 注目の議案はタグ枠から外れるので、固定しても表示されない（その枠は自動選定で埋まる）
-const featuredAfterUpdate = new Set(featuredBillIds ?? current.featuredBillIds);
-for (const [tagId, billIds] of Object.entries(pinnedBillIdsByTagId)) {
-  for (const billId of billIds) {
-    if (!linkKeys.has(`${tagId}|${billId}`)) {
-      fail(`タグ「${tagById.get(tagId).label}」に紐づいていない議案です: ${billById.get(billId).name}`);
-    }
-    if (featuredAfterUpdate.has(billId)) {
-      fail(`注目の議案はタグ枠に固定できません: ${billById.get(billId).name}`);
-    }
-  }
-}
-
-// ── 変更内容の表示 ───────────────────────────────────
-const billName = (id) => billById.get(id)?.name ?? id;
-if (featuredBillIds) {
-  console.log("注目の議案:");
-  featuredBillIds.forEach((id, index) => console.log(`  ${index + 1}. ${billName(id)}`));
-}
-if (tagIds) {
-  console.log(`タグ別セクションの順: ${tagIds.map((id) => tagById.get(id).label).join(" → ")}`);
-}
-for (const [tagId, billIds] of Object.entries(pinnedBillIdsByTagId)) {
-  console.log(`タグ枠「${tagById.get(tagId).label}」の固定:`);
-  if (billIds.length === 0) console.log("  （固定なし。すべて自動選定）");
-  billIds.forEach((id, index) => console.log(`  ${index + 1}. ${billName(id)}`));
-}
-
-if (process.env.DRY_RUN) {
-  console.log("DRY_RUN のため更新しません");
-  process.exit(0);
-}
-
-// ── 更新 ─────────────────────────────────────────
-if (featuredBillIds) {
-  const dropped = current.featuredBillIds.filter((id) => !featuredBillIds.includes(id));
-  if (dropped.length > 0) {
-    await update("bills", { is_featured: false, featured_priority: null }, (q) =>
-      q.in("id", dropped)
-    );
-  }
-  for (const [index, id] of featuredBillIds.entries()) {
-    await update("bills", { is_featured: true, featured_priority: index + 1 }, (q) =>
-      q.eq("id", id)
-    );
-  }
-}
-
-if (tagIds) {
-  const hidden = current.tagIds.filter((id) => !tagIds.includes(id));
-  if (hidden.length > 0) {
-    await update("tags", { featured_priority: null }, (q) => q.in("id", hidden));
-  }
-  for (const [index, id] of tagIds.entries()) {
-    await update("tags", { featured_priority: index + 1 }, (q) => q.eq("id", id));
-  }
-}
-
-for (const [tagId, billIds] of Object.entries(pinnedBillIdsByTagId)) {
-  await update("bills_tags", { pinned_priority: null }, (q) =>
-    q.eq("tag_id", tagId).not("pinned_priority", "is", null)
-  );
+  // 途中で失敗してもピンが全部消えないよう、先に新しい順位を書いてから外れた分を解除する
   for (const [index, billId] of billIds.entries()) {
     await update("bills_tags", { pinned_priority: index + 1 }, (q) =>
       q.eq("tag_id", tagId).eq("bill_id", billId)
     );
   }
+  await update("bills_tags", { pinned_priority: null }, (q) => {
+    const query = q.eq("tag_id", tagId).not("pinned_priority", "is", null);
+    return billIds.length > 0 ? query.not("bill_id", "in", `(${billIds.join(",")})`) : query;
+  });
 }
 
 console.log("更新しました。web の /api/revalidate で bills タグのキャッシュを消してください");

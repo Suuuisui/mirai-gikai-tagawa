@@ -1,4 +1,5 @@
 import "server-only";
+import { fetchAllPages } from "@mirai-gikai/shared/supabase/fetch-all-pages";
 import { selectTagSectionBills } from "@mirai-gikai/shared/top-page/select-tag-section-bills";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
@@ -21,25 +22,29 @@ export async function findPublishedBillProposerSources(
   difficultyLevel: DifficultyLevelEnum
 ) {
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills")
-    .select(
-      `
+  const { data, error } = await fetchAllPages((from, to) =>
+    supabase
+      .from("bills")
+      .select(
+        `
       id,
       name,
       bill_contents!inner (
         content
       )
     `
-    )
-    .eq("publish_status", "published")
-    .eq("bill_contents.difficulty_level", difficultyLevel);
+      )
+      .eq("publish_status", "published")
+      .eq("bill_contents.difficulty_level", difficultyLevel)
+      .order("id")
+      .range(from, to)
+  );
 
   if (error) {
     throw new Error(`Failed to fetch bill proposer sources: ${error.message}`);
   }
 
-  return data;
+  return data ?? [];
 }
 
 /**
@@ -51,10 +56,11 @@ export async function findPublishedBillsLiteWithContents(
   difficultyLevel: DifficultyLevelEnum
 ) {
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills")
-    .select(
-      `
+  const { data, error } = await fetchAllPages((from, to) =>
+    supabase
+      .from("bills")
+      .select(
+        `
       *,
       bill_contents!inner (
         id,
@@ -66,16 +72,19 @@ export async function findPublishedBillsLiteWithContents(
         updated_at
       )
     `
-    )
-    .eq("publish_status", "published")
-    .eq("bill_contents.difficulty_level", difficultyLevel)
-    .order("submitted_date", { ascending: false, nullsFirst: false });
+      )
+      .eq("publish_status", "published")
+      .eq("bill_contents.difficulty_level", difficultyLevel)
+      .order("submitted_date", { ascending: false, nullsFirst: false })
+      .order("id")
+      .range(from, to)
+  );
 
   if (error) {
     throw new Error(`Failed to fetch bills (lite): ${error.message}`);
   }
 
-  return data;
+  return data ?? [];
 }
 
 /**
@@ -215,10 +224,15 @@ export async function findTagsByBillIds(
   const supabase = createAdminClient();
   const results = await Promise.all(
     chunk(billIds, IN_CLAUSE_CHUNK_SIZE).map(async (ids) => {
-      const { data, error } = await supabase
-        .from("bills_tags")
-        .select("bill_id, tags(id, label)")
-        .in("bill_id", ids);
+      const { data, error } = await fetchAllPages((from, to) =>
+        supabase
+          .from("bills_tags")
+          .select("bill_id, tags(id, label)")
+          .in("bill_id", ids)
+          .order("bill_id")
+          .order("tag_id")
+          .range(from, to)
+      );
 
       if (error) {
         throw new Error(`Failed to fetch tags: ${error.message}`);
@@ -243,10 +257,11 @@ export async function findPublishedBillsByDietSession(
   difficultyLevel: DifficultyLevelEnum
 ) {
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills")
-    .select(
-      `
+  const { data, error } = await fetchAllPages((from, to) =>
+    supabase
+      .from("bills")
+      .select(
+        `
       *,
       bill_contents!inner (
         id,
@@ -259,18 +274,21 @@ export async function findPublishedBillsByDietSession(
         updated_at
       )
     `
-    )
-    .eq("diet_session_id", dietSessionId)
-    .eq("publish_status", "published")
-    .eq("bill_contents.difficulty_level", difficultyLevel)
-    .order("status_order", { ascending: true })
-    .order("submitted_date", { ascending: false, nullsFirst: false });
+      )
+      .eq("diet_session_id", dietSessionId)
+      .eq("publish_status", "published")
+      .eq("bill_contents.difficulty_level", difficultyLevel)
+      .order("status_order", { ascending: true })
+      .order("submitted_date", { ascending: false, nullsFirst: false })
+      .order("id")
+      .range(from, to)
+  );
 
   if (error) {
     throw new Error(`Failed to fetch bills by diet session: ${error.message}`);
   }
 
-  return data;
+  return data ?? [];
 }
 
 /**
@@ -287,10 +305,11 @@ export async function findPreviousSessionBills(
   limit: number
 ) {
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills")
-    .select(
-      `
+  const { data, error } = await fetchAllPages((from, to) =>
+    supabase
+      .from("bills")
+      .select(
+        `
       *,
       bill_contents!inner (
         id,
@@ -303,10 +322,13 @@ export async function findPreviousSessionBills(
         updated_at
       )
     `
-    )
-    .eq("diet_session_id", dietSessionId)
-    .eq("publish_status", "published")
-    .eq("bill_contents.difficulty_level", difficultyLevel);
+      )
+      .eq("diet_session_id", dietSessionId)
+      .eq("publish_status", "published")
+      .eq("bill_contents.difficulty_level", difficultyLevel)
+      .order("id")
+      .range(from, to)
+  );
 
   if (error) {
     throw new Error(`Failed to fetch previous session bills: ${error.message}`);
@@ -356,11 +378,15 @@ export async function countPublishedBillsGroupedByDietSession(
   difficultyLevel: DifficultyLevelEnum
 ): Promise<Map<string, number>> {
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills")
-    .select("diet_session_id, bill_contents!inner(difficulty_level)")
-    .eq("publish_status", "published")
-    .eq("bill_contents.difficulty_level", difficultyLevel);
+  const { data, error } = await fetchAllPages((from, to) =>
+    supabase
+      .from("bills")
+      .select("id, diet_session_id, bill_contents!inner(difficulty_level)")
+      .eq("publish_status", "published")
+      .eq("bill_contents.difficulty_level", difficultyLevel)
+      .order("id")
+      .range(from, to)
+  );
 
   if (error) {
     throw new Error(
@@ -392,13 +418,17 @@ export async function findBillStatsGroupedByDietSession(
   difficultyLevel: DifficultyLevelEnum
 ): Promise<Map<string, DietSessionBillStats>> {
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills")
-    .select(
-      "diet_session_id, member_votes, bill_contents!inner(difficulty_level)"
-    )
-    .eq("publish_status", "published")
-    .eq("bill_contents.difficulty_level", difficultyLevel);
+  const { data, error } = await fetchAllPages((from, to) =>
+    supabase
+      .from("bills")
+      .select(
+        "id, diet_session_id, member_votes, bill_contents!inner(difficulty_level)"
+      )
+      .eq("publish_status", "published")
+      .eq("bill_contents.difficulty_level", difficultyLevel)
+      .order("id")
+      .range(from, to)
+  );
 
   if (error) {
     throw new Error(
@@ -498,11 +528,14 @@ export async function findPublishedBillsByTag(
     query = query.eq("bills.diet_session_id", dietSessionId);
   }
 
-  const { data, error } = await query;
+  const { data: pagedData, error } = await fetchAllPages((from, to) =>
+    query.order("bill_id").range(from, to)
+  );
 
   if (error) {
     throw new Error(`Failed to fetch bills for tag: ${error.message}`);
   }
+  const data = pagedData ?? [];
 
   // bills_tags を起点にした select では referencedTable 指定の .order() が
   // 最上位の行順に反映されないため、取得後にアプリ側で並べ替える。

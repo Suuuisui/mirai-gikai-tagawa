@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAdmin } from "@/features/auth/server/lib/auth-server";
 import {
   invalidateWebCache,
   WEB_CACHE_TAGS,
@@ -10,6 +11,7 @@ import { createMiraiStance } from "../repositories/mirai-stance-repository";
 
 export async function createStance(billId: string, data: StanceInput) {
   try {
+    await requireAdmin();
     await createMiraiStance(billId, data);
 
     invalidateWebCache([WEB_CACHE_TAGS.BILLS]);
