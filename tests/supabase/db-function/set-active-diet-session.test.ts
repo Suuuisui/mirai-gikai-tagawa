@@ -1,8 +1,12 @@
 import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import {
   adminClient,
-  createTestDietSession,
   cleanupTestDietSession,
+  cleanupTestUser,
+  createTestDietSession,
+  createTestUser,
+  getAnonClient,
+  getAuthenticatedClient,
 } from "../utils";
 
 describe("set_active_diet_session() 関数", () => {
@@ -88,5 +92,46 @@ describe("set_active_diet_session() 関数", () => {
       .single();
 
     expect(data?.is_active).toBe(false);
+  });
+
+  it("公開キー（anon）からは実行できず、is_active も変わらない", async () => {
+    const a = await createTestDietSession({
+      slug: `test-a-${Date.now()}`,
+      is_active: true,
+    });
+    const b = await createTestDietSession({
+      slug: `test-b-${Date.now()}`,
+    });
+    sessionIds.push(a.id, b.id);
+
+    const { error } = await getAnonClient().rpc("set_active_diet_session", {
+      target_session_id: b.id,
+    });
+    expect(error).not.toBeNull();
+
+    const { data } = await adminClient
+      .from("diet_sessions")
+      .select("id, is_active")
+      .in("id", [a.id, b.id]);
+    expect(data?.find((d) => d.id === a.id)?.is_active).toBe(true);
+    expect(data?.find((d) => d.id === b.id)?.is_active).toBe(false);
+  });
+
+  it("ログインしただけのユーザー（authenticated）からも実行できない", async () => {
+    const user = await createTestUser(`normal-${Date.now()}@example.com`);
+    try {
+      const target = await createTestDietSession({
+        slug: `test-auth-${Date.now()}`,
+      });
+      sessionIds.push(target.id);
+
+      const client = await getAuthenticatedClient(user.email, user.password);
+      const { error } = await client.rpc("set_active_diet_session", {
+        target_session_id: target.id,
+      });
+      expect(error).not.toBeNull();
+    } finally {
+      await cleanupTestUser(user.id);
+    }
   });
 });
