@@ -1,5 +1,5 @@
 import { describe, expect, it, afterEach } from "vitest";
-import { adminClient, cleanupTestUser } from "../utils";
+import { adminClient, cleanupTestUser, getAnonClient } from "../utils";
 
 describe("apply_admin_role_if_eligible 関数", () => {
   const createdUserIds: string[] = [];
@@ -71,5 +71,20 @@ describe("apply_admin_role_if_eligible 関数", () => {
 
     const roles = await getUserRoles(userId);
     expect(roles).toBeUndefined();
+  });
+
+  it("公開キー（anon）からは実行できない", async () => {
+    const userId = await createUserWithProvider(
+      `test-anon-${Date.now()}@team-mir.ai`,
+      "google"
+    );
+
+    const { error } = await getAnonClient().rpc(
+      "apply_admin_role_if_eligible",
+      {
+        target_user_id: userId,
+      }
+    );
+    expect(error).not.toBeNull();
   });
 });
