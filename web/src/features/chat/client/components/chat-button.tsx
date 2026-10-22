@@ -12,6 +12,7 @@ import {
   useState,
 } from "react";
 import type { BillWithContent } from "@/features/bills/shared/types";
+import { buildSelectedTextQuestion } from "../../shared/utils/build-selected-text-question";
 import { ChatWindow } from "./chat-window";
 
 // アニメーション定数
@@ -73,7 +74,8 @@ export const ChatButton = forwardRef<ChatButtonRef, ChatButtonProps>(
           return;
         }
 
-        const questionText = `「${selectedText}」について教えてください。`;
+        // 選択範囲が極端に長くても、サーバーの上限に収まる質問文にする
+        const questionText = buildSelectedTextQuestion(selectedText);
         setOpenedWithText(true);
         setIsOpen(true);
         chatState.sendMessage({

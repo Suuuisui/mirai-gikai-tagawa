@@ -1,5 +1,6 @@
 import "server-only";
 
+import { isValidBearerToken } from "@mirai-gikai/shared/security/constant-time-equal";
 import { env } from "@/lib/env";
 
 /**
@@ -52,8 +53,9 @@ export function verifyInternalAuth(request: Request): void {
     throw new Error("REVALIDATE_SECRET is not configured");
   }
 
+  // 応答時間から秘密を推測されないよう、定数時間で比較する
   const authHeader = request.headers.get("Authorization");
-  if (!authHeader || authHeader !== `Bearer ${secret}`) {
+  if (!isValidBearerToken(authHeader, secret)) {
     throw new Error("Unauthorized: Invalid bearer token");
   }
 }

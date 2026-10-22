@@ -214,6 +214,101 @@ describe("useInterviewChat", () => {
     });
   });
 
+  describe("プレビュー用トークン", () => {
+    const PREVIEW_TOKEN = "preview-token-abc";
+
+    it("previewToken を渡すと、submit のリクエストに含まれる", () => {
+      const { result } = renderHook(() =>
+        useInterviewChat({
+          billId: DEFAULT_BILL_ID,
+          initialMessages: [],
+          previewToken: PREVIEW_TOKEN,
+        })
+      );
+
+      act(() => {
+        result.current.handleSubmit({ text: "テスト入力" });
+      });
+
+      expect(mockSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          billId: DEFAULT_BILL_ID,
+          previewToken: PREVIEW_TOKEN,
+        })
+      );
+    });
+
+    it("previewToken を渡さない通常の利用では、リクエストにトークンを含めない", () => {
+      const { result } = renderHook(() =>
+        useInterviewChat({ billId: DEFAULT_BILL_ID, initialMessages: [] })
+      );
+
+      act(() => {
+        result.current.handleSubmit({ text: "テスト入力" });
+      });
+
+      const calledWith = mockSubmit.mock.calls[0][0] as {
+        previewToken?: string;
+      };
+      expect(calledWith.previewToken).toBeUndefined();
+    });
+
+    it("エラー後の自動リトライでも previewToken が引き継がれる", () => {
+      const { result } = renderHook(() =>
+        useInterviewChat({
+          billId: DEFAULT_BILL_ID,
+          initialMessages: [],
+          previewToken: PREVIEW_TOKEN,
+        })
+      );
+
+      act(() => {
+        result.current.handleSubmit({ text: "テスト" });
+      });
+      mockSubmit.mockClear();
+
+      act(() => {
+        mockState.onFinish?.({
+          object: undefined,
+          error: new Error("エラー"),
+        });
+      });
+
+      expect(mockSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({ isRetry: true, previewToken: PREVIEW_TOKEN })
+      );
+    });
+
+    it("chat→summary の自動遷移で送るリクエストにも previewToken が含まれる", () => {
+      const { result } = renderHook(() =>
+        useInterviewChat({
+          billId: DEFAULT_BILL_ID,
+          initialMessages: [],
+          previewToken: PREVIEW_TOKEN,
+        })
+      );
+
+      act(() => {
+        result.current.handleSubmit({ text: "テスト" });
+      });
+      mockSubmit.mockClear();
+
+      act(() => {
+        mockState.onFinish?.({
+          object: { text: "まとめに進みます", next_stage: "summary" },
+          error: undefined,
+        });
+      });
+
+      expect(mockSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currentStage: "summary",
+          previewToken: PREVIEW_TOKEN,
+        })
+      );
+    });
+  });
+
   describe("handleQuickReply", () => {
     it("クイックリプライ選択: handleSubmitが呼ばれユーザーメッセージが追加される", () => {
       const { result } = renderHook(() =>

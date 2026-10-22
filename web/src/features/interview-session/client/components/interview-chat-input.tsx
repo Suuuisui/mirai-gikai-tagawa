@@ -12,6 +12,7 @@ import {
   PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
 import { useIsDesktop } from "@/hooks/use-is-desktop";
+import { INTERVIEW_MAX_USER_MESSAGE_CHARS } from "../../shared/constants";
 
 interface InterviewChatInputProps {
   input: string;
@@ -62,6 +63,9 @@ export function InterviewChatInput({
             value={input}
             placeholder={placeholder}
             rows={1}
+            // サーバーの上限を超える長さは入力させない（超えると送信が拒否され、
+            // 会話の履歴に残った回答のせいで以降の送信も失敗してしまう）
+            maxLength={INTERVIEW_MAX_USER_MESSAGE_CHARS}
             submitOnEnter={isDesktop}
             className="!min-h-0 min-w-0 wrap-anywhere text-sm font-medium leading-[1.5em] tracking-[0.01em] placeholder:text-mirai-text-placeholder placeholder:font-medium placeholder:leading-[1.5em] placeholder:tracking-[0.01em] placeholder:no-underline border-none focus:ring-0 bg-transparent shadow-none !py-2 !px-0"
           />

@@ -7,7 +7,10 @@ import {
   type TestUser,
 } from "@test-utils/utils";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { completeInterviewSession } from "./complete-interview-session";
+import {
+  completeInterviewSession,
+  completeInterviewSessionOnce,
+} from "./complete-interview-session";
 
 const contentRichness = {
   total: 70,
@@ -268,5 +271,96 @@ describe("completeInterviewSession 統合テスト", () => {
 
     const report = await completeInterviewSession({ sessionId });
     expect(report.summary).toBe("テスト法案に賛成の立場");
+  });
+});
+
+describe("completeInterviewSessionOnce 統合テスト", () => {
+  let testUser: TestUser;
+  let sessionId: string;
+  let billId: string;
+
+  beforeEach(async () => {
+    testUser = await createTestUser();
+    const data = await createTestInterviewData(testUser.id);
+    sessionId = data.session.id;
+    billId = data.bill.id;
+  });
+
+  afterEach(async () => {
+    await cleanupTestBill(billId);
+    await cleanupTestUser(testUser.id);
+  });
+
+  it("未完了のセッションは、通常どおり完了処理を行ってレポートを返す", async () => {
+    await adminClient.from("interview_messages").insert({
+      interview_session_id: sessionId,
+      role: "assistant",
+      content: validReportMessage,
+    });
+
+    const report = await completeInterviewSessionOnce({ sessionId });
+
+    expect(report.interview_session_id).toBe(sessionId);
+    expect(report.summary).toBe("テスト法案に賛成の立場");
+
+    const { data: dbSession } = await adminClient
+      .from("interview_sessions")
+      .select("completed_at")
+      .eq("id", sessionId)
+      .single();
+    expect(dbSession?.completed_at).toBeTruthy();
+  });
+
+  it("完了済みのセッションに再度呼んでも、モデレーションをやり直さず既存のレポートを返す", async () => {
+    await adminClient.from("interview_messages").insert({
+      interview_session_id: sessionId,
+      role: "assistant",
+      content: validReportMessage,
+    });
+    const first = await completeInterviewSessionOnce({
+      sessionId,
+      isPublicByUser: true,
+    });
+
+    // 再評価・再保存されると上書きされる値を、目印の値に書き換えておく
+    await adminClient
+      .from("interview_report")
+      .update({ moderation_score: 42, moderation_reasoning: "目印" })
+      .eq("id", first.id);
+
+    // 公開の希望を変えて再度呼んでも、既存のレポートがそのまま返る
+    const second = await completeInterviewSessionOnce({
+      sessionId,
+      isPublicByUser: false,
+    });
+
+    expect(second.id).toBe(first.id);
+    expect(second.moderation_score).toBe(42);
+    expect(second.moderation_reasoning).toBe("目印");
+    expect(second.is_public_by_user).toBe(true);
+
+    // DB 上のレポートも書き換わっていない
+    const { data: dbReport } = await adminClient
+      .from("interview_report")
+      .select("moderation_score, moderation_reasoning, is_public_by_user")
+      .eq("interview_session_id", sessionId)
+      .single();
+    expect(dbReport).toEqual({
+      moderation_score: 42,
+      moderation_reasoning: "目印",
+      is_public_by_user: true,
+    });
+  });
+
+  it("レポートが見つからないセッションは、完了処理のエラーをそのまま投げる", async () => {
+    await adminClient.from("interview_messages").insert({
+      interview_session_id: sessionId,
+      role: "assistant",
+      content: "レポートの無い普通の応答",
+    });
+
+    await expect(completeInterviewSessionOnce({ sessionId })).rejects.toThrow(
+      "No report found in conversation messages"
+    );
   });
 });

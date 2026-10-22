@@ -1,3 +1,4 @@
+import { isValidBearerToken } from "@mirai-gikai/shared/security/constant-time-equal";
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { ALL_CACHE_TAGS, type CacheTag } from "@/lib/cache-tags";
@@ -15,7 +16,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (authHeader !== `Bearer ${env.revalidateSecret}`) {
+    // 応答時間から秘密を推測されないよう、定数時間で比較する
+    if (!isValidBearerToken(authHeader, env.revalidateSecret)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

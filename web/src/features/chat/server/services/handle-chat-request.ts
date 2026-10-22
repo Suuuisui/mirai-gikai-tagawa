@@ -24,6 +24,7 @@ import { formatMemberVotesForPrompt } from "@/features/chat/shared/utils/format-
 import { formatSponsorsForPrompt } from "@/features/chat/shared/utils/format-sponsors-for-prompt";
 import { pickChatKnowledgeSource } from "@/features/chat/shared/utils/pick-chat-knowledge-source";
 import { findPublicInterviewConfigByBillId } from "@/features/interview-config/server/repositories/interview-config-repository";
+import { keepStreamRunning } from "@/lib/ai/keep-stream-running";
 import { AI_MODELS } from "@/lib/ai/models";
 import { env } from "@/lib/env";
 import {
@@ -32,6 +33,7 @@ import {
   type PromptProvider,
 } from "@/lib/prompt";
 import { routes } from "@/lib/routes";
+import { runCostLimitCheck } from "../utils/run-cost-limit-check";
 import { isWithinDailyCostLimit, recordChatUsage } from "./cost-tracker";
 import {
   checkSystemDailyCostLimit,
@@ -83,7 +85,9 @@ export async function handleChatRequest({
   // Extract context from messages
   const context = extractChatContext(messages);
 
-  try {
+  // 利用額の上限チェック（fail-closed）。上限超過は ChatError、チェック自体の失敗
+  // （DB エラーなど）も COST_LIMIT_CHECK_FAILED の ChatError として処理を止める
+  await runCostLimitCheck(async () => {
     // Check per-user cost limit before processing
     const isWithinLimit = await isWithinDailyCostLimit(
       userId,
@@ -96,13 +100,7 @@ export async function handleChatRequest({
     // Check system-wide cost limits before processing
     await checkSystemDailyCostLimit();
     await checkSystemMonthlyCostLimit();
-  } catch (error) {
-    if (error instanceof ChatError) {
-      throw error;
-    }
-    // コストチェックに失敗した場合はログに記録して続行
-    console.error("Cost limit check error:", error);
-  }
+  });
 
   // Build prompt configuration
   const { promptName, promptResult } = await buildPrompt(
@@ -161,6 +159,11 @@ export async function handleChatRequest({
         metadata: buildTelemetryMetadata(context, promptResult, userId),
       },
     });
+
+    // クライアントが応答の途中で接続を切ると、onFinish（利用額の記録）が呼ばれずに
+    // 終わり、費用の上限に数えられなくなる。別の読み手で最後まで読み進めさせて、
+    // onFinish を必ず実行させる（待たずに投げっぱなしにする）
+    void keepStreamRunning(result);
 
     return result.toUIMessageStreamResponse();
   } catch (error) {

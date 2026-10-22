@@ -5,7 +5,11 @@ import {
 } from "@/features/chat/server/services/handle-chat-request";
 import { chatErrorToResponse } from "@/features/chat/server/utils/chat-error-response";
 import { getChatSupabaseUser } from "@/features/chat/server/utils/supabase-server";
-import { jsonResponse } from "@/lib/api/response";
+import {
+  CHAT_REQUEST_ERROR_MESSAGES,
+  validateChatRequestBody,
+} from "@/features/chat/shared/utils/validate-chat-request";
+import { jsonResponse, textResponse } from "@/lib/api/response";
 import { registerNodeTelemetry } from "@/lib/telemetry/register";
 
 async function _mockResponse(_req: Request) {
@@ -53,9 +57,7 @@ export async function POST(req: Request) {
   // 明示的にtelemetryを初期化
   await registerNodeTelemetry();
 
-  const { messages }: { messages: UIMessage<ChatMessageMetadata>[] } =
-    await req.json();
-
+  // 未認証のリクエストは、本文を読む前に断る
   const {
     data: { user },
     error: getUserError,
@@ -64,6 +66,22 @@ export async function POST(req: Request) {
   if (getUserError || !user) {
     return jsonResponse({ error: "Anonymous session required" }, 401);
   }
+
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return textResponse(CHAT_REQUEST_ERROR_MESSAGES.invalid, 400);
+  }
+
+  // メッセージの件数・長さに上限を設ける（細工したリクエストで 1 回の費用を
+  // 膨らませたり、システムプロンプトに巨大な文字列を差し込んだりさせない）
+  const validation = validateChatRequestBody(body);
+  if (!validation.success) {
+    return textResponse(validation.message, validation.status);
+  }
+  const messages = validation.data
+    .messages as unknown as UIMessage<ChatMessageMetadata>[];
 
   try {
     return await handleChatRequest({ messages, userId: user.id });

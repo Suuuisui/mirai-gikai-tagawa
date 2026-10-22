@@ -20,6 +20,10 @@
       "types": "./src/stream/inject-json-fields.ts",
       "default": "./src/stream/inject-json-fields.ts"
     },
+    "./security/constant-time-equal": {
+      "types": "./src/security/constant-time-equal.ts",
+      "default": "./src/security/constant-time-equal.ts"
+    },
     "./moderation/build-prompt": {
       "types": "./src/moderation/build-moderation-prompt.ts",
       "default": "./src/moderation/build-moderation-prompt.ts"

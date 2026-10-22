@@ -1,7 +1,9 @@
 import { Home, User } from "lucide-react";
+import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { LogoutButton } from "@/features/auth/client/components/logout-button";
 import { getCurrentAdmin } from "@/features/auth/server/lib/auth-server";
+import { routes } from "@/lib/routes";
 import { NavigationLinks } from "./layout/navigation-links";
 
 export default async function MainLayout({
@@ -10,6 +12,14 @@ export default async function MainLayout({
   children: ReactNode;
 }) {
   const admin = await getCurrentAdmin();
+
+  // 多層防御: 認証・権限の確認は middleware が行うが、その matcher は画像の拡張子で
+  // 終わるパス（.svg / .png など）を素通しする。管理者でないのに保護されたページが
+  // 描画されることがないよう、ここでもログイン画面へ戻す
+  if (!admin) {
+    redirect(routes.login());
+  }
+
   return (
     <div className="min-h-dvh bg-gray-50">
       {/* Header */}
@@ -32,7 +42,7 @@ export default async function MainLayout({
             <div className="flex items-center space-x-2 md:space-x-4">
               <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-700">
                 <User className="h-4 w-4" />
-                <span className="hidden md:inline">{admin?.email}</span>
+                <span className="hidden md:inline">{admin.email}</span>
               </div>
               <LogoutButton />
             </div>
