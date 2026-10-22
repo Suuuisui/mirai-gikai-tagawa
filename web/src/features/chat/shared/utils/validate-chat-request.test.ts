@@ -133,11 +133,11 @@ describe("validateChatRequestBody", () => {
       expect(result.success).toBe(true);
     });
 
-    it("トップページのチャットが送る議案サマリー（60 件・各 500 字）", () => {
-      const bills = Array.from({ length: 60 }, (_, i) => ({
+    it("トップページのチャットが送る議案サマリー（本番の 18 件より多い 40 件・各 300 字）", () => {
+      const bills = Array.from({ length: 40 }, (_, i) => ({
         id: `bill-${i}`,
         name: `${"議案名".repeat(10)}（議案第${i}号）`,
-        summary: "要約".repeat(250),
+        summary: "要約".repeat(150),
         tags: ["予算", "決算", "条例"],
         isFeatured: i < 3,
       }));
@@ -324,8 +324,8 @@ describe("validateChatRequestBody", () => {
       expect(result).toMatchObject({ success: false, status: 413 });
     });
 
-    it("議案サマリーが 300 件を超えれば弾く", () => {
-      const bills = Array.from({ length: 301 }, (_, i) => ({
+    it("議案サマリーが 60 件を超えれば弾く", () => {
+      const bills = Array.from({ length: 61 }, (_, i) => ({
         id: `bill-${i}`,
         name: "議案",
       }));
@@ -343,6 +343,19 @@ describe("validateChatRequestBody", () => {
             bills: [{ id: "1", name: "議案", summary: "あ".repeat(100_000) }],
           },
         }),
+      ]);
+      expect(result).toMatchObject({ success: false, status: 413 });
+    });
+
+    it("議案サマリーの一覧全体が 30,000 字を超えれば弾く（1 件ずつは上限内でも、件数を掛けて膨らませる細工）", () => {
+      const bills = Array.from({ length: 60 }, (_, i) => ({
+        id: `bill-${i}`,
+        name: "議".repeat(300),
+        summary: "要".repeat(1_000),
+        tags: Array.from({ length: 20 }, () => "タ".repeat(50)),
+      }));
+      const result = validate([
+        userMessage("質問", { pageContext: { type: "home", bills } }),
       ]);
       expect(result).toMatchObject({ success: false, status: 413 });
     });

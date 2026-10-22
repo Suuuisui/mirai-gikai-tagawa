@@ -30,13 +30,20 @@ export const CHAT_REQUEST_LIMITS = {
   maxTotalOtherPartsChars: 60_000,
   /** 1 メッセージに含められるパーツの数 */
   maxPartsPerMessage: 100,
-  /** トップページのチャットが送る議案サマリーの件数（システムプロンプトに入る） */
-  maxHomeBills: 300,
+  /**
+   * トップページのチャットが送る議案サマリー（システムプロンプトにそのまま入る）。
+   * 2026-10-23 時点の本番のトップページが送るのは 18 件・要約は最長 209 字・題名は最長 99 字。
+   * 1 件ずつの上限だけだと「件数 × 1 件の上限」まで膨らませられるため、
+   * pageContext 全体の大きさ（JSON にした文字数）にも上限を置く
+   */
+  maxHomeBills: 60,
   maxIdChars: 200,
-  maxBillNameChars: 1_000,
-  maxBillSummaryChars: 5_000,
-  maxBillTags: 50,
-  maxTagChars: 100,
+  maxBillNameChars: 300,
+  maxBillSummaryChars: 1_000,
+  maxBillTags: 20,
+  maxTagChars: 50,
+  /** pageContext 全体（議案サマリーの一覧を含む）を JSON にしたときの文字数 */
+  maxPageContextChars: 30_000,
 } as const;
 
 export const CHAT_REQUEST_ERROR_MESSAGES = {
@@ -171,6 +178,15 @@ export function validateChatRequestBody(
         ? CHAT_REQUEST_ERROR_MESSAGES.tooLong
         : CHAT_REQUEST_ERROR_MESSAGES.invalid
     );
+  }
+
+  // 議案サマリーの一覧はシステムプロンプトにそのまま入るので、全体の大きさも確かめる
+  const pageContext = metadata.data.pageContext;
+  if (
+    pageContext &&
+    JSON.stringify(pageContext).length > L.maxPageContextChars
+  ) {
+    return failValidation(413, CHAT_REQUEST_ERROR_MESSAGES.tooLong);
   }
 
   const { totalTextChars, totalOtherPartsChars, longestUserMessageChars } =
