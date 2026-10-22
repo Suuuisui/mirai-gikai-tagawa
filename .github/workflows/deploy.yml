@@ -5,9 +5,16 @@ name: Deploy to Vercel
 # paths フィルタは意図的に使わない（packages/ の共有コード変更を拾い漏らさないため常に両方デプロイ）。
 #
 # push トリガーではなく Code Check（lint/typecheck/build/test）workflow の完了を
-# workflow_run で受けて実行する。conclusion == 'success' かつ対象ブランチが main の
-# 場合のみデプロイし、Code Check が失敗した push ではデプロイしない。
+# workflow_run で受けて実行する。このリポジトリの main への push で Code Check が
+# 成功した場合だけデプロイし、Code Check が失敗した push ではデプロイしない。
 # workflow_dispatch（手動実行）は Code Check の結果に関わらず単独で動作する。
+#
+# workflow_run は Secrets 付きで動くため、PR の Code Check で起動してはいけない。
+# Code Check は pull_request でも走り、fork の PR では head_branch が fork 側の
+# ブランチ名になる（fork に main を作れば 'main' になる）。ブランチ名だけで判定すると、
+# fork の PR のコードを VERCEL_TOKEN 付きで checkout して本番にデプロイしてしまう
+# （2026-10-22 のセキュリティ点検で指摘）。イベントが push で、かつ同じリポジトリで
+# あることも必ず確かめる。
 #
 # 必要な Secrets:
 # - VERCEL_TOKEN: Vercel API トークン
@@ -26,12 +33,14 @@ concurrency:
 
 jobs:
   deploy:
-    # workflow_dispatch は無条件で実行。workflow_run 経由は Code Check が
-    # main ブランチで成功した場合のみ実行する（develop や PR での実行、失敗時は除外）。
+    # workflow_dispatch は無条件で実行。workflow_run 経由は、このリポジトリの main への
+    # push で Code Check が成功した場合のみ実行する（develop・PR・fork・失敗時は除外）。
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.head_branch == 'main')
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -51,6 +60,8 @@ jobs:
           # workflow_run はデフォルトブランチ先頭を checkout してしまうため、
           # Code Check が実際に検証したコミットを明示的に指定する。
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          # 以降のステップで GitHub のトークンは使わないので、作業ツリーに残さない
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
