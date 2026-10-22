@@ -10,6 +10,26 @@ function buildCompleteRequest(body: unknown): Request {
 }
 
 describe("POST /api/interview/complete", () => {
+  it("JSON として読めない本文の場合は400を返す", async () => {
+    const res = await POST(
+      new Request("http://localhost/api/interview/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{not json",
+      })
+    );
+
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Invalid JSON body" });
+  });
+
+  it("sessionId が文字列でない場合は400を返す", async () => {
+    const res = await POST(buildCompleteRequest({ sessionId: { id: 1 } }));
+
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Missing sessionId" });
+  });
+
   it("sessionId がない場合は400を返す", async () => {
     const res = await POST(buildCompleteRequest({ isPublic: true }));
 

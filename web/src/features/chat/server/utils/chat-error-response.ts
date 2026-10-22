@@ -19,6 +19,17 @@ export function chatErrorToResponse(error: unknown): Response {
           "今月の利用上限に達しました。来月1日以降に再度お試しください。",
           429
         );
+      case ChatErrorCode.COST_LIMIT_CHECK_FAILED:
+        // 利用額を確認できないときは、上限を守れないので処理を止める（fail-closed）
+        return textResponse(
+          "ただいま利用状況を確認できないため、AIをご利用いただけません。しばらく待ってから再度お試しください。",
+          503
+        );
+      case ChatErrorCode.INTERVIEW_NOT_AVAILABLE:
+        return textResponse(
+          "このインタビューは現在ご利用いただけません。",
+          404
+        );
       default:
         return textResponse(
           "エラーが発生しました。しばらく待ってから再度お試しください。",

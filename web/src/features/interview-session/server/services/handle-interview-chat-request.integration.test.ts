@@ -2,12 +2,16 @@ import {
   adminClient,
   cleanupTestBill,
   cleanupTestUser,
+  createTestBill,
   createTestInterviewData,
+  createTestPreviewToken,
   createTestUser,
   type TestUser,
 } from "@test-utils/utils";
 import { convertArrayToReadableStream, MockLanguageModelV3 } from "ai/test";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { BillWithContent } from "@/features/bills/shared/types";
+import { ChatErrorCode } from "@/features/chat/shared/types/errors";
 import type { InterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config-admin";
 import { createStreamMock } from "@/test-utils/mock-language-model";
 import type { InterviewSession } from "../../shared/types";
@@ -113,6 +117,7 @@ describe("handleInterviewChatRequest 統合テスト", () => {
   let billId: string;
   let session: InterviewSession;
   let config: InterviewConfig;
+  let bill: BillWithContent;
 
   beforeEach(async () => {
     testUser = await createTestUser();
@@ -121,9 +126,14 @@ describe("handleInterviewChatRequest 統合テスト", () => {
     billId = data.bill.id;
     session = data.session;
     config = data.config;
+    bill = { ...data.bill, tags: [] };
   });
 
   afterEach(async () => {
+    await adminClient
+      .from("chat_usage_events")
+      .delete()
+      .eq("user_id", testUser.id);
     await cleanupTestBill(billId);
     await cleanupTestUser(testUser.id);
   });
@@ -141,7 +151,7 @@ describe("handleInterviewChatRequest 統合テスト", () => {
         userId: testUser.id,
         deps: {
           chatModel: mockModel,
-          getBill: async () => null,
+          getBill: async () => bill,
           getInterviewConfig: async () => config,
           getSession: async () => session,
           getMessages: async () => [],
@@ -174,7 +184,7 @@ describe("handleInterviewChatRequest 統合テスト", () => {
         userId: testUser.id,
         deps: {
           chatModel: mockModel,
-          getBill: async () => null,
+          getBill: async () => bill,
           getInterviewConfig: async () => config,
           getSession: async () => session,
           getMessages: async () => [],
@@ -212,7 +222,7 @@ describe("handleInterviewChatRequest 統合テスト", () => {
         userId: testUser.id,
         deps: {
           chatModel: mockModel,
-          getBill: async () => null,
+          getBill: async () => bill,
           getInterviewConfig: async () => config,
           getSession: async () => session,
           getMessages: async () => [],
@@ -242,7 +252,7 @@ describe("handleInterviewChatRequest 統合テスト", () => {
         userId: testUser.id,
         deps: {
           summaryModel: mockModel,
-          getBill: async () => null,
+          getBill: async () => bill,
           getInterviewConfig: async () => config,
           getSession: async () => session,
           getMessages: async () => [],
@@ -279,7 +289,7 @@ describe("handleInterviewChatRequest 統合テスト", () => {
         userId: testUser.id,
         deps: {
           summaryModel: model,
-          getBill: async () => null,
+          getBill: async () => bill,
           getInterviewConfig: async () => config,
           getSession: async () => session,
           getMessages: async () => [],
@@ -321,7 +331,7 @@ describe("handleInterviewChatRequest 統合テスト", () => {
         userId: testUser.id,
         deps: {
           summaryModel: model,
-          getBill: async () => null,
+          getBill: async () => bill,
           getInterviewConfig: async () => config,
           getSession: async () => session,
           getMessages: async () => [],
@@ -371,7 +381,7 @@ describe("handleInterviewChatRequest 統合テスト", () => {
         deps: {
           summaryModel: summaryMock,
           chatModel: chatMock,
-          getBill: async () => null,
+          getBill: async () => bill,
           getInterviewConfig: async () => config,
           getSession: async () => session,
           getMessages: async () => [],
@@ -386,6 +396,181 @@ describe("handleInterviewChatRequest 統合テスト", () => {
       // summaryModel の出力が保存されていること
       expect(messages).toHaveLength(2);
       expect(messages[1].content).toBe(validSummaryResponse);
+    });
+  });
+
+  describe("接続が切れたとき", () => {
+    it("クライアントが応答の途中で接続を切っても、回答の保存と利用額の記録が行われる", async () => {
+      // 以前は onFinish が呼ばれず、回答も利用額（費用上限の集計に使う）も残らなかった
+      const mockModel = createStreamMock([
+        validChatResponse.slice(0, 20),
+        validChatResponse.slice(20),
+      ]);
+
+      const response = await handleInterviewChatRequest({
+        messages: [
+          { role: "user", content: "この法案についてどう思いますか？" },
+        ],
+        billId,
+        currentStage: "chat",
+        userId: testUser.id,
+        deps: {
+          chatModel: mockModel,
+          getBill: async () => bill,
+          getInterviewConfig: async () => config,
+          getSession: async () => session,
+          getMessages: async () => [],
+        },
+      });
+
+      // 最初のかたまりだけ読んで、利用者が接続を切った状況を再現する
+      const reader = response.body?.getReader();
+      await reader?.read();
+      await reader?.cancel();
+
+      await vi.waitFor(
+        async () => {
+          const messages = await findInterviewMessagesBySessionId(sessionId);
+          expect(messages.map((m) => m.role)).toEqual(["user", "assistant"]);
+          expect(messages[1].content).toBe(validChatResponse);
+        },
+        { timeout: 5000, interval: 100 }
+      );
+
+      const { data: usageEvents } = await adminClient
+        .from("chat_usage_events")
+        .select("*")
+        .eq("user_id", testUser.id);
+      expect(usageEvents).toHaveLength(1);
+    });
+  });
+
+  describe("公開前の議案・インタビュー設定の扱い", () => {
+    const chatMessages = [
+      { role: "user", content: "この法案についてどう思いますか？" },
+    ];
+
+    /**
+     * 実際の取得処理（DB）を使って呼び出す。認証が要る部分（セッション・メッセージの
+     * 取得）だけをバイパスする。createTestInterviewData の議案は下書き（draft）、
+     * インタビュー設定は公開中（public）
+     */
+    function callWithRealLoaders(options: {
+      previewToken?: string;
+      billId?: string;
+    }) {
+      const { model, prompts } = createCapturingStreamMock(validChatResponse);
+      const promise = handleInterviewChatRequest({
+        messages: chatMessages,
+        billId: options.billId ?? billId,
+        currentStage: "chat",
+        previewToken: options.previewToken,
+        userId: testUser.id,
+        deps: {
+          chatModel: model,
+          getSession: async () => session,
+          getMessages: async () => [],
+        },
+      });
+      return { promise, prompts };
+    }
+
+    it("下書きの議案は、プレビュー用トークンなしでは使えず、何も保存されない", async () => {
+      const { promise, prompts } = callWithRealLoaders({});
+
+      await expect(promise).rejects.toMatchObject({
+        code: ChatErrorCode.INTERVIEW_NOT_AVAILABLE,
+      });
+      expect(prompts).toHaveLength(0);
+      expect(await findInterviewMessagesBySessionId(sessionId)).toHaveLength(0);
+    });
+
+    it("下書きの議案でも、有効なプレビュー用トークンがあれば使える（システムプロンプトに議案が入る）", async () => {
+      const token = await createTestPreviewToken(billId);
+      const { promise, prompts } = callWithRealLoaders({
+        previewToken: token.token,
+      });
+
+      const response = await promise;
+      expect(response.status).toBe(200);
+      await consumeResponseStream(response);
+
+      expect(prompts).toHaveLength(1);
+      expect(JSON.stringify(prompts[0])).toContain(bill.name);
+    });
+
+    it("期限切れのプレビュー用トークンでは、下書きの議案は使えない", async () => {
+      const token = await createTestPreviewToken(billId, {
+        expires_at: new Date(Date.now() - 60 * 1000).toISOString(),
+      });
+      const { promise, prompts } = callWithRealLoaders({
+        previewToken: token.token,
+      });
+
+      await expect(promise).rejects.toMatchObject({
+        code: ChatErrorCode.INTERVIEW_NOT_AVAILABLE,
+      });
+      expect(prompts).toHaveLength(0);
+    });
+
+    it("存在しないプレビュー用トークンでは、下書きの議案は使えない", async () => {
+      const { promise } = callWithRealLoaders({
+        previewToken: "token-that-does-not-exist",
+      });
+
+      await expect(promise).rejects.toMatchObject({
+        code: ChatErrorCode.INTERVIEW_NOT_AVAILABLE,
+      });
+    });
+
+    it("別の議案のプレビュー用トークンでは、下書きの議案は使えない", async () => {
+      const otherBill = await createTestBill();
+      try {
+        const otherToken = await createTestPreviewToken(otherBill.id);
+        const { promise } = callWithRealLoaders({
+          previewToken: otherToken.token,
+        });
+
+        await expect(promise).rejects.toMatchObject({
+          code: ChatErrorCode.INTERVIEW_NOT_AVAILABLE,
+        });
+      } finally {
+        await cleanupTestBill(otherBill.id);
+      }
+    });
+
+    it("議案が公開済みで、インタビュー設定も公開中なら、トークンなしで使える", async () => {
+      await adminClient
+        .from("bills")
+        .update({ publish_status: "published" })
+        .eq("id", billId);
+
+      const { promise, prompts } = callWithRealLoaders({});
+
+      const response = await promise;
+      expect(response.status).toBe(200);
+      await consumeResponseStream(response);
+
+      expect(prompts).toHaveLength(1);
+      expect(JSON.stringify(prompts[0])).toContain(bill.name);
+    });
+
+    it("議案が公開済みでも、インタビュー設定が公開中でなければ（closed）使えない", async () => {
+      await adminClient
+        .from("bills")
+        .update({ publish_status: "published" })
+        .eq("id", billId);
+      await adminClient
+        .from("interview_configs")
+        .update({ status: "closed" })
+        .eq("id", config.id);
+
+      const { promise, prompts } = callWithRealLoaders({});
+
+      await expect(promise).rejects.toMatchObject({
+        code: ChatErrorCode.INTERVIEW_NOT_AVAILABLE,
+      });
+      expect(prompts).toHaveLength(0);
     });
   });
 });

@@ -33,4 +33,9 @@ export interface InterviewChatRequestParams {
   currentStage: "chat" | "summary" | "summary_complete";
   isRetry?: boolean;
   nextQuestionId?: string;
+  /**
+   * 管理画面のプレビュー用トークン。付いていて有効なときだけ、公開前の議案・
+   * インタビュー設定でチャットできる（付いていない通常の利用では公開中のものだけ）
+   */
+  previewToken?: string;
 }

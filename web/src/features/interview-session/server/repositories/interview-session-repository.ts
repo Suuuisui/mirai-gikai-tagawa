@@ -163,6 +163,45 @@ export async function updateInterviewSessionCompleted(
   }
 }
 
+/**
+ * 完了済みセッションのレポートを取得
+ *
+ * セッションが未完了（completed_at が null）、またはレポートが無い場合は null。
+ */
+export async function findCompletedReportBySessionId(
+  sessionId: string
+): Promise<InterviewReport | null> {
+  const supabase = createAdminClient();
+
+  const { data: session, error: sessionError } = await supabase
+    .from("interview_sessions")
+    .select("completed_at")
+    .eq("id", sessionId)
+    .single();
+
+  if (sessionError) {
+    throw new Error(
+      `Failed to fetch interview session: ${sessionError.message}`
+    );
+  }
+
+  if (!session.completed_at) {
+    return null;
+  }
+
+  const { data: report, error: reportError } = await supabase
+    .from("interview_report")
+    .select("*")
+    .eq("interview_session_id", sessionId)
+    .maybeSingle();
+
+  if (reportError) {
+    throw new Error(`Failed to fetch interview report: ${reportError.message}`);
+  }
+
+  return report;
+}
+
 // ========================================
 // Interview Messages
 // ========================================

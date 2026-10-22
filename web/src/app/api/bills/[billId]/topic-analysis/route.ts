@@ -31,10 +31,8 @@ export async function GET(
     }
     return json(analysis);
   } catch (error) {
+    // 詳細（DB のエラー文など）はサーバーのログにだけ残し、利用者には固定の文言を返す
     console.error("[TopicAnalysis] public read failed:", error);
-    return json(
-      { error: error instanceof Error ? error.message : "read failed" },
-      500
-    );
+    return json({ error: "read failed" }, 500);
   }
 }

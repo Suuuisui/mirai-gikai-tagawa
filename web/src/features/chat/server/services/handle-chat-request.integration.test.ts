@@ -7,7 +7,7 @@ import {
   type TestUser,
 } from "@test-utils/utils";
 import type { LanguageModelUsage, UIMessage } from "ai";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChatError, ChatErrorCode } from "@/features/chat/shared/types/errors";
 import { createStreamMock } from "@/test-utils/mock-language-model";
 import { createMockPromptProvider } from "@/test-utils/mock-prompt-provider";
@@ -349,6 +349,43 @@ describe("handleChatRequest 統合テスト", () => {
     });
   });
 
+  describe("接続が切れたとき", () => {
+    it("クライアントが応答の途中で接続を切っても、chat_usage_events が DB に保存される", async () => {
+      // 以前は onFinish が呼ばれず利用額が記録されなかったため、接続を切るだけで
+      // 1 日・1 人あたりの費用上限をすり抜けられた
+      const sessionId = `test-session-disconnect-${Date.now()}`;
+      const mockModel = createStreamMock(["一つ目、", "二つ目、", "三つ目。"]);
+      const messages = createTestMessages({ sessionId });
+
+      const response = await handleChatRequest({
+        messages,
+        userId: testUser.id,
+        deps: {
+          model: mockModel,
+          promptProvider: createMockPromptProvider(),
+        },
+      });
+
+      // 最初のかたまりだけ読んで、利用者が接続を切った状況を再現する
+      const reader = response.body?.getReader();
+      await reader?.read();
+      await reader?.cancel();
+
+      await vi.waitFor(
+        async () => {
+          const { data: usageEvents } = await adminClient
+            .from("chat_usage_events")
+            .select("*")
+            .eq("user_id", testUser.id);
+
+          expect(usageEvents).toHaveLength(1);
+          expect(usageEvents?.[0].session_id).toBe(sessionId);
+        },
+        { timeout: 5000, interval: 100 }
+      );
+    });
+  });
+
   describe("コストリミット超過", () => {
     it("日次コストリミットを超過している場合は ChatError をスローする", async () => {
       // デイリーコストリミットを超える記録を事前にシード
@@ -384,6 +421,34 @@ describe("handleChatRequest 統合テスト", () => {
       ).rejects.toMatchObject({
         code: ChatErrorCode.DAILY_COST_LIMIT_REACHED,
       });
+    });
+
+    it("上限チェック自体が失敗した場合（DB エラー）は、続行せず COST_LIMIT_CHECK_FAILED で止める", async () => {
+      // uuid でない user_id は DB が受け付けず、利用額の集計クエリがエラーになる。
+      // 以前はエラーをログに出して続行していたため、DB の不調の間は上限なしで使えた
+      const promptNames: string[] = [];
+      const trackingPromptProvider = {
+        getPrompt: async (name: string) => {
+          promptNames.push(name);
+          return { content: "テスト", metadata: "{}" };
+        },
+      };
+
+      await expect(
+        handleChatRequest({
+          messages: createTestMessages(),
+          userId: "not-a-uuid",
+          deps: {
+            model: createStreamMock(["テスト"]),
+            promptProvider: trackingPromptProvider,
+          },
+        })
+      ).rejects.toMatchObject({
+        code: ChatErrorCode.COST_LIMIT_CHECK_FAILED,
+      });
+
+      // プロンプトの取得にも進んでいない（= AI の呼び出しまで行っていない）
+      expect(promptNames).toHaveLength(0);
     });
   });
 });

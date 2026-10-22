@@ -7,13 +7,17 @@ import {
   Output,
   streamText,
 } from "ai";
+import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
 import { getBillByIdAdmin } from "@/features/bills/server/loaders/get-bill-by-id-admin";
+import { validatePreviewToken } from "@/features/bills/server/loaders/validate-preview-token";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import {
   isWithinDailyCostLimit,
   recordChatUsage,
 } from "@/features/chat/server/services/cost-tracker";
+import { runCostLimitCheck } from "@/features/chat/server/utils/run-cost-limit-check";
 import { ChatError, ChatErrorCode } from "@/features/chat/shared/types/errors";
+import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import type { InterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config-admin";
 import { getInterviewConfigAdmin } from "@/features/interview-config/server/loaders/get-interview-config-admin";
 import { getInterviewQuestions } from "@/features/interview-config/server/loaders/get-interview-questions";
@@ -29,12 +33,14 @@ import type {
   InterviewMessage,
   InterviewSession,
 } from "@/features/interview-session/shared/types";
+import { keepStreamRunning } from "@/lib/ai/keep-stream-running";
 import { DEFAULT_INTERVIEW_CHAT_MODEL } from "@/lib/ai/models";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 import { buildSummaryModelMessages } from "../../shared/utils/build-summary-model-messages";
 import { ensureTrailingUserMessage } from "../../shared/utils/ensure-trailing-user-message";
 import { mergeMessagesWithIds } from "../../shared/utils/merge-messages-with-ids";
+import { resolveInterviewChatContext } from "../../shared/utils/resolve-interview-chat-context";
 import {
   buildInterviewSystemPrompt,
   buildSummarySystemPrompt,
@@ -60,10 +66,18 @@ export type InterviewChatDeps = {
   getSession?: (configId: string) => Promise<InterviewSession | null>;
   /** テスト時に認証をバイパスするためのメッセージ取得関数 */
   getMessages?: (sessionId: string) => Promise<InterviewMessage[]>;
-  /** テスト時にcookies依存をバイパスするための議案取得関数 */
+  /**
+   * テスト時にcookies依存をバイパスするための議案取得関数
+   * （公開中のみ・公開状態を問わない、どちらの取得も置き換える）
+   */
   getBill?: (billId: string) => Promise<BillWithContent | null>;
-  /** テスト時にnext/cache依存をバイパスするためのインタビュー設定取得関数 */
+  /**
+   * テスト時にnext/cache依存をバイパスするためのインタビュー設定取得関数
+   * （公開中のみ・公開状態を問わない、どちらの取得も置き換える）
+   */
   getInterviewConfig?: (billId: string) => Promise<InterviewConfig | null>;
+  /** テスト時にDB依存をバイパスするためのプレビュー用トークン検証関数 */
+  validatePreviewToken?: (billId: string, token?: string) => Promise<boolean>;
 };
 
 /**
@@ -77,6 +91,7 @@ export async function handleInterviewChatRequest({
   billId,
   currentStage,
   isRetry = false,
+  previewToken,
   userId,
   deps,
 }: InterviewChatRequestParams & {
@@ -88,22 +103,39 @@ export async function handleInterviewChatRequest({
 
   // TTFB短縮のため、互いに依存しないDBアクセスは並列実行する。
   // 日次コスト制限チェック（fail-closed: エラー時もリクエストをブロック）と
-  // インタビュー設定・議案情報の取得（テスト時はdeps経由でNext.js依存をバイパス）
-  const getInterviewConfigFn =
-    deps?.getInterviewConfig ?? getInterviewConfigAdmin;
-  const getBillFn = deps?.getBill ?? getBillByIdAdmin;
-  const [isWithinLimit, interviewConfig, bill] = await Promise.all([
-    isWithinDailyCostLimit(userId, env.chat.dailyUserCostLimitUsd),
-    getInterviewConfigFn(billId),
-    getBillFn(billId),
+  // インタビュー設定・議案情報の取得（テスト時はdeps経由でNext.js依存をバイパス）。
+  //
+  // billId・previewToken はクライアントから渡される値。公開状態を問わない取得
+  // （admin）を無条件に使うと、下書きの議案や非公開のインタビュー設定が
+  // システムプロンプトに入ってしまうため、使える範囲を resolveInterviewChatContext で決める
+  // （通常は公開中のみ。有効なプレビュー用トークンがあるときだけ公開前も可）
+  const [isWithinLimit, context] = await Promise.all([
+    runCostLimitCheck(() =>
+      isWithinDailyCostLimit(userId, env.chat.dailyUserCostLimitUsd)
+    ),
+    resolveInterviewChatContext({
+      billId,
+      previewToken,
+      loaders: {
+        validatePreviewToken:
+          deps?.validatePreviewToken ?? validatePreviewToken,
+        getPublicBill: deps?.getBill ?? getBillById,
+        getPublicInterviewConfig:
+          deps?.getInterviewConfig ?? getInterviewConfig,
+        getAdminBill: deps?.getBill ?? getBillByIdAdmin,
+        getAdminInterviewConfig:
+          deps?.getInterviewConfig ?? getInterviewConfigAdmin,
+      },
+    }),
   ]);
   if (!isWithinLimit) {
     throw new ChatError(ChatErrorCode.DAILY_COST_LIMIT_REACHED);
   }
 
-  if (!interviewConfig) {
-    throw new Error("Interview config not found");
+  if (!context) {
+    throw new ChatError(ChatErrorCode.INTERVIEW_NOT_AVAILABLE);
   }
+  const { bill, interviewConfig } = context;
 
   // 最新のメッセージを取得
   const lastMessage = messages[messages.length - 1];
@@ -342,12 +374,16 @@ async function generateStreamingResponse({
         output: Output.object({ schema: interviewChatWithReportSchema }),
       });
       textStream = result.textStream;
+      // クライアントが接続を切っても最後まで読み進めさせ、onFinish（利用額の記録・
+      // 回答の保存）を必ず実行させる（待たずに投げっぱなしにする）
+      void keepStreamRunning(result);
     } else {
       const result = streamText({
         ...streamParams,
         output: Output.object({ schema: interviewChatTextSchema }),
       });
       textStream = result.textStream;
+      void keepStreamRunning(result);
     }
 
     // LLMがnext_stageを直接出力するため、ストリームをそのまま返す

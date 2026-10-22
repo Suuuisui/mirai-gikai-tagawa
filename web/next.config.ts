@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
+import { buildSupabaseImageRemotePatterns } from "../packages/shared/src/next/supabase-image-remote-pattern.cjs";
 
 const isDev = process.env.NODE_ENV === "development";
 
 const nextConfig: NextConfig = {
+  // `x-powered-by: Next.js` を返さない（使っているフレームワークを知らせる必要がないため）
+  poweredByHeader: false,
   experimental: {
     serverSourceMaps: true,
   },
@@ -63,11 +66,11 @@ const nextConfig: NextConfig = {
         hostname: "127.0.0.1",
         pathname: "/storage/v1/object/public/bill-thumbnails/**",
       },
-      {
-        protocol: "https",
-        hostname: "*.supabase.co",
-        pathname: "/storage/v1/object/public/bill-thumbnails/**",
-      },
+      // 自分の Supabase プロジェクトの画像だけを許可する（ビルド時に
+      // NEXT_PUBLIC_SUPABASE_URL から読む）。`*.supabase.co` を丸ごと許可すると、
+      // 他人のプロジェクトの画像まで /_next/image 経由で最適化させられる。
+      // 環境変数がない・ローカルのときは何も足さず、上の 127.0.0.1 の設定だけが使われる
+      ...buildSupabaseImageRemotePatterns(process.env.NEXT_PUBLIC_SUPABASE_URL),
       ...(isDev
         ? [
             {

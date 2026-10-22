@@ -1,16 +1,9 @@
 import "server-only";
 
-import { timingSafeEqual } from "node:crypto";
+import { constantTimeEqual } from "@mirai-gikai/shared/security/constant-time-equal";
 import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
 
 const MCP_CLIENT_ID = "mirai-gikai-content-agent";
-
-function constantTimeEqual(a: string, b: string) {
-  const aBuf = Buffer.from(a, "utf8");
-  const bBuf = Buffer.from(b, "utf8");
-  if (aBuf.length !== bBuf.length) return false;
-  return timingSafeEqual(aBuf, bBuf);
-}
 
 export async function verifyMcpToken(
   _req: Request,

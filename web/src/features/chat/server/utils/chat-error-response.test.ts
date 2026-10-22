@@ -27,6 +27,24 @@ describe("chatErrorToResponse", () => {
     expect(await res.text()).toContain("今月の利用上限");
   });
 
+  it("COST_LIMIT_CHECK_FAILED で 503 を返す（利用額を確認できないときは止める）", async () => {
+    const res = chatErrorToResponse(
+      new ChatError(ChatErrorCode.COST_LIMIT_CHECK_FAILED)
+    );
+    expect(res.status).toBe(503);
+    expect(await res.text()).toContain("利用状況を確認できない");
+  });
+
+  it("INTERVIEW_NOT_AVAILABLE で 404 を返す", async () => {
+    const res = chatErrorToResponse(
+      new ChatError(ChatErrorCode.INTERVIEW_NOT_AVAILABLE)
+    );
+    expect(res.status).toBe(404);
+    expect(await res.text()).toContain(
+      "インタビューは現在ご利用いただけません"
+    );
+  });
+
   it("その他の ChatError で 500 を返す", async () => {
     const res = chatErrorToResponse(
       new ChatError(ChatErrorCode.PROMPT_FETCH_FAILED)

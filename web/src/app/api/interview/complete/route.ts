@@ -1,17 +1,32 @@
 import { NextResponse } from "next/server";
-import { completeInterviewSession } from "@/features/interview-session/server/services/complete-interview-session";
+import { completeInterviewSessionOnce } from "@/features/interview-session/server/services/complete-interview-session";
 import { verifySessionOwnership } from "@/features/interview-session/server/utils/verify-session-ownership";
 import {
   isInvalidOptionalBooleanInput,
   parseOptionalBoolean,
 } from "@/features/interview-session/shared/utils/optional-boolean";
 
+/** 完了処理が失敗したときに利用者へ返す固定の文言（詳細はサーバーのログにだけ残す） */
+const COMPLETE_FAILED_MESSAGE =
+  "インタビューの完了処理に失敗しました。時間をおいて、もう一度お試しください。";
+
 export async function POST(req: Request) {
-  const { sessionId, isPublic, isDataReuseConsented } = await req.json();
+  let body: {
+    sessionId?: unknown;
+    isPublic?: unknown;
+    isDataReuseConsented?: unknown;
+  } | null;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const { sessionId, isPublic, isDataReuseConsented } = body ?? {};
   const isPublicByUser = parseOptionalBoolean(isPublic);
   const dataReuseConsented = parseOptionalBoolean(isDataReuseConsented);
 
-  if (!sessionId) {
+  if (typeof sessionId !== "string" || sessionId === "") {
     return NextResponse.json({ error: "Missing sessionId" }, { status: 400 });
   }
 
@@ -35,7 +50,9 @@ export async function POST(req: Request) {
   }
 
   try {
-    const report = await completeInterviewSession({
+    // 完了済みのセッションなら、モデレーション（LLM 呼び出し）をやり直さず
+    // 既存のレポートを返す
+    const report = await completeInterviewSessionOnce({
       sessionId,
       isPublicByUser,
       isDataReuseConsented: dataReuseConsented,
@@ -43,14 +60,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ report });
   } catch (error) {
+    // 詳細（DB のエラー文など）はサーバーのログにだけ残し、利用者には固定の文言を返す
     console.error("Complete interview error:", error);
     return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to complete interview",
-      },
+      { error: COMPLETE_FAILED_MESSAGE },
       { status: 500 }
     );
   }

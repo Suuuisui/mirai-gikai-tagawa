@@ -8,6 +8,7 @@ import type { InterviewReport } from "../../shared/types";
 import { buildCompletedInterviewReportInsert } from "../../shared/utils/complete-interview-report";
 import { extractReportFromMessage } from "../../shared/utils/report-extraction";
 import {
+  findCompletedReportBySessionId,
   findInterviewMessagesBySessionIdDesc,
   updateInterviewSessionCompleted,
   upsertInterviewReport,
@@ -117,4 +118,23 @@ export async function completeInterviewSession({
   await updateInterviewSessionCompleted(sessionId);
 
   return report;
+}
+
+/**
+ * 完了済みのセッションなら、モデレーション（LLM 呼び出し）をやり直さず既存のレポートを返す。
+ * 未完了のセッションだけ {@link completeInterviewSession} で完了処理を行う。
+ *
+ * 完了 API（/api/interview/complete）の入口として使う。完了後のセッションに対して
+ * 何度呼ばれても LLM 呼び出しが増えないようにするため。
+ * （{@link completeInterviewSession} 自体は、レポート内容を更新する再完了のために
+ * 何度でも実行できる作りのままにしてある）
+ */
+export async function completeInterviewSessionOnce(
+  params: CompleteInterviewSessionParams
+): Promise<InterviewReport> {
+  const existingReport = await findCompletedReportBySessionId(params.sessionId);
+  if (existingReport) {
+    return existingReport;
+  }
+  return completeInterviewSession(params);
 }
