@@ -45,13 +45,27 @@ jobs:
 
       # Claude は Issue のスレッド全体を読む。関係者以外（第三者）のコメントが 1 件でもあれば、
       # プロンプトインジェクションで自動マージ→本番デプロイまで進む恐れがあるので起動しない（ジョブを失敗で止める）。
+      # 確認から Claude 実行までの間に第三者が書き込めないよう、先に会話をロック（関係者だけ書ける状態）にする。
+      # 最後の「ロック解除」ステップで元に戻す。
+      - name: Issue の会話をロック
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUM: ${{ github.event.issue.number }}
+        run: |
+          gh issue lock "$ISSUE_NUM" --repo "$GITHUB_REPOSITORY" || true
+          # ロックできていなければ止める（すでにロック済みなら OK）
+          [ "$(gh api "repos/${GITHUB_REPOSITORY}/issues/${ISSUE_NUM}" --jq .locked)" = "true" ] || { echo "::error::Issue をロックできませんでした"; exit 1; }
+
       - name: スレッドに関係者以外の書き込みが無いか確認
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUM: ${{ github.event.issue.number }}
         run: |
+          # 許可するのは関係者（OWNER/MEMBER/COLLABORATOR）と、名前を指定した信頼できるボットだけ
           BAD=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${ISSUE_NUM}/comments" --paginate \
-            --jq '.[] | select(.user.type != "Bot") | select(.author_association as $a | ["OWNER","MEMBER","COLLABORATOR"] | index($a) | not) | .user.login' | sort -u)
+            --jq '.[] | select(.user.login as $u | ["github-actions[bot]","claude[bot]"] | index($u) | not)
+                      | select(.author_association as $a | ["OWNER","MEMBER","COLLABORATOR"] | index($a) | not)
+                      | .user.login' | sort -u)
           if [ -n "$BAD" ]; then
             echo "::error::関係者以外のコメントがあるため @claude を実行しません: $(echo $BAD | tr '\n' ' ')"
             exit 1
@@ -90,6 +104,13 @@ jobs:
           fi
           echo "pr=$PR" >> "$GITHUB_OUTPUT"
 
+      - name: Issue の会話のロック解除
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUM: ${{ github.event.issue.number }}
+        run: gh issue unlock "$ISSUE_NUM" --repo "$GITHUB_REPOSITORY" || true
+
   # 2) PR のコードを install / test する。書き込み権限なし・トークンを残さない
   verify:
     needs: claude
@@ -99,11 +120,17 @@ jobs:
       contents: read
     env:
       PR_NUM: ${{ needs.claude.outputs.pr }}
+    outputs:
+      sha: ${{ steps.sha.outputs.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: refs/pull/${{ needs.claude.outputs.pr }}/head
           persist-credentials: false
+
+      - name: 検証する commit を記録
+        id: sha
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Install pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
@@ -136,7 +163,8 @@ jobs:
       actions: write
     steps:
       - name: 自動マージ
-        run: gh pr merge "${{ needs.claude.outputs.pr }}" --squash --delete-branch --repo "$GITHUB_REPOSITORY"
+        # テストした commit から PR が動いていたらマージしない
+        run: gh pr merge "${{ needs.claude.outputs.pr }}" --squash --delete-branch --match-head-commit "${{ needs.verify.outputs.sha }}" --repo "$GITHUB_REPOSITORY"
         env:
           GH_TOKEN: ${{ github.token }}
 
