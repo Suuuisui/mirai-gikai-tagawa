@@ -17,6 +17,10 @@ permissions:
 jobs:
   # 1) Claude に実装させ、対象 PR を特定する（書き込み権限あり。PR のコードは実行しない）
   claude:
+    # 同じ Issue に対する実行を直列化（並行実行で片方のロック解除がもう片方の保護を外さないように）
+    concurrency:
+      group: claude-issue-${{ github.event.issue.number }}
+      cancel-in-progress: false
     # このリポジトリは PUBLIC。リポジトリ関係者（OWNER/MEMBER/COLLABORATOR）が書いた
     # Issue / コメントだけを処理する。コメント起動の場合は Issue 本文の作者も同条件
     # （第三者が書いた Issue 本文がプロンプトに入るのを防ぐ）。
@@ -48,10 +52,13 @@ jobs:
       # 確認から Claude 実行までの間に第三者が書き込めないよう、先に会話をロック（関係者だけ書ける状態）にする。
       # 最後の「ロック解除」ステップで元に戻す。
       - name: Issue の会話をロック
+        id: lock
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUM: ${{ github.event.issue.number }}
         run: |
+          # すでにロックされていた Issue は、このジョブでは解除しない（was_locked=true）
+          echo "was_locked=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${ISSUE_NUM}" --jq .locked)" >> "$GITHUB_OUTPUT"
           gh issue lock "$ISSUE_NUM" --repo "$GITHUB_REPOSITORY" || true
           # ロックできていなければ止める（すでにロック済みなら OK）
           [ "$(gh api "repos/${GITHUB_REPOSITORY}/issues/${ISSUE_NUM}" --jq .locked)" = "true" ] || { echo "::error::Issue をロックできませんでした"; exit 1; }
@@ -105,7 +112,7 @@ jobs:
           echo "pr=$PR" >> "$GITHUB_OUTPUT"
 
       - name: Issue の会話のロック解除
-        if: always()
+        if: always() && steps.lock.outputs.was_locked == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUM: ${{ github.event.issue.number }}
