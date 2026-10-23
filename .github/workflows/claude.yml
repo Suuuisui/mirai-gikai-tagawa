@@ -43,6 +43,20 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      # Claude は Issue のスレッド全体を読む。関係者以外（第三者）のコメントが 1 件でもあれば、
+      # プロンプトインジェクションで自動マージ→本番デプロイまで進む恐れがあるので起動しない（ジョブを失敗で止める）。
+      - name: スレッドに関係者以外の書き込みが無いか確認
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUM: ${{ github.event.issue.number }}
+        run: |
+          BAD=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${ISSUE_NUM}/comments" --paginate \
+            --jq '.[] | select(.user.type != "Bot") | select(.author_association as $a | ["OWNER","MEMBER","COLLABORATOR"] | index($a) | not) | .user.login' | sort -u)
+          if [ -n "$BAD" ]; then
+            echo "::error::関係者以外のコメントがあるため @claude を実行しません: $(echo $BAD | tr '\n' ' ')"
+            exit 1
+          fi
+
       - name: Claude Code 実行
         uses: anthropics/claude-code-action@cfc3eb22bfed5c26ef66e3223c982af27e4524de # v1
         with:
