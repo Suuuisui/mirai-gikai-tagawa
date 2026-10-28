@@ -40,5 +40,16 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  return { supabaseResponse, user };
+  // セッションの AAL（aal2 = 二段階認証まで済み）。JWT の aal クレームを読む。
+  // 上の getUser() が Supabase にトークンを検証させたあとに同じトークンを読み直すだけ
+  // なので信頼できる（署名が偽物のトークンなら、そもそも user が null になる）。
+  // 取れなかったときは null のままにして、呼び出し側が「二段階認証が済んでいない」と
+  // 扱う（閉じる側に倒す）
+  let currentLevel: string | null = null;
+  if (user) {
+    const { data } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    currentLevel = data?.currentLevel ?? null;
+  }
+
+  return { supabaseResponse, user, currentLevel };
 }

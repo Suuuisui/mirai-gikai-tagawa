@@ -240,9 +240,12 @@ auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
 max_enrolled_factors = 10
 
 # Control MFA via App Authenticator (TOTP)
+# 管理画面（admin）は管理者に認証アプリの 6 桁コード（TOTP）を必須にしている。
+# ローカルでもこれを有効にしないと、管理者がログインできなくなる。
+# 本番の Supabase は TOTP が既定で有効。
 [auth.mfa.totp]
-enroll_enabled = false
-verify_enabled = false
+enroll_enabled = true
+verify_enabled = true
 
 # Configure MFA via Phone Messaging
 [auth.mfa.phone]

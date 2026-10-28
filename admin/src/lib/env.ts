@@ -3,6 +3,8 @@
  * アプリケーション全体で使用する環境変数を一元管理
  */
 
+import { parseMfaRequired } from "./auth/mfa";
+
 if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
   throw new Error("環境変数 NEXT_PUBLIC_SUPABASE_URL が設定されていません");
 }
@@ -20,6 +22,12 @@ export const env = {
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
   supabasePublishableKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   revalidateSecret: process.env.REVALIDATE_SECRET,
+  // 管理者に二段階認証（TOTP）を必須にするか。環境変数 ADMIN_MFA_REQUIRED が
+  // "false" のときだけ強制をやめる（未設定なら強制する）。
+  // 本番で二段階認証のページが動かず管理画面に入れなくなったときの緊急用スイッチで、
+  // 普段は設定しない。変えたあとは再デプロイが要る（Vercel の環境変数は新しい
+  // デプロイから効く）。原因を直したらすぐ消すこと
+  adminMfaRequired: parseMfaRequired(process.env.ADMIN_MFA_REQUIRED),
   // トピック分析・バックフィルを実行する Cloud Run Job のトリガ設定
   gcp: {
     projectId: process.env.GCP_PROJECT_ID,
