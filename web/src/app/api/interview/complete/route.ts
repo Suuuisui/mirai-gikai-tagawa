@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { rejectBotRequest } from "@/features/bot-protection/server/utils/reject-bot-request";
 import { completeInterviewSessionOnce } from "@/features/interview-session/server/services/complete-interview-session";
 import { verifySessionOwnership } from "@/features/interview-session/server/utils/verify-session-ownership";
 import {
@@ -11,6 +12,13 @@ const COMPLETE_FAILED_MESSAGE =
   "インタビューの完了処理に失敗しました。時間をおいて、もう一度お試しください。";
 
 export async function POST(req: Request) {
+  // ボットは、本文の読み取りや所有者の確認より先に、モデレーション（LLM 呼び出し）の前に断る
+  // （Vercel BotID）。このクライアントは JSON の error を読んで画面に出すので json で返す
+  const botRejection = await rejectBotRequest({ format: "json" });
+  if (botRejection) {
+    return botRejection;
+  }
+
   let body: {
     sessionId?: unknown;
     isPublic?: unknown;

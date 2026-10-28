@@ -1,3 +1,4 @@
+import { withBotId } from "botid/next/config";
 import type { NextConfig } from "next";
 import { buildSupabaseImageRemotePatterns } from "../packages/shared/src/next/supabase-image-remote-pattern.cjs";
 
@@ -89,4 +90,8 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Vercel BotID のチャレンジ用スクリプトを同じオリジンから配るための rewrite。
+// Vercel 上では BotID の経路をプラットフォームが自動で用意する（withBotId は不要）ので、
+// ローカル開発のときだけ足す。無いと next dev ではスクリプトの読み込みに失敗し、
+// 守る API へのリクエストが送られない
+export default isDev ? withBotId(nextConfig) : nextConfig;
