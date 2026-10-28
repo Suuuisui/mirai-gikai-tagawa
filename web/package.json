@@ -48,7 +48,7 @@
     "langfuse-vercel": "^3.38.5",
     "lucide-react": "^0.542.0",
     "lucide-static": "^1.25.0",
-    "nanoid": "^5.1.5",
+    "nanoid": "^3.3.18",
     "next": "15.5.28",
     "nextjs-toploader": "^3.9.17",
     "react": "19.1.10",
