@@ -1,5 +1,28 @@
-import { describe, expect, it } from "vitest";
+import { checkBotId } from "botid/server";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { BOT_BLOCKED_MESSAGE } from "@/features/bot-protection/server/utils/reject-bot-request";
 import { POST } from "./route";
+
+// BotID は Vercel の外では判定できない（開発・テストでは常に人として扱い、設定不足の警告を出す）。
+// 外部サービスの判定だけを固定の結果に差し替え、ルートが判定をどこで呼ぶかを確かめる
+vi.mock("botid/server", () => ({ checkBotId: vi.fn() }));
+
+const HUMAN = {
+  isHuman: true,
+  isBot: false,
+  isVerifiedBot: false,
+  bypassed: true,
+};
+const BOT = {
+  isHuman: false,
+  isBot: true,
+  isVerifiedBot: false,
+  bypassed: false,
+};
+
+beforeEach(() => {
+  vi.mocked(checkBotId).mockResolvedValue(HUMAN);
+});
 
 function buildCompleteRequest(body: unknown): Request {
   return new Request("http://localhost/api/interview/complete", {
@@ -71,5 +94,15 @@ describe("POST /api/interview/complete", () => {
     );
 
     expect(res.status).toBe(403);
+  });
+
+  it("ボットと判定されたら、本文の検証より先に403を返す", async () => {
+    vi.mocked(checkBotId).mockResolvedValueOnce(BOT);
+
+    // 人なら 400（Missing sessionId）になる本文でも、ボットは 403
+    const res = await POST(buildCompleteRequest({}));
+
+    expect(res.status).toBe(403);
+    expect(await res.json()).toEqual({ error: BOT_BLOCKED_MESSAGE });
   });
 });

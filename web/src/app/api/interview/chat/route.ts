@@ -1,3 +1,4 @@
+import { rejectBotRequest } from "@/features/bot-protection/server/utils/reject-bot-request";
 import {
   checkSystemDailyCostLimit,
   checkSystemMonthlyCostLimit,
@@ -14,6 +15,12 @@ import { jsonResponse } from "@/lib/api/response";
 import { registerNodeTelemetry } from "@/lib/telemetry/register";
 
 export async function POST(req: Request) {
+  // ボットは、認証や本文の読み取りより先に、AI を呼ぶ前に断る（Vercel BotID）
+  const botRejection = await rejectBotRequest();
+  if (botRejection) {
+    return botRejection;
+  }
+
   // Vercel node環境でinstrumentationが自動で起動しない問題対応
   // 明示的にtelemetryを初期化
   await registerNodeTelemetry();
