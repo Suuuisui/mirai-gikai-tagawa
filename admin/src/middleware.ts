@@ -1,7 +1,23 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { hasVerifiedTotpFactor } from "@/lib/auth/mfa";
 import { checkAdminPermission } from "@/lib/auth/permissions";
+import { decideAdminRoute } from "@/lib/auth/route-gate";
+import { env } from "@/lib/env";
 import { updateSession } from "@/lib/supabase/middleware";
+
+/**
+ * redirect の応答に、セッション更新で付いた Cookie を引き継ぐ。
+ * 引き継がないと、トークンを更新した直後の redirect で新しい Cookie が捨てられ、
+ * 次のリクエストが使用済みの古いトークンで更新しようとしてログアウトされうる
+ */
+function redirectWithCookies(url: URL, from: NextResponse) {
+  const response = NextResponse.redirect(url);
+  for (const cookie of from.cookies.getAll()) {
+    response.cookies.set(cookie);
+  }
+  return response;
+}
 
 export async function middleware(request: NextRequest) {
   // MCP エンドポイントはBearerトークンで独自認証する。Supabase auth の呼び出しを避けるため
@@ -12,43 +28,33 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const { supabaseResponse, user } = await updateSession(request);
+  const { supabaseResponse, user, currentLevel } = await updateSession(request);
 
-  // OAuth コールバックはそのまま通す（Route Handler で処理する）
-  if (request.nextUrl.pathname === "/api/auth/callback") {
+  // 通す・redirect する・の判断は純粋関数（route-gate.ts）に任せる。
+  // ログイン／管理者／二段階認証（AAL2）の確認はここで一括して行う。
+  // OAuth コールバック（/api/auth/callback）や二段階認証のページ自体の扱いもそちら
+  const decision = decideAdminRoute({
+    pathname,
+    isAuthenticated: user !== null,
+    isAdmin: checkAdminPermission(user),
+    mfaRequired: env.adminMfaRequired,
+    currentLevel,
+    hasVerifiedTotpFactor: hasVerifiedTotpFactor(user?.factors),
+  });
+
+  if (decision.type === "next") {
+    // IMPORTANT: You *must* return the supabaseResponse object as it is.
     return supabaseResponse;
   }
 
-  // ログインページへのアクセスで、既にログイン済みの場合
-  if (request.nextUrl.pathname === "/login") {
-    if (user && checkAdminPermission(user)) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/bills";
-      return NextResponse.redirect(url);
-    }
-    // ログインページは常にアクセス可能
-    return supabaseResponse;
+  const url = request.nextUrl.clone();
+  url.pathname = decision.pathname;
+  // 元のページのクエリは行き先に持ち越さない
+  url.search = "";
+  if (decision.error) {
+    url.searchParams.set("error", decision.error);
   }
-
-  // 保護されたルートへのアクセス
-  // 未認証の場合
-  if (!user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
-  }
-
-  // admin権限チェック
-  if (!checkAdminPermission(user)) {
-    // 権限がない場合もログイン画面へ
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("error", "unauthorized");
-    return NextResponse.redirect(url);
-  }
-
-  // IMPORTANT: You *must* return the supabaseResponse object as it is.
-  return supabaseResponse;
+  return redirectWithCookies(url, supabaseResponse);
 }
 
 export const config = {

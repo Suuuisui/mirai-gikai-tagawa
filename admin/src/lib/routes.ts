@@ -9,6 +9,9 @@
 // ── 静的ルート ──────────────────────────────────────
 export const routes = {
   login: () => "/login" as const,
+  // 二段階認証（保護されたページの外。パスワードでログインしたあと、管理画面に入る前に通る）
+  mfaSetup: () => "/mfa/setup" as const,
+  mfaVerify: () => "/mfa/verify" as const,
   homepage: () => "/homepage" as const,
   bills: () => "/bills" as const,
   billNew: () => "/bills/new" as const,
