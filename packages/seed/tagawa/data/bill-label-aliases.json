@@ -16,5 +16,11 @@
     "proposer": "member",
     "officialLabel": "議案第64号",
     "label": "議員提出議案第64号"
+  },
+  {
+    "sessionKey": "r8-6-teirei",
+    "proposer": "member",
+    "officialLabel": "議案第65号",
+    "label": "議員提出議案第65号"
   }
 ]

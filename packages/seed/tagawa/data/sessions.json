@@ -9250,6 +9250,144 @@
             "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311993/3_11993_56035_up_mohg78ox.pdf"
           }
         ]
+      },
+      {
+        "billNumberLabel": "認定第1号",
+        "title": "令和7年度田川市一般会計決算",
+        "proposer": "mayor",
+        "resultLabel": "不認定",
+        "resultSource": "official",
+        "resolvedDate": "2026-10-08",
+        "explanationMaterialUrls": [
+          {
+            "label": "認定第1号説明資料_総務文教委員会",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311993/3_11993_56333_up_3ml5iqko.pdf"
+          },
+          {
+            "label": "認定第1号説明資料_厚生委員会",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311993/3_11993_56251_up_k7q30lly.pdf"
+          },
+          {
+            "label": "認定第1号説明資料_建設経済委員会",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311993/3_11993_56250_up_te5g4x5y.pdf"
+          }
+        ]
+      },
+      {
+        "billNumberLabel": "認定第2号",
+        "title": "令和7年度田川市国民健康保険特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2026-10-08",
+        "explanationMaterialUrls": [
+          {
+            "label": "認定第2号説明資料",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311993/3_11993_56249_up_lov7xvvu.pdf"
+          }
+        ]
+      },
+      {
+        "billNumberLabel": "認定第3号",
+        "title": "令和7年度田川市後期高齢者医療特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2026-10-08",
+        "explanationMaterialUrls": [
+          {
+            "label": "認定第3号説明資料",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311993/3_11993_56248_up_okpiakm5.pdf"
+          }
+        ]
+      },
+      {
+        "billNumberLabel": "認定第4号",
+        "title": "令和7年度田川市急患医療特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2026-10-08",
+        "explanationMaterialUrls": [
+          {
+            "label": "認定第4号説明資料",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311993/3_11993_56247_up_oyzxzwdr.pdf"
+          }
+        ]
+      },
+      {
+        "billNumberLabel": "認定第5号",
+        "title": "令和7年度田川市等三線沿線地域交通体系整備事業基金特別会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2026-10-08",
+        "explanationMaterialUrls": [
+          {
+            "label": "認定第5号説明資料",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311993/3_11993_56246_up_4s1kzxcb.pdf"
+          }
+        ]
+      },
+      {
+        "billNumberLabel": "認定第6号",
+        "title": "令和7年度田川市病院事業会計決算",
+        "proposer": "mayor",
+        "resultLabel": "認定",
+        "resultSource": "official",
+        "resolvedDate": "2026-10-08",
+        "explanationMaterialUrls": [
+          {
+            "label": "認定第6号説明資料",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311993/3_11993_56245_up_kvt2k72g.pdf"
+          }
+        ]
+      },
+      {
+        "billNumberLabel": "議案第62号",
+        "title": "令和8年度田川市一般会計補正予算（追加）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-10-08",
+        "explanationMaterialUrls": [
+          {
+            "label": "議案第62号説明資料_総務文教委員会",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311993/3_11993_56244_up_nqcm1wuy.pdf"
+          },
+          {
+            "label": "議案第62号説明資料_建設経済委員会",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311993/3_11993_56243_up_hvuhxexi.pdf"
+          }
+        ]
+      },
+      {
+        "billNumberLabel": "議案第63号",
+        "title": "財産の取得について（ノンステップバス）",
+        "proposer": "mayor",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-10-08",
+        "explanationMaterialUrls": [
+          {
+            "label": "議案第63号説明資料",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311993/3_11993_56242_up_6neevmix.pdf"
+          }
+        ]
+      },
+      {
+        "billNumberLabel": "議員提出議案第65号",
+        "title": "非核三原則の堅持を求める意見書について",
+        "proposer": "member",
+        "resultLabel": "原案可決",
+        "resultSource": "official",
+        "resolvedDate": "2026-10-08",
+        "explanationMaterialUrls": [
+          {
+            "label": "議員提出議案第65号",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00311993/3_11993_56241_up_cxieu1iw.pdf"
+          }
+        ]
       }
     ]
   }
