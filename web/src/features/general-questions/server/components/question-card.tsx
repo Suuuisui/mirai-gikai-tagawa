@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { jumpTargetClassName } from "@/components/ui/jump-nav";
 import { TextLink } from "@/components/ui/text-link";
 import { MemberLink } from "@/features/members/server/components/member-link";
+import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import { questionAnchorId } from "../../shared/utils/group-questions";
@@ -52,6 +53,11 @@ export function QuestionCard({
     !compact && !alignedOutline && record.outline ? record.outline : null;
   const unalignedPointCount =
     unalignedOutline?.reduce((sum, item) => sum + item.points.length, 0) ?? 0;
+  // 公式サイトに通告書PDFが無い会期は、開示請求で交付を受けた通告書から要旨を起こしている
+  const outlineFromDisclosure =
+    !compact &&
+    record.outline !== null &&
+    record.outlineSource === "disclosure";
 
   return (
     <article
@@ -128,7 +134,10 @@ export function QuestionCard({
         </details>
       )}
 
-      {(record.videoUrl || answerRecordId || record.pdfUrl) && (
+      {(record.videoUrl ||
+        answerRecordId ||
+        record.pdfUrl ||
+        outlineFromDisclosure) && (
         <footer className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
           {record.videoUrl && (
             <TextLink external href={record.videoUrl}>
@@ -147,6 +156,9 @@ export function QuestionCard({
               <FileText aria-hidden className="size-3.5" />
               通告書（PDF）
             </TextLink>
+          )}
+          {outlineFromDisclosure && (
+            <SourceBadge kind="disclosure" detail="要旨は通告書の写しから" />
           )}
         </footer>
       )}
