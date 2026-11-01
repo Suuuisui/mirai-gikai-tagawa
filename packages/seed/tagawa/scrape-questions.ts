@@ -24,6 +24,10 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import type { GeneralQuestionRecord } from "@mirai-gikai/shared/council/types";
 import { collectLinkedPageUrls, extractPageId } from "./council-html-utils";
+import {
+  type DisclosedQuestionOutlines,
+  findDisclosedOutline,
+} from "./disclosed-question-outlines";
 import { writeGeneratedData } from "./generated-data-writer";
 import { CACHE_DIR, fetchBinaryWithCache, fetchWithCache } from "./http-utils";
 import { parseQuestionOutlines, type QuestionOutline } from "./question-outline-parser";
@@ -38,6 +42,10 @@ import { matchQuestionVideos, type QuestionVideo } from "./question-video-matche
 const LIST_URL = "https://www.joho.tagawa.fukuoka.jp/list00706.html";
 const OUT_PATH = "web/src/features/general-questions/shared/data/general-questions-data.ts";
 const VIDEOS_PATH = path.join(import.meta.dirname, "data/question-videos.json");
+const DISCLOSED_OUTLINES_PATH = path.join(
+  import.meta.dirname,
+  "data/disclosed-question-outlines.json"
+);
 
 function hasPdftotext(): boolean {
   try {
@@ -118,6 +126,9 @@ async function main() {
   }
 
   const videos = loadVideos();
+  const disclosed = JSON.parse(
+    readFileSync(DISCLOSED_OUTLINES_PATH, "utf-8")
+  ) as DisclosedQuestionOutlines;
   /** 会期ごとの記録（会期の最初の質問日で新しい順に並べるために保持） */
   const sessions: Array<{ firstDate: string; records: GeneralQuestionRecord[] }> = [];
   for (const [key, pages] of pagesBySession) {
@@ -133,12 +144,22 @@ async function main() {
     }
     const videoUrls = matchQuestionVideos(merged.records, videos);
     let outlineCount = 0;
-    const records = merged.records.map((record) => {
-      const outline = outlines.find((o) => o.order === record.order);
-      if (outline) outlineCount += 1;
+    let disclosedCount = 0;
+    const records = merged.records.map((record): GeneralQuestionRecord => {
+      const pdfOutline = outlines.find((o) => o.order === record.order);
+      // 公式サイトに通告書PDFが無い会期は、開示請求で交付を受けた通告書の要旨を使う
+      const disclosedOutline = pdfOutline
+        ? undefined
+        : findDisclosedOutline(disclosed, key, record.memberName);
+      const outline =
+        pdfOutline ??
+        (disclosedOutline && { order: record.order, ...disclosedOutline });
+      if (pdfOutline) outlineCount += 1;
+      if (disclosedOutline) disclosedCount += 1;
       return {
         ...record,
         ...attachOutline(record, outline),
+        ...(disclosedOutline && { outlineSource: "disclosure" as const }),
         videoUrl: videoUrls.get(record.id) ?? null,
       };
     });
@@ -148,7 +169,7 @@ async function main() {
       .sort()[0] ?? "";
     sessions.push({ firstDate, records });
     console.log(
-      `  ${key}: ${records.length}人（要旨 ${outlineCount}・動画 ${videoUrls.size}）`
+      `  ${key}: ${records.length}人（要旨 ${outlineCount}・開示 ${disclosedCount}・動画 ${videoUrls.size}）`
     );
   }
 
@@ -163,7 +184,7 @@ async function main() {
     typeName: "GeneralQuestionRecord",
     header: [
       "生成コマンド: pnpm --filter @mirai-gikai/seed tagawa:scrape-questions",
-      `出典: 田川市議会「一般質問一覧」 ${LIST_URL} と各会期の通告書PDF、公式YouTubeチャンネル`,
+      `出典: 田川市議会「一般質問一覧」 ${LIST_URL} と各会期の通告書PDF（PDFが無い会期は情報開示請求で交付を受けた通告書）、公式YouTubeチャンネル`,
       `${records.length}件（${pagesBySession.size}会期）`,
     ],
     data: records,
