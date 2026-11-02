@@ -17,7 +17,7 @@ interface OpinionsPageProps {
 // （billsタグ）を叩き、getBillById経由でbillsタグに依存する本ルートの
 // キャッシュも即時破棄される。revalidateは配線外の更新（手動のデータ投入等）に
 // 対するフォールバック
-export const revalidate = 600;
+export const revalidate = 86400;
 
 // 全パスをリクエスト時に生成してキャッシュする（オンデマンドISR）。
 // これが無いと動的パラメータルートはISR対象にならず毎回SSRされる

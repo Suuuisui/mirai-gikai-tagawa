@@ -31,8 +31,8 @@ import {
 import { getJapanTime } from "@/lib/utils/date";
 
 // ISR: データ更新時は /api/revalidate（revalidateTag）で即時反映され、
-// 会期バナー等の日付起因の表示は最長10分で追従する
-export const revalidate = 600;
+// 会期バナー等の日付起因の表示は最長1時間で追従する（ページ数が少ないので短めにする）
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   // 検索意図「田川市議会」に合わせ、トップだけはサイト名先行の

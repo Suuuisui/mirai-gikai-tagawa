@@ -15,8 +15,8 @@ interface SessionSummaryPageProps {
 }
 
 // ISR: データ更新時は /api/revalidate（revalidateTag）で即時反映され、
-// 会期バナー等の日付起因の表示は最長10分で追従する
-export const revalidate = 600;
+// 会期バナー等の日付起因の表示は最長1日遅れる。ページ数が多く、クローラーの巡回のたびに作り直すと Vercel の無料枠（ISR Writes・CPU）を使い切るため。データの更新はタグの再検証で即時に反映する
+export const revalidate = 86400;
 
 // 全パスをリクエスト時に生成してキャッシュする（オンデマンドISR）。
 // これが無いと動的パラメータルートはISR対象にならず毎回SSRされる

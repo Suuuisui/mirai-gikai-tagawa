@@ -29,7 +29,7 @@ import {
 import { getJapanTime, toDateString } from "@/lib/utils/date";
 
 // ISR: 議案データ更新時は /api/revalidate で即時反映（タイマーは保険）
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 /**
  * 公開中のトピック分析ページ。取得に失敗しても sitemap 全体を巻き込まない

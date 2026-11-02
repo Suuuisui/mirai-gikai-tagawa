@@ -23,7 +23,7 @@ interface CommitteeMeetingPageProps {
 }
 
 // ISR: データ更新時は /api/revalidate（revalidateTag）で即時反映される
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 // 全パスをリクエスト時に生成してキャッシュする（オンデマンドISR）。
 // これが無いと動的パラメータルートはISR対象にならず毎回SSRされる
