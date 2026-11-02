@@ -69,7 +69,7 @@ const _getCachedSessionSummary = unstable_cache(
   },
   ["session-summary"],
   {
-    revalidate: 600, // 10分
+    revalidate: 86400, // 1日（データの更新は /api/revalidate のタグで即時に反映する）
     tags: [
       CACHE_TAGS.BILLS,
       CACHE_TAGS.DIET_SESSIONS,

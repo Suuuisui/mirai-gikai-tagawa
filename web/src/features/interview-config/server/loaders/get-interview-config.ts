@@ -30,7 +30,7 @@ const _getCachedInterviewConfig = unstable_cache(
   },
   ["interview-config"],
   {
-    revalidate: 600, // 10分（600秒）
+    revalidate: 86400, // 1日（データの更新は /api/revalidate のタグで即時に反映する）
     tags: [CACHE_TAGS.INTERVIEW_CONFIGS],
   }
 );

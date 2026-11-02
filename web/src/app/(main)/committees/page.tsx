@@ -6,7 +6,7 @@ import { PAGE_COPY } from "@/lib/seo/page-copy";
 import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 // ISR: データ更新時は /api/revalidate（revalidateTag）で即時反映される
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: PAGE_COPY.committees.title,

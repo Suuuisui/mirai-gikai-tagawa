@@ -47,7 +47,7 @@ const _getCachedBillStatsByDietSession = unstable_cache(
   },
   ["session-archive-bill-stats"],
   {
-    revalidate: 600, // 10分
+    revalidate: 86400, // 1日（データの更新は /api/revalidate のタグで即時に反映する）
     tags: [CACHE_TAGS.BILLS],
   }
 );

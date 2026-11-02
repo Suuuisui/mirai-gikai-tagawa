@@ -11,8 +11,8 @@ import { buildPageShareMetadata, SITE_NAME } from "@/lib/seo/share-metadata";
 import { formatDate, getJapanTime } from "@/lib/utils/date";
 
 // ISR: データ更新時は /api/revalidate（revalidateTag）で即時反映され、
-// 「就任N日目」など日付起因の表示は最長10分で追従する
-export const revalidate = 600;
+// 「就任N日目」など日付起因の表示は最長1時間で追従する（ページ数が少ないので短めにする）
+export const revalidate = 3600;
 
 const MAYOR_NAME = compactName(MAYOR_PROFILE.name);
 const TITLE = `${MAYOR_NAME} 田川市長の動き｜就任後の議会・提出議案・就任までの経緯`;

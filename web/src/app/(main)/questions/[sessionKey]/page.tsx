@@ -14,7 +14,7 @@ interface QuestionSessionPageProps {
 }
 
 // ISR: 静的データが主だが、リンク解決にキャッシュ済みのDBデータを使う
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 // 全パスをリクエスト時に生成してキャッシュする（オンデマンドISR）
 export function generateStaticParams() {

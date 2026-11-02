@@ -22,7 +22,7 @@ const _getCachedCommitteeMeetingPetitionRefs = unstable_cache(
   // 形を変えたらキーも変えて古い形のキャッシュを読まないようにする
   ["committee-meeting-petition-refs-v2"],
   {
-    revalidate: 3600,
+    revalidate: 86400, // 1日（データの更新は /api/revalidate のタグで即時に反映する）
     tags: [CACHE_TAGS.COMMITTEE_MEETINGS],
   }
 );
