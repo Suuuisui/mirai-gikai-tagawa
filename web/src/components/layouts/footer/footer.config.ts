@@ -55,6 +55,10 @@ export const primaryLinks: FooterLink[] = [
     href: routes.elections(),
   },
   {
+    label: "本会議の傍聴者数",
+    href: routes.attendance(),
+  },
+  {
     label: "情報のもと（出典）",
     href: routes.sources(),
   },

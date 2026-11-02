@@ -233,6 +233,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      url: `${baseUrl}${routes.attendance()}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    },
+    {
       url: `${baseUrl}${routes.search()}`,
       lastModified: latestBillUpdatedAt,
       changeFrequency: "weekly" as const,
