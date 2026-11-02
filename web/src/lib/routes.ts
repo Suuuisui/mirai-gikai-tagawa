@@ -60,6 +60,7 @@ export const routes = {
   // ── 市長・選挙 ────────────────────────────────────
   mayor: () => "/mayor" as const,
   elections: () => "/elections" as const,
+  attendance: () => "/attendance" as const,
 
   // ── 一般質問・請願陳情 ────────────────────────────
   questions: () => "/questions" as const,
