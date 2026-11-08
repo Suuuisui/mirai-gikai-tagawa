@@ -28,7 +28,8 @@ import {
 } from "@/lib/seo/sitemap-entries";
 import { getJapanTime, toDateString } from "@/lib/utils/date";
 
-// ISR: 議案データ更新時は /api/revalidate で即時反映（タイマーは保険）
+// ISR: 議案データ更新時は /api/revalidate で即時反映。一般質問の日付を今日（JST）で
+// 切るため 1 日で作り直す（1 ファイルだけなので無料枠への影響は小さい）
 export const revalidate = 86400;
 
 /**

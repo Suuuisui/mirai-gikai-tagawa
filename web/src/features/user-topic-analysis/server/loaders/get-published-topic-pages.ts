@@ -54,13 +54,13 @@ async function loadPublishedTopicPages(): Promise<PublishedTopicPage[]> {
  *
  * sitemap の再生成のたびに、全議案の意見本文まで取り直さないよう unstable_cache に載せる
  * （JSON にできる値だけを返す）。議案データの更新時は /api/revalidate（revalidateTag）で
- * 即時に失効するため、タイマーは長めの保険
+ * 即時に失効するため、時間では失効させない
  */
 export const getPublishedTopicPages = unstable_cache(
   loadPublishedTopicPages,
   ["published-topic-pages"],
   {
-    revalidate: 86400,
+    revalidate: false,
     tags: [CACHE_TAGS.BILLS],
   }
 );

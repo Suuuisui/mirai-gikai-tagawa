@@ -10,7 +10,7 @@ import { PAGE_COPY } from "@/lib/seo/page-copy";
 import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 // ISR: 議員・委員会記録のリンク解決はキャッシュ済みデータを使う
-export const revalidate = 86400;
+export const revalidate = false;
 
 export const metadata: Metadata = {
   title: PAGE_COPY.petitions.title,

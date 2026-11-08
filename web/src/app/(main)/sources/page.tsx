@@ -6,7 +6,7 @@ import { PAGE_COPY } from "@/lib/seo/page-copy";
 import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 // ISR: 委員会の記録の件数はキャッシュ済みの一覧から数える
-export const revalidate = 86400;
+export const revalidate = false;
 
 export const metadata: Metadata = {
   title: PAGE_COPY.sources.title,
