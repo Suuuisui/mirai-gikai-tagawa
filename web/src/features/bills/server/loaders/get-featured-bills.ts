@@ -59,7 +59,7 @@ const _getCachedFeaturedBills = unstable_cache(
   },
   ["featured-bills-list"],
   {
-    revalidate: 86400, // 1日（データの更新は /api/revalidate のタグで即時に反映する）
+    revalidate: false, // 時間では失効させない（データの更新は /api/revalidate のタグで即時に反映する）
     tags: [CACHE_TAGS.BILLS, CACHE_TAGS.INTERVIEW_CONFIGS],
   }
 );

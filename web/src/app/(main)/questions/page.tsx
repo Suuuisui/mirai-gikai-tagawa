@@ -10,7 +10,7 @@ import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
 
 // ISR: 質問データは静的（デプロイで更新）、会期・議員・委員会記録へのリンク解決は
 // キャッシュ済みのDBデータを使い、そちらの更新は /api/revalidate で反映される
-export const revalidate = 86400;
+export const revalidate = false;
 
 export const metadata: Metadata = {
   title: PAGE_COPY.questions.title,

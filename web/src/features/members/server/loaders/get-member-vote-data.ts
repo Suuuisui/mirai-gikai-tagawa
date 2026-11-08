@@ -98,8 +98,8 @@ const _getCachedProposerTypeMap = unstable_cache(
   ["bill-proposer-types"],
   {
     // 提出者区分はデータ更新時にしか変わらず、更新時はadmin操作の
-    // /api/revalidate（revalidateTag）で即時失効するため、タイマーは長めの保険
-    revalidate: 86400,
+    // /api/revalidate（revalidateTag）で即時失効するため、時間では失効させない
+    revalidate: false,
     tags: [CACHE_TAGS.BILLS],
   }
 );

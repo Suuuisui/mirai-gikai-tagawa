@@ -59,7 +59,7 @@ const _getCachedBillsLite = unstable_cache(
   {
     // データ更新はadmin操作時の/api/revalidate（revalidateTag）で即時反映される
     // ため、タイマーは保険。Egress削減のため短い間隔での引き直しはしない
-    revalidate: 86400, // 1日（データの更新は /api/revalidate のタグで即時に反映する）
+    revalidate: false, // 時間では失効させない（データの更新は /api/revalidate のタグで即時に反映する）
     tags: [CACHE_TAGS.BILLS, CACHE_TAGS.INTERVIEW_CONFIGS],
   }
 );
