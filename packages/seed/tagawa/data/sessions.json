@@ -9390,5 +9390,28 @@
         ]
       }
     ]
+  },
+  {
+    "key": "r8-7-rinji",
+    "name": "令和8年（第7回）11月臨時会",
+    "startDate": "2026-11-13",
+    "endDate": "2026-11-13",
+    "sourceUrl": "https://www.joho.tagawa.fukuoka.jp/kiji00312092/index.html",
+    "bills": [
+      {
+        "billNumberLabel": "議案第64号",
+        "title": "田川市教育委員会教育長の任命について（山下 晃司 氏）",
+        "proposer": "mayor",
+        "resultLabel": "同意",
+        "resultSource": "official",
+        "resolvedDate": "2026-11-13",
+        "explanationMaterialUrls": [
+          {
+            "label": "議案第64号",
+            "url": "https://www.joho.tagawa.fukuoka.jp/kiji00312092/3_12092_56754_up_u46qivgc.pdf"
+          }
+        ]
+      }
+    ]
   }
 ]
